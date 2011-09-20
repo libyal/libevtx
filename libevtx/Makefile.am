@@ -1,0 +1,70 @@
+AM_CPPFLAGS = \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/common \
+	-I$(top_srcdir)/libcstring \
+	-I$(top_srcdir)/liberror \
+	-I$(top_srcdir)/libnotify \
+	@LIBUNA_CPPFLAGS@ \
+	@LIBBFIO_CPPFLAGS@ \
+	@LIBFDATA_CPPFLAGS@ \
+	@LIBFDATETIME_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
+	@MEMWATCH_CPPFLAGS@
+
+lib_LTLIBRARIES = libevtx.la
+
+libevtx_la_SOURCES = \
+	evtx_chunk.h \
+	evtx_file_header.h \
+	libevtx.c \
+	libevtx_array_type.c libevtx_array_type.h \
+	libevtx_codepage.c libevtx_codepage.h \
+	libevtx_debug.c libevtx_debug.h \
+	libevtx_definitions.h \
+	libevtx_error.c libevtx_error.h \
+	libevtx_extern.h \
+	libevtx_file.c libevtx_file.h \
+	libevtx_i18n.c libevtx_i18n.h \
+	libevtx_io_handle.c libevtx_io_handle.h \
+	libevtx_libbfio.h \
+	libevtx_libfdata.h \
+	libevtx_libfvalue.h \
+	libevtx_libuna.h \
+	libevtx_list_type.c libevtx_list_type.h \
+	libevtx_notify.c libevtx_notify.h \
+	libevtx_support.c libevtx_support.h \
+	libevtx_types.h \
+	libevtx_unused.h
+
+libevtx_la_LIBADD = \
+	../libcstring/libcstring.la \
+	../liberror/liberror.la \
+	../libnotify/libnotify.la \
+	@LIBUNA_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBFDATA_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFVALUE_LIBADD@
+
+libevtx_la_LDFLAGS = -no-undefined -version-info 1:0:0
+
+EXTRA_DIST = \
+	libevtx_definitions.h.in \
+	libevtx.rc \
+	libevtx.rc.in
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
+distclean: clean
+	/bin/rm -f libevtx_definitions.h
+	/bin/rm -f libevtx.rc
+	/bin/rm -f Makefile
+
+splint:
+	@echo "Running splint on libevtx ..." 
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libevtx_la_SOURCES) 
+
