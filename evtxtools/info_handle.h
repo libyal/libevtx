@@ -56,9 +56,6 @@ struct info_handle
 	int abort;
 };
 
-const char *info_handle_get_column_type_description(
-             uint32_t column_type );
-
 int info_handle_initialize(
      info_handle_t **info_handle,
      liberror_error_t **error );

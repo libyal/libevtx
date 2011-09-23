@@ -1,5 +1,5 @@
 /*
- * Extracts tables from an Extensible Storage Engine (ESE) Database (EDB) file
+ * Extracts log entries from a Windows XML EventViewer Log (EVTX) file
  *
  * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -54,11 +54,11 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use evtxexport to export items stored in an Extensible Storage Engine (ESE)\n"
-	                 "Database (EDB) file\n\n" );
+	fprintf( stream, "Use evtxexport to export log entries stored in a Windows XML EventViewer\n"
+	                 "Log (EVTX) file\n\n" );
 
-	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -l logfile ] [ -m mode ] [ -t target ]\n"
-	                 "                   [ -T table_name ] [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ]\n"
+	                 "                  source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
@@ -68,13 +68,9 @@ void usage_fprint(
 	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
-	fprintf( stream, "\t-m:     export mode, option: all, tables (default)\n"
-	                 "\t        'all' exports all the tables or a single specified table with indexes,\n"
-	                 "\t        'tables' exports all the tables or a single specified table\n" );
 	fprintf( stream, "\t-t:     specify the basename of the target directory to export to\n"
 	                 "\t        (default is the source filename) evtxexport will add the suffix\n"
 	                 "\t        .export to the basename\n" );
-	fprintf( stream, "\t-T:     exports only a specific table\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -128,8 +124,6 @@ int main( int argc, char * const argv[] )
 {
 	libcstring_system_character_t *log_filename          = NULL;
 	libcstring_system_character_t *option_ascii_codepage = NULL;
-	libcstring_system_character_t *option_export_mode    = NULL;
-	libcstring_system_character_t *option_table_name     = NULL;
 	libcstring_system_character_t *option_target_path    = NULL;
 	libcstring_system_character_t *path_separator        = NULL;
 	libcstring_system_character_t *source                = NULL;
@@ -137,7 +131,6 @@ int main( int argc, char * const argv[] )
 	log_handle_t *log_handle                             = NULL;
 	char *program                                        = "evtxexport";
 	size_t source_length                                 = 0;
-	size_t option_table_name_length                      = 0;
 	libcstring_system_integer_t option                   = 0;
 	int result                                           = 0;
 	int verbose                                          = 0;
@@ -170,7 +163,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:m:t:T:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:t:vV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -202,18 +195,8 @@ int main( int argc, char * const argv[] )
 
 				break;
 
-			case (libcstring_system_integer_t) 'm':
-				option_export_mode = optarg;
-
-				break;
-
 			case (libcstring_system_integer_t) 't':
 				option_target_path = optarg;
-
-				break;
-
-			case (libcstring_system_integer_t) 'T':
-				option_table_name = optarg;
 
 				break;
 
@@ -262,11 +245,6 @@ int main( int argc, char * const argv[] )
 		}
 		option_target_path = path_separator;
 	}
-	if( option_table_name != NULL )
-	{
-		option_table_name_length = libcstring_system_string_length(
-		                            option_table_name );
-	}
 	libsystem_notify_set_verbose(
 	 verbose );
 	libevtx_notify_set_stream(
@@ -298,28 +276,6 @@ int main( int argc, char * const argv[] )
 /* TODO
 	evtxexport_export_handle->print_status_information = print_status_information;
 */
-	if( option_export_mode != NULL )
-	{
-		result = export_handle_set_export_mode(
-			  evtxexport_export_handle,
-			  option_export_mode,
-			  &error );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to set export mode.\n" );
-
-			goto on_error;
-		}
-		else if( result == 0 )
-		{
-			fprintf(
-			 stderr,
-			 "Unsupported export mode defaulting to: tables.\n" );
-		}
-	}
 	if( option_ascii_codepage != NULL )
 	{
 		result = export_handle_set_ascii_codepage(
@@ -424,8 +380,6 @@ int main( int argc, char * const argv[] )
 */
 	result = export_handle_export_file(
 	          evtxexport_export_handle,
-	          option_table_name,
-	          option_table_name_length,
 	          log_handle,
 	          &error );
 

@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from an Extensible Storage Engine (ESE) Database (EDB) file
+ * Shows information obtained from a Windows XML EventViewer Log (EVTX) file
  *
  * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -52,8 +52,8 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use evtxinfo to determine information about an Extensible Storage Engine (ESE)\n"
-	                 "Database File (EDB).\n\n" );
+	fprintf( stream, "Use evtxinfo to determine information about a Windows XML EventViewer\n"
+	                 "Log (EVTX) file\n\n" );
 
 	fprintf( stream, "Usage: evtxinfo [ -hvV ] source\n\n" );
 
@@ -109,7 +109,7 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libevtx_error_t *error               = NULL;
+	libevtx_error_t *error                = NULL;
 	libcstring_system_character_t *source = NULL;
 	char *program                         = "evtxinfo";
 	libcstring_system_integer_t option    = 0;

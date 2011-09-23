@@ -36,20 +36,10 @@
 extern "C" {
 #endif
 
-enum EXPORT_MODES
-{
-	EXPORT_MODE_ALL			= (int) 'a',
-	EXPORT_MODE_TABLES		= (int) 't'
-};
-
 typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
-	/* The export mode
-	 */
-	uint8_t export_mode;
-
 	/* The libevtx input file
 	 */
 	libevtx_file_t *input_file;
@@ -95,11 +85,6 @@ int export_handle_signal_abort(
      export_handle_t *export_handle,
      liberror_error_t **error );
 
-int export_handle_set_export_mode(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
-     liberror_error_t **error );
-
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
      const libcstring_system_character_t *string,
@@ -139,70 +124,9 @@ int export_handle_close(
      export_handle_t *export_handle,
      liberror_error_t **error );
 
-/* Item generic export functions
- */
-int export_handle_create_text_item_file(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *item_filename,
-     size_t item_filename_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     FILE **item_file_stream,
-     liberror_error_t **error );
-
-int export_handle_export_table(
-     export_handle_t *export_handle,
-     libevtx_table_t *table,
-     const libcstring_system_character_t *table_name,
-     size_t table_name_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
-
-int export_handle_export_indexes(
-     export_handle_t *export_handle,
-     libevtx_table_t *table,
-     const libcstring_system_character_t *table_name,
-     size_t table_name_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
-
-int export_handle_export_index(
-     export_handle_t *export_handle,
-     libevtx_index_t *index,
-     const libcstring_system_character_t *index_name,
-     size_t index_name_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
-
-int export_handle_export_record(
-     libevtx_record_t *record,
-     FILE *record_file_stream,
-     liberror_error_t **error );
-
-int export_handle_export_record_value(
-     libevtx_record_t *record,
-     int record_value_entry,
-     FILE *record_file_stream,
-     liberror_error_t **error );
-
 int export_handle_export_file(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *export_table_name,
-     size_t export_table_name_length,
      log_handle_t *log_handle,
-     liberror_error_t **error );
-
-int decompress_7bit_ascii(
-     uint8_t *uncompressed_data,
-     size_t uncompressed_data_size,
-     uint8_t *compressed_data,
-     size_t compressed_data_size,
      liberror_error_t **error );
 
 #if defined( __cplusplus )
