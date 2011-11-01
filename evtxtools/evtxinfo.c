@@ -123,6 +123,7 @@ int main( int argc, char * const argv[] )
 
         if( libsystem_initialize(
              "evtxtools",
+             _IONBF,
              &error ) != 1 )
 	{
 		fprintf(

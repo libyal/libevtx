@@ -14,8 +14,6 @@ SUBDIRS = \
 	libfvalue \
 	libevtx \
 	libfwnt \
-	libfmapi \
-	libmapidb \
 	libsystem \
 	evtxtools \
 	po \
@@ -35,6 +33,8 @@ SPEC_FILES = \
 	libevtx.spec.in
 
 EXTRA_DIST = \
+	README.dll \
+	README.macosx \
 	README.mingw \
 	README.static \
         $(GETTEXT_FILES) \
@@ -93,8 +93,6 @@ splint:
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libfmapi && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libmapidb && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/evtxtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))

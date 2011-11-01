@@ -1,8 +1,10 @@
 dnl Functions for libsystem
+dnl
+dnl Version: 20111031
 
 dnl Function to detect if ctime_r or ctime is available
 dnl Also checks how to use ctime_r
-AC_DEFUN([AC_CHECK_FUNC_CTIME],
+AC_DEFUN([AX_LIBSYSTEM_CHECK_FUNC_CTIME],
  [AC_CHECK_FUNCS([ctime_r])
 
  AS_IF(
@@ -86,7 +88,7 @@ AC_DEFUN([AC_CHECK_FUNC_CTIME],
 
 dnl Function to detect if mkdir is available
 dnl Also checks how to use mkdir
-AC_DEFUN([AC_CHECK_FUNC_MKDIR],
+AC_DEFUN([AX_LIBSYSTEM_CHECK_FUNC_MKDIR],
  [AC_CHECK_FUNCS([mkdir])
 
  AS_IF(
@@ -151,11 +153,11 @@ AC_DEFUN([AC_CHECK_FUNC_MKDIR],
   [AC_MSG_FAILURE(
    [Missing function: mkdir],
    [1])
+  ])
  ])
-])
 
 dnl Function to detect if libsystem dependencies are available
-AC_DEFUN([AC_CHECK_LOCAL_LIBSYSTEM],
+AC_DEFUN([AX_LIBSYSTEM_CHECK_LOCAL],
  [dnl Types used in libsystem/libsystem_date_time.c
  AC_STRUCT_TM
 
@@ -177,139 +179,128 @@ AC_DEFUN([AC_CHECK_LOCAL_LIBSYSTEM],
 
  AS_IF(
   [test "x$ac_cv_header_glob_h" = xno],
-  [AC_CHECK_HEADERS([io.h]) ])
+  [AC_CHECK_HEADERS([io.h])
+  ])
 
  dnl Headers included in libsystem/libsystem_signal.h
  AC_CHECK_HEADERS([signal.h sys/signal.h])
 
  dnl File input/output functions used in libsystem/libsystem_file_io.h
- AC_CHECK_FUNCS(
-  [close],
-  [],
+ AC_CHECK_FUNCS([close fstat ftruncate lseek open read stat write])
+
+ AS_IF(
+  [test "x$ac_cv_func_close" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: close],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [fstat],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_fstat" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: fstat],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [ftruncate],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_ftruncate" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: ftruncate],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [lseek],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_lseek" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: lseek],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [open],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_open" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: open],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [read],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_read" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: read],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [stat],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_stat" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: stat],
    [1])
   ])
  
- AC_CHECK_FUNCS(
-  [write],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_write" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: write],
    [1])
   ])
 
  dnl Date and time functions used in libsystem/libsystem_date_time.c
- AC_CHECK_FUNCS(
-  [localtime_r],
-  [],
-  [AC_CHECK_FUNCS(
-   [localtime],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: localtime_r and localtime],
-    [1])
-   ])
+ AC_CHECK_FUNCS([localtime localtime_r mktime])
+
+ AS_IF(
+  [test "x$ac_cv_func_localtime" != xyes && test "x$ac_cv_func_localtime_r" != xyes],
+  [AC_MSG_FAILURE(
+   [Missing functions: localtime and localtime_r],
+   [1])
   ])
  
- AC_CHECK_FUNCS(
-  [mktime],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_mktime" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: mktime],
    [1])
   ])
  
  dnl Date and time functions used in libsystem/libsystem_date_time.h
- AC_CHECK_FUNC_CTIME
+ AX_LIBSYSTEM_CHECK_FUNC_CTIME
  
- AC_CHECK_FUNCS(
-  [gmtime_r],
-  [],
-  [AC_CHECK_FUNCS(
-   [gmtime],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: gmtime_r and gmtime],
-    [1])
-   ])
+ AC_CHECK_FUNCS([gmtime gmtime_r time])
+
+ AS_IF(
+  [test "x$ac_cv_func_gmtime" != xyes && test "x$ac_cv_func_gmtime_r" != xyes],
+  [AC_MSG_FAILURE(
+   [Missing functions: gmtime_r and gmtime],
+   [1])
   ])
  
- AC_CHECK_FUNCS(
-  [time],
-  [],
+ AS_IF(
+  [test "x$ac_cv_func_time" != xyes],
   [AC_MSG_FAILURE(
    [Missing function: time],
    [1])
   ])
  
  dnl Directory functions used in libsystem/libsystem_directory_io.h
- AC_CHECK_FUNCS(
-  [chdir],
-  [],
+ AC_CHECK_FUNCS([chdir])
+ 
+ AS_IF(
+  [test "x$ac_cv_func_chdir" != xyes],
   [AC_MSG_FAILURE(
    [Missing functions: chdir],
    [1])
   ])
  
- AC_CHECK_FUNC_MKDIR
+ AX_LIBSYSTEM_CHECK_FUNC_MKDIR
  
  dnl Check for error string functions used in libsystem/libsystem_error_string.c
  AC_FUNC_STRERROR_R()
  
  AS_IF(
-  [test "x$ac_cv_have_decl_strerror_r" = xno],
-  [AC_CHECK_FUNCS(
-   [strerror],
-   [],
+  [test "x$ac_cv_have_decl_strerror_r" != xyes],
+  [AC_CHECK_FUNCS([strerror])
+
+  AS_IF(
+   [test "x$ac_cv_func_strerror" != xyes],
    [AC_MSG_FAILURE(
     [Missing functions: strerror_r and strerror],
     [1])
@@ -319,7 +310,11 @@ AC_DEFUN([AC_CHECK_LOCAL_LIBSYSTEM],
  dnl Commandline argument/option parsing functions in libsystem/libsystem_getopt.h
  AC_CHECK_FUNCS([getopt])
  
+ dnl Check for IO buffering functions in libsystem/libsystem_support.c
+ AC_CHECK_FUNCS([setvbuf])
+
  dnl Check for internationalization functions in libsystem/libsystem_support.c
  AC_CHECK_FUNCS([bindtextdomain textdomain])
+
  ])
 

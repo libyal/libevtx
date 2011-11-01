@@ -1,4 +1,13 @@
 TODO
+* codepage support
+
+20111101
+* updated configure.ac and m4 files
+* updated spec and pc file
+* updated README files
+* updated common, libcstring, libsystem, libuna, libbfio, libfdatetime,
+  libfvalue
+* worked on windows codepage 932 and 936 support
 
 20110920
 * worked on initial version

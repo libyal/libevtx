@@ -1,5 +1,5 @@
 Libevtx supports two types of static compilation
-* static libary
+* static library
 * static excutables
 
 Creating a static library
@@ -8,13 +8,13 @@ Use the following command to tell configure you want to make a static library:
 ./configure --enable-shared=no
 
 
-Creating static executables
+Creating static evtxcutables
 
 Make sure you have a static version of:
 * glibc
 
 Some distrubions provide separate packages for static versions of libraries
 
-Use the following command to tell configure you want to make a static executables:
-./configure --enable-static-executables=yes
+Use the following command to tell configure you want to make a static evtxcutables:
+./configure --enable-static-evtxcutables=yes
 

@@ -105,6 +105,8 @@ int libevtx_set_codepage(
 	 && ( codepage != LIBEVTX_CODEPAGE_KOI8_R )
 	 && ( codepage != LIBEVTX_CODEPAGE_KOI8_U )
 	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_874 )
+	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_932 )
+	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_936 )
 	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_1250 )
 	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_1251 )
 	 && ( codepage != LIBEVTX_CODEPAGE_WINDOWS_1252 )
