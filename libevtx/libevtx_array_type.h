@@ -1,7 +1,7 @@
 /* 
  * Array type functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -86,21 +86,21 @@ int libevtx_array_initialize(
 int libevtx_array_free(
      libevtx_array_t **array,
      int (*entry_free_function)(
-            intptr_t *entry,
+            intptr_t **entry,
             liberror_error_t **error ),
      liberror_error_t **error );
 
 int libevtx_array_empty(
      libevtx_array_t *array,
      int (*entry_free_function)(
-            intptr_t *entry,
+            intptr_t **entry,
             liberror_error_t **error ),
      liberror_error_t **error );
 
 int libevtx_array_clear(
      libevtx_array_t *array,
      int (*entry_free_function)(
-            intptr_t *entry,
+            intptr_t **entry,
             liberror_error_t **error ),
      liberror_error_t **error );
 
@@ -108,7 +108,7 @@ int libevtx_array_clone(
      libevtx_array_t **destination_array,
      libevtx_array_t *source_array,
      int (*entry_free_function)(
-            intptr_t *entry,
+            intptr_t **entry,
             liberror_error_t **error ),
      int (*entry_clone_function)(
             intptr_t **destination,
@@ -120,7 +120,7 @@ int libevtx_array_resize(
      libevtx_array_t *array,
      int number_of_entries,
      int (*entry_free_function)(
-            intptr_t *entry,
+            intptr_t **entry,
             liberror_error_t **error ),
      liberror_error_t **error );
 

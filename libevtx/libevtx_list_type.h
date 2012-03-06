@@ -1,7 +1,7 @@
 /*
  * List type functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -58,7 +58,7 @@ enum LIBEVTX_LIST_INSERT_FLAGS
 
 	/* Only allow unique entries, no duplicates
 	 */
-	LIBEVTX_LIST_INSERT_FLAG_UNIQUE_ENTRIES	= 0x01,
+	LIBEVTX_LIST_INSERT_FLAG_UNIQUE_ENTRIES		= 0x01,
 };
 
 typedef struct libevtx_list_element libevtx_list_element_t;
@@ -102,7 +102,7 @@ int libevtx_list_element_initialize(
 int libevtx_list_element_free(
      libevtx_list_element_t **element,
      int (*value_free_function)(
-            intptr_t *value,
+            intptr_t **value,
             liberror_error_t **error ),
      liberror_error_t **error );
 
@@ -123,14 +123,14 @@ int libevtx_list_initialize(
 int libevtx_list_free(
      libevtx_list_t **list,
      int (*value_free_function)(
-            intptr_t *value,
+            intptr_t **value,
             liberror_error_t **error ),
      liberror_error_t **error );
 
 int libevtx_list_empty(
      libevtx_list_t *list,
      int (*value_free_function)(
-            intptr_t *value,
+            intptr_t **value,
             liberror_error_t **error ),
      liberror_error_t **error );
 
@@ -138,7 +138,7 @@ int libevtx_list_clone(
      libevtx_list_t **destination_list,
      libevtx_list_t *source_list,
      int (*value_free_function)(
-            intptr_t *value,
+            intptr_t **value,
             liberror_error_t **error ),
      int (*value_clone_function)(
             intptr_t **destination,

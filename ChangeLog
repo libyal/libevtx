@@ -1,5 +1,11 @@
 TODO
+* chunk similar to libesedb page
+* code clean up
+  - behavior of initialize functions
 * codepage support
+
+20120306
+* 2012 update
 
 20111101
 * updated configure.ac and m4 files

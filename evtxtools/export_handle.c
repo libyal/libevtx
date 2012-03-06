@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -620,7 +620,8 @@ int export_handle_make_directory(
 		return( -1 );
 	}
 	if( libsystem_directory_make(
-	     directory_name ) != 0 )
+	     directory_name,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,

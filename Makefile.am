@@ -8,6 +8,7 @@ SUBDIRS = \
 	libnotify \
 	libuna \
 	libbfio \
+	libfcache \
 	libfdata \
 	libfdatetime \
 	libfguid \
@@ -20,6 +21,18 @@ SUBDIRS = \
 	manuals \
 	macosx \
 	msvscpp
+
+DPKG_FILES = \
+	dpkg/changelog \
+	dpkg/changelog.in \
+       	dpkg/compat \
+       	dpkg/control \
+       	dpkg/copyright \
+       	dpkg/copyright.in \
+       	dpkg/rules \
+       	dpkg/libevtx-dev.docs \
+       	dpkg/libevtx.docs \
+       	dpkg/libevtx-tools.docs
 
 GETTEXT_FILES = \
 	config.rpath \
@@ -37,6 +50,7 @@ EXTRA_DIST = \
 	README.macosx \
 	README.mingw \
 	README.static \
+        $(DPKG_FILES) \
         $(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \
         $(REDHAT_FILES)
@@ -62,6 +76,7 @@ library:
 	(cd $(srcdir)/libnotify && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfcache && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdata && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdatetime && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
@@ -87,6 +102,7 @@ splint:
 	(cd $(srcdir)/libnotify && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfcache && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdata && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdatetime && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))

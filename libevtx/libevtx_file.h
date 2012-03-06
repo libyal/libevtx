@@ -1,7 +1,7 @@
 /*
  * File functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -30,6 +30,7 @@
 #include "libevtx_extern.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 
 #if defined( __cplusplus )
@@ -58,7 +59,7 @@ struct libevtx_internal_file
 
 	/* The chunks cache
 	 */
-	libfdata_cache_t *chunks_cache;
+	libfcache_cache_t *chunks_cache;
 
 	/* Value to indicate if abort was signalled
 	 */

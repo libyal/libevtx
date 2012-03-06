@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libnotify \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
@@ -20,6 +21,7 @@ libevtx_la_SOURCES = \
 	evtx_file_header.h \
 	libevtx.c \
 	libevtx_array_type.c libevtx_array_type.h \
+	libevtx_chunk.c libevtx_chunk.h \
 	libevtx_codepage.c libevtx_codepage.h \
 	libevtx_debug.c libevtx_debug.h \
 	libevtx_definitions.h \
@@ -29,6 +31,7 @@ libevtx_la_SOURCES = \
 	libevtx_i18n.c libevtx_i18n.h \
 	libevtx_io_handle.c libevtx_io_handle.h \
 	libevtx_libbfio.h \
+	libevtx_libfcache.h \
 	libevtx_libfdata.h \
 	libevtx_libfvalue.h \
 	libevtx_libuna.h \
@@ -44,6 +47,7 @@ libevtx_la_LIBADD = \
 	../libnotify/libnotify.la \
 	@LIBUNA_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
+	@LIBFCACHE_LIBADD@ \
 	@LIBFDATA_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFGUID_LIBADD@ \

@@ -1,7 +1,7 @@
 /*
  * File functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -33,6 +33,8 @@
 #include "libevtx_io_handle.h"
 #include "libevtx_file.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libfcache.h"
+#include "libevtx_libfdata.h"
 
 /* Initializes a file
  * Make sure the value file is pointing to is set to NULL
@@ -719,7 +721,7 @@ int libevtx_file_close(
 
 		result = -1;
 	}
-	if( libfdata_cache_free(
+	if( libfcache_cache_free(
 	     &( internal_file->chunks_cache ),
 	     error ) != 1 )
 	{
@@ -867,7 +869,7 @@ int libevtx_file_open_read(
 
 		return( -1 );
 	}
-	if( libfdata_cache_initialize(
+	if( libfcache_cache_initialize(
 	     &( internal_file->chunks_cache ),
 	     LIBEVTX_MAXIMUM_CACHE_ENTRIES_CHUNKS,
 	     error ) != 1 )

@@ -1,6 +1,6 @@
 dnl Functions for libsystem
 dnl
-dnl Version: 20111031
+dnl Version: 20120226
 
 dnl Function to detect if ctime_r or ctime is available
 dnl Also checks how to use ctime_r
@@ -165,8 +165,11 @@ AC_DEFUN([AX_LIBSYSTEM_CHECK_LOCAL],
  dnl libsystem/libsystem_notify.h and libsystem/libsystem_string.h
  AC_CHECK_HEADERS([errno.h])
 
- dnl Headers included in libsystem/libsystem_directory_io.h, libsystem/libsystem_file_io.h
+ dnl Headers included in libsystem/libsystem_directory.h, libsystem/libsystem_file_io.h
  AC_CHECK_HEADERS([sys/stat.h])
+
+ dnl Headers included in libsystem/libsystem_directory.h
+ AC_CHECK_HEADERS([dirent.h])
 
  dnl Headers included in libsystem/libsystem_file_io.h
  AC_CHECK_HEADERS([fcntl.h unistd.h])
@@ -280,8 +283,8 @@ AC_DEFUN([AX_LIBSYSTEM_CHECK_LOCAL],
    [1])
   ])
  
- dnl Directory functions used in libsystem/libsystem_directory_io.h
- AC_CHECK_FUNCS([chdir])
+ dnl Directory functions used in libsystem/libsystem_directory.h
+ AC_CHECK_FUNCS([chdir closedir opendir readdir_r])
  
  AS_IF(
   [test "x$ac_cv_func_chdir" != xyes],
@@ -309,6 +312,16 @@ AC_DEFUN([AX_LIBSYSTEM_CHECK_LOCAL],
  
  dnl Commandline argument/option parsing functions in libsystem/libsystem_getopt.h
  AC_CHECK_FUNCS([getopt])
+ 
+ dnl Path functions used in libsystem/libsystem_path.h
+ AC_CHECK_FUNCS([getcwd])
+ 
+ AS_IF(
+  [test "x$ac_cv_func_getcwd" != xyes],
+  [AC_MSG_FAILURE(
+   [Missing functions: getcwd],
+   [1])
+  ])
  
  dnl Check for IO buffering functions in libsystem/libsystem_support.c
  AC_CHECK_FUNCS([setvbuf])

@@ -1,7 +1,7 @@
 /*
  * Common output functions for the evtxtools
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -41,12 +41,6 @@
 #include <libfwnt.h>
 #endif
 
-#if defined( HAVE_LOCAL_LIBFMAPI )
-#include <libfmapi_definitions.h>
-#elif defined( HAVE_LIBFMAPI_H )
-#include <libfmapi.h>
-#endif
-
 #include <libsystem.h>
 
 #include "evtxoutput.h"
@@ -68,7 +62,7 @@ void evtxoutput_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Copyright (c) 2011, %s.\n" ),
+	 _( "Copyright (c) 2011-2012, %s.\n" ),
 	 _( "Joachim Metz" ) );
 
 	fprintf(
@@ -139,6 +133,8 @@ void evtxoutput_version_detailed_fprint(
 	 ", libbfio %s",
 	 LIBBFIO_VERSION_STRING );
 
+/* TODO libfcache, libfdata */
+
 	fprintf(
 	 stream,
 	 ", libfdatetime %s",
@@ -158,11 +154,6 @@ void evtxoutput_version_detailed_fprint(
 	 stream,
 	 ", libfwnt %s",
 	 LIBFWNT_VERSION_STRING );
-
-	fprintf(
-	 stream,
-	 ", libfmapi %s",
-	 LIBFMAPI_VERSION_STRING );
 
         fprintf(
 	 stream,

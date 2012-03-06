@@ -1,7 +1,7 @@
 /*
  * The libfdata header wrapper
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -32,7 +32,6 @@
 #include <libfdata_block_reference.h>
 #include <libfdata_buffer.h>
 #include <libfdata_buffer_reference.h>
-#include <libfdata_cache.h>
 #include <libfdata_definitions.h>
 #include <libfdata_list.h>
 #include <libfdata_list_element.h>

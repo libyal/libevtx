@@ -1,7 +1,7 @@
 /*
- * Notification function
+ * The internal libfcache header
  *
- * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,46 +19,33 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_NOTIFY_H )
-#define _LIBEVTX_NOTIFY_H
+#if !defined( _LIBESEDB_LIBFCACHE_H )
+#define _LIBESEDB_LIBFCACHE_H
 
 #include <common.h>
-#include <types.h>
 
-#include <liberror.h>
+/* Define HAVE_LOCAL_LIBFCACHE for local use of libfcache
+ */
+#if defined( HAVE_LOCAL_LIBFCACHE )
 
-#include <stdio.h>
+#include <libfcache_cache.h>
+#include <libfcache_date_time.h>
+#include <libfcache_definitions.h>
+#include <libfcache_types.h>
 
-#include "libevtx_extern.h"
+#elif defined( HAVE_LIBFCACHE_H )
 
-#if defined( __cplusplus )
-extern "C" {
+/* If libtool DLL support is enabled set LIBFCACHE_DLL_IMPORT
+ * before including libfcache.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFCACHE_DLL_IMPORT
 #endif
 
-#if !defined( HAVE_LOCAL_LIBEVTX )
+#include <libfcache.h>
 
-LIBEVTX_EXTERN \
-void libevtx_notify_set_verbose(
-      int verbose );
-
-LIBEVTX_EXTERN \
-int libevtx_notify_set_stream(
-     FILE *stream,
-     liberror_error_t **error );
-
-LIBEVTX_EXTERN \
-int libevtx_notify_stream_open(
-     const char *filename,
-     liberror_error_t **error );
-
-LIBEVTX_EXTERN \
-int libevtx_notify_stream_close(
-     liberror_error_t **error );
-
-#endif
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libfcache.h
 #endif
 
 #endif

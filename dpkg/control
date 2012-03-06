@@ -1,0 +1,29 @@
+Source: libevtx
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <jbmetz@users.sourceforge.net>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.3
+Homepage: https://sourceforge.net/projects/libevtx/
+
+Package: libevtx
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to support the Windows XML EventViewer Log (EVTX) format
+ libevtx is a library to support the Windows XML EventViewer Log (EVTX) format.
+
+Package: libevtx-dev
+Section: libdevel
+Architecture: any
+Depends: libevtx (= ${Source-Version})
+Description: Header files and libraries for developing applications for libevtx
+ Header files and libraries for developing applications for libevtx.
+
+Package: libevtx-tools
+Section: utils
+Architecture: any
+Depends: libevtx (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Windows XML EventViewer Log (EVTX) files
+ Several tools for reading Windows XML EventViewer Log (EVTX) files.
+

@@ -1,7 +1,7 @@
 /*
- * Database functions
+ * Chunk functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_DATABASE_H )
-#define _LIBEVTX_DATABASE_H
+#if !defined( _LIBEVTX_CHUNK_H )
+#define _LIBEVTX_CHUNK_H
 
 #include <common.h>
 #include <types.h>
@@ -29,34 +29,35 @@
 
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libevtx_database libevtx_database_t;
+typedef struct libevtx_chunk libevtx_chunk_t;
 
-struct libevtx_database
+struct libevtx_chunk
 {
 	/* TODO implement something useful */
 	int dummy;
 };
 
-int libevtx_database_initialize(
-     libevtx_database_t **database,
+int libevtx_chunk_initialize(
+     libevtx_chunk_t **chunk,
      liberror_error_t **error );
 
-int libevtx_database_free(
-     libevtx_database_t **database,
+int libevtx_chunk_free(
+     libevtx_chunk_t **chunk,
      liberror_error_t **error );
 
-int libevtx_database_read(
-     libevtx_database_t *database,
+int libevtx_chunk_read(
+     libevtx_chunk_t *chunk,
      libbfio_handle_t *file_io_handle,
      libevtx_io_handle_t *io_handle,
      libfdata_vector_t *pages_vector,
-     libfdata_cache_t *pages_cache,
+     libfcache_cache_t *pages_cache,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

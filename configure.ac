@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20111101],
+ [20120306],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -58,6 +58,9 @@ AX_LIBUNA_CHECK_ENABLE
 dnl Check for enabling libbfio for basic file IO support
 AX_LIBBFIO_CHECK_ENABLE
 
+dnl Check for enabling libfcache for file value cache support
+AX_LIBFCACHE_CHECK_ENABLE
+
 dnl Check for enabling libfdata for file and memory data block support
 AX_LIBFDATA_CHECK_ENABLE
 
@@ -87,7 +90,7 @@ AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes],
+ [test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes],
  [AC_SUBST(
   [libevtx_spec_requires],
   [Requires:])
@@ -134,6 +137,11 @@ AS_IF(
   ])
  ])
 
+dnl Set the date for dpkg files
+AC_SUBST(
+ [DATE],
+ [`date -R 2> /dev/null`])
+
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
@@ -143,6 +151,7 @@ AC_CONFIG_FILES([liberror/Makefile])
 AC_CONFIG_FILES([libnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
+AC_CONFIG_FILES([libfcache/Makefile])
 AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
@@ -164,6 +173,8 @@ AC_CONFIG_FILES([include/libevtx/types.h])
 AC_CONFIG_FILES([libevtx/libevtx_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([dpkg/changelog])
+AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libevtx/libevtx.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libevtx.pc])
@@ -178,6 +189,7 @@ AC_MSG_NOTICE([
 Building:
    libuna support:                            $ac_cv_libuna
    libbfio support:                           $ac_cv_libbfio
+   libfcache support:                         $ac_cv_libfcache
    libfdata support:                          $ac_cv_libfdata
    libfdatetime support:                      $ac_cv_libfdatetime
    libfguid support:                          $ac_cv_libfguid
@@ -190,5 +202,4 @@ Features:
    Verbose output:                            $ac_cv_enable_verbose_output
    Debug output:                              $ac_cv_enable_debug_output
 ]);
-
 

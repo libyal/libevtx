@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (c) 2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -32,6 +32,7 @@
 #include "libevtx_definitions.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 #include "libevtx_unused.h"
 
@@ -90,6 +91,7 @@ int libevtx_io_handle_initialize(
 
 			goto on_error;
 		}
+		( *io_handle )->chunk_size     = 0x00010000UL;
 		( *io_handle )->ascii_codepage = LIBEVTX_CODEPAGE_WINDOWS_1252;
 	}
 	return( 1 );
@@ -151,7 +153,9 @@ int libevtx_io_handle_read_file_header(
 	ssize_t read_count        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	uint64_t value_64bit      = 0;
 	uint32_t value_32bit      = 0;
+	uint16_t value_16bit      = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -220,10 +224,7 @@ int libevtx_io_handle_read_file_header(
 		 "%s: unable to read file header.",
 		 function );
 
-		memory_free(
-		 file_header_data );
-
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
@@ -233,10 +234,10 @@ int libevtx_io_handle_read_file_header(
 		 function );
 		libnotify_print_data(
 		 file_header_data,
-		 sizeof( evtx_file_header_t ) );
+		 sizeof( evtx_file_header_t ),
+		 0 );
 	}
 #endif
-
 	if( memory_compare(
 	     ( (evtx_file_header_t *) file_header_data )->signature,
 	     evtx_file_signature,
@@ -266,11 +267,118 @@ int libevtx_io_handle_read_file_header(
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 5 ] ,
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 6 ] );
 
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->first_chunk_number,
+		 value_64bit );
+		libnotify_printf(
+		 "%s: first chunk number\t\t\t: %" PRIu64 "\n",
+		 function,
+		 value_64bit );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->last_chunk_number,
+		 value_64bit );
+		libnotify_printf(
+		 "%s: last chunk number\t\t\t: %" PRIu64 "\n",
+		 function,
+		 value_64bit );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->next_record_identifier,
+		 value_64bit );
+		libnotify_printf(
+		 "%s: next record identifier\t\t: %" PRIu64 "\n",
+		 function,
+		 value_64bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->header_size,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: header size\t\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->unknown1,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: unknown1\t\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->major_version,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: major version\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->minor_version,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: minor version\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->header_block_size,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: header block size\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		byte_stream_copy_to_uint16_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->number_of_chunks,
+		 value_16bit );
+		libnotify_printf(
+		 "%s: number of chunks\t\t\t: %" PRIu16 "\n",
+		 function,
+		 value_16bit );
+
+		libnotify_printf(
+		 "%s: unknown2:\n",
+		 function );
+		libnotify_print_data(
+		 ( (evtx_file_header_t *) file_header_data )->unknown2,
+		 76,
+		 0 );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->flags,
+		 value_32bit );
+		libnotify_printf(
+		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_file_header_t *) file_header_data )->checksum,
+		 value_32bit );
+		libnotify_printf(
+		 "%s: checksum\t\t\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
 		libnotify_printf(
 		 "\n" );
 	}
 #endif
-
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libnotify_verbose != 0 )
+	{
+		libnotify_printf(
+		 "%s: trailing data:\n",
+		 function );
+		libnotify_print_data(
+		 &( file_header_data[ sizeof( evtx_file_header_t ) ] ),
+		 read_size - sizeof( evtx_file_header_t ),
+		 LIBNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+	}
+#endif
 	memory_free(
 	 file_header_data );
 
@@ -295,7 +403,7 @@ int libevtx_io_handle_read_chunk(
      intptr_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_vector_t *vector,
-     libfdata_cache_t *cache,
+     libfcache_cache_t *cache,
      int element_index,
      off64_t element_data_offset,
      size64_t element_data_size LIBEVTX_ATTRIBUTE_UNUSED,
