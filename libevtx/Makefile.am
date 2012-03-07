@@ -21,6 +21,7 @@ libevtx_la_SOURCES = \
 	evtx_file_header.h \
 	libevtx.c \
 	libevtx_array_type.c libevtx_array_type.h \
+	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
 	libevtx_codepage.c libevtx_codepage.h \
 	libevtx_debug.c libevtx_debug.h \

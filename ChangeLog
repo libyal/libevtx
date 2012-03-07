@@ -4,6 +4,10 @@ TODO
   - behavior of initialize functions
 * codepage support
 
+20120307
+* worked on reading chunks
+* added CRC32 support
+
 20120306
 * 2012 update
 

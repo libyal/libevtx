@@ -35,7 +35,7 @@ struct evtx_chunk_header
 {
 	/* The file signature
 	 * Consists of 8 bytes
-	 * Consists of: "ElfFile\x00"
+	 * Consists of: "ElfChnk\x00"
 	 */
 	uint8_t signature[ 8 ];
 
