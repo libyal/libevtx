@@ -18,15 +18,18 @@ lib_LTLIBRARIES = libevtx.la
 
 libevtx_la_SOURCES = \
 	evtx_chunk.h \
+	evtx_event_record.h \
 	evtx_file_header.h \
 	libevtx.c \
 	libevtx_array_type.c libevtx_array_type.h \
+	libevtx_binary_xml_token.c libevtx_binary_xml_token.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
 	libevtx_codepage.c libevtx_codepage.h \
 	libevtx_debug.c libevtx_debug.h \
 	libevtx_definitions.h \
 	libevtx_error.c libevtx_error.h \
+	libevtx_event_values.c libevtx_event_values.h \
 	libevtx_extern.h \
 	libevtx_file.c libevtx_file.h \
 	libevtx_i18n.c libevtx_i18n.h \

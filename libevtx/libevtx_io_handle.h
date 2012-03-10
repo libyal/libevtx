@@ -61,6 +61,10 @@ struct libevtx_io_handle
 	 */
 	uint32_t chunk_size;
 
+	/* Various flags
+	 */
+	uint32_t flags;
+
 	/* The codepage of the ASCII strings
 	 */
 	int ascii_codepage;

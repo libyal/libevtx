@@ -59,34 +59,39 @@ struct evtx_chunk_header
 	 */
 	uint8_t last_event_record_identifier[ 8 ];
 
-	/* Unknown
-	 * Consists 8 bytes
+	/* The header size
+	 * Consists of 4 bytes
 	 */
-	uint8_t unknown1[ 8 ];
+	uint8_t header_size[ 4 ];
+
+	/* The last event record offset
+	 * Consists 4 bytes
+	 */
+	uint8_t last_event_record_offset[ 4 ];
+
+	/* The free space offset
+	 * Consists 4 bytes
+	 */
+	uint8_t free_space_offset[ 4 ];
+
+	/* Event records checksum
+	 * Consists 4 bytes
+	 */
+	uint8_t event_records_checksum[ 4 ];
+
+	/* Unknown
+	 * Consists 64 bytes
+	 */
+	uint8_t unknown1[ 64 ];
 
 	/* Unknown
 	 * Consists 4 bytes
 	 */
 	uint8_t unknown2[ 4 ];
 
-	/* Unknown
-	 * Consists 4 bytes
-	 */
-	uint8_t unknown3[ 4 ];
-
-	/* Unknown
-	 * Consists 64 bytes
-	 */
-	uint8_t unknown4[ 64 ];
-
-	/* Unknown
-	 * Consists 4 bytes
-	 */
-	uint8_t unknown5[ 4 ];
-
 	/* Checksum
 	 * Consists of 4 bytes
-	 * Contains a CRC32 of the first 120 bytes
+	 * Contains a CRC32 of bytes 0 to 120 and 128 to 512
 	 */
 	uint8_t checksum[ 4 ];
 };

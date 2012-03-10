@@ -27,6 +27,7 @@
 #include <liberror.h>
 #include <libnotify.h>
 
+#include "libevtx_chunk.h"
 #include "libevtx_debug.h"
 #include "libevtx_definitions.h"
 #include "libevtx_i18n.h"
@@ -825,7 +826,7 @@ int libevtx_file_open_read(
 		 "%s: unable to read file header.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	/* TODO move to function in IO handle
 	 * libevtx_io_handle_set_chunks_data_range( offset, size );
@@ -851,7 +852,7 @@ int libevtx_file_open_read(
 		 "%s: unable to create chunks vector.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libfdata_vector_append_segment(
 	     internal_file->chunks_vector,
@@ -867,7 +868,7 @@ int libevtx_file_open_read(
 		 "%s: unable to append segment to chunks vector.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libfcache_cache_initialize(
 	     &( internal_file->chunks_cache ),
@@ -881,9 +882,57 @@ int libevtx_file_open_read(
 		 "%s: unable to create chunks cache.",
 		 function );
 
+		goto on_error;
+	}
+/* TODO */
+	libevtx_chunk_t *chunk = NULL;
+
+	if( libfdata_vector_get_element_value_by_index(
+	     internal_file->chunks_vector,
+	     internal_file->file_io_handle,
+	     internal_file->chunks_cache,
+	     0,
+	     (intptr_t **) &chunk,
+	     0,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve chunk: %" PRIu32 ".",
+		 function,
+		 0 );
+
+		return( -1 );
+	}
+	if( chunk == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing chunk.",
+		 function );
+
 		return( -1 );
 	}
 	return( 1 );
+
+on_error:
+	if( internal_file->chunks_cache != NULL )
+	{
+		libfcache_cache_free(
+		 &( internal_file->chunks_cache ),
+		 NULL );
+	}
+	if( internal_file->chunks_vector != NULL )
+	{
+		libfdata_vector_free(
+		 &( internal_file->chunks_vector ),
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Retrieves the file version

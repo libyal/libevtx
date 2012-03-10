@@ -55,14 +55,9 @@ struct evtx_file_header
 	uint8_t next_record_identifier[ 8 ];
 
 	/* The header size
-	 * Consists of 2 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t header_size[ 2 ];
-
-	/* Unknown1
-	 * Consists of 2 bytes
-	 */
-	uint8_t unknown1[ 2 ];
+	uint8_t header_size[ 4 ];
 
 	/* The major version
 	 * Consists of 2 bytes
@@ -87,7 +82,7 @@ struct evtx_file_header
 	/* Unknown
 	 * Consists 76 bytes
 	 */
-	uint8_t unknown2[ 76 ];
+	uint8_t unknown1[ 76 ];
 
 	/* Flags
 	 * Consists of 4 bytes
@@ -96,7 +91,7 @@ struct evtx_file_header
 
 	/* Checksum
 	 * Consists of 4 bytes
-	 * Contains a CRC32 of the first 120 bytes
+	 * Contains a CRC32 of bytes 0 to 120
 	 */
 	uint8_t checksum[ 4 ];
 };

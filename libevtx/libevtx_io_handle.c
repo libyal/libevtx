@@ -27,6 +27,8 @@
 #include <liberror.h>
 #include <libnotify.h>
 
+#include "libevtx_checksum.h"
+#include "libevtx_chunk.h"
 #include "libevtx_codepage.h"
 #include "libevtx_debug.h"
 #include "libevtx_definitions.h"
@@ -147,15 +149,17 @@ int libevtx_io_handle_read_file_header(
      off64_t file_offset,
      liberror_error_t **error )
 {
-	uint8_t *file_header_data = NULL;
-	static char *function     = "libevtx_io_handle_read_file_header";
-	size_t read_size          = 4096;
-	ssize_t read_count        = 0;
+	uint8_t *file_header_data    = NULL;
+	static char *function        = "libevtx_io_handle_read_file_header";
+	size_t read_size             = 4096;
+	ssize_t read_count           = 0;
+	uint32_t calculated_checksum = 0;
+	uint32_t stored_checksum     = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit      = 0;
-	uint32_t value_32bit      = 0;
-	uint16_t value_16bit      = 0;
+	uint64_t value_64bit         = 0;
+	uint32_t value_32bit         = 0;
+	uint16_t value_16bit         = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -252,12 +256,15 @@ int libevtx_io_handle_read_file_header(
 
 		goto on_error;
 	}
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->checksum,
+	 stored_checksum );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
 		libnotify_printf(
-		 "%s: signature\t\t\t\t: %c%c%c%c%c%c%c\n",
+		 "%s: signature\t\t\t\t: %c%c%c%c%c%c%c\\x%02x\n",
 		 function,
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 0 ],
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 1 ],
@@ -265,7 +272,8 @@ int libevtx_io_handle_read_file_header(
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 3 ],
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 4 ],
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 5 ] ,
-		 ( (evtx_file_header_t *) file_header_data )->signature[ 6 ] );
+		 ( (evtx_file_header_t *) file_header_data )->signature[ 6 ] ,
+		 ( (evtx_file_header_t *) file_header_data )->signature[ 7 ] );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->first_chunk_number,
@@ -291,21 +299,13 @@ int libevtx_io_handle_read_file_header(
 		 function,
 		 value_64bit );
 
-		byte_stream_copy_to_uint16_little_endian(
+		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->header_size,
-		 value_16bit );
+		 value_32bit );
 		libnotify_printf(
-		 "%s: header size\t\t\t\t: %" PRIu16 "\n",
+		 "%s: header size\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 value_16bit );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->unknown1,
-		 value_16bit );
-		libnotify_printf(
-		 "%s: unknown1\t\t\t\t: %" PRIu16 "\n",
-		 function,
-		 value_16bit );
+		 value_32bit );
 
 		byte_stream_copy_to_uint16_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->major_version,
@@ -340,10 +340,10 @@ int libevtx_io_handle_read_file_header(
 		 value_16bit );
 
 		libnotify_printf(
-		 "%s: unknown2:\n",
+		 "%s: unknown1:\n",
 		 function );
 		libnotify_print_data(
-		 ( (evtx_file_header_t *) file_header_data )->unknown2,
+		 ( (evtx_file_header_t *) file_header_data )->unknown1,
 		 76,
 		 0 );
 
@@ -355,20 +355,45 @@ int libevtx_io_handle_read_file_header(
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->checksum,
-		 value_32bit );
 		libnotify_printf(
 		 "%s: checksum\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
-		 value_32bit );
+		 stored_checksum );
 
 		libnotify_printf(
 		 "\n" );
 	}
 #endif
-/* TODO validate checksum */
+	if( libevtx_checksum_calculate_little_endian_crc32(
+	     &calculated_checksum,
+	     file_header_data,
+	     120,
+	     0,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to calculate CRC-32 checksum.",
+		 function );
 
+		goto on_error;
+	}
+	if( stored_checksum != calculated_checksum )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: mismatch in file header CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
+			 function,
+			 stored_checksum,
+			 calculated_checksum );
+		}
+#endif
+		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
@@ -412,15 +437,12 @@ int libevtx_io_handle_read_chunk(
      uint8_t read_flags LIBEVTX_ATTRIBUTE_UNUSED,
      liberror_error_t **error )
 {
-/* TODO
 	libevtx_chunk_t *chunk = NULL;
-*/
-	static char *function = "libevtx_io_handle_read_chunk";
+	static char *function  = "libevtx_io_handle_read_chunk";
 
 	LIBEVTX_UNREFERENCED_PARAMETER( element_data_size );
 	LIBEVTX_UNREFERENCED_PARAMETER( read_flags );
 
-/*
 	if( libevtx_chunk_initialize(
 	     &chunk,
 	     error ) != 1 )
@@ -455,7 +477,7 @@ int libevtx_io_handle_read_chunk(
 	     cache,
 	     element_index,
 	     (intptr_t *) chunk,
-	     &libevtx_chunk_free,
+	     (int (*)(intptr_t **, liberror_error_t **)) &libevtx_chunk_free,
 	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
 	     error ) != 1 )
 	{
@@ -468,18 +490,15 @@ int libevtx_io_handle_read_chunk(
 
 		goto on_error;
 	}
-*/
 	return( 1 );
 
 on_error:
-/*
 	if( chunk != NULL )
 	{
 		libevtx_chunk_free(
-		 (intptr_t *) chunk,
+		 &chunk,
 		 NULL );
 	}
-*/
 	return( -1 );
 }
 

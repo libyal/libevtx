@@ -91,8 +91,8 @@ int libevtx_chunk_free(
 
 int libevtx_chunk_read(
      libevtx_chunk_t *chunk,
-     libbfio_handle_t *file_io_handle,
      libevtx_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      off64_t file_offset,
      liberror_error_t **error );
 

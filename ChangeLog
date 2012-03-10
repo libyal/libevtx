@@ -3,6 +3,10 @@ TODO
 * code clean up
   - behavior of initialize functions
 * codepage support
+* flag internally if the file is corrupted (CRC mismatch)
+
+20120310
+* worked on reading events
 
 20120307
 * worked on reading chunks
