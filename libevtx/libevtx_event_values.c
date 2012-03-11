@@ -27,9 +27,10 @@
 #include <liberror.h>
 #include <libnotify.h>
 
-#include "libevtx_binary_xml_token.h"
+#include "libevtx_binary_xml_document.h"
 #include "libevtx_event_values.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_libfdatetime.h"
 
 #include "evtx_event_record.h"
 
@@ -150,15 +151,16 @@ int libevtx_event_values_read(
      size_t chunk_data_offset,
      liberror_error_t **error )
 {
-	const uint8_t *event_record_data = NULL;
-	static char *function            = "libevtx_event_values_read";
-	size_t event_record_data_size    = 0;
-	uint32_t copy_of_size            = 0;
+	const uint8_t *event_record_data  = NULL;
+	static char *function             = "libevtx_event_values_read";
+	size_t event_record_data_size     = 0;
+	uint32_t copy_of_size             = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit             = 0;
-	uint32_t value_32bit             = 0;
-	uint16_t value_16bit             = 0;
+	libcstring_system_character_t filetime_string[ 32 ];
+
+	libfdatetime_filetime_t *filetime = NULL;
+	int result                        = 0;
 #endif
 
 	if( event_values == NULL )
@@ -293,11 +295,81 @@ int libevtx_event_values_read(
 		 function,
 		 event_values->identifier );
 
-		libnotify_printf(
-		 "%s: creation time\t\t\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 event_values->creation_time );
+		if( libfdatetime_filetime_initialize(
+		     &filetime,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file time.",
+			 function );
 
+			goto on_error;
+		}
+		if( libfdatetime_filetime_copy_from_byte_stream(
+		     filetime,
+		     ( (evtx_event_record_header_t *) event_record_data )->creation_time,
+		     8,
+		     LIBFDATETIME_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy file time from byte stream.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfdatetime_filetime_copy_to_utf16_string(
+			  filetime,
+			  (uint16_t *) filetime_string,
+			  32,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
+			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  error );
+#else
+		result = libfdatetime_filetime_copy_to_utf8_string(
+			  filetime,
+			  (uint8_t *) filetime_string,
+			  32,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
+			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy file time to string.",
+			 function );
+
+			goto on_error;
+		}
+		libnotify_printf(
+		 "%s: creation time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 function,
+		 filetime_string );
+
+		if( libfdatetime_filetime_free(
+		     &filetime,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free file time.",
+			 function );
+
+			goto on_error;
+		}
 		libnotify_printf(
 		 "%s: copy of size\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
@@ -338,59 +410,64 @@ int libevtx_event_values_read(
 	}
 #endif
 /* TODO */
-	libevtx_binary_xml_token_t *binary_xml_token = NULL;
+	libevtx_binary_xml_document_t *binary_xml_document = NULL;
 
-	while( chunk_data_offset < chunk_data_size )
+	if( libevtx_binary_xml_document_initialize(
+	     &binary_xml_document,
+	     error ) != 1 )
 	{
-		if( libevtx_binary_xml_token_initialize(
-		     &binary_xml_token,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create binary XML token.",
-			 function );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create binary XML document.",
+		 function );
 
-			goto on_error;
-		}
-		if( libevtx_binary_xml_token_read(
-		     binary_xml_token,
-		     io_handle,
-		     chunk_data,
-		     chunk_data_size,
-		     chunk_data_offset,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read binary XML token.",
-			 function );
+		goto on_error;
+	}
+	if( libevtx_binary_xml_document_read(
+	     binary_xml_document,
+	     io_handle,
+	     chunk_data,
+	     chunk_data_size,
+	     chunk_data_offset,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read binary XML document.",
+		 function );
 
-			goto on_error;
-		}
-		chunk_data_offset += binary_xml_token->size;
+		goto on_error;
+	}
+	chunk_data_offset += binary_xml_document->size;
 
-		if( libevtx_binary_xml_token_free(
-		     &binary_xml_token,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free binary XML token.",
-			 function );
+	if( libevtx_binary_xml_document_free(
+	     &binary_xml_document,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free binary XML document.",
+		 function );
 
-			goto on_error;
-		}
+		goto on_error;
 	}
 	return( 1 );
 
 on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( filetime != NULL )
+	{
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+	}
+#endif
 	return( -1 );
 }
 

@@ -1,4 +1,5 @@
 TODO
+* add debug function for binary XML token types
 * chunk similar to libesedb page
 * code clean up
   - behavior of initialize functions

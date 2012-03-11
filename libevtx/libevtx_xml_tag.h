@@ -1,5 +1,5 @@
 /*
- * Binary XML token functions
+ * XML tag functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,47 +19,44 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_BINARY_XML_TOKEN_H )
-#define _LIBEVTX_BINARY_XML_TOKEN_H
+#if !defined( _LIBEVTX_XML_TAG_H )
+#define _LIBEVTX_XML_TAG_H
 
 #include <common.h>
 #include <types.h>
 
 #include <liberror.h>
 
-#include "libevtx_io_handle.h"
+#include "libevtx_array_type.h"
+#include "libevtx_libfvalue.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libevtx_binary_xml_token libevtx_binary_xml_token_t;
+typedef struct libevtx_xml_tag libevtx_xml_tag_t;
 
-struct libevtx_binary_xml_token
+struct libevtx_xml_tag
 {
-	/* The type
+	/* The name
 	 */
-	uint8_t type;
+	libfvalue_value_t *name;
 
-	/* The size
+	/* The attributes array
 	 */
-	size_t size;
+	libevtx_array_t *attributes_array;
+
+	/* The value
+	 */
+	libfvalue_value_t *value;
 };
 
-int libevtx_binary_xml_token_initialize(
-     libevtx_binary_xml_token_t **binary_xml_token,
+int libevtx_xml_tag_initialize(
+     libevtx_xml_tag_t **xml_tag,
      liberror_error_t **error );
 
-int libevtx_binary_xml_token_free(
-     libevtx_binary_xml_token_t **binary_xml_token,
-     liberror_error_t **error );
-
-int libevtx_binary_xml_token_read(
-     libevtx_binary_xml_token_t *binary_xml_token,
-     libevtx_io_handle_t *io_handle,
-     const uint8_t *chunk_data,
-     size_t chunk_data_size,
-     size_t chunk_data_offset,
+int libevtx_xml_tag_free(
+     libevtx_xml_tag_t **xml_tag,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

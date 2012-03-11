@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20120310
+#define LIBEVTX_VERSION						20120311
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20120310"
+#define LIBEVTX_VERSION_STRING					"20120311"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -93,8 +93,10 @@ enum LIBEVTX_BINARY_XML_TOKENS
 	LIBEVTX_BINARY_XML_TOKEN_TEMPLATE_INSTANCE		= 0x0c,
 	LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION		= 0x0d,
 	LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION		= 0x0e,
-	LIBEVTX_BINARY_XML_TOKEN_REPEATED_SUBSTITUTION		= 0x0f
+	LIBEVTX_BINARY_XML_TOKEN_FRAGMENT_HEADER		= 0x0f
 };
+
+#define LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA		0x40
 
 /* The maximum number of cache entries defintions
  */

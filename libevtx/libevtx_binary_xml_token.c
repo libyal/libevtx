@@ -63,7 +63,7 @@ int libevtx_binary_xml_token_initialize(
 		return( -1 );
 	}
 	*binary_xml_token = memory_allocate_structure(
-	                 libevtx_binary_xml_token_t );
+	                     libevtx_binary_xml_token_t );
 
 	if( *binary_xml_token == NULL )
 	{
@@ -191,7 +191,7 @@ int libevtx_binary_xml_token_read(
 		 "%s: invalid binary XML token data size value exceeds maximum.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	if( chunk_data_offset >= chunk_data_size )
 	{
@@ -202,7 +202,7 @@ int libevtx_binary_xml_token_read(
 		 "%s: invalid chunk data offset value out of bounds.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	binary_xml_token_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_token_data_size = chunk_data_size - chunk_data_offset;
@@ -216,42 +216,32 @@ int libevtx_binary_xml_token_read(
 		 "%s: invalid binary XML token data size value too small.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-	switch( binary_xml_token_data[ 0 ] & 0x3f )
+	switch( binary_xml_token_data[ 0 ] )
 	{
 		case LIBEVTX_BINARY_XML_TOKEN_END_OF_FILE:
 		case LIBEVTX_BINARY_XML_TOKEN_CLOSE_START_ELEMENT_TAG:
 		case LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG:
 		case LIBEVTX_BINARY_XML_TOKEN_END_ELEMENT_TAG:
-			binary_xml_token->size = 1;
-			break;
-
 		case LIBEVTX_BINARY_XML_TOKEN_OPEN_START_ELEMENT_TAG:
-			byte_stream_copy_to_uint32_little_endian(
-			 &( binary_xml_token_data[ 3 ] ),
-			 binary_xml_token->size );
-
-			break;
-
+		case LIBEVTX_BINARY_XML_TOKEN_OPEN_START_ELEMENT_TAG | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_VALUE:
+		case LIBEVTX_BINARY_XML_TOKEN_VALUE | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_ATTRIBUTE:
+		case LIBEVTX_BINARY_XML_TOKEN_ATTRIBUTE | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_CDATA_SECTION:
+		case LIBEVTX_BINARY_XML_TOKEN_CDATA_SECTION | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_CHARACTER_REFERENCE:
+		case LIBEVTX_BINARY_XML_TOKEN_CHARACTER_REFERENCE | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_ENTITY_REFERENCE:
+		case LIBEVTX_BINARY_XML_TOKEN_ENTITY_REFERENCE | LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA:
 		case LIBEVTX_BINARY_XML_TOKEN_PI_TARGET:
 		case LIBEVTX_BINARY_XML_TOKEN_PI_DATA:
-			binary_xml_token->size = 1;
-			break;
-
 		case LIBEVTX_BINARY_XML_TOKEN_TEMPLATE_INSTANCE:
-			binary_xml_token->size = 34;
-			break;
-
 		case LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION:
 		case LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION:
-		case LIBEVTX_BINARY_XML_TOKEN_REPEATED_SUBSTITUTION:
-			binary_xml_token->size = 4;
+		case LIBEVTX_BINARY_XML_TOKEN_FRAGMENT_HEADER:
 			break;
 
 		default:
@@ -261,27 +251,12 @@ int libevtx_binary_xml_token_read(
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 			 "%s: unsupported binary XML token type: 0x%02" PRIx8 ".",
 			 function,
-			 binary_xml_token_data[ 0 ] & 0x3f );
+			 binary_xml_token_data[ 0 ] );
 
-			goto on_error;
+			return( -1 );
 	}
 	binary_xml_token->type = binary_xml_token_data[ 0 ];
 
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
-	{
-		libnotify_printf(
-		 "%s: binary XML token header data:\n",
-		 function );
-		libnotify_print_data(
-		 binary_xml_token_data,
-		 binary_xml_token->size,
-		 0 );
-	}
-#endif
 	return( 1 );
-
-on_error:
-	return( -1 );
 }
 

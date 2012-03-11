@@ -22,6 +22,7 @@ libevtx_la_SOURCES = \
 	evtx_file_header.h \
 	libevtx.c \
 	libevtx_array_type.c libevtx_array_type.h \
+	libevtx_binary_xml_document.c libevtx_binary_xml_document.h \
 	libevtx_binary_xml_token.c libevtx_binary_xml_token.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
@@ -37,13 +38,15 @@ libevtx_la_SOURCES = \
 	libevtx_libbfio.h \
 	libevtx_libfcache.h \
 	libevtx_libfdata.h \
+	libevtx_libfdatetime.h \
 	libevtx_libfvalue.h \
 	libevtx_libuna.h \
 	libevtx_list_type.c libevtx_list_type.h \
 	libevtx_notify.c libevtx_notify.h \
 	libevtx_support.c libevtx_support.h \
 	libevtx_types.h \
-	libevtx_unused.h
+	libevtx_unused.h \
+	libevtx_xml_tag.c libevtx_xml_tag.h
 
 libevtx_la_LIBADD = \
 	../libcstring/libcstring.la \
