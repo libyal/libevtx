@@ -269,7 +269,7 @@ int libevtx_binary_xml_document_read(
 				if( libnotify_verbose != 0 )
 				{
 					libnotify_printf(
-					 "%s: type\t\t: 0x%02" PRIx8 "\n",
+					 "%s: type\t\t\t\t\t: 0x%02" PRIx8 "\n",
 					 function,
 					 chunk_data[ chunk_data_offset ] );
 
@@ -1826,7 +1826,11 @@ int libevtx_binary_xml_document_read_template_instance(
 	size_t binary_xml_document_data_size             = 0;
 	size_t template_value_definitions_data_size      = 0;
 	size_t template_values_data_size                 = 0;
+	size_t template_data_offset                      = 0;
+	size_t template_data_size                        = 0;
+	size_t trailing_data_size                        = 0;
 	uint32_t number_of_template_values               = 0;
+	uint32_t template_definition_data_offset         = 0;
 	uint32_t template_definition_data_size           = 0;
 	uint32_t template_value_index                    = 0;
 	uint16_t template_value_data_size                = 0;
@@ -1905,7 +1909,7 @@ int libevtx_binary_xml_document_read_template_instance(
 	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
 
-	if( binary_xml_document_data_size < 34 )
+	if( ( chunk_data_offset + 10 ) >= chunk_data_size )
 	{
 		liberror_error_set(
 		 error,
@@ -1914,23 +1918,23 @@ int libevtx_binary_xml_document_read_template_instance(
 		 "%s: invalid binary XML document data size value too small.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
 		libnotify_printf(
-		 "%s: template instance data:\n",
+		 "%s: template instance header data:\n",
 		 function );
 		libnotify_print_data(
-		 binary_xml_document_data,
-		 34,
+		 &( chunk_data[ chunk_data_offset ] ),
+		 10,
 		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint32_little_endian(
-	 &( binary_xml_document_data[ 30 ] ),
-	 template_definition_data_size );
+	 &( chunk_data[ chunk_data_offset + 6 ] ),
+	 template_definition_data_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
@@ -1938,31 +1942,85 @@ int libevtx_binary_xml_document_read_template_instance(
 		libnotify_printf(
 		 "%s: type\t\t: 0x%02" PRIx8 "\n",
 		 function,
-		 binary_xml_document_data[ 0 ] );
+		 chunk_data[ chunk_data_offset ] );
 
 		libnotify_printf(
 		 "%s: unknown1\t\t: %" PRIu8 "\n",
 		 function,
-		 binary_xml_document_data[ 1 ] );
+		 chunk_data[ chunk_data_offset + 1 ] );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 &( binary_xml_document_data[ 2 ] ),
+		 &( chunk_data[ chunk_data_offset + 2 ] ),
 		 value_32bit );
 		libnotify_printf(
 		 "%s: unknown2\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 &( binary_xml_document_data[ 6 ] ),
-		 value_32bit );
 		libnotify_printf(
 		 "%s: data offset\t\t: 0x%08" PRIx32 "\n",
 		 function,
-		 value_32bit );
+		 template_definition_data_offset );
 
+		libnotify_printf(
+		 "\n" );
+	}
+#endif
+	binary_xml_token->size = 10;
+	chunk_data_offset     += 10;
+
+	if( template_definition_data_offset > chunk_data_offset )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid template definition data offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( chunk_data_offset < template_definition_data_offset )
+	{
+		trailing_data_size = template_definition_data_offset - chunk_data_offset;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: trailing data:\n",
+			 function );
+			libnotify_print_data(
+			 &( chunk_data[ chunk_data_offset ] ),
+			 trailing_data_size,
+			 0 );
+		}
+#endif
+		binary_xml_token->size += trailing_data_size;
+		chunk_data_offset      += trailing_data_size;
+	}
+	template_data_offset = template_definition_data_offset;
+
+	if( ( template_data_offset + 24 ) >= chunk_data_size )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid binary XML document data size value too small.",
+		 function );
+
+		goto on_error;
+	}
+	byte_stream_copy_to_uint32_little_endian(
+	 &( chunk_data[ template_data_offset + 20 ] ),
+	 template_definition_data_size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libnotify_verbose != 0 )
+	{
 		byte_stream_copy_to_uint32_little_endian(
-		 &( binary_xml_document_data[ 10 ] ),
+		 &( chunk_data[ template_data_offset ] ),
 		 value_32bit );
 		libnotify_printf(
 		 "%s: offset next\t\t: 0x%08" PRIx32 "\n",
@@ -1973,7 +2031,7 @@ int libevtx_binary_xml_document_read_template_instance(
 		 "%s: identifier:\n",
 		 function );
 		libnotify_print_data(
-		 &( binary_xml_document_data[ 14 ] ),
+		 &( chunk_data[ template_data_offset + 4 ] ),
 		 16,
 		 0 );
 
@@ -1986,13 +2044,8 @@ int libevtx_binary_xml_document_read_template_instance(
 		 "\n" );
 	}
 #endif
-	binary_xml_token->size = 34;
-	chunk_data_offset     += 34;
+	template_data_offset += 24;
 
-	/* The template data size does not include the first 33 bytes
-	 * of the template definition, note that the token type is
-	 * also included here
-	 */
 	if( libevtx_binary_xml_token_initialize(
 	     &binary_xml_sub_token,
 	     error ) != 1 )
@@ -2011,7 +2064,7 @@ int libevtx_binary_xml_document_read_template_instance(
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
-	     chunk_data_offset,
+	     template_data_offset,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -2028,7 +2081,7 @@ int libevtx_binary_xml_document_read_template_instance(
 	     binary_xml_sub_token,
 	     chunk_data,
 	     chunk_data_size,
-	     chunk_data_offset,
+	     template_data_offset,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -2040,16 +2093,14 @@ int libevtx_binary_xml_document_read_template_instance(
 
 		goto on_error;
 	}
-	binary_xml_token->size        += binary_xml_sub_token->size;
-	chunk_data_offset             += binary_xml_sub_token->size;
-	template_definition_data_size -= binary_xml_sub_token->size;
+	template_data_offset += binary_xml_sub_token->size;
 
 	if( libevtx_binary_xml_token_read(
 	     binary_xml_sub_token,
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
-	     chunk_data_offset,
+	     template_data_offset,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -2067,7 +2118,7 @@ int libevtx_binary_xml_document_read_template_instance(
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
-	     chunk_data_offset,
+	     template_data_offset,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -2079,16 +2130,14 @@ int libevtx_binary_xml_document_read_template_instance(
 
 		goto on_error;
 	}
-	binary_xml_token->size        += binary_xml_sub_token->size;
-	chunk_data_offset             += binary_xml_sub_token->size;
-	template_definition_data_size -= binary_xml_sub_token->size;
+	template_data_offset += binary_xml_sub_token->size;
 
 	if( libevtx_binary_xml_token_read(
 	     binary_xml_sub_token,
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
-	     chunk_data_offset,
+	     template_data_offset,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -2147,9 +2196,7 @@ int libevtx_binary_xml_document_read_template_instance(
 		 "\n" );
 	}
 #endif
-	binary_xml_token->size        += 1;
-	chunk_data_offset             += 1;
-	template_definition_data_size -= 1;
+	template_data_offset += 1;
 
 	if( libevtx_binary_xml_token_free(
 	     &binary_xml_sub_token,
@@ -2164,7 +2211,34 @@ int libevtx_binary_xml_document_read_template_instance(
 
 		goto on_error;
 	}
-	if( chunk_data_offset >= chunk_data_size )
+	if( template_definition_data_offset == chunk_data_offset )
+	{
+		template_data_size = template_data_offset
+		                   - template_definition_data_offset;
+
+		binary_xml_token->size += template_data_size;
+		chunk_data_offset      += template_data_size;
+
+		/* The template data size does not include the first 33 bytes
+		 * of the template definition
+		 * In this case the template data size contains 24 of the 33 bytes
+		 */
+		if( template_definition_data_size < ( template_data_size - 24 ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid template definition data size value too small.",
+			 function );
+
+			goto on_error;
+		}
+		template_definition_data_size -= template_data_size - 24;
+	}
+/* TODO check if template_definition_data_size is 0 */
+
+	if( ( chunk_data_offset + 4 ) >= chunk_data_size )
 	{
 		liberror_error_set(
 		 error,
@@ -2183,7 +2257,7 @@ int libevtx_binary_xml_document_read_template_instance(
 		 function );
 		libnotify_print_data(
 		 &( chunk_data[ chunk_data_offset ] ),
-		 1,
+		 4,
 		 0 );
 	}
 #endif

@@ -293,6 +293,7 @@ int libevtx_chunk_read(
 	static char *function              = "libevtx_chunk_read";
 	size_t chunk_values_data_offset    = 0;
 	size_t chunk_values_data_size      = 0;
+	ssize_t free_space_size            = 0;
 	ssize_t read_count                 = 0;
 	uint64_t calculated_chunk_number   = 0;
 	uint32_t calculated_checksum       = 0;
@@ -656,7 +657,7 @@ int libevtx_chunk_read(
 /* TODO */
 	libevtx_event_values_t *event_values = NULL;
 
-	while( chunk_values_data_offset < chunk_values_data_size )
+	while( chunk_values_data_offset < free_space_offset )
 	{
 		if( libevtx_event_values_initialize(
 		     &event_values,
@@ -704,6 +705,23 @@ int libevtx_chunk_read(
 			goto on_error;
 		}
 		number_of_event_records++;
+	}
+	if( chunk_values_data_offset < chunk_values_data_size )
+	{
+		free_space_size = chunk_values_data_size - chunk_values_data_offset;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: free space data:\n",
+			 function );
+			libnotify_print_data(
+			 &( chunk_values_data[ chunk_values_data_offset ] ),
+			 free_space_size,
+			 0 );
+		}
+#endif
 	}
 
 /* TODO validate number of event records */
