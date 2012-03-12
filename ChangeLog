@@ -1,10 +1,17 @@
 TODO
+* store XML tags and attributes
 * add debug function for binary XML token types
 * chunk similar to libesedb page
 * code clean up
   - behavior of initialize functions
 * codepage support
 * flag internally if the file is corrupted (CRC mismatch)
+
+20120312
+* worked on parsing binary XML
+
+20120311
+* worked on parsing binary XML
 
 20120310
 * worked on reading events

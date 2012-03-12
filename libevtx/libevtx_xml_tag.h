@@ -27,7 +27,6 @@
 
 #include <liberror.h>
 
-#include "libevtx_array_type.h"
 #include "libevtx_libfvalue.h"
 
 #if defined( __cplusplus )
@@ -38,15 +37,15 @@ typedef struct libevtx_xml_tag libevtx_xml_tag_t;
 
 struct libevtx_xml_tag
 {
-	/* The name
+	/* The name (value)
 	 */
 	libfvalue_value_t *name;
 
-	/* The attributes array
+	/* The attribute (value) table
 	 */
-	libevtx_array_t *attributes_array;
+	libfvalue_table_t *attribute_table;
 
-	/* The value
+	/* The value (value)
 	 */
 	libfvalue_value_t *value;
 };

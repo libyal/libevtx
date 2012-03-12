@@ -29,6 +29,7 @@
 
 #include "libevtx_binary_xml_token.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_xml_tag.h"
 
 #if defined( __cplusplus )
 extern "C" {

@@ -379,9 +379,7 @@ int libevtx_binary_xml_document_read_attribute(
 {
 	libevtx_binary_xml_token_t *binary_xml_sub_token = NULL;
 	libfvalue_value_t *name_value                    = NULL;
-	const uint8_t *binary_xml_document_data          = NULL;
 	static char *function                            = "libevtx_binary_xml_document_read_attribute";
-	size_t binary_xml_document_data_size             = 0;
 	size_t trailing_data_size                        = 0;
 	uint32_t attribute_name_offset                   = 0;
 	uint32_t attribute_name_size                     = 0;
@@ -458,10 +456,7 @@ int libevtx_binary_xml_document_read_attribute(
 
 		return( -1 );
 	}
-	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
-	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
-
-	if( binary_xml_document_data_size < 5 )
+	if( ( chunk_data_offset + 5 ) >= chunk_data_size )
 	{
 		liberror_error_set(
 		 error,
@@ -470,7 +465,7 @@ int libevtx_binary_xml_document_read_attribute(
 		 "%s: invalid binary XML document data size value too small.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
@@ -479,13 +474,13 @@ int libevtx_binary_xml_document_read_attribute(
 		 "%s: attribute data:\n",
 		 function );
 		libnotify_print_data(
-		 binary_xml_document_data,
+		 &( chunk_data[ chunk_data_offset ] ),
 		 5,
 		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint32_little_endian(
-	 &( binary_xml_document_data[ 1 ] ),
+	 &( chunk_data[ chunk_data_offset + 1 ] ),
 	 attribute_name_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -494,7 +489,7 @@ int libevtx_binary_xml_document_read_attribute(
 		libnotify_printf(
 		 "%s: type\t\t\t: 0x%02" PRIx8 "\n",
 		 function,
-		 binary_xml_document_data[ 0 ] );
+		 &( chunk_data[ chunk_data_offset ] ) );
 
 		libnotify_printf(
 		 "%s: name offset\t\t\t: 0x%08" PRIx32 "\n",
