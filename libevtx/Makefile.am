@@ -26,6 +26,7 @@ libevtx_la_SOURCES = \
 	libevtx.c \
 	libevtx_array_type.c libevtx_array_type.h \
 	libevtx_binary_xml_document.c libevtx_binary_xml_document.h \
+	libevtx_binary_xml_template_value.c libevtx_binary_xml_template_value.h \
 	libevtx_binary_xml_token.c libevtx_binary_xml_token.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \

@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libevtx_array_type.h"
 #include "libevtx_binary_xml_token.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
@@ -70,10 +71,22 @@ int libevtx_binary_xml_document_read_attribute(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
+     libevtx_array_t *template_values_array,
      libevtx_xml_tag_t *xml_tag,
      libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_element(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libevtx_array_t *template_values_array,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_binary_xml_document_read_fragment(
      libevtx_binary_xml_document_t *binary_xml_document,
      libevtx_binary_xml_token_t *binary_xml_token,
      libevtx_io_handle_t *io_handle,
@@ -91,12 +104,25 @@ int libevtx_binary_xml_document_read_fragment_header(
      size_t chunk_data_offset,
      libcerror_error_t **error );
 
-int libevtx_binary_xml_document_read_optional_substitution(
+int libevtx_binary_xml_document_read_normal_substitution(
      libevtx_binary_xml_document_t *binary_xml_document,
      libevtx_binary_xml_token_t *binary_xml_token,
+     libevtx_io_handle_t *io_handle,
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
+     libevtx_array_t *template_values_array,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_binary_xml_document_read_optional_substitution(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libevtx_array_t *template_values_array,
      libevtx_xml_tag_t *xml_tag,
      libcerror_error_t **error );
 
@@ -108,6 +134,15 @@ int libevtx_binary_xml_document_read_template_instance(
      size_t chunk_data_size,
      size_t chunk_data_offset,
      libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_binary_xml_document_read_template_instance_values(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libevtx_array_t **template_values_array,
      libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_value(

@@ -174,7 +174,7 @@ int libevtx_xml_tag_free(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free the elements array.",
+			 "%s: unable to free elements array.",
 			 function );
 
 			result = -1;
@@ -188,7 +188,7 @@ int libevtx_xml_tag_free(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free the attributes array.",
+			 "%s: unable to free attributes array.",
 			 function );
 
 			result = -1;
@@ -376,7 +376,7 @@ int libevtx_xml_tag_debug_print(
 	     indentation_iterator++ )
 	{
 		libcnotify_printf(
-		 "\t" );
+		 "  " );
 	}
 	libcnotify_printf(
 	 "<" );
@@ -439,7 +439,7 @@ int libevtx_xml_tag_debug_print(
 				     indentation_iterator++ )
 				{
 					libcnotify_printf(
-					 "\t" );
+					 "  " );
 				}
 			}
 			if( libfvalue_debug_print_value(
@@ -457,7 +457,7 @@ int libevtx_xml_tag_debug_print(
 				return( -1 );
 			}
 			libcnotify_printf(
-			 "=" );
+			 "=\"" );
 
 /* TODO as long as substitutions are not handled this is necessary */
 			if( attribute_xml_tag->value != NULL )
@@ -477,6 +477,9 @@ int libevtx_xml_tag_debug_print(
 					return( -1 );
 				}
 			}
+			libcnotify_printf(
+			 "\"" );
+
 			if( ( ( attribute_index + 1 ) != number_of_attributes )
 			 && ( ( attribute_index > 0 )
 			  ||  ( number_of_attributes > 1 ) ) )
@@ -561,7 +564,7 @@ int libevtx_xml_tag_debug_print(
 		     indentation_iterator++ )
 		{
 			libcnotify_printf(
-			 "\t" );
+			 "  " );
 		}
 	}
 	if( ( xml_tag->value != NULL )

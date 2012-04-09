@@ -30,6 +30,120 @@
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
+/* Prints the value type
+ */
+void libevtx_debug_print_value_type(
+      uint8_t value_type )
+{
+	switch( value_type & 0x7f )
+	{
+		case LIBEVTX_VALUE_TYPE_NULL:
+			libcnotify_printf(
+			 "NULL" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_STRING_UTF16:
+			libcnotify_printf(
+			 "UTF-16 string" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
+			libcnotify_printf(
+			 "Byte stream string" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_INTEGER_8BIT:
+			libcnotify_printf(
+			 "Integer 8-bit signed" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_8BIT:
+			libcnotify_printf(
+			 "Integer 8-bit unsigned" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_INTEGER_16BIT:
+			libcnotify_printf(
+			 "Integer 16-bit signed" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_16BIT:
+			libcnotify_printf(
+			 "Integer 16-bit unsigned" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_INTEGER_32BIT:
+			libcnotify_printf(
+			 "Integer 32-bit signed" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_32BIT:
+			libcnotify_printf(
+			 "Integer 32-bit unsigned" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_INTEGER_64BIT:
+			libcnotify_printf(
+			 "Integer 64-bit signed" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_64BIT:
+			libcnotify_printf(
+			 "Integer 64-bit unsigned" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_BOOLEAN:
+			libcnotify_printf(
+			 "Boolean" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_BINARY_DATA:
+			libcnotify_printf(
+			 "Binary data" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_GUID:
+			libcnotify_printf(
+			 "GUID" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_SIZE:
+			libcnotify_printf(
+			 "Size" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_FILETIME:
+			libcnotify_printf(
+			 "Filetime" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
+			libcnotify_printf(
+			 "NT Security Identifier (SID)" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_32BIT:
+			libcnotify_printf(
+			 "Hexadecimal integer 32-bit" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_64BIT:
+			libcnotify_printf(
+			 "Hexadecimal integer 64-bit" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_BINARY_XML:
+			libcnotify_printf(
+			 "Binary XML" );
+			break;
+
+		default:
+			libcnotify_printf(
+			 "UNKNOWN" );
+			break;
+	}
+}
+
 /* Prints the read offsets
  * Returns 1 if successful or -1 on error
  */
