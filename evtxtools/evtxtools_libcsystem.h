@@ -1,5 +1,6 @@
 /*
- * The internal libfcache header
+ * Library for system independent implementation of functionality
+ * for programs
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,33 +20,38 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBESEDB_LIBFCACHE_H )
-#define _LIBESEDB_LIBFCACHE_H
+#if !defined( _EVTXTOOLS_LIBCSYSTEM_H )
+#define _EVTXTOOLS_LIBCSYSTEM_H
 
-#include <common.h>
-
-/* Define HAVE_LOCAL_LIBFCACHE for local use of libfcache
+/* Define HAVE_LOCAL_LIBCSYSTEM for local use of libcsystem
  */
-#if defined( HAVE_LOCAL_LIBFCACHE )
+#if defined( HAVE_LOCAL_LIBCSYSTEM )
 
-#include <libfcache_cache.h>
-#include <libfcache_date_time.h>
-#include <libfcache_definitions.h>
-#include <libfcache_types.h>
+#include <libcsystem_date_time.h>
+#include <libcsystem_definitions.h>
+#include <libcsystem_file_io.h>
+#include <libcsystem_file_stream.h>
+#include <libcsystem_getopt.h>
+#include <libcsystem_glob.h>
+#include <libcsystem_i18n.h>
+#include <libcsystem_signal.h>
+#include <libcsystem_string.h>
+#include <libcsystem_support.h>
+#include <libcsystem_unused.h>
 
-#elif defined( HAVE_LIBFCACHE_H )
+#elif defined( HAVE_LIBCSYSTEM_H )
 
-/* If libtool DLL support is enabled set LIBFCACHE_DLL_IMPORT
- * before including libfcache.h
+/* If libtool DLL support is enabled set LIBCSYSTEM_DLL_IMPORT
+ * before including libcsystem.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFCACHE_DLL_IMPORT
+#define LIBCSYSTEM_DLL_IMPORT
 #endif
 
-#include <libfcache.h>
+#include <libcsystem.h>
 
 #else
-#error Missing libfcache.h
+#error Missing libcsystem.h
 #endif
 
 #endif

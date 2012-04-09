@@ -22,12 +22,11 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libevtx_debug.h"
 #include "libevtx_definitions.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_libcnotify.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
@@ -36,7 +35,7 @@
  */
 int libevtx_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_debug_print_read_offsets";
 	off64_t offset        = 0;
@@ -46,10 +45,10 @@ int libevtx_debug_print_read_offsets(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -60,16 +59,16 @@ int libevtx_debug_print_read_offsets(
 	     &number_of_offsets,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of offsets read.",
 		 function );
 
 		return( -1 );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "Offsets read:\n" );
 
 	for( offset_iterator = 0;
@@ -83,17 +82,17 @@ int libevtx_debug_print_read_offsets(
 		     &size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve offset: %d.",
 			 function,
 			 offset_iterator );
 
 			return( -1 );
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%08" PRIi64 " ( 0x%08" PRIx64 " ) - %08" PRIi64 " ( 0x%08" PRIx64 " ) size: %" PRIi64 "\n",
 		 offset,
 		 offset,
@@ -101,7 +100,7 @@ int libevtx_debug_print_read_offsets(
 		 offset + (off64_t) size,
 		 size );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "\n" );
 
 	return( 1 );

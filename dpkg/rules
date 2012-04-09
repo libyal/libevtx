@@ -14,7 +14,7 @@ export DH_OPTIONS
 install_libevtx:
 	# Set up libevtx package directories and files
 	mkdir -p debian/libevtx/usr/lib
-	install -p -m755 debian/tmp/usr/lib/lib*.so.* debian/libevtx/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.so.*.*.* debian/libevtx/usr/lib
 
 install_libevtx_dev:
 	# Set up libevtx-dev package directories and files

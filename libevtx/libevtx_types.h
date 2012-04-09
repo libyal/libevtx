@@ -35,21 +35,9 @@
  */
 #if defined( HAVE_DEBUG_OUTPUT )
 typedef struct libevtx_file {}		libevtx_file_t;
-typedef struct libevtx_table {}	libevtx_table_t;
-typedef struct libevtx_column {}	libevtx_column_t;
-typedef struct libevtx_index {}	libevtx_index_t;
-typedef struct libevtx_record {}	libevtx_record_t;
-typedef struct libevtx_long_value {}	libevtx_long_value_t;
-typedef struct libevtx_multi_value {}	libevtx_multi_value_t;
 
 #else
 typedef intptr_t libevtx_file_t;
-typedef intptr_t libevtx_table_t;
-typedef intptr_t libevtx_column_t;
-typedef intptr_t libevtx_index_t;
-typedef intptr_t libevtx_record_t;
-typedef intptr_t libevtx_long_value_t;
-typedef intptr_t libevtx_multi_value_t;
 
 #endif
 

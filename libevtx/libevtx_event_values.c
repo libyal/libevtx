@@ -24,12 +24,11 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libevtx_binary_xml_document.h"
 #include "libevtx_event_values.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_libcnotify.h"
 #include "libevtx_libfdatetime.h"
 
 #include "evtx_event_record.h"
@@ -42,16 +41,16 @@ const uint8_t *evtx_event_record_signature = (uint8_t *) "\x2a\x2a\x00\x00";
  */
 int libevtx_event_values_initialize(
      libevtx_event_values_t **event_values,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_event_values_initialize";
 
 	if( event_values == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid event values.",
 		 function );
 
@@ -59,10 +58,10 @@ int libevtx_event_values_initialize(
 	}
 	if( *event_values != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid event values value already set.",
 		 function );
 
@@ -73,10 +72,10 @@ int libevtx_event_values_initialize(
 
 	if( *event_values == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create event values.",
 		 function );
 
@@ -87,11 +86,24 @@ int libevtx_event_values_initialize(
 	     0,
 	     sizeof( libevtx_event_values_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear event values.",
+		 function );
+
+		goto on_error;
+	}
+	if( libevtx_binary_xml_document_initialize(
+	     &( ( *event_values )->xml_document ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create XML document.",
 		 function );
 
 		goto on_error;
@@ -114,17 +126,17 @@ on_error:
  */
 int libevtx_event_values_free(
      libevtx_event_values_t **event_values,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_event_values_free";
 	int result            = 1;
 
 	if( event_values == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid event values.",
 		 function );
 
@@ -132,6 +144,19 @@ int libevtx_event_values_free(
 	}
 	if( *event_values != NULL )
 	{
+		if( libevtx_binary_xml_document_free(
+		     &( ( *event_values )->xml_document ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free XML document.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 *event_values );
 
@@ -149,7 +174,7 @@ int libevtx_event_values_read(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	const uint8_t *event_record_data  = NULL;
 	static char *function             = "libevtx_event_values_read";
@@ -165,21 +190,32 @@ int libevtx_event_values_read(
 
 	if( event_values == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid event values.",
+		 function );
+
+		return( -1 );
+	}
+	if( event_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid event values - missing XML document.",
 		 function );
 
 		return( -1 );
 	}
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -187,10 +223,10 @@ int libevtx_event_values_read(
 	}
 	if( chunk_data == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk data.",
 		 function );
 
@@ -198,10 +234,10 @@ int libevtx_event_values_read(
 	}
 	if( chunk_data_size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid event record data size value exceeds maximum.",
 		 function );
 
@@ -209,10 +245,10 @@ int libevtx_event_values_read(
 	}
 	if( chunk_data_offset >= chunk_data_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid chunk data offset value out of bounds.",
 		 function );
 
@@ -223,22 +259,22 @@ int libevtx_event_values_read(
 
 	if( event_record_data_size < ( sizeof( evtx_event_record_header_t ) + 4 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid event record data size value too small.",
 		 function );
 
 		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: event record header data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 event_record_data,
 		 sizeof( evtx_event_record_header_t ),
 		 0 );
@@ -249,10 +285,10 @@ int libevtx_event_values_read(
 	     evtx_event_record_signature,
 	     4 ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported event record signature.",
 		 function );
 
@@ -275,9 +311,9 @@ int libevtx_event_values_read(
 	 copy_of_size );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: signature\t\t\t\t\t: \\x%02x\\x%02x\\x%02x\\x%02x\n",
 		 function,
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 0 ],
@@ -285,12 +321,12 @@ int libevtx_event_values_read(
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 2 ] ,
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 3 ] );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: size\t\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 event_values->size );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: identifier\t\t\t\t\t: %" PRIu64 "\n",
 		 function,
 		 event_values->identifier );
@@ -299,10 +335,10 @@ int libevtx_event_values_read(
 		     &filetime,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create file time.",
 			 function );
 
@@ -315,10 +351,10 @@ int libevtx_event_values_read(
 		     LIBFDATETIME_ENDIAN_LITTLE,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to copy file time from byte stream.",
 			 function );
 
@@ -343,16 +379,16 @@ int libevtx_event_values_read(
 #endif
 		if( result != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to copy file time to string.",
 			 function );
 
 			goto on_error;
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: creation time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
@@ -361,31 +397,31 @@ int libevtx_event_values_read(
 		     &filetime,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free file time.",
 			 function );
 
 			goto on_error;
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: copy of size\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 copy_of_size );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "\n" );
 	}
 #endif
 	if( ( event_values->size < sizeof( evtx_event_record_header_t ) )
 	 || ( event_values->size > ( event_record_data_size - 4 ) ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid event record data size value out of bounds.",
 		 function );
 
@@ -398,65 +434,59 @@ int libevtx_event_values_read(
 	                       - ( sizeof( evtx_event_record_header_t ) + 4 );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: event record data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 event_record_data,
 		 event_record_data_size,
 		 0 );
 	}
 #endif
-/* TODO */
-	libevtx_binary_xml_document_t *binary_xml_document = NULL;
-
-	if( libevtx_binary_xml_document_initialize(
-	     &binary_xml_document,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create binary XML document.",
-		 function );
-
-		goto on_error;
-	}
 	if( libevtx_binary_xml_document_read(
-	     binary_xml_document,
+	     event_values->xml_document,
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
 	     chunk_data_offset,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read binary XML document.",
 		 function );
 
 		goto on_error;
 	}
-	chunk_data_offset += binary_xml_document->size;
+	chunk_data_offset += event_values->xml_document->size;
 
-	if( libevtx_binary_xml_document_free(
-	     &binary_xml_document,
-	     error ) != 1 )
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free binary XML document.",
+		libcnotify_printf(
+		 "%s: XML document:\n",
 		 function );
 
-		goto on_error;
+		if( libevtx_xml_tag_debug_print(
+		     event_values->xml_document->root_xml_tag,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print XML document.",
+			 function );
+
+			goto on_error;
+		}
 	}
+#endif
 	return( 1 );
 
 on_error:

@@ -25,11 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_array_type.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -75,37 +74,37 @@ struct libevtx_chunk
 
 int libevtx_chunk_value_initialize(
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_value_free(
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_initialize(
      libevtx_chunk_t **chunk,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_free(
      libevtx_chunk_t **chunk,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_read(
      libevtx_chunk_t *chunk,
      libevtx_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_get_number_of_values(
      libevtx_chunk_t *chunk,
      uint16_t *number_of_values,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_chunk_get_value(
      libevtx_chunk_t *chunk,
      uint16_t value_index,
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

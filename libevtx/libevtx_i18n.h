@@ -25,8 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #if defined( HAVE_LIBINTL_H )
 #include <libintl.h>
 #endif
@@ -36,12 +34,14 @@
 #define	_( string ) \
 	dgettext( "libevtx", string )
 
+#include "libevtx_libcerror.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
 int libevtx_i18n_initialize(
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

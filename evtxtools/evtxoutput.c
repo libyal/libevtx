@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <types.h>
 
@@ -41,9 +42,11 @@
 #include <libfwnt.h>
 #endif
 
-#include <libsystem.h>
-
 #include "evtxoutput.h"
+#include "evtxtools_libcerror.h"
+#include "evtxtools_libclocale.h"
+#include "evtxtools_libcstring.h"
+#include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"
 #include "evtxtools_libfguid.h"

@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -97,91 +97,91 @@ struct libevtx_list
 
 int libevtx_list_element_initialize(
      libevtx_list_element_t **element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_element_free(
      libevtx_list_element_t **element,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_list_element_get_value(
      libevtx_list_element_t *element,
      intptr_t **value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_element_set_value(
      libevtx_list_element_t *element,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_initialize(
      libevtx_list_t **list,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_free(
      libevtx_list_t **list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_list_empty(
      libevtx_list_t *list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_list_clone(
      libevtx_list_t **destination_list,
      libevtx_list_t *source_list,
      int (*value_free_function)(
             intptr_t **value,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      int (*value_clone_function)(
             intptr_t **destination,
             intptr_t *source,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_list_get_number_of_elements(
      libevtx_list_t *list,
      int *number_of_elements,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_get_element_by_index(
      libevtx_list_t *list,
      int list_element_index,
      libevtx_list_element_t **element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_get_value_by_index(
      libevtx_list_t *list,
      int list_element_index,
      intptr_t **value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_prepend_element(
      libevtx_list_t *list,
      libevtx_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_prepend_value(
      libevtx_list_t *list,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_append_element(
      libevtx_list_t *list,
      libevtx_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_append_value(
      libevtx_list_t *list,
      intptr_t *value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_insert_element(
      libevtx_list_t *list,
@@ -189,9 +189,9 @@ int libevtx_list_insert_element(
      int (*value_compare_function)(
             intptr_t *first,
             intptr_t *second,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_insert_value(
      libevtx_list_t *list,
@@ -199,14 +199,14 @@ int libevtx_list_insert_value(
      int (*value_compare_function)(
             intptr_t *first,
             intptr_t *second,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_list_remove_element(
      libevtx_list_t *list,
      libevtx_list_element_t *element,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

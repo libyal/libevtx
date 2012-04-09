@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_binary_xml_token.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_libcerror.h"
 #include "libevtx_xml_tag.h"
 
 #if defined( __cplusplus )
@@ -39,22 +38,22 @@ typedef struct libevtx_binary_xml_document libevtx_binary_xml_document_t;
 
 struct libevtx_binary_xml_document
 {
-	/* The document type
+	/* The root XML tag
 	 */
-	uint8_t type;
+	libevtx_xml_tag_t *root_xml_tag;
 
 	/* The size
 	 */
-	uint32_t size;
+	size_t size;
 };
 
 int libevtx_binary_xml_document_initialize(
      libevtx_binary_xml_document_t **binary_xml_document,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_free(
      libevtx_binary_xml_document_t **binary_xml_document,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -62,7 +61,7 @@ int libevtx_binary_xml_document_read(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_attribute(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -71,7 +70,8 @@ int libevtx_binary_xml_document_read_attribute(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_element(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -80,7 +80,8 @@ int libevtx_binary_xml_document_read_element(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_fragment_header(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -88,7 +89,7 @@ int libevtx_binary_xml_document_read_fragment_header(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_optional_substitution(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -96,7 +97,8 @@ int libevtx_binary_xml_document_read_optional_substitution(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_template_instance(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -105,7 +107,8 @@ int libevtx_binary_xml_document_read_template_instance(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_value(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -113,7 +116,8 @@ int libevtx_binary_xml_document_read_value(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

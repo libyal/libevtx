@@ -24,13 +24,12 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
-#include "info_handle.h"
-#include "evtxinput.h"
+#include "evtxtools_libcerror.h"
+#include "evtxtools_libclocale.h"
+#include "evtxtools_libcstring.h"
 #include "evtxtools_libfdatetime.h"
 #include "evtxtools_libevtx.h"
+#include "info_handle.h"
 
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
 
@@ -39,16 +38,16 @@
  */
 int info_handle_initialize(
      info_handle_t **info_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "info_handle_initialize";
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
@@ -61,10 +60,10 @@ int info_handle_initialize(
 
 		if( *info_handle == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create info handle.",
 			 function );
 
@@ -75,10 +74,10 @@ int info_handle_initialize(
 		     0,
 		     sizeof( info_handle_t ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear info handle.",
 			 function );
 
@@ -88,10 +87,10 @@ int info_handle_initialize(
 		     &( ( *info_handle )->input_file ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to initialize input file.",
 			 function );
 
@@ -117,17 +116,17 @@ on_error:
  */
 int info_handle_free(
      info_handle_t **info_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "info_handle_free";
 	int result            = 1;
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
@@ -141,10 +140,10 @@ int info_handle_free(
 			     &( ( *info_handle )->input_file ),
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 				 "%s: unable to free input file.",
 				 function );
 
@@ -164,16 +163,16 @@ int info_handle_free(
  */
 int info_handle_signal_abort(
      info_handle_t *info_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "info_handle_signal_abort";
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
@@ -187,10 +186,10 @@ int info_handle_signal_abort(
 		     info_handle->input_file,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to signal input file to abort.",
 			 function );
 
@@ -206,33 +205,51 @@ int info_handle_signal_abort(
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
      const libcstring_system_character_t *string,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	static char *function = "info_handle_set_ascii_codepage";
-	int result            = 0;
+	static char *function  = "info_handle_set_ascii_codepage";
+	size_t string_length   = 0;
+	uint32_t feature_flags = 0;
+	int result             = 0;
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
 		return( -1 );
 	}
-	result = evtxinput_determine_ascii_codepage(
-	          string,
-	          &( info_handle->ascii_codepage ),
-	          error );
+	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_KOI8
+	              | LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
 
+	string_length = libcstring_system_string_length(
+	                 string );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libclocale_codepage_copy_from_string_wide(
+	          &( info_handle->ascii_codepage ),
+	          string,
+	          string_length,
+	          feature_flags,
+	          error );
+#else
+	result = libclocale_codepage_copy_from_string(
+	          &( info_handle->ascii_codepage ),
+	          string,
+	          string_length,
+	          feature_flags,
+	          error );
+#endif
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to determine ASCII codepage.",
 		 function );
 
@@ -247,16 +264,16 @@ int info_handle_set_ascii_codepage(
 int info_handle_open(
      info_handle_t *info_handle,
      const libcstring_system_character_t *filename,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "info_handle_open";
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
@@ -276,10 +293,10 @@ int info_handle_open(
 	     error ) != 1 )
 #endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open input file.",
 		 function );
 
@@ -293,16 +310,16 @@ int info_handle_open(
  */
 int info_handle_close(
      info_handle_t *info_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "info_handle_close";
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
@@ -312,10 +329,10 @@ int info_handle_close(
 	     info_handle->input_file,
 	     error ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 		 "%s: unable to close input file.",
 		 function );
 
@@ -329,83 +346,48 @@ int info_handle_close(
  */
 int info_handle_file_fprint(
      info_handle_t *info_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	libevtx_column_t *column                   = NULL;
-	libevtx_index_t *index                     = NULL;
-	libevtx_table_t *table                     = NULL;
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "evtxinfo_file_info_fprint";
-	size_t value_string_size                    = 0;
-	uint32_t file_type                          = 0;
-	uint32_t format_revision                    = 0;
-	uint32_t format_version                     = 0;
-	uint32_t column_identifier                  = 0;
-	uint32_t column_type                        = 0;
-	uint32_t index_identifier                   = 0;
-	uint32_t table_identifier                   = 0;
-	uint32_t page_size                          = 0;
-	int column_iterator                         = 0;
-	int index_iterator                          = 0;
-	int number_of_columns                       = 0;
-	int number_of_indexes                       = 0;
-	int number_of_tables                        = 0;
-	int result                                  = 0;
-	int table_iterator                          = 0;
+	static char *function  = "evtxinfo_file_info_fprint";
+	uint16_t major_version = 0;
+	uint16_t minor_version = 0;
 
 	if( info_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid info handle.",
 		 function );
 
 		return( -1 );
 	}
-	fprintf(
-	 info_handle->notify_stream,
-	 "Windows XML EventViewer Log information:\n" );
-
-/* TODO
-	if( libevtx_file_get_type(
+	if( libevtx_file_get_version(
 	     info_handle->input_file,
-	     &file_type,
+	     &major_version,
+	     &minor_version,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve file type.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file version.",
 		 function );
 
 		return( -1 );
 	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tFile type:\t\t" );
+	 "Windows EventViewer Log (EVTX) information:\n" );
 
-	if( file_type == LIBEVTX_FILE_TYPE_DATABASE )
-	{
-		fprintf(
-		 info_handle->notify_stream,
-		 "Database" );
-	}
-	else if( file_type == LIBEVTX_FILE_TYPE_STREAMING_FILE )
-	{
-		fprintf(
-		 info_handle->notify_stream,
-		 "Streaming file" );
-	}
-	else
-	{
-		fprintf(
-		 info_handle->notify_stream,
-		 "Unknown" );
-	}
-*/
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tVersion\t\t\t: %" PRIu32 ".%" PRIu32 "\n",
+	 major_version,
+	 minor_version );
+
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );

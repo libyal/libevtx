@@ -25,11 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_extern.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
 #include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 
@@ -69,24 +68,24 @@ struct libevtx_internal_file
 LIBEVTX_EXTERN \
 int libevtx_file_initialize(
      libevtx_file_t **file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_file_free(
      libevtx_file_t **file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_file_signal_abort(
      libevtx_file_t *file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_file_open(
      libevtx_file_t *file,
      const char *filename,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 LIBEVTX_EXTERN \
@@ -94,7 +93,7 @@ int libevtx_file_open_wide(
      libevtx_file_t *file,
      const wchar_t *filename,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 #endif
 
 LIBEVTX_EXTERN \
@@ -102,23 +101,23 @@ int libevtx_file_open_file_io_handle(
      libevtx_file_t *file,
      libbfio_handle_t *file_io_handle,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_file_close(
      libevtx_file_t *file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_file_open_read(
      libevtx_internal_file_t *internal_file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_file_get_format_version(
+int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

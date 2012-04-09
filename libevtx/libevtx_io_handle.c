@@ -24,9 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libevtx_checksum.h"
 #include "libevtx_chunk.h"
 #include "libevtx_codepage.h"
@@ -34,6 +31,8 @@
 #include "libevtx_definitions.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_libcnotify.h"
 #include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 #include "libevtx_unused.h"
@@ -48,16 +47,16 @@ const uint8_t *evtx_file_signature = (uint8_t *) "ElfFile";
  */
 int libevtx_io_handle_initialize(
      libevtx_io_handle_t **io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_io_handle_initialize";
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -70,10 +69,10 @@ int libevtx_io_handle_initialize(
 
 		if( *io_handle == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create IO handle.",
 			 function );
 
@@ -84,10 +83,10 @@ int libevtx_io_handle_initialize(
 		     0,
 		     sizeof( libevtx_io_handle_t ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear IO handle.",
 			 function );
 
@@ -114,17 +113,17 @@ on_error:
  */
 int libevtx_io_handle_free(
      libevtx_io_handle_t **io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_io_handle_free";
 	int result            = 1;
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -147,7 +146,7 @@ int libevtx_io_handle_read_file_header(
      libevtx_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	uint8_t *file_header_data    = NULL;
 	static char *function        = "libevtx_io_handle_read_file_header";
@@ -164,19 +163,19 @@ int libevtx_io_handle_read_file_header(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: reading file header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
 		 file_offset,
@@ -189,10 +188,10 @@ int libevtx_io_handle_read_file_header(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek file header offset: %" PRIi64 ".",
 		 function,
 		 file_offset );
@@ -204,16 +203,16 @@ int libevtx_io_handle_read_file_header(
 
 	if( file_header_data == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create file header data.",
 		 function );
 
 		return( -1 );
 	}
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              file_header_data,
 	              read_size,
@@ -221,22 +220,22 @@ int libevtx_io_handle_read_file_header(
 
 	if( read_count != (ssize_t) read_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read file header.",
 		 function );
 
 		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: file header data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 file_header_data,
 		 sizeof( evtx_file_header_t ),
 		 0 );
@@ -247,23 +246,31 @@ int libevtx_io_handle_read_file_header(
 	     evtx_file_signature,
 	     8 ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported file signature.",
 		 function );
 
 		goto on_error;
 	}
+	byte_stream_copy_to_uint16_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->major_version,
+	 io_handle->major_version );
+
+	byte_stream_copy_to_uint16_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->minor_version,
+	 io_handle->minor_version );
+
 	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->checksum,
 	 stored_checksum );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: signature\t\t\t\t: %c%c%c%c%c%c%c\\x%02x\n",
 		 function,
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 0 ],
@@ -278,7 +285,7 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->first_chunk_number,
 		 value_64bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: first chunk number\t\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
@@ -286,7 +293,7 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->last_chunk_number,
 		 value_64bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: last chunk number\t\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
@@ -294,7 +301,7 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->next_record_identifier,
 		 value_64bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: next record identifier\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
@@ -302,31 +309,25 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->header_size,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: header size\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->major_version,
-		 value_16bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: major version\t\t\t: %" PRIu16 "\n",
 		 function,
-		 value_16bit );
+		 io_handle->major_version );
 
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->minor_version,
-		 value_16bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: minor version\t\t\t: %" PRIu16 "\n",
 		 function,
-		 value_16bit );
+		 io_handle->minor_version );
 
 		byte_stream_copy_to_uint16_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->header_block_size,
 		 value_16bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: header block size\t\t\t: %" PRIu16 "\n",
 		 function,
 		 value_16bit );
@@ -334,15 +335,15 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint16_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->number_of_chunks,
 		 value_16bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: number of chunks\t\t\t: %" PRIu16 "\n",
 		 function,
 		 value_16bit );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown1:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 ( (evtx_file_header_t *) file_header_data )->unknown1,
 		 76,
 		 0 );
@@ -350,17 +351,17 @@ int libevtx_io_handle_read_file_header(
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->flags,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: checksum\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 stored_checksum );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "\n" );
 	}
 #endif
@@ -371,10 +372,10 @@ int libevtx_io_handle_read_file_header(
 	     0,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to calculate CRC-32 checksum.",
 		 function );
 
@@ -383,9 +384,9 @@ int libevtx_io_handle_read_file_header(
 	if( stored_checksum != calculated_checksum )
 	{
 #if defined( HAVE_VERBOSE_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: mismatch in file header CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
 			 function,
 			 stored_checksum,
@@ -395,15 +396,15 @@ int libevtx_io_handle_read_file_header(
 		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: trailing data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 &( file_header_data[ sizeof( evtx_file_header_t ) ] ),
 		 read_size - sizeof( evtx_file_header_t ),
-		 LIBNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	memory_free(
@@ -435,7 +436,7 @@ int libevtx_io_handle_read_chunk(
      off64_t element_data_offset,
      size64_t element_data_size LIBEVTX_ATTRIBUTE_UNUSED,
      uint8_t read_flags LIBEVTX_ATTRIBUTE_UNUSED,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libevtx_chunk_t *chunk = NULL;
 	static char *function  = "libevtx_io_handle_read_chunk";
@@ -447,10 +448,10 @@ int libevtx_io_handle_read_chunk(
 	     &chunk,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create chunk.",
 		 function );
 
@@ -463,10 +464,10 @@ int libevtx_io_handle_read_chunk(
 	     element_data_offset,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read chunk.",
 		 function );
 
@@ -477,14 +478,14 @@ int libevtx_io_handle_read_chunk(
 	     cache,
 	     element_index,
 	     (intptr_t *) chunk,
-	     (int (*)(intptr_t **, liberror_error_t **)) &libevtx_chunk_free,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunk_free,
 	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set chunk as element value.",
 		 function );
 

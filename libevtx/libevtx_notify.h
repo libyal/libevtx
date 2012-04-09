@@ -25,11 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include <stdio.h>
 
 #include "libevtx_extern.h"
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -44,16 +43,16 @@ void libevtx_notify_set_verbose(
 LIBEVTX_EXTERN \
 int libevtx_notify_set_stream(
      FILE *stream,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_notify_stream_open(
      const char *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_notify_stream_close(
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif
 

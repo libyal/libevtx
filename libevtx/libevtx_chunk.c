@@ -23,9 +23,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libevtx_array_type.h"
 #include "libevtx_checksum.h"
 #include "libevtx_chunk.h"
@@ -33,6 +30,8 @@
 #include "libevtx_event_values.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_libcnotify.h"
 
 #include "evtx_chunk.h"
 
@@ -43,16 +42,16 @@ const uint8_t *evtx_chunk_signature = (uint8_t *) "ElfChnk";
  */
 int libevtx_chunk_value_initialize(
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_chunk_value_initialize";
 
 	if( chunk_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk value.",
 		 function );
 
@@ -60,10 +59,10 @@ int libevtx_chunk_value_initialize(
 	}
 	if( *chunk_value != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid chunk value value already set.",
 		 function );
 
@@ -74,10 +73,10 @@ int libevtx_chunk_value_initialize(
 
 	if( *chunk_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create chunk value.",
 		 function );
 
@@ -88,10 +87,10 @@ int libevtx_chunk_value_initialize(
 	     0,
 	     sizeof( libevtx_chunk_value_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear chunk value.",
 		 function );
 
@@ -115,16 +114,16 @@ on_error:
  */
 int libevtx_chunk_value_free(
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_chunk_value_free";
 
 	if( chunk_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk value.",
 		 function );
 
@@ -148,16 +147,16 @@ int libevtx_chunk_value_free(
  */
 int libevtx_chunk_initialize(
      libevtx_chunk_t **chunk,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_chunk_initialize";
 
 	if( chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk.",
 		 function );
 
@@ -165,10 +164,10 @@ int libevtx_chunk_initialize(
 	}
 	if( *chunk != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid chunk value already set.",
 		 function );
 
@@ -179,10 +178,10 @@ int libevtx_chunk_initialize(
 
 	if( *chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create chunk.",
 		 function );
 
@@ -193,10 +192,10 @@ int libevtx_chunk_initialize(
 	     0,
 	     sizeof( libevtx_chunk_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear chunk.",
 		 function );
 
@@ -207,10 +206,10 @@ int libevtx_chunk_initialize(
 	     0,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create chunk values array.",
 		 function );
 
@@ -234,17 +233,17 @@ on_error:
  */
 int libevtx_chunk_free(
      libevtx_chunk_t **chunk,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_chunk_free";
 	int result            = 1;
 
 	if( chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk.",
 		 function );
 
@@ -254,13 +253,13 @@ int libevtx_chunk_free(
 	{
 		if( libevtx_array_free(
 		     &( ( *chunk )->values_array ),
-		     (int (*)(intptr_t **, liberror_error_t **)) &libevtx_chunk_value_free,
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunk_value_free,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free the chunk values array.",
 			 function );
 
@@ -287,7 +286,7 @@ int libevtx_chunk_read(
      libevtx_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	uint8_t *chunk_values_data         = NULL;
 	static char *function              = "libevtx_chunk_read";
@@ -312,10 +311,10 @@ int libevtx_chunk_read(
 
 	if( chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk.",
 		 function );
 
@@ -323,10 +322,10 @@ int libevtx_chunk_read(
 	}
 	if( chunk->data != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid chunk data already set.",
 		 function );
 
@@ -334,10 +333,10 @@ int libevtx_chunk_read(
 	}
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -346,9 +345,9 @@ int libevtx_chunk_read(
 	calculated_chunk_number = (uint64_t) ( ( file_offset - io_handle->chunk_size ) / io_handle->chunk_size );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: reading chunk: %" PRIu64 " at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
 		 calculated_chunk_number,
@@ -362,10 +361,10 @@ int libevtx_chunk_read(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek chunk offset: %" PRIi64 ".",
 		 function,
 		 file_offset );
@@ -377,10 +376,10 @@ int libevtx_chunk_read(
 
 	if( chunk->data == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create chunk data.",
 		 function );
 
@@ -388,7 +387,7 @@ int libevtx_chunk_read(
 	}
 	chunk->data_size = (size_t) io_handle->chunk_size;
 
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              chunk->data,
 	              chunk->data_size,
@@ -396,10 +395,10 @@ int libevtx_chunk_read(
 
 	if( read_count != (ssize_t) chunk->data_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read chunk data.",
 		 function );
 
@@ -409,12 +408,12 @@ int libevtx_chunk_read(
 	chunk_values_data_size = chunk->data_size;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: chunk header data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 chunk_values_data,
 		 sizeof( evtx_chunk_header_t ),
 		 0 );
@@ -425,10 +424,10 @@ int libevtx_chunk_read(
 	     evtx_chunk_signature,
 	     8 ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported chunk signature.",
 		 function );
 
@@ -459,9 +458,9 @@ int libevtx_chunk_read(
 	 stored_checksum );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: signature\t\t\t\t\t\t: %c%c%c%c%c%c%c\\x%02x\n",
 		 function,
 		 ( (evtx_chunk_header_t *) chunk_values_data )->signature[ 0 ],
@@ -473,12 +472,12 @@ int libevtx_chunk_read(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->signature[ 6 ],
 		 ( (evtx_chunk_header_t *) chunk_values_data )->signature[ 7 ] );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: first event record number\t\t\t\t: %" PRIu64 "\n",
 		 function,
 		 first_event_record_number );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: last event record number\t\t\t\t: %" PRIu64 "\n",
 		 function,
 		 last_event_record_number );
@@ -486,7 +485,7 @@ int libevtx_chunk_read(
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->first_event_record_identifier,
 		 value_64bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: first event record identifier\t\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
@@ -494,7 +493,7 @@ int libevtx_chunk_read(
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->last_event_record_identifier,
 		 value_64bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: last event record identifier\t\t\t: %" PRIu64 "\n",
 		 function,
 		 value_64bit );
@@ -502,30 +501,30 @@ int libevtx_chunk_read(
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->header_size,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: header size\t\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: last event record offset\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 last_event_record_offset );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: free space offset\t\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 free_space_offset );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: event records checksum\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 event_records_checksum );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown1:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->unknown1,
 		 64,
 		 0 );
@@ -533,17 +532,17 @@ int libevtx_chunk_read(
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_values_data )->unknown2,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown2\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: checksum\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 stored_checksum );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "\n" );
 	}
 #endif
@@ -554,10 +553,10 @@ int libevtx_chunk_read(
 	     0,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to calculate CRC-32 checksum.",
 		 function );
 
@@ -570,10 +569,10 @@ int libevtx_chunk_read(
 	     calculated_checksum,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to calculate CRC-32 checksum.",
 		 function );
 
@@ -582,9 +581,9 @@ int libevtx_chunk_read(
 	if( stored_checksum != calculated_checksum )
 	{
 #if defined( HAVE_VERBOSE_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: mismatch in chunk: %" PRIu64 " header CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
 			 function,
 			 calculated_chunk_number,
@@ -597,12 +596,12 @@ int libevtx_chunk_read(
 	chunk_values_data_offset = sizeof( evtx_chunk_header_t );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: chunk table data:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 &( chunk_values_data[ chunk_values_data_offset ] ),
 		 384,
 		 0 );
@@ -614,10 +613,10 @@ int libevtx_chunk_read(
 	if( ( free_space_offset < chunk_values_data_offset )
 	 || ( free_space_offset > chunk_values_data_size ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid free space offset value out of bounds.",
 		 function );
 
@@ -630,10 +629,10 @@ int libevtx_chunk_read(
 	     0,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to calculate CRC-32 checksum.",
 		 function );
 
@@ -642,9 +641,9 @@ int libevtx_chunk_read(
 	if( event_records_checksum != calculated_checksum )
 	{
 #if defined( HAVE_VERBOSE_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: mismatch in chunk: %" PRIu64 " events records CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
 			 function,
 			 calculated_chunk_number,
@@ -663,10 +662,10 @@ int libevtx_chunk_read(
 		     &event_values,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create event values.",
 			 function );
 
@@ -680,10 +679,10 @@ int libevtx_chunk_read(
 		     chunk_values_data_offset,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read event values.",
 			 function );
 
@@ -695,10 +694,10 @@ int libevtx_chunk_read(
 		     &event_values,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free event values.",
 			 function );
 
@@ -711,12 +710,12 @@ int libevtx_chunk_read(
 		free_space_size = chunk_values_data_size - chunk_values_data_offset;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: free space data:\n",
 			 function );
-			libnotify_print_data(
+			libcnotify_print_data(
 			 &( chunk_values_data[ chunk_values_data_offset ] ),
 			 free_space_size,
 			 0 );
@@ -744,17 +743,17 @@ on_error:
 int libevtx_chunk_get_number_of_values(
      libevtx_chunk_t *chunk,
      uint16_t *number_of_values,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function      = "libevtx_chunk_get_number_of_values";
 	int chunk_number_of_values = 0;
 
 	if( chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk.",
 		 function );
 
@@ -762,10 +761,10 @@ int libevtx_chunk_get_number_of_values(
 	}
 	if( number_of_values == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid number of values.",
 		 function );
 
@@ -776,10 +775,10 @@ int libevtx_chunk_get_number_of_values(
 	     &chunk_number_of_values,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of values.",
 		 function );
 
@@ -787,10 +786,10 @@ int libevtx_chunk_get_number_of_values(
 	}
 	if( chunk_number_of_values > (int) UINT16_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid number of chunk values value exceeds maximum.",
 		 function );
 
@@ -808,16 +807,16 @@ int libevtx_chunk_get_value(
      libevtx_chunk_t *chunk,
      uint16_t value_index,
      libevtx_chunk_value_t **chunk_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_chunk_get_value";
 
 	if( chunk == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk.",
 		 function );
 
@@ -829,10 +828,10 @@ int libevtx_chunk_get_value(
 	     (intptr_t **) chunk_value,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve chunk value: %" PRIu16 ".",
 		 function,
 		 value_index );

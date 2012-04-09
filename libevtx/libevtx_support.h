@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_extern.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -47,31 +46,31 @@ int libevtx_get_access_flags_read(
 LIBEVTX_EXTERN \
 int libevtx_get_codepage(
      int *codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_set_codepage(
      int codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 
 LIBEVTX_EXTERN \
 int libevtx_check_file_signature(
      const char *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 LIBEVTX_EXTERN \
 int libevtx_check_file_signature_wide(
      const wchar_t *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 #endif
 
 LIBEVTX_EXTERN \
 int libevtx_check_file_signature_file_io_handle(
      libbfio_handle_t *bfio_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

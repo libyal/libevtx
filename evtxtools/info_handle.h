@@ -26,10 +26,9 @@
 #include <file_stream.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #include "evtxtools_libevtx.h"
+#include "evtxtools_libcerror.h"
+#include "evtxtools_libcstring.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -58,33 +57,33 @@ struct info_handle
 
 int info_handle_initialize(
      info_handle_t **info_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_free(
      info_handle_t **info_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_signal_abort(
      info_handle_t *info_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
      const libcstring_system_character_t *string,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_open(
      info_handle_t *info_handle,
      const libcstring_system_character_t *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_close(
      info_handle_t *info_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int info_handle_file_fprint(
      info_handle_t *info_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

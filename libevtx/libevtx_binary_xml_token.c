@@ -24,11 +24,10 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libevtx_binary_xml_token.h"
 #include "libevtx_definitions.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_libcnotify.h"
 
 /* Initialize binary XML token
  * Make sure the value binary XML token is pointing to is set to NULL
@@ -36,16 +35,16 @@
  */
 int libevtx_binary_xml_token_initialize(
      libevtx_binary_xml_token_t **binary_xml_token,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_binary_xml_token_initialize";
 
 	if( binary_xml_token == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid binary XML token.",
 		 function );
 
@@ -53,10 +52,10 @@ int libevtx_binary_xml_token_initialize(
 	}
 	if( *binary_xml_token != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid binary XML token value already set.",
 		 function );
 
@@ -67,10 +66,10 @@ int libevtx_binary_xml_token_initialize(
 
 	if( *binary_xml_token == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create binary XML token.",
 		 function );
 
@@ -81,10 +80,10 @@ int libevtx_binary_xml_token_initialize(
 	     0,
 	     sizeof( libevtx_binary_xml_token_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear binary XML token.",
 		 function );
 
@@ -108,17 +107,17 @@ on_error:
  */
 int libevtx_binary_xml_token_free(
      libevtx_binary_xml_token_t **binary_xml_token,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libevtx_binary_xml_token_free";
 	int result            = 1;
 
 	if( binary_xml_token == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid binary XML token.",
 		 function );
 
@@ -143,7 +142,7 @@ int libevtx_binary_xml_token_read(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	const uint8_t *binary_xml_token_data = NULL;
 	static char *function                = "libevtx_binary_xml_token_read";
@@ -151,10 +150,10 @@ int libevtx_binary_xml_token_read(
 
 	if( binary_xml_token == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid binary XML token.",
 		 function );
 
@@ -162,10 +161,10 @@ int libevtx_binary_xml_token_read(
 	}
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -173,10 +172,10 @@ int libevtx_binary_xml_token_read(
 	}
 	if( chunk_data == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid chunk data.",
 		 function );
 
@@ -184,10 +183,10 @@ int libevtx_binary_xml_token_read(
 	}
 	if( chunk_data_size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid binary XML token data size value exceeds maximum.",
 		 function );
 
@@ -195,10 +194,10 @@ int libevtx_binary_xml_token_read(
 	}
 	if( chunk_data_offset >= chunk_data_size )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid chunk data offset value out of bounds.",
 		 function );
 
@@ -209,10 +208,10 @@ int libevtx_binary_xml_token_read(
 
 	if( binary_xml_token_data_size < 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid binary XML token data size value too small.",
 		 function );
 
@@ -245,10 +244,10 @@ int libevtx_binary_xml_token_read(
 			break;
 
 		default:
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 			 "%s: unsupported binary XML token type: 0x%02" PRIx8 ".",
 			 function,
 			 binary_xml_token_data[ 0 ] );

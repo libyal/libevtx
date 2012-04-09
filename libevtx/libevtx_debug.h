@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libevtx_libcerror.h"
 
 #include "libevtx_libbfio.h"
 
@@ -37,7 +37,7 @@ extern "C" {
 
 int libevtx_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif
 

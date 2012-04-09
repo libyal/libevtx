@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
 #include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 
@@ -72,17 +71,17 @@ struct libevtx_io_handle
 
 int libevtx_io_handle_initialize(
      libevtx_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_io_handle_free(
      libevtx_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_io_handle_read_file_header(
      libevtx_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      off64_t file_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_io_handle_read_chunk(
      intptr_t *io_handle,
@@ -93,7 +92,7 @@ int libevtx_io_handle_read_chunk(
      off64_t element_data_offset,
      size64_t element_data_size,
      uint8_t read_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

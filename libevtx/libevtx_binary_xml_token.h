@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libevtx_io_handle.h"
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -48,11 +47,11 @@ struct libevtx_binary_xml_token
 
 int libevtx_binary_xml_token_initialize(
      libevtx_binary_xml_token_t **binary_xml_token,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_token_free(
      libevtx_binary_xml_token_t **binary_xml_token,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_binary_xml_token_read(
      libevtx_binary_xml_token_t *binary_xml_token,
@@ -60,7 +59,7 @@ int libevtx_binary_xml_token_read(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

@@ -252,11 +252,11 @@ int libevtx_file_close(
      libevtx_file_t *file,
      libevtx_error_t **error );
 
-/* Retrieves the file format version
+/* Retrieves the file version
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_file_get_format_version(
+int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,

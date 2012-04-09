@@ -1,7 +1,7 @@
 /*
  * Checksum functions
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -22,7 +22,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libevtx_libcerror.h"
 
 /* Table of CRC-32 values of 8-bit values
  */
@@ -75,7 +75,7 @@ int libevtx_checksum_calculate_little_endian_crc32(
      uint8_t *buffer,
      size_t size,
      uint32_t initial_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function      = "libevtx_checksum_calculate_little_endian_crc32";
 	size_t buffer_offset       = 0;
@@ -83,10 +83,10 @@ int libevtx_checksum_calculate_little_endian_crc32(
 
 	if( crc32 == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid CRC-32.",
 		 function );
 
@@ -94,10 +94,10 @@ int libevtx_checksum_calculate_little_endian_crc32(
 	}
 	if( buffer == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid buffer.",
 		 function );
 
@@ -105,10 +105,10 @@ int libevtx_checksum_calculate_little_endian_crc32(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 
@@ -142,7 +142,7 @@ int libevtx_checksum_calculate_little_endian_weak_crc32(
      uint8_t *buffer,
      size_t size,
      uint32_t initial_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function      = "libevtx_checksum_calculate_little_endian_weak_crc32";
 	size_t buffer_offset       = 0;
@@ -150,10 +150,10 @@ int libevtx_checksum_calculate_little_endian_weak_crc32(
 
 	if( crc32 == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid CRC-32.",
 		 function );
 
@@ -161,10 +161,10 @@ int libevtx_checksum_calculate_little_endian_weak_crc32(
 	}
 	if( buffer == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid buffer.",
 		 function );
 
@@ -172,10 +172,10 @@ int libevtx_checksum_calculate_little_endian_weak_crc32(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 

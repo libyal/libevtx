@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -81,71 +81,71 @@ struct libevtx_array
 int libevtx_array_initialize(
      libevtx_array_t **array,
      int number_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_array_free(
      libevtx_array_t **array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_array_empty(
      libevtx_array_t *array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_array_clear(
      libevtx_array_t *array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_array_clone(
      libevtx_array_t **destination_array,
      libevtx_array_t *source_array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      int (*entry_clone_function)(
             intptr_t **destination,
             intptr_t *source,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_array_resize(
      libevtx_array_t *array,
      int number_of_entries,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libevtx_array_get_number_of_entries(
      libevtx_array_t *array,
      int *number_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_array_get_entry_by_index(
      libevtx_array_t *array,
      int entry_index,
      intptr_t **entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_array_set_entry_by_index(
      libevtx_array_t *array,
      int entry_index,
      intptr_t *entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_array_append_entry(
      libevtx_array_t *array,
      int *entry_index,
      intptr_t *entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_array_insert_entry(
      libevtx_array_t *array,
@@ -154,9 +154,9 @@ int libevtx_array_insert_entry(
      int (*entry_compare_function)(
             intptr_t *first_entry,
             intptr_t *second_entry,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

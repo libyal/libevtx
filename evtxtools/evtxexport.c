@@ -24,9 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #if defined( HAVE_UNISTD_H )
 #include <unistd.h>
 #endif
@@ -35,9 +32,12 @@
 #include <stdlib.h>
 #endif
 
-#include <libsystem.h>
-
 #include "evtxoutput.h"
+#include "evtxtools_libcerror.h"
+#include "evtxtools_libclocale.h"
+#include "evtxtools_libcnotify.h"
+#include "evtxtools_libcstring.h"
+#include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
 #include "export_handle.h"
 #include "log_handle.h"
@@ -57,7 +57,7 @@ void usage_fprint(
 	fprintf( stream, "Use evtxexport to export log entries stored in a Windows XML EventViewer\n"
 	                 "Log (EVTX) file\n\n" );
 
-	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ]\n"
+	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -l logfile ] [ -hvV ]\n"
 	                 "                  source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
@@ -68,9 +68,6 @@ void usage_fprint(
 	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
-	fprintf( stream, "\t-t:     specify the basename of the target directory to export to\n"
-	                 "\t        (default is the source filename) evtxexport will add the suffix\n"
-	                 "\t        .export to the basename\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -78,12 +75,12 @@ void usage_fprint(
 /* Signal handler for evtxexport
  */
 void evtxexport_signal_handler(
-      libsystem_signal_t signal LIBSYSTEM_ATTRIBUTE_UNUSED )
+      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
 {
-	liberror_error_t *error = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function   = "evtxexport_signal_handler";
 
-	LIBSYSTEM_UNREFERENCED_PARAMETER( signal )
+	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
 
 	evtxexport_abort = 1;
 
@@ -93,22 +90,22 @@ void evtxexport_signal_handler(
 		     evtxexport_export_handle,
 		     &error ) != 1 )
 		{
-			libsystem_notify_printf(
+			libcnotify_printf(
 			 "%s: unable to signal export handle to abort.\n",
 			 function );
 
-			libsystem_notify_print_error_backtrace(
+			libcnotify_print_error_backtrace(
 			 error );
-			liberror_error_free(
+			libcerror_error_free(
 			 &error );
 		}
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libsystem_file_io_close(
+	if( libcsystem_file_io_close(
 	     0 ) != 0 )
 	{
-		libsystem_notify_printf(
+		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
 		 function );
 	}
@@ -124,10 +121,9 @@ int main( int argc, char * const argv[] )
 {
 	libcstring_system_character_t *log_filename          = NULL;
 	libcstring_system_character_t *option_ascii_codepage = NULL;
-	libcstring_system_character_t *option_target_path    = NULL;
 	libcstring_system_character_t *path_separator        = NULL;
 	libcstring_system_character_t *source                = NULL;
-	liberror_error_t *error                              = NULL;
+	libcerror_error_t *error                             = NULL;
 	log_handle_t *log_handle                             = NULL;
 	char *program                                        = "evtxexport";
 	size_t source_length                                 = 0;
@@ -135,14 +131,23 @@ int main( int argc, char * const argv[] )
 	int result                                           = 0;
 	int verbose                                          = 0;
 
-	libsystem_notify_set_stream(
+	libcnotify_stream_set(
 	 stderr,
 	 NULL );
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 1 );
 
-	if( libsystem_initialize(
-             "evtxtools",
+	if( libclocale_initialize(
+	     "evtxtools",
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize locale values.\n" );
+
+		goto on_error;
+	}
+	if( libcsystem_initialize(
              _IONBF,
 	     &error ) != 1 )
 	{
@@ -150,21 +155,16 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize system values.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	evtxoutput_version_fprint(
 	 stdout,
 	 program );
 
-	while( ( option = libsystem_getopt(
+	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:t:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:vV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -196,11 +196,6 @@ int main( int argc, char * const argv[] )
 
 				break;
 
-			case (libcstring_system_integer_t) 't':
-				option_target_path = optarg;
-
-				break;
-
 			case (libcstring_system_integer_t) 'v':
 				verbose = 1;
 
@@ -226,27 +221,7 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-	if( option_target_path == NULL )
-	{
-		source_length = libcstring_system_string_length(
-		                 source );
-
-		path_separator = libcstring_system_string_search_character_reverse(
-		                  source,
-		                  (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR,
-		                  source_length );
-
-		if( path_separator == NULL )
-		{
-			path_separator = source;
-		}
-		else
-		{
-			path_separator++;
-		}
-		option_target_path = path_separator;
-	}
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 verbose );
 	libevtx_notify_set_stream(
 	 stderr,
@@ -299,38 +274,6 @@ int main( int argc, char * const argv[] )
 			 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
 		}
 	}
-	if( export_handle_set_target_path(
-	     evtxexport_export_handle,
-	     option_target_path,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to set target path.\n" );
-
-		goto on_error;
-	}
-	result = export_handle_create_items_export_path(
-	          evtxexport_export_handle,
-	          &error );
-
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to create items export path.\n" );
-
-		goto on_error;
-	}
-	else if( result == 0 )
-	{
-		fprintf(
-		 stderr,
-		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
-		 evtxexport_export_handle->items_export_path );
-
-		goto on_error;
-	}
 	if( log_handle_open(
 	     log_handle,
 	     log_filename,
@@ -348,7 +291,7 @@ int main( int argc, char * const argv[] )
 	 "Opening file.\n" );
 
 #ifdef TODO_SIGNAL_ABORT
-	if( libsystem_signal_attach(
+	if( libcsystem_signal_attach(
 	     evtxexport_signal_handler,
 	     &error ) != 1 )
 	{
@@ -356,9 +299,9 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to attach signal handler.\n" );
 
-		libsystem_notify_print_error_backtrace(
+		libcnotify_print_error_backtrace(
 		 error );
-		liberror_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 #endif
@@ -393,16 +336,16 @@ int main( int argc, char * const argv[] )
 		goto on_error;
 	}
 #ifdef TODO_SIGNAL_ABORT
-	if( libsystem_signal_detach(
+	if( libcsystem_signal_detach(
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to detach signal handler.\n" );
 
-		libsystem_notify_print_error_backtrace(
+		libcnotify_print_error_backtrace(
 		 error );
-		liberror_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 #endif
@@ -464,9 +407,9 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libsystem_notify_print_error_backtrace(
+		libcnotify_print_error_backtrace(
 		 error );
-		liberror_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	if( evtxexport_export_handle != NULL )

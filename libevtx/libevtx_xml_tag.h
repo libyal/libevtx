@@ -25,8 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
+#include "libevtx_array_type.h"
+#include "libevtx_libcerror.h"
 #include "libevtx_libfvalue.h"
 
 #if defined( __cplusplus )
@@ -41,22 +41,43 @@ struct libevtx_xml_tag
 	 */
 	libfvalue_value_t *name;
 
-	/* The attribute (value) table
-	 */
-	libfvalue_table_t *attribute_table;
-
 	/* The value (value)
 	 */
 	libfvalue_value_t *value;
+
+	/* The attributes array
+	 */
+	libevtx_array_t *attributes_array;
+
+	/* The elements array
+	 */
+	libevtx_array_t *elements_array;
 };
 
 int libevtx_xml_tag_initialize(
      libevtx_xml_tag_t **xml_tag,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_xml_tag_free(
      libevtx_xml_tag_t **xml_tag,
-     liberror_error_t **error );
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_append_attribute(
+     libevtx_xml_tag_t *xml_tag,
+     libevtx_xml_tag_t *attribute_xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_append_element(
+     libevtx_xml_tag_t *xml_tag,
+     libevtx_xml_tag_t *element_xml_tag,
+     libcerror_error_t **error );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+int libevtx_xml_tag_debug_print(
+     libevtx_xml_tag_t *xml_tag,
+     int indentation_level,
+     libcerror_error_t **error );
+#endif
 
 #if defined( __cplusplus )
 }

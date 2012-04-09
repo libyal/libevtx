@@ -2,10 +2,13 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libnotify \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
@@ -36,6 +39,10 @@ libevtx_la_SOURCES = \
 	libevtx_i18n.c libevtx_i18n.h \
 	libevtx_io_handle.c libevtx_io_handle.h \
 	libevtx_libbfio.h \
+	libevtx_libcerror.h \
+	libevtx_libclocale.h \
+	libevtx_libcnotify.h \
+	libevtx_libcstring.h \
 	libevtx_libfcache.h \
 	libevtx_libfdata.h \
 	libevtx_libfdatetime.h \
@@ -49,10 +56,13 @@ libevtx_la_SOURCES = \
 	libevtx_xml_tag.c libevtx_xml_tag.h
 
 libevtx_la_LIBADD = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
-	../libnotify/libnotify.la \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFCACHE_LIBADD@ \
 	@LIBFDATA_LIBADD@ \

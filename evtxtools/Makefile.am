@@ -1,15 +1,19 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libsystem \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
 
@@ -21,33 +25,41 @@ bin_PROGRAMS = \
 
 evtxexport_SOURCES = \
 	evtxexport.c \
-	evtxinput.c evtxinput.h \
 	evtxoutput.c evtxoutput.h \
+	evtxtools_libcerror.h \
+	evtxtools_libclocale.h \
+	evtxtools_libcnotify.h \
+	evtxtools_libcsystem.h \
+	evtxtools_libcstring.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
 	evtxtools_libuna.h \
-	export.c export.h \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h
 
 evtxexport_LDADD  = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	../libevtx/libevtx.la \
-	../libsystem/libsystem.la \
-	@LIBUNA_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
 evtxinfo_SOURCES = \
 	evtxinfo.c \
-	evtxinput.c evtxinput.h \
 	evtxoutput.c evtxoutput.h \
+	evtxtools_libcerror.h \
+	evtxtools_libclocale.h \
+	evtxtools_libcnotify.h \
+	evtxtools_libcstring.h \
+	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
@@ -55,10 +67,12 @@ evtxinfo_SOURCES = \
 	info_handle.c info_handle.h
 
 evtxinfo_LDADD  = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	../libevtx/libevtx.la \
-	../libsystem/libsystem.la \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 

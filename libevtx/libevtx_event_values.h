@@ -25,9 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
+#include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -48,15 +48,19 @@ struct libevtx_event_values
 	/* The creation time
 	 */
 	uint64_t creation_time;
+
+	/* The XML document
+	 */
+	libevtx_binary_xml_document_t *xml_document;
 };
 
 int libevtx_event_values_initialize(
      libevtx_event_values_t **event_values,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_event_values_free(
      libevtx_event_values_t **event_values,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libevtx_event_values_read(
      libevtx_event_values_t *event_values,
@@ -64,7 +68,7 @@ int libevtx_event_values_read(
      const uint8_t *chunk_data,
      size_t chunk_data_size,
      size_t chunk_data_offset,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

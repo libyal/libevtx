@@ -20,11 +20,7 @@
  */
 
 #include <common.h>
-#include <memory.h>
 #include <types.h>
-
-#include <liberror.h>
-#include <libnotify.h>
 
 #include "libevtx_codepage.h"
 
