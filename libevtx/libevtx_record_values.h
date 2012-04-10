@@ -1,5 +1,5 @@
 /*
- * Chunk functions
+ * Record values functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,63 +19,66 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_CHUNK_H )
-#define _LIBEVTX_CHUNK_H
+#if !defined( _LIBEVTX_RECORD_VALUES_H )
+#define _LIBEVTX_RECORD_VALUES_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libevtx_array_type.h"
+#include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
-#include "libevtx_libbfio.h"
 #include "libevtx_libcerror.h"
-#include "libevtx_record_values.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libevtx_chunk libevtx_chunk_t;
+typedef struct libevtx_record_values libevtx_record_values_t;
 
-struct libevtx_chunk
+struct libevtx_record_values
 {
-	/* The chunk data
+	/* The data size
 	 */
-	uint8_t *data;
+	uint32_t data_size;
 
-	/* The chunk data size
+	/* The chunk data offset
 	 */
-	size_t data_size;
+	size_t chunk_data_offset;
 
-	/* The records array
+	/* The identifier
 	 */
-	libevtx_array_t *records_array;
+	uint64_t identifier;
+
+	/* The creation time
+	 */
+	uint64_t creation_time;
+
+	/* The XML document
+	 */
+	libevtx_binary_xml_document_t *xml_document;
 };
 
-int libevtx_chunk_initialize(
-     libevtx_chunk_t **chunk,
-     libcerror_error_t **error );
-
-int libevtx_chunk_free(
-     libevtx_chunk_t **chunk,
-     libcerror_error_t **error );
-
-int libevtx_chunk_read(
-     libevtx_chunk_t *chunk,
-     libevtx_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     off64_t file_offset,
-     libcerror_error_t **error );
-
-int libevtx_chunk_get_number_of_records(
-     libevtx_chunk_t *chunk,
-     uint16_t *number_of_records,
-     libcerror_error_t **error );
-
-int libevtx_chunk_get_record(
-     libevtx_chunk_t *chunk,
-     uint16_t record_index,
+int libevtx_record_values_initialize(
      libevtx_record_values_t **record_values,
+     libcerror_error_t **error );
+
+int libevtx_record_values_free(
+     libevtx_record_values_t **record_values,
+     libcerror_error_t **error );
+
+int libevtx_record_values_read_header(
+     libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libcerror_error_t **error );
+
+int libevtx_record_values_read_xml_document(
+     libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

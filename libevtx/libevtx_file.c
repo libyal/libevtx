@@ -23,6 +23,8 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libevtx_chunks_table.h"
+#include "libevtx_codepage.h"
 #include "libevtx_chunk.h"
 #include "libevtx_debug.h"
 #include "libevtx_definitions.h"
@@ -35,6 +37,8 @@
 #include "libevtx_libcstring.h"
 #include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
+#include "libevtx_record.h"
+#include "libevtx_record_values.h"
 
 /* Initializes a file
  * Make sure the value file is pointing to is set to NULL
@@ -205,7 +209,8 @@ int libevtx_file_signal_abort(
      libevtx_file_t *file,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_file_signal_abort";
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_signal_abort";
 
 	if( file == NULL )
 	{
@@ -218,7 +223,20 @@ int libevtx_file_signal_abort(
 
 		return( -1 );
 	}
-	( (libevtx_internal_file_t *) file )->abort = 1;
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file->io_handle->abort = 1;
 
 	return( 1 );
 }
@@ -247,6 +265,8 @@ int libevtx_file_open(
 
 		return( -1 );
 	}
+	internal_file = (libevtx_internal_file_t *) file;
+
 	if( filename == NULL )
 	{
 		libcerror_error_set(
@@ -281,8 +301,6 @@ int libevtx_file_open(
 
 		return( -1 );
 	}
-	internal_file = (libevtx_internal_file_t *) file;
-
 	if( libbfio_file_initialize(
 	     &file_io_handle,
 	     error ) != 1 )
@@ -384,6 +402,8 @@ int libevtx_file_open_wide(
 
 		return( -1 );
 	}
+	internal_file = (libevtx_internal_file_t *) file;
+
 	if( filename == NULL )
 	{
 		libcerror_error_set(
@@ -418,8 +438,6 @@ int libevtx_file_open_wide(
 
 		return( -1 );
 	}
-	internal_file = (libevtx_internal_file_t *) file;
-
 	if( libbfio_file_initialize(
 	     &file_io_handle,
 	     error ) != 1 )
@@ -744,8 +762,23 @@ int libevtx_file_open_read(
      libevtx_internal_file_t *internal_file,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_file_open_read";
-	size64_t file_size    = 0;
+	libevtx_chunk_t *chunk                 = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	libevtx_chunks_table_t *chunks_table   = NULL;
+	static char *function                  = "libevtx_file_open_read";
+	off64_t file_offset                    = 0;
+	size64_t file_size                     = 0;
+	uint16_t calculated_number_of_chunks   = 0;
+	uint16_t chunk_index                   = 0;
+	uint16_t record_index                  = 0;
+	uint16_t number_of_records             = 0;
+	int element_index                      = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint8_t *trailing_data                 = NULL;
+	size_t trailing_data_size              = 0;
+	ssize_t read_count                     = 0;
+#endif
 
 	if( internal_file == NULL )
 	{
@@ -791,6 +824,28 @@ int libevtx_file_open_read(
 
 		return( -1 );
 	}
+	if( internal_file->records_list != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid internal file - records list already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_file->records_cache != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid internal file - records cache already set.",
+		 function );
+
+		return( -1 );
+	}
 	if( libbfio_handle_get_size(
 	     internal_file->file_io_handle,
 	     &file_size,
@@ -803,7 +858,7 @@ int libevtx_file_open_read(
 		 "%s: unable to retrieve file size.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -827,13 +882,10 @@ int libevtx_file_open_read(
 
 		goto on_error;
 	}
-	/* TODO move to function in IO handle
-	 * libevtx_io_handle_set_chunks_data_range( offset, size );
-	 */
-	internal_file->io_handle->chunks_data_offset = 4096;
-	internal_file->io_handle->chunks_data_size   = file_size - 4096;
+	internal_file->io_handle->chunks_data_size = file_size
+	                                           - internal_file->io_handle->chunks_data_offset;
 
-	/* TODO clone function ? */
+/* TODO clone function ? */
 	if( libfdata_vector_initialize(
 	     &( internal_file->chunks_vector ),
 	     (size64_t) internal_file->io_handle->chunk_size,
@@ -883,42 +935,298 @@ int libevtx_file_open_read(
 
 		goto on_error;
 	}
-/* TODO */
-	libevtx_chunk_t *chunk = NULL;
-
-	if( libfdata_vector_get_element_value_by_index(
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "Reading chunks:\n" );
+	}
+#endif
+	if( libevtx_chunks_table_initialize(
+	     &chunks_table,
+	     internal_file->io_handle,
 	     internal_file->chunks_vector,
-	     internal_file->file_io_handle,
 	     internal_file->chunks_cache,
-	     0,
-	     (intptr_t **) &chunk,
-	     0,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve chunk: %" PRIu32 ".",
-		 function,
-		 0 );
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create chunks table.",
+		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	if( chunk == NULL )
+/* TODO clone function ? */
+	if( libfdata_list_initialize(
+	     &( internal_file->records_list ),
+	     (intptr_t *) chunks_table,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunks_table_free,
+	     NULL,
+	     &libevtx_chunks_table_read_record,
+	     LIBFDATA_FLAG_IO_HANDLE_MANAGED,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing chunk.",
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create records list.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
+	chunks_table = NULL;
+
+	if( libfcache_cache_initialize(
+	     &( internal_file->records_cache ),
+	     LIBEVTX_MAXIMUM_CACHE_ENTRIES_RECORDS,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create records cache.",
+		 function );
+
+		goto on_error;
+	}
+	file_offset = internal_file->io_handle->chunks_data_offset;
+
+	for( chunk_index = 0;
+	     chunk_index < internal_file->io_handle->number_of_chunks;
+	     chunk_index++ )
+	{
+		if( file_offset >= (off64_t) file_size )
+		{
+			break;
+		}
+		if( libevtx_chunk_initialize(
+		     &chunk,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create chunk: %" PRIu16 ".",
+			 function,
+			 chunk_index );
+
+			goto on_error;
+		}
+		if( libevtx_chunk_read(
+		     chunk,
+		     internal_file->io_handle,
+		     internal_file->file_io_handle,
+		     file_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read chunk: %" PRIu16 ".",
+			 function,
+			 chunk_index );
+
+			goto on_error;
+		}
+		if( libevtx_chunk_get_number_of_records(
+		     chunk,
+		     &number_of_records,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve chunk: %" PRIu16 " number of records.",
+			 function,
+			 chunk_index );
+
+			goto on_error;
+		}
+		for( record_index = 0;
+		     record_index < number_of_records;
+		     record_index++ )
+		{
+			if( libevtx_chunk_get_record(
+			     chunk,
+			     record_index,
+			     &record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve chunk: %" PRIu16 " record: %" PRIu16 ".",
+				 function,
+				 chunk_index,
+				 record_index );
+
+				goto on_error;
+			}
+			if( record_values == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing chunk: %" PRIu16 " record: %" PRIu16 ".",
+				 function,
+				 chunk_index,
+				 record_index );
+
+				goto on_error;
+			}
+			if( libfdata_list_append_element(
+			     internal_file->records_list,
+			     &element_index,
+			     file_offset + record_values->chunk_data_offset,
+			     (size64_t) record_values->data_size,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append segment to chunks vector.",
+				 function );
+
+				goto on_error;
+			}
+/* TODO cache record values ? */
+		}
+		file_offset += chunk->data_size;
+
+		if( libevtx_chunk_free(
+		     &chunk,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free chunk: %" PRIu16 ".",
+			 function,
+			 chunk_index );
+
+			goto on_error;
+		}
+		calculated_number_of_chunks++;
+	}
+	internal_file->io_handle->chunks_data_size = file_offset
+	                                           - internal_file->io_handle->chunks_data_offset;
+
+	if( internal_file->io_handle->number_of_chunks != calculated_number_of_chunks )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: mismatch in number of chunks ( %" PRIu16 " != %" PRIu16 " ).\n",
+			 function,
+			 internal_file->io_handle->number_of_chunks,
+			 calculated_number_of_chunks );
+		}
+#endif
+		internal_file->io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( file_offset < (off64_t) file_size )
+		{
+			trailing_data_size = (size_t) ( file_size - file_offset );
+
+			trailing_data = (uint8_t *) memory_allocate(
+			                             sizeof( uint8_t ) * trailing_data_size );
+
+			if( trailing_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create trailing data.",
+				 function );
+
+				goto on_error;
+			}
+			read_count = libbfio_handle_read_buffer(
+				      internal_file->file_io_handle,
+				      trailing_data,
+				      trailing_data_size,
+				      error );
+
+			if( read_count != (ssize_t) trailing_data_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read trailing data.",
+				 function );
+
+				memory_free(
+				 trailing_data );
+
+				goto on_error;
+			}
+			file_offset += read_count;
+
+			libcnotify_printf(
+			 "%s: trailing data:\n",
+			 function );
+			libcnotify_print_data(
+			 trailing_data,
+			 trailing_data_size,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+
+			memory_free(
+			 trailing_data );
+
+			trailing_data = NULL;
+		}
+	}
+#endif
 	return( 1 );
 
 on_error:
+	if( trailing_data != NULL )
+	{
+		memory_free(
+		 trailing_data );
+	}
+	if( chunk != NULL )
+	{
+		libevtx_chunk_free(
+		 &chunk,
+		 NULL );
+	}
+	if( internal_file->records_cache != NULL )
+	{
+		libfcache_cache_free(
+		 &( internal_file->records_cache ),
+		 NULL );
+	}
+	if( internal_file->records_list != NULL )
+	{
+		libfdata_list_free(
+		 &( internal_file->records_list ),
+		 NULL );
+	}
+	if( chunks_table != NULL )
+	{
+		libevtx_chunks_table_free(
+		 &chunks_table,
+		 NULL );
+	}
 	if( internal_file->chunks_cache != NULL )
 	{
 		libfcache_cache_free(
@@ -932,6 +1240,119 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
+}
+
+/* Retrieves the file ASCII codepage
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_get_ascii_codepage(
+     libevtx_file_t *file,
+     int *ascii_codepage,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_get_ascii_codepage";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ascii_codepage == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid ASCII codepage.",
+		 function );
+
+		return( -1 );
+	}
+	*ascii_codepage = internal_file->io_handle->ascii_codepage;
+
+	return( 1 );
+}
+
+/* Sets the file ASCII codepage
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_set_ascii_codepage(
+     libevtx_file_t *file,
+     int ascii_codepage,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_set_ascii_codepage";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( ascii_codepage != LIBEVTX_CODEPAGE_ASCII )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_874 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_932 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_936 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1250 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1251 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1252 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1253 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1254 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1256 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1257 )
+	 && ( ascii_codepage != LIBEVTX_CODEPAGE_WINDOWS_1258 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported ASCII codepage.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file->io_handle->ascii_codepage = ascii_codepage;
+
+	return( 1 );
 }
 
 /* Retrieves the file version
@@ -995,6 +1416,123 @@ int libevtx_file_get_version(
 	*major_version = internal_file->io_handle->major_version;
 	*minor_version = internal_file->io_handle->minor_version;
 
+	return( 1 );
+}
+
+/* Retrieves the number of records
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_get_number_of_records(
+     libevtx_file_t *file,
+     int *number_of_records,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_get_number_of_records";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( libfdata_list_get_number_of_elements(
+	     internal_file->records_list,
+	     number_of_records,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of records.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific record
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_get_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	static char *function                  = "libevtx_file_get_record";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfdata_list_get_element_value_by_index(
+	     internal_file->records_list,
+	     internal_file->file_io_handle,
+	     internal_file->records_cache,
+	     record_index,
+	     (intptr_t **) &record_values,
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve record values: %d.",
+		 function,
+		 record_index );
+
+		return( -1 );
+	}
+	if( libevtx_record_initialize(
+	     record,
+	     internal_file->io_handle,
+	     internal_file->file_io_handle,
+	     record_values,
+	     LIBEVTX_RECORD_FLAGS_DEFAULT,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create record.",
+		 function );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

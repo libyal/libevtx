@@ -35,9 +35,11 @@
  */
 #if defined( HAVE_DEBUG_OUTPUT )
 typedef struct libevtx_file {}		libevtx_file_t;
+typedef struct libevtx_record {}	libevtx_record_t;
 
 #else
 typedef intptr_t libevtx_file_t;
+typedef intptr_t libevtx_record_t;
 
 #endif
 

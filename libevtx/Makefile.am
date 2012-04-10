@@ -30,11 +30,11 @@ libevtx_la_SOURCES = \
 	libevtx_binary_xml_token.c libevtx_binary_xml_token.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
+	libevtx_chunks_table.c libevtx_chunks_table.h \
 	libevtx_codepage.c libevtx_codepage.h \
 	libevtx_debug.c libevtx_debug.h \
 	libevtx_definitions.h \
 	libevtx_error.c libevtx_error.h \
-	libevtx_event_values.c libevtx_event_values.h \
 	libevtx_extern.h \
 	libevtx_file.c libevtx_file.h \
 	libevtx_i18n.c libevtx_i18n.h \
@@ -51,6 +51,8 @@ libevtx_la_SOURCES = \
 	libevtx_libuna.h \
 	libevtx_list_type.c libevtx_list_type.h \
 	libevtx_notify.c libevtx_notify.h \
+	libevtx_record.c libevtx_record.h \
+	libevtx_record_values.c libevtx_record_values.h \
 	libevtx_support.c libevtx_support.h \
 	libevtx_types.h \
 	libevtx_unused.h \

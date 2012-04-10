@@ -154,11 +154,12 @@ int libevtx_io_handle_read_file_header(
 	ssize_t read_count           = 0;
 	uint32_t calculated_checksum = 0;
 	uint32_t stored_checksum     = 0;
+	uint16_t first_chunk_number  = 0;
+	uint16_t last_chunk_number   = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit         = 0;
 	uint32_t value_32bit         = 0;
-	uint16_t value_16bit         = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -255,6 +256,14 @@ int libevtx_io_handle_read_file_header(
 
 		goto on_error;
 	}
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->first_chunk_number,
+	 first_chunk_number );
+
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->last_chunk_number,
+	 last_chunk_number );
+
 	byte_stream_copy_to_uint16_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->major_version,
 	 io_handle->major_version );
@@ -262,6 +271,14 @@ int libevtx_io_handle_read_file_header(
 	byte_stream_copy_to_uint16_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->minor_version,
 	 io_handle->minor_version );
+
+	byte_stream_copy_to_uint16_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->header_block_size,
+	 io_handle->chunks_data_offset );
+
+	byte_stream_copy_to_uint16_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->number_of_chunks,
+	 io_handle->number_of_chunks );
 
 	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->checksum,
@@ -282,21 +299,15 @@ int libevtx_io_handle_read_file_header(
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 6 ] ,
 		 ( (evtx_file_header_t *) file_header_data )->signature[ 7 ] );
 
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->first_chunk_number,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: first chunk number\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 first_chunk_number );
 
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->last_chunk_number,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: last chunk number\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 last_chunk_number );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->next_record_identifier,
@@ -324,21 +335,15 @@ int libevtx_io_handle_read_file_header(
 		 function,
 		 io_handle->minor_version );
 
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->header_block_size,
-		 value_16bit );
 		libcnotify_printf(
-		 "%s: header block size\t\t\t: %" PRIu16 "\n",
+		 "%s: header block size\t\t\t: %" PRIi64 "\n",
 		 function,
-		 value_16bit );
+		 io_handle->chunks_data_offset );
 
-		byte_stream_copy_to_uint16_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->number_of_chunks,
-		 value_16bit );
 		libcnotify_printf(
 		 "%s: number of chunks\t\t\t: %" PRIu16 "\n",
 		 function,
-		 value_16bit );
+		 io_handle->number_of_chunks );
 
 		libcnotify_printf(
 		 "%s: unknown1:\n",
@@ -407,6 +412,34 @@ int libevtx_io_handle_read_file_header(
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
+	if( first_chunk_number > last_chunk_number )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: first chunk number: %" PRIu16 " exceeds last chunk number: %" PRIu16 ".\n",
+			 function,
+			 first_chunk_number,
+			 last_chunk_number );
+		}
+#endif
+		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+	}
+	else if( io_handle->number_of_chunks != ( last_chunk_number - first_chunk_number + 1 ) )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: mismatch in number of chunks ( %" PRIu16 " != %" PRIu16 " ).\n",
+			 function,
+			 io_handle->number_of_chunks,
+			 last_chunk_number - first_chunk_number + 1 );
+		}
+#endif
+		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+	}
 	memory_free(
 	 file_header_data );
 

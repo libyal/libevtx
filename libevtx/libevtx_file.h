@@ -60,9 +60,13 @@ struct libevtx_internal_file
 	 */
 	libfcache_cache_t *chunks_cache;
 
-	/* Value to indicate if abort was signalled
+	/* The records list
 	 */
-	int abort;
+	libfdata_list_t *records_list;
+
+	/* The records cache
+	 */
+	libfcache_cache_t *records_cache;
 };
 
 LIBEVTX_EXTERN \
@@ -113,10 +117,35 @@ int libevtx_file_open_read(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_file_get_ascii_codepage(
+     libevtx_file_t *file,
+     int *ascii_codepage,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_set_ascii_codepage(
+     libevtx_file_t *file,
+     int ascii_codepage,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_get_number_of_records(
+     libevtx_file_t *file,
+     int *number_of_records,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_get_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

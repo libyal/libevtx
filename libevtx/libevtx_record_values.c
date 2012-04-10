@@ -1,5 +1,5 @@
 /*
- * Event values functions
+ * Record values functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -25,85 +25,72 @@
 #include <types.h>
 
 #include "libevtx_binary_xml_document.h"
-#include "libevtx_event_values.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libcnotify.h"
 #include "libevtx_libfdatetime.h"
+#include "libevtx_record_values.h"
 
 #include "evtx_event_record.h"
 
 const uint8_t *evtx_event_record_signature = (uint8_t *) "\x2a\x2a\x00\x00";
 
-/* Initialize event values
- * Make sure the value event values is pointing to is set to NULL
+/* Initialize record values
+ * Make sure the value record values is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libevtx_event_values_initialize(
-     libevtx_event_values_t **event_values,
+int libevtx_record_values_initialize(
+     libevtx_record_values_t **record_values,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_event_values_initialize";
+	static char *function = "libevtx_record_values_initialize";
 
-	if( event_values == NULL )
+	if( record_values == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid event values.",
+		 "%s: invalid record values.",
 		 function );
 
 		return( -1 );
 	}
-	if( *event_values != NULL )
+	if( *record_values != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid event values value already set.",
+		 "%s: invalid record values value already set.",
 		 function );
 
 		return( -1 );
 	}
-	*event_values = memory_allocate_structure(
-	                 libevtx_event_values_t );
+	*record_values = memory_allocate_structure(
+	                  libevtx_record_values_t );
 
-	if( *event_values == NULL )
+	if( *record_values == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create event values.",
+		 "%s: unable to create record values.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *event_values ),
+	     ( *record_values ),
 	     0,
-	     sizeof( libevtx_event_values_t ) ) == NULL )
+	     sizeof( libevtx_record_values_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear event values.",
-		 function );
-
-		goto on_error;
-	}
-	if( libevtx_binary_xml_document_initialize(
-	     &( ( *event_values )->xml_document ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create XML document.",
+		 "%s: unable to clear record values.",
 		 function );
 
 		goto on_error;
@@ -111,65 +98,68 @@ int libevtx_event_values_initialize(
 	return( 1 );
 
 on_error:
-	if( *event_values != NULL )
+	if( *record_values != NULL )
 	{
 		memory_free(
-		 *event_values );
+		 *record_values );
 
-		*event_values = NULL;
+		*record_values = NULL;
 	}
 	return( -1 );
 }
 
-/* Frees event values
+/* Frees record values
  * Returns 1 if successful or -1 on error
  */
-int libevtx_event_values_free(
-     libevtx_event_values_t **event_values,
+int libevtx_record_values_free(
+     libevtx_record_values_t **record_values,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_event_values_free";
+	static char *function = "libevtx_record_values_free";
 	int result            = 1;
 
-	if( event_values == NULL )
+	if( record_values == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid event values.",
+		 "%s: invalid record values.",
 		 function );
 
 		return( -1 );
 	}
-	if( *event_values != NULL )
+	if( *record_values != NULL )
 	{
-		if( libevtx_binary_xml_document_free(
-		     &( ( *event_values )->xml_document ),
-		     error ) != 1 )
+		if( ( *record_values )->xml_document != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free XML document.",
-			 function );
+			if( libevtx_binary_xml_document_free(
+			     &( ( *record_values )->xml_document ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free XML document.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
 		memory_free(
-		 *event_values );
+		 *record_values );
 
-		*event_values = NULL;
+		*record_values = NULL;
 	}
 	return( result );
 }
 
-/* Reads the event values
+/* Reads the record values header
  * Returns 1 if successful or -1 on error
  */
-int libevtx_event_values_read(
-     libevtx_event_values_t *event_values,
+int libevtx_record_values_read_header(
+     libevtx_record_values_t *record_values,
      libevtx_io_handle_t *io_handle,
      const uint8_t *chunk_data,
      size_t chunk_data_size,
@@ -177,7 +167,7 @@ int libevtx_event_values_read(
      libcerror_error_t **error )
 {
 	const uint8_t *event_record_data  = NULL;
-	static char *function             = "libevtx_event_values_read";
+	static char *function             = "libevtx_record_values_read_header";
 	size_t event_record_data_size     = 0;
 	uint32_t copy_of_size             = 0;
 
@@ -188,24 +178,13 @@ int libevtx_event_values_read(
 	int result                        = 0;
 #endif
 
-	if( event_values == NULL )
+	if( record_values == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid event values.",
-		 function );
-
-		return( -1 );
-	}
-	if( event_values->xml_document == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid event values - missing XML document.",
+		 "%s: invalid record values.",
 		 function );
 
 		return( -1 );
@@ -238,7 +217,7 @@ int libevtx_event_values_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid event record data size value exceeds maximum.",
+		 "%s: invalid chunk data size value exceeds maximum.",
 		 function );
 
 		goto on_error;
@@ -294,27 +273,25 @@ int libevtx_event_values_read(
 
 		goto on_error;
 	}
+	record_values->chunk_data_offset = chunk_data_offset;
+
 	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_event_record_header_t *) event_record_data )->size,
-	 event_values->size );
+	 record_values->data_size );
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (evtx_event_record_header_t *) event_record_data )->identifier,
-	 event_values->identifier );
+	 record_values->identifier );
 
 	byte_stream_copy_to_uint64_little_endian(
 	 ( (evtx_event_record_header_t *) event_record_data )->creation_time,
-	 event_values->creation_time );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( event_record_data[ event_values->size - 4 ] ),
-	 copy_of_size );
+	 record_values->creation_time );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: signature\t\t\t\t\t: \\x%02x\\x%02x\\x%02x\\x%02x\n",
+		 "%s: signature\t\t\t\t: \\x%02x\\x%02x\\x%02x\\x%02x\n",
 		 function,
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 0 ],
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 1 ],
@@ -322,14 +299,14 @@ int libevtx_event_values_read(
 		 ( (evtx_event_record_header_t *) event_record_data )->signature[ 3 ] );
 
 		libcnotify_printf(
-		 "%s: size\t\t\t\t\t\t: %" PRIu32 "\n",
+		 "%s: size\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 event_values->size );
+		 record_values->data_size );
 
 		libcnotify_printf(
-		 "%s: identifier\t\t\t\t\t: %" PRIu64 "\n",
+		 "%s: identifier\t\t\t\t: %" PRIu64 "\n",
 		 function,
-		 event_values->identifier );
+		 record_values->identifier );
 
 		if( libfdatetime_filetime_initialize(
 		     &filetime,
@@ -389,7 +366,7 @@ int libevtx_event_values_read(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: creation time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "%s: creation time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
 
@@ -406,17 +383,10 @@ int libevtx_event_values_read(
 
 			goto on_error;
 		}
-		libcnotify_printf(
-		 "%s: copy of size\t\t\t\t\t: %" PRIu32 "\n",
-		 function,
-		 copy_of_size );
-
-		libcnotify_printf(
-		 "\n" );
 	}
 #endif
-	if( ( event_values->size < sizeof( evtx_event_record_header_t ) )
-	 || ( event_values->size > ( event_record_data_size - 4 ) ) )
+	if( ( record_values->data_size < sizeof( evtx_event_record_header_t ) )
+	 || ( record_values->data_size > ( event_record_data_size - 4 ) ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -427,12 +397,161 @@ int libevtx_event_values_read(
 
 		goto on_error;
 	}
+	byte_stream_copy_to_uint32_little_endian(
+	 &( event_record_data[ record_values->data_size - 4 ] ),
+	 copy_of_size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: copy of size\t\t\t\t: %" PRIu32 "\n",
+		 function,
+		 copy_of_size );
+
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif
 /* TODO validate size with copy */
-	chunk_data_offset     += sizeof( evtx_event_record_header_t );
-	event_record_data     += sizeof( evtx_event_record_header_t );
-	event_record_data_size = event_values->size
+	return( 1 );
+
+on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( filetime != NULL )
+	{
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+	}
+#endif
+	return( -1 );
+}
+
+/* Reads the record values XML document
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_read_xml_document(
+     libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     libcerror_error_t **error )
+{
+	const uint8_t *event_record_data  = NULL;
+	static char *function             = "libevtx_record_values_read_xml_document";
+	size_t chunk_data_offset          = 0;
+	size_t event_record_data_size     = 0;
+	uint32_t copy_of_size             = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid record values - XML document already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( chunk_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid chunk data.",
+		 function );
+
+		return( -1 );
+	}
+	if( chunk_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid chunk data size value exceeds maximum.",
+		 function );
+
+		goto on_error;
+	}
+	if( record_values->chunk_data_offset >= chunk_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid record values - chunk data offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	chunk_data_offset      = record_values->chunk_data_offset
+	                       + sizeof( evtx_event_record_header_t );
+	event_record_data_size = record_values->data_size
 	                       - ( sizeof( evtx_event_record_header_t ) + 4 );
 
+	if( chunk_data_offset >= chunk_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid chunk data offset value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( chunk_data_offset + event_record_data_size ) > chunk_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid event record data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	event_record_data = &( chunk_data[ chunk_data_offset ] );
+
+	if( libevtx_binary_xml_document_initialize(
+	     &( record_values->xml_document ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create XML document.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -446,7 +565,7 @@ int libevtx_event_values_read(
 	}
 #endif
 	if( libevtx_binary_xml_document_read(
-	     event_values->xml_document,
+	     record_values->xml_document,
 	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
@@ -462,8 +581,6 @@ int libevtx_event_values_read(
 
 		goto on_error;
 	}
-	chunk_data_offset += event_values->xml_document->size;
-
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -472,7 +589,7 @@ int libevtx_event_values_read(
 		 function );
 
 		if( libevtx_xml_tag_debug_print(
-		     event_values->xml_document->root_xml_tag,
+		     record_values->xml_document->root_xml_tag,
 		     0,
 		     error ) != 1 )
 		{
@@ -490,14 +607,12 @@ int libevtx_event_values_read(
 	return( 1 );
 
 on_error:
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( filetime != NULL )
+	if( record_values->xml_document != NULL )
 	{
-		libfdatetime_filetime_free(
-		 &filetime,
+		libevtx_binary_xml_document_free(
+		 &( record_values->xml_document ),
 		 NULL );
 	}
-#endif
 	return( -1 );
 }
 

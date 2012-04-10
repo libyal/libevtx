@@ -48,6 +48,10 @@ struct libevtx_io_handle
 	 */
 	uint16_t minor_version;
 
+	/* The number of chunks
+	 */
+	uint16_t number_of_chunks;
+
 	/* The chunks data offset
 	 */
 	off64_t chunks_data_offset;
@@ -67,6 +71,10 @@ struct libevtx_io_handle
 	/* The codepage of the ASCII strings
 	 */
 	int ascii_codepage;
+
+	/* Value to indicate if abort was signalled
+	 */
+	int abort;
 };
 
 int libevtx_io_handle_initialize(

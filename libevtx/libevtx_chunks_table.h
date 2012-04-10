@@ -1,5 +1,5 @@
 /*
- * Event values functions
+ * Chunks table functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,55 +19,59 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_EVENT_VALUES_H )
-#define _LIBEVTX_EVENT_VALUES_H
+#if !defined( _LIBEVTX_CHUNKS_TABLE_H )
+#define _LIBEVTX_CHUNKS_TABLE_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
+#include "libevtx_libbfio.h"
 #include "libevtx_libcerror.h"
+#include "libevtx_libfcache.h"
+#include "libevtx_libfdata.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libevtx_event_values libevtx_event_values_t;
+typedef struct libevtx_chunks_table libevtx_chunks_table_t;
 
-struct libevtx_event_values
+struct libevtx_chunks_table
 {
-	/* The size
+	/* The IO handle 
 	 */
-	uint32_t size;
+	libevtx_io_handle_t *io_handle;
 
-	/* The identifier
+	/* The chunks vector
 	 */
-	uint64_t identifier;
+	libfdata_vector_t *chunks_vector;
 
-	/* The creation time
+	/* The chunks cache
 	 */
-	uint64_t creation_time;
-
-	/* The XML document
-	 */
-	libevtx_binary_xml_document_t *xml_document;
+	libfcache_cache_t *chunks_cache;
 };
 
-int libevtx_event_values_initialize(
-     libevtx_event_values_t **event_values,
-     libcerror_error_t **error );
-
-int libevtx_event_values_free(
-     libevtx_event_values_t **event_values,
-     libcerror_error_t **error );
-
-int libevtx_event_values_read(
-     libevtx_event_values_t *event_values,
+int libevtx_chunks_table_initialize(
+     libevtx_chunks_table_t **chunks_table,
      libevtx_io_handle_t *io_handle,
-     const uint8_t *chunk_data,
-     size_t chunk_data_size,
-     size_t chunk_data_offset,
+     libfdata_vector_t *chunks_vector,
+     libfcache_cache_t *chunks_cache,
+     libcerror_error_t **error );
+
+int libevtx_chunks_table_free(
+     libevtx_chunks_table_t **chunks_table,
+     libcerror_error_t **error );
+
+int libevtx_chunks_table_read_record(
+     intptr_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_list_element_t *list_element,
+     libfcache_cache_t *cache,
+     off64_t element_data_offset,
+     size64_t element_data_size,
+     uint32_t element_data_flags,
+     uint8_t read_flags,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
