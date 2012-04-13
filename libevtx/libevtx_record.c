@@ -350,6 +350,57 @@ int libevtx_record_get_creation_time(
 	return( 1 );
 }
 
+/* Retrieves the event identifier
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_event_identifier(
+     libevtx_record_t *record,
+     uint64_t *event_identifier,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                     = "libevtx_record_get_event_identifier";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( internal_record->record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal record - missing record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( event_identifier == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid event identifier.",
+		 function );
+
+		return( -1 );
+	}
+	*event_identifier = internal_record->record_values->event_identifier;
+
+	return( 1 );
+}
+
 /* Retrieves the size of the UTF-8 encoded XML string
  * The returned size includes the end of string character
  * Returns 1 if successful or -1 on error

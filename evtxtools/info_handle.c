@@ -348,10 +348,11 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	static char *function  = "evtxinfo_file_info_fprint";
-	uint16_t major_version = 0;
-	uint16_t minor_version = 0;
-	int number_of_records  = 0;
+	static char *function           = "evtxinfo_file_info_fprint";
+	uint16_t major_version          = 0;
+	uint16_t minor_version          = 0;
+	int number_of_recovered_records = 0;
+	int number_of_records           = 0;
 
 	if( info_handle == NULL )
 	{
@@ -393,20 +394,39 @@ int info_handle_file_fprint(
 
 		return( -1 );
 	}
+	if( libevtx_file_get_number_of_recovered_records(
+	     info_handle->input_file,
+	     &number_of_recovered_records,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of recovered records.",
+		 function );
+
+		return( -1 );
+	}
 	fprintf(
 	 info_handle->notify_stream,
-	 "Windows EventViewer Log (EVTX) information:\n" );
+	 "Windows Event Viewer Log (EVTX) information:\n" );
 
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tVersion\t\t\t: %" PRIu32 ".%" PRIu32 "\n",
+	 "\tVersion\t\t\t\t: %" PRIu32 ".%" PRIu32 "\n",
 	 major_version,
 	 minor_version );
 
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tNumber of records\t: %d\n",
+	 "\tNumber of records\t\t: %d\n",
 	 number_of_records );
+
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tNumber of recovered records\t: %d\n",
+	 number_of_recovered_records );
 
 	fprintf(
 	 info_handle->notify_stream,

@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Windows XML EventViewer Log (EVTX) file
+ * Shows information obtained from a Windows XML Event Viewer Log (EVTX) file
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -53,7 +53,7 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use evtxinfo to determine information about a Windows XML EventViewer\n"
+	fprintf( stream, "Use evtxinfo to determine information about a Windows XML Event Viewer\n"
 	                 "Log (EVTX) file\n\n" );
 
 	fprintf( stream, "Usage: evtxinfo [ -hvV ] source\n\n" );

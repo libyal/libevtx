@@ -221,13 +221,44 @@ int libevtx_chunks_table_read_record(
 
 		goto on_error;
 	}
-/* TODO
-	if( libfdata_vector_set_element_value_by_index(
-	     vector,
+/* TODO read record values */
+/* TODO get read record values at offset */
+/* TODO make sure record values are not freed elsewhere */
+	int record_index = 0;
+
+	if( libevtx_chunk_get_record(
+	     chunk,
+	     record_index,
+	     &record_values,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve chunk record: %" PRIu16 ".",
+		 function,
+		 record_index );
+
+		goto on_error;
+	}
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing chunk record: %" PRIu16 ".",
+		 function,
+		 record_index );
+
+		goto on_error;
+	}
+	if( libfdata_list_element_set_element_value(
+	     list_element,
 	     cache,
-	     element_index,
-	     (intptr_t *) chunk,
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunk_free,
+	     (intptr_t *) record_values,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
 	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
 	     error ) != 1 )
 	{
@@ -235,12 +266,11 @@ int libevtx_chunks_table_read_record(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set chunk as element value.",
+		 "%s: unable to set record values as element value.",
 		 function );
 
 		goto on_error;
 	}
-*/
 	return( 1 );
 
 on_error:

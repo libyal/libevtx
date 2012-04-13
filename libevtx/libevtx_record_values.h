@@ -53,6 +53,10 @@ struct libevtx_record_values
 	 */
 	uint64_t creation_time;
 
+	/* The event identifier
+	 */
+	uint64_t event_identifier;
+
 	/* The XML document
 	 */
 	libevtx_binary_xml_document_t *xml_document;

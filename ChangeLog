@@ -3,6 +3,7 @@ TODO
   - complete reading event records on demand with XML document
 * evtxeport:
   - rewrite using evtexport
+* add recovery scan
 * combine binary xml value subsitution code into single function?
 * add debug function for binary XML token types
 * chunk similar to libesedb page
@@ -13,6 +14,10 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120413
+* worked on evtxexport
+* worked on API
 
 20120410
 * worked on API

@@ -83,6 +83,12 @@ int libevtx_record_get_creation_time(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_record_get_event_identifier(
+     libevtx_record_t *record,
+     uint64_t *event_identifier,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_record_get_utf8_xml_string_size(
      libevtx_record_t *record,
      size_t *utf8_string_size,

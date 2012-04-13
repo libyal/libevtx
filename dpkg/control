@@ -10,8 +10,8 @@ Package: libevtx
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Library to support the Windows XML EventViewer Log (EVTX) format
- libevtx is a library to support the Windows XML EventViewer Log (EVTX) format.
+Description: Library to support the Windows XML Event Log (EVTX) format
+ libevtx is a library to support the Windows XML Event Log (EVTX) format.
 
 Package: libevtx-dev
 Section: libdevel
@@ -24,6 +24,6 @@ Package: libevtx-tools
 Section: utils
 Architecture: any
 Depends: libevtx (= ${Source-Version}), ${shlibs:Depends}
-Description: Several tools for reading Windows XML EventViewer Log (EVTX) files
- Several tools for reading Windows XML EventViewer Log (EVTX) files.
+Description: Several tools for reading Windows XML Event Log (EVTX) files
+ Several tools for reading Windows XML Event Log (EVTX) files.
 

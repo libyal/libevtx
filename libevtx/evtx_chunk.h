@@ -1,5 +1,5 @@
 /*
- * The chunk definition of a Windows XML EventViewer Log (EVTX) file
+ * The chunk definition of a Windows XML Event Log (EVTX) file
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *

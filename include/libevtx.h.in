@@ -1,5 +1,5 @@
 /*
- * Library to support the Windows XML EventViewer Log (EVTX) format
+ * Library to support the Windows XML Event Log (EVTX) format
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -281,6 +281,25 @@ int libevtx_file_get_record(
      libevtx_record_t **record,
      libevtx_error_t **error );
 
+/* Retrieves the number of recovered records
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_get_number_of_recovered_records(
+     libevtx_file_t *file,
+     int *number_of_records,
+     libevtx_error_t **error );
+
+/* Retrieves a specific recovered record
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_get_recovered_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
+     libevtx_error_t **error );
+
 /* -------------------------------------------------------------------------
  * Record functions
  * ------------------------------------------------------------------------- */
@@ -310,6 +329,15 @@ LIBEVTX_EXTERN \
 int libevtx_record_get_creation_time(
      libevtx_record_t *record,
      uint64_t *creation_time,
+     libevtx_error_t **error );
+
+/* Retrieves the event identifier
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_event_identifier(
+     libevtx_record_t *record,
+     uint64_t *event_identifier,
      libevtx_error_t **error );
 
 /* Retrieves the size of the UTF-8 encoded XML string

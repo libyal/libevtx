@@ -64,6 +64,10 @@ struct libevtx_internal_file
 	 */
 	libfdata_list_t *records_list;
 
+	/* The recovered records list
+	 */
+	libfdata_list_t *recovered_records_list;
+
 	/* The records cache
 	 */
 	libfcache_cache_t *records_cache;
@@ -143,6 +147,19 @@ int libevtx_file_get_number_of_records(
 
 LIBEVTX_EXTERN \
 int libevtx_file_get_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_get_number_of_recovered_records(
+     libevtx_file_t *file,
+     int *number_of_records,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_get_recovered_record(
      libevtx_file_t *file,
      int record_index,
      libevtx_record_t **record,
