@@ -25,6 +25,7 @@
 
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libclocale.h"
+#include "evtxtools_libcnotify.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"
@@ -470,11 +471,13 @@ int export_handle_export_record(
 {
 	libcstring_system_character_t filetime_string[ 32 ];
 
-	libfdatetime_filetime_t *filetime = NULL;
-	static char *function             = "export_handle_export_record";
-	uint64_t event_identifier         = 0;
-	uint64_t value_64bit              = 0;
-	int result                        = 0;
+	libfdatetime_filetime_t *filetime        = NULL;
+	libcstring_system_character_t *event_xml = NULL;
+	static char *function                    = "export_handle_export_record";
+	size_t event_xml_size                    = 0;
+	uint64_t event_identifier                = 0;
+	uint64_t value_64bit                     = 0;
+	int result                               = 0;
 
 	if( export_handle == NULL )
 	{
@@ -623,6 +626,76 @@ int export_handle_export_record(
 	 "Event identifier\t: 0x%08" PRIx64 "\n",
 	 event_identifier );
 
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libevtx_record_get_utf16_xml_string_size(
+	     record,
+	     &event_xml_size,
+	     error ) != 1 )
+#else
+	if( libevtx_record_get_utf8_xml_string_size(
+	     record,
+	     &event_xml_size,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event XML size.",
+		 function );
+
+		goto on_error;
+	}
+	if( event_xml_size > 0 )
+	{
+		event_xml = libcstring_system_string_allocate(
+		             event_xml_size );
+
+		if( event_xml == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create event XML.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libevtx_record_get_utf16_xml_string(
+		     record,
+		     (uint16_t *) event_xml,
+		     event_xml_size,
+		     error ) != 1 )
+#else
+		if( libevtx_record_get_utf8_xml_string(
+		     record,
+		     (uint8_t *) event_xml,
+		     event_xml_size,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve event XML.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Event XML\n%" PRIs_LIBCSTRING_SYSTEM "\n\n",
+		 event_xml );
+
+		memory_free(
+		 event_xml );
+
+		event_xml = NULL;
+	}
 	fprintf(
 	 export_handle->notify_stream,
 	 "\n" );
@@ -630,6 +703,11 @@ int export_handle_export_record(
 	return( 1 );
 
 on_error:
+	if( event_xml != NULL )
+	{
+		memory_free(
+		 event_xml );
+	}
 	if( filetime != NULL )
 	{
 		libfdatetime_filetime_free(
@@ -731,6 +809,14 @@ int export_handle_export_records(
 			 function,
 			 record_index );
 
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( ( error != NULL )
+			 && ( *error != NULL ) )
+			{
+				libcnotify_print_error_backtrace(
+				 *error );
+			}
+#endif
 			libcerror_error_free(
 			 error );
 		}
@@ -844,6 +930,14 @@ int export_handle_export_recovered_records(
 			 function,
 			 record_index );
 
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( ( error != NULL )
+			 && ( *error != NULL ) )
+			{
+				libcnotify_print_error_backtrace(
+				 *error );
+			}
+#endif
 			libcerror_error_free(
 			 error );
 		}

@@ -411,7 +411,7 @@ int libevtx_record_get_utf8_xml_string_size(
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                     = "libevtx_record_get_utf8_xml_string_size";
+	static char *function                      = "libevtx_record_get_utf8_xml_string_size";
 
 	if( record == NULL )
 	{
@@ -426,18 +426,20 @@ int libevtx_record_get_utf8_xml_string_size(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( internal_record->record_values == NULL )
+	if( libevtx_record_values_get_utf8_xml_string_size(
+	     internal_record->record_values,
+	     utf8_string_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of record values XML.",
 		 function );
 
 		return( -1 );
 	}
-/* TODO */
 	return( 1 );
 }
 
@@ -452,7 +454,7 @@ int libevtx_record_get_utf8_xml_string(
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                     = "libevtx_record_get_utf8_xml_string";
+	static char *function                      = "libevtx_record_get_utf8_xml_string";
 
 	if( record == NULL )
 	{
@@ -467,18 +469,107 @@ int libevtx_record_get_utf8_xml_string(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( internal_record->record_values == NULL )
+	if( libevtx_record_values_get_utf8_xml_string(
+	     internal_record->record_values,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy record values XML to UTF-8 string.",
 		 function );
 
 		return( -1 );
 	}
-/* TODO */
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded XML string
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_xml_string_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_xml_string_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_xml_string_size(
+	     internal_record->record_values,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of record values XML.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded XML string
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_xml_string(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_xml_string";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_xml_string(
+	     internal_record->record_values,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy record values XML to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

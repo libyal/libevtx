@@ -72,10 +72,36 @@ int libevtx_xml_tag_append_element(
      libevtx_xml_tag_t *element_xml_tag,
      libcerror_error_t **error );
 
+int libevtx_xml_tag_get_utf8_xml_string_size(
+     libevtx_xml_tag_t *xml_tag,
+     int xml_tag_level,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_utf8_xml_string(
+     libevtx_xml_tag_t *xml_tag,
+     int xml_tag_level,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_utf16_xml_string_size(
+     libevtx_xml_tag_t *xml_tag,
+     int xml_tag_level,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_utf16_xml_string(
+     libevtx_xml_tag_t *xml_tag,
+     int xml_tag_level,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 #if defined( HAVE_DEBUG_OUTPUT )
 int libevtx_xml_tag_debug_print(
      libevtx_xml_tag_t *xml_tag,
-     int indentation_level,
+     int xml_tag_level,
      libcerror_error_t **error );
 #endif
 

@@ -90,6 +90,28 @@ int libevtx_record_values_read_xml_document(
      size_t chunk_data_size,
      libcerror_error_t **error );
 
+int libevtx_record_values_get_utf8_xml_string_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_xml_string(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_xml_string_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_xml_string(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

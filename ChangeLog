@@ -1,4 +1,6 @@
 TODO
+* libfvalue:
+  - improve to value to string type support
 * libevtx:
   - create XML string
   - merge <File><File/>
