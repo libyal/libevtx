@@ -70,6 +70,11 @@ int libevtx_record_values_free(
      libevtx_record_values_t **record_values,
      libcerror_error_t **error );
 
+int libevtx_record_values_clone(
+     libevtx_record_values_t **destination_record_values,
+     libevtx_record_values_t *source_record_values,
+     libcerror_error_t **error );
+
 int libevtx_record_values_read_header(
      libevtx_record_values_t *record_values,
      libevtx_io_handle_t *io_handle,

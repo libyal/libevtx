@@ -1153,11 +1153,13 @@ int libevtx_file_open_read(
 
 				goto on_error;
 			}
+			/* The chunk index is stored in the element data size
+			 */
 			if( libfdata_list_append_element(
 			     internal_file->records_list,
 			     &element_index,
 			     file_offset + record_values->chunk_data_offset,
-			     (size64_t) record_values->data_size,
+			     (size64_t) chunk_index,
 			     0,
 			     error ) != 1 )
 			{

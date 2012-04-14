@@ -56,6 +56,11 @@ int libevtx_binary_xml_document_free(
      libevtx_binary_xml_document_t **binary_xml_document,
      libcerror_error_t **error );
 
+int libevtx_binary_xml_document_clone(
+     libevtx_binary_xml_document_t **destination_binary_xml_document,
+     libevtx_binary_xml_document_t *source_binary_xml_document,
+     libcerror_error_t **error );
+
 int libevtx_binary_xml_document_read(
      libevtx_binary_xml_document_t *binary_xml_document,
      libevtx_io_handle_t *io_handle,
@@ -113,6 +118,7 @@ int libevtx_binary_xml_document_read_normal_substitution(
      size_t chunk_data_offset,
      libevtx_array_t *template_values_array,
      libevtx_xml_tag_t *xml_tag,
+     size_t *repeat_offset,
      libcerror_error_t **error );
 
 int libevtx_binary_xml_document_read_optional_substitution(

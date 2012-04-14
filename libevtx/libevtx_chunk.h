@@ -47,6 +47,10 @@ struct libevtx_chunk
 	 */
 	size_t data_size;
 
+	/* The (chunk) file offset
+	 */
+	off64_t file_offset;
+
 	/* The records array
 	 */
 	libevtx_array_t *records_array;

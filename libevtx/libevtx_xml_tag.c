@@ -76,7 +76,7 @@ int libevtx_xml_tag_initialize(
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *xml_tag ),
+	     *xml_tag,
 	     0,
 	     sizeof( libevtx_xml_tag_t ) ) == NULL )
 	{

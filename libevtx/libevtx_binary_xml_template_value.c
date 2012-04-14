@@ -73,7 +73,7 @@ int libevtx_binary_xml_template_value_initialize(
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *binary_xml_template_value ),
+	     *binary_xml_template_value,
 	     0,
 	     sizeof( libevtx_binary_xml_template_value_t ) ) == NULL )
 	{

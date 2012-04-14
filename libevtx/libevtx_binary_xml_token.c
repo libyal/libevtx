@@ -76,7 +76,7 @@ int libevtx_binary_xml_token_initialize(
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *binary_xml_token ),
+	     *binary_xml_token,
 	     0,
 	     sizeof( libevtx_binary_xml_token_t ) ) == NULL )
 	{

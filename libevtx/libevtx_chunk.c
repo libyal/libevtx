@@ -84,7 +84,7 @@ int libevtx_chunk_initialize(
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *chunk ),
+	     *chunk,
 	     0,
 	     sizeof( libevtx_chunk_t ) ) == NULL )
 	{
@@ -269,6 +269,8 @@ int libevtx_chunk_read(
 
 		goto on_error;
 	}
+	chunk->file_offset = file_offset;
+
 	chunk->data = (uint8_t *) memory_allocate(
 	                           (size_t) io_handle->chunk_size );
 

@@ -82,7 +82,7 @@ int libevtx_binary_xml_document_initialize(
 		goto on_error;
 	}
 	if( memory_set(
-	     ( *binary_xml_document ),
+	     *binary_xml_document,
 	     0,
 	     sizeof( libevtx_binary_xml_document_t ) ) == NULL )
 	{
@@ -163,6 +163,58 @@ int libevtx_binary_xml_document_free(
 		*binary_xml_document = NULL;
 	}
 	return( result );
+}
+
+/* Clones the binary XML document
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_binary_xml_document_clone(
+     libevtx_binary_xml_document_t **destination_binary_xml_document,
+     libevtx_binary_xml_document_t *source_binary_xml_document,
+     libcerror_error_t **error )
+{
+	static char *function = "libevtx_binary_xml_document_free";
+
+	if( destination_binary_xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination binary XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_binary_xml_document != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid destination binary XML document value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_binary_xml_document == NULL )
+	{
+		*destination_binary_xml_document = NULL;
+
+		return( 1 );
+	}
+	/* TODO clone tags */
+
+	return( 1 );
+
+on_error:
+	if( *destination_binary_xml_document != NULL )
+	{
+		libevtx_binary_xml_document_free(
+		 destination_binary_xml_document,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Reads a binary XML document
@@ -1994,6 +2046,7 @@ int libevtx_binary_xml_document_read_normal_substitution(
      size_t chunk_data_offset,
      libevtx_array_t *template_values_array,
      libevtx_xml_tag_t *xml_tag,
+     size_t *repeat_offset,
      libcerror_error_t **error )
 {
 	libevtx_binary_xml_template_value_t *template_value = NULL;
@@ -2082,6 +2135,17 @@ int libevtx_binary_xml_document_read_normal_substitution(
 
 		return( -1 );
 	}
+	if( repeat_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid repeat offset.",
+		 function );
+
+		return( -1 );
+	}
 	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
 
@@ -2159,16 +2223,18 @@ int libevtx_binary_xml_document_read_normal_substitution(
 /* TODO check type with template type
  * NULL seems to be allowed
  */
-	switch( template_value_type & 0x7f )
+	switch( template_value_type )
 	{
 		case LIBEVTX_VALUE_TYPE_NULL:
 			break;
 
 		case LIBEVTX_VALUE_TYPE_STRING_UTF16:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_UTF16:
 			value_type = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
 			break;
 
 		case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_BYTE_STREAM:
 			value_type = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
 			break;
 
@@ -2247,6 +2313,7 @@ int libevtx_binary_xml_document_read_normal_substitution(
 
 /* TODO improve */
 		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
 			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
 			break;
 
@@ -2280,10 +2347,9 @@ int libevtx_binary_xml_document_read_normal_substitution(
 		}
 		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
 		{
-/* TODO pass codepage */
 			if( libfvalue_value_set_codepage(
 			     xml_tag->value,
-			     LIBFVALUE_CODEPAGE_ASCII,
+			     io_handle->ascii_codepage,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -2295,6 +2361,9 @@ int libevtx_binary_xml_document_read_normal_substitution(
 
 				goto on_error;
 			}
+		}
+		if( ( value_type & LIBEVTX_VALUE_TYPE_ARRAY ) != 0 )
+		{
 		}
 		if( libfvalue_value_set_data(
 		     xml_tag->value,
@@ -2534,16 +2603,18 @@ int libevtx_binary_xml_document_read_optional_substitution(
  * NULL seems to be allowed
  */
 
-	switch( template_value_type & 0x7f )
+	switch( template_value_type )
 	{
 		case LIBEVTX_VALUE_TYPE_NULL:
 			break;
 
 		case LIBEVTX_VALUE_TYPE_STRING_UTF16:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_UTF16:
 			value_type = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
 			break;
 
 		case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_BYTE_STREAM:
 			value_type = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
 			break;
 
@@ -2622,6 +2693,7 @@ int libevtx_binary_xml_document_read_optional_substitution(
 
 /* TODO improve */
 		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
+		case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
 			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
 			break;
 
@@ -2755,10 +2827,9 @@ int libevtx_binary_xml_document_read_optional_substitution(
 		}
 		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
 		{
-/* TODO pass codepage */
 			if( libfvalue_value_set_codepage(
 			     xml_tag->value,
-			     LIBFVALUE_CODEPAGE_ASCII,
+			     io_handle->ascii_codepage,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
