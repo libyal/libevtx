@@ -1,6 +1,7 @@
 TODO
 * libevtx:
-  - complete reading event records on demand with XML document
+  - create XML string
+  - merge <File><File/>
 * evtxeport:
   - rewrite using evtexport
   - export format: xml

@@ -95,19 +95,6 @@ int libevtx_binary_xml_document_initialize(
 
 		goto on_error;
 	}
-	if( libevtx_xml_tag_initialize(
-	     &( ( *binary_xml_document )->root_xml_tag ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create root XML tag.",
-		 function );
-
-		goto on_error;
-	}
 	return( 1 );
 
 on_error:
@@ -144,18 +131,21 @@ int libevtx_binary_xml_document_free(
 	}
 	if( *binary_xml_document != NULL )
 	{
-		if( libevtx_xml_tag_free(
-		     &( ( *binary_xml_document )->root_xml_tag ),
-		     error ) != 1 )
+		if( ( *binary_xml_document )->root_xml_tag != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free root XML tag.",
-			 function );
+			if( libevtx_xml_tag_free(
+			     &( ( *binary_xml_document )->root_xml_tag ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free root XML tag.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
 		memory_free(
 		 *binary_xml_document );
@@ -242,13 +232,13 @@ int libevtx_binary_xml_document_read(
 
 		return( -1 );
 	}
-	if( binary_xml_document->root_xml_tag == NULL )
+	if( binary_xml_document->root_xml_tag != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid binary XML document - missing root XML tag.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid binary XML document - root XML tag already set.",
 		 function );
 
 		return( -1 );
@@ -453,10 +443,16 @@ int libevtx_binary_xml_document_read_attribute(
      libcerror_error_t **error )
 {
 	libevtx_binary_xml_token_t *binary_xml_sub_token = NULL;
+	libevtx_xml_tag_t *attribute_xml_tag             = NULL;
+	const uint8_t *binary_xml_document_data          = NULL;
 	static char *function                            = "libevtx_binary_xml_document_read_attribute";
+	size_t binary_xml_document_data_offset           = 0;
+	size_t binary_xml_document_data_size             = 0;
 	size_t trailing_data_size                        = 0;
+	size_t template_value_offset                     = 0;
 	uint32_t attribute_name_offset                   = 0;
 	uint32_t attribute_name_size                     = 0;
+	int result                                       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit                             = 0;
@@ -530,7 +526,10 @@ int libevtx_binary_xml_document_read_attribute(
 
 		return( -1 );
 	}
-	if( ( chunk_data_offset + 5 ) >= chunk_data_size )
+	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
+	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
+
+	if( binary_xml_document_data_size < 5 )
 	{
 		libcerror_error_set(
 		 error,
@@ -540,213 +539,6 @@ int libevtx_binary_xml_document_read_attribute(
 		 function );
 
 		goto on_error;
-	}
-	if( xml_tag == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid XML tag.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: attribute data:\n",
-		 function );
-		libcnotify_print_data(
-		 &( chunk_data[ chunk_data_offset ] ),
-		 5,
-		 0 );
-	}
-#endif
-	byte_stream_copy_to_uint32_little_endian(
-	 &( chunk_data[ chunk_data_offset + 1 ] ),
-	 attribute_name_offset );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: type\t\t\t: 0x%02" PRIx8 "\n",
-		 function,
-		 &( chunk_data[ chunk_data_offset ] ) );
-
-		libcnotify_printf(
-		 "%s: name offset\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 attribute_name_offset );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	binary_xml_token->size = 5;
-	chunk_data_offset     += 5;
-
-	if( attribute_name_offset > chunk_data_offset )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid attribute data offset value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( chunk_data_offset < attribute_name_offset )
-	{
-		trailing_data_size = attribute_name_offset - chunk_data_offset;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: trailing data:\n",
-			 function );
-			libcnotify_print_data(
-			 &( chunk_data[ chunk_data_offset ] ),
-			 trailing_data_size,
-			 0 );
-		}
-#endif
-		binary_xml_token->size += trailing_data_size;
-		chunk_data_offset      += trailing_data_size;
-	}
-	if( ( attribute_name_offset + 8 ) > chunk_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid binary XML document data size value too small.",
-		 function );
-
-		goto on_error;
-	}
-	byte_stream_copy_to_uint16_little_endian(
-	 &( chunk_data[ attribute_name_offset + 6 ] ),
-	 attribute_name_size );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 &( chunk_data[ attribute_name_offset ] ),
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: name unknown1\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 &( chunk_data[ attribute_name_offset + 4 ] ),
-		 value_16bit );
-		libcnotify_printf(
-		 "%s: name hash\t\t\t: 0x%04" PRIx16 "\n",
-		 function,
-		 value_16bit );
-
-		libcnotify_printf(
-		 "%s: name number of characters\t: %" PRIu16 "\n",
-		 function,
-		 attribute_name_size );
-	}
-#endif
-	attribute_name_size += 1;
-	attribute_name_size *= 2;
-
-	if( ( attribute_name_offset + 8 + attribute_name_size ) > chunk_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid attribute name size value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: name data:\n",
-		 function );
-		libcnotify_print_data(
-		 &( chunk_data[ attribute_name_offset + 8 ] ),
-		 attribute_name_size,
-		 0 );
-	}
-#endif
-	if( libfvalue_value_initialize(
-	     &( xml_tag->name ),
-	     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create name value.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfvalue_value_set_data(
-	     xml_tag->name,
-	     &( chunk_data[ attribute_name_offset + 8 ] ),
-	     attribute_name_size,
-	     LIBFVALUE_ENDIAN_LITTLE,
-	     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set name value data.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: name\t\t\t: ",
-		 function );
-
-		if( libfvalue_debug_print_value(
-		     xml_tag->name,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print name value.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "\n" );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	if( chunk_data_offset == attribute_name_offset )
-	{
-		binary_xml_token->size += 8 + attribute_name_size;
-		chunk_data_offset      += 8 + attribute_name_size;
 	}
 	if( libevtx_binary_xml_token_initialize(
 	     &binary_xml_sub_token,
@@ -761,107 +553,370 @@ int libevtx_binary_xml_document_read_attribute(
 
 		goto on_error;
 	}
-	if( libevtx_binary_xml_token_read(
-	     binary_xml_sub_token,
-	     io_handle,
-	     chunk_data,
-	     chunk_data_size,
-	     chunk_data_offset,
-	     error ) != 1 )
+	do
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read binary XML sub token.",
-		 function );
-
-		goto on_error;
-	}
-	switch( binary_xml_sub_token->type & 0xbf )
-	{
-		case LIBEVTX_BINARY_XML_TOKEN_VALUE:
-/* TODO make sure this is a string value */
-			if( libevtx_binary_xml_document_read_value(
-			     binary_xml_document,
-			     binary_xml_sub_token,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read value.",
-				 function );
-
-				goto on_error;
-			}
-			break;
-
-		case LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION:
-			if( libevtx_binary_xml_document_read_normal_substitution(
-			     binary_xml_document,
-			     binary_xml_sub_token,
-			     io_handle,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     template_values_array,
-			     xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read normal substitution.",
-				 function );
-
-				goto on_error;
-			}
-			break;
-
-		case LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION:
-			if( libevtx_binary_xml_document_read_optional_substitution(
-			     binary_xml_document,
-			     binary_xml_sub_token,
-			     io_handle,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     template_values_array,
-			     xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read optional substitution.",
-				 function );
-
-				goto on_error;
-			}
-			break;
-
-		default:
+		if( libevtx_xml_tag_initialize(
+		     &attribute_xml_tag,
+		     error ) != 1 )
+		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: invalid binary XML sub token - unsupported type: 0x%02" PRIx8 ".",
-			 function,
-			 binary_xml_sub_token->type );
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create attribute XML tag.",
+			 function );
 
 			goto on_error;
-	}
-	binary_xml_token->size += binary_xml_sub_token->size;
-	chunk_data_offset      += binary_xml_sub_token->size;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: attribute data:\n",
+			 function );
+			libcnotify_print_data(
+			 binary_xml_document_data,
+			 5,
+			 0 );
+		}
+#endif
+		byte_stream_copy_to_uint32_little_endian(
+		 &( binary_xml_document_data[ 1 ] ),
+		 attribute_name_offset );
 
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: type\t\t\t: 0x%02" PRIx8 "\n",
+			 function,
+			 binary_xml_document_data[ 0 ] );
+
+			libcnotify_printf(
+			 "%s: name offset\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 attribute_name_offset );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		binary_xml_document_data_offset = 5;
+
+		if( attribute_name_offset > ( chunk_data_offset + binary_xml_document_data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid attribute data offset value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+		if( ( chunk_data_offset + binary_xml_document_data_offset ) < attribute_name_offset )
+		{
+			trailing_data_size = attribute_name_offset - ( chunk_data_offset - binary_xml_document_data_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: trailing data:\n",
+				 function );
+				libcnotify_print_data(
+				 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+				 trailing_data_size,
+				 0 );
+			}
+#endif
+			binary_xml_document_data_offset += trailing_data_size;
+		}
+		if( ( attribute_name_offset + 8 ) > chunk_data_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid binary XML document data size value too small.",
+			 function );
+
+			goto on_error;
+		}
+		byte_stream_copy_to_uint16_little_endian(
+		 &( chunk_data[ attribute_name_offset + 6 ] ),
+		 attribute_name_size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 &( chunk_data[ attribute_name_offset ] ),
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: name unknown1\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint16_little_endian(
+			 &( chunk_data[ attribute_name_offset + 4 ] ),
+			 value_16bit );
+			libcnotify_printf(
+			 "%s: name hash\t\t\t: 0x%04" PRIx16 "\n",
+			 function,
+			 value_16bit );
+
+			libcnotify_printf(
+			 "%s: name number of characters\t: %" PRIu16 "\n",
+			 function,
+			 attribute_name_size );
+		}
+#endif
+		attribute_name_size += 1;
+		attribute_name_size *= 2;
+
+		if( ( attribute_name_offset + 8 + attribute_name_size ) > chunk_data_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid attribute name size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: name data:\n",
+			 function );
+			libcnotify_print_data(
+			 &( chunk_data[ attribute_name_offset + 8 ] ),
+			 attribute_name_size,
+			 0 );
+		}
+#endif
+		if( libfvalue_value_initialize(
+		     &( attribute_xml_tag->name ),
+		     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create name value.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfvalue_value_set_data(
+		     attribute_xml_tag->name,
+		     &( chunk_data[ attribute_name_offset + 8 ] ),
+		     attribute_name_size,
+		     LIBFVALUE_ENDIAN_LITTLE,
+		     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set name value data.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: name\t\t\t: ",
+			 function );
+
+			if( libfvalue_debug_print_value(
+			     attribute_xml_tag->name,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print name value.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "\n" );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		if( ( chunk_data_offset + binary_xml_document_data_offset ) == attribute_name_offset )
+		{
+			binary_xml_document_data_offset += 8 + attribute_name_size;
+		}
+		if( libevtx_binary_xml_token_read(
+		     binary_xml_sub_token,
+		     io_handle,
+		     chunk_data,
+		     chunk_data_size,
+		     chunk_data_offset + binary_xml_document_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read binary XML sub token.",
+			 function );
+
+			goto on_error;
+		}
+		result = 1;
+
+		switch( binary_xml_sub_token->type & 0xbf )
+		{
+			case LIBEVTX_BINARY_XML_TOKEN_VALUE:
+				if( template_value_offset != 0 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+					 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid template value offset value out of bounds.",
+					 function );
+
+					goto on_error;
+				}
+				if( libevtx_binary_xml_document_read_value(
+				     binary_xml_document,
+				     binary_xml_sub_token,
+				     chunk_data,
+				     chunk_data_size,
+				     chunk_data_offset + binary_xml_document_data_offset,
+				     attribute_xml_tag,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read value.",
+					 function );
+
+					goto on_error;
+				}
+				break;
+
+			case LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION:
+				result = libevtx_binary_xml_document_read_normal_substitution(
+				          binary_xml_document,
+				          binary_xml_sub_token,
+				          io_handle,
+				          chunk_data,
+				          chunk_data_size,
+				          chunk_data_offset + binary_xml_document_data_offset,
+				          template_values_array,
+				          &template_value_offset,
+				          attribute_xml_tag,
+				          error );
+
+				if( result == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read normal substitution.",
+					 function );
+
+					goto on_error;
+				}
+				break;
+
+			case LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION:
+				result = libevtx_binary_xml_document_read_optional_substitution(
+					  binary_xml_document,
+					  binary_xml_sub_token,
+					  io_handle,
+					  chunk_data,
+					  chunk_data_size,
+					  chunk_data_offset + binary_xml_document_data_offset,
+					  template_values_array,
+					  &template_value_offset,
+					  attribute_xml_tag,
+					  error );
+
+				if( result == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read optional substitution.",
+					 function );
+
+					goto on_error;
+				}
+				break;
+
+			default:
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 "%s: invalid binary XML sub token - unsupported type: 0x%02" PRIx8 ".",
+				 function,
+				 binary_xml_sub_token->type );
+
+				goto on_error;
+		}
+		if( result != 0 )
+		{
+			if( libevtx_xml_tag_append_attribute(
+			     xml_tag,
+			     attribute_xml_tag,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append attribute to XML tag.",
+				 function );
+
+				goto on_error;
+			}
+			attribute_xml_tag = NULL;
+		}
+		binary_xml_document_data_offset += binary_xml_sub_token->size;
+	}
+	while( template_value_offset > 0 );
+
+	binary_xml_token->size = binary_xml_document_data_offset;
+
+	if( attribute_xml_tag != NULL )
+	{
+		if( libevtx_xml_tag_free(
+		     &attribute_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free attribute XML tag.",
+			 function );
+
+			goto on_error;
+		}
+	}
 	if( libevtx_binary_xml_token_free(
 	     &binary_xml_sub_token,
 	     error ) != 1 )
@@ -878,16 +933,16 @@ int libevtx_binary_xml_document_read_attribute(
 	return( 1 );
 
 on_error:
+	if( attribute_xml_tag != NULL )
+	{
+		libevtx_xml_tag_free(
+		 &attribute_xml_tag,
+		 NULL );
+	}
 	if( binary_xml_sub_token != NULL )
 	{
 		libevtx_binary_xml_token_free(
 		 &binary_xml_sub_token,
-		 NULL );
-	}
-	if( xml_tag->name != NULL )
-	{
-		libfvalue_value_free(
-		 &( xml_tag->name ),
 		 NULL );
 	}
 	return( -1 );
@@ -908,16 +963,18 @@ int libevtx_binary_xml_document_read_element(
      libcerror_error_t **error )
 {
 	libevtx_binary_xml_token_t *binary_xml_sub_token = NULL;
-	libevtx_xml_tag_t *attribute_xml_tag             = NULL;
 	libevtx_xml_tag_t *element_xml_tag               = NULL;
 	const uint8_t *binary_xml_document_data          = NULL;
 	static char *function                            = "libevtx_binary_xml_document_read_element";
+	size_t binary_xml_document_data_offset           = 0;
 	size_t binary_xml_document_data_size             = 0;
 	size_t trailing_data_size                        = 0;
+	size_t template_value_offset                     = 0;
 	uint32_t attribute_list_size                     = 0;
 	uint32_t element_name_offset                     = 0;
 	uint32_t element_name_size                       = 0;
 	uint32_t element_size                            = 0;
+	int result                                       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit                             = 0;
@@ -991,17 +1048,6 @@ int libevtx_binary_xml_document_read_element(
 
 		return( -1 );
 	}
-	if( xml_tag == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid XML tag.",
-		 function );
-
-		return( -1 );
-	}
 	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
 
@@ -1016,226 +1062,6 @@ int libevtx_binary_xml_document_read_element(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: element data:\n",
-		 function );
-		libcnotify_print_data(
-		 binary_xml_document_data,
-		 11,
-		 0 );
-	}
-#endif
-	byte_stream_copy_to_uint32_little_endian(
-	 &( binary_xml_document_data[ 3 ] ),
-	 element_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( binary_xml_document_data[ 7 ] ),
-	 element_name_offset );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
-		 function,
-		 binary_xml_document_data[ 0 ] );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 &( binary_xml_document_data[ 1 ] ),
-		 value_16bit );
-		libcnotify_printf(
-		 "%s: dependency identifier\t\t: %" PRIi16 " (0x%04" PRIx16 ")\n",
-		 function,
-		 (int16_t) value_16bit,
-		 value_16bit );
-
-		libcnotify_printf(
-		 "%s: size\t\t\t\t: %" PRIu32 "\n",
-		 function,
-		 element_size );
-
-		libcnotify_printf(
-		 "%s: name offset\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 element_name_offset );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	binary_xml_token->size = 11;
-	chunk_data_offset     += 11;
-
-	/* The first 7 bytes are not included in the element size
-	 */
-	element_size -= 4;
-
-	if( element_name_offset > chunk_data_offset )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid element data offset value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( chunk_data_offset < element_name_offset )
-	{
-		trailing_data_size = element_name_offset - chunk_data_offset;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: trailing data:\n",
-			 function );
-			libcnotify_print_data(
-			 &( chunk_data[ chunk_data_offset ] ),
-			 trailing_data_size,
-			 0 );
-		}
-#endif
-		binary_xml_token->size += trailing_data_size;
-		chunk_data_offset      += trailing_data_size;
-		element_size           -= trailing_data_size;
-	}
-	if( ( element_name_offset + 8 ) > chunk_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid binary XML document data size value too small.",
-		 function );
-
-		goto on_error;
-	}
-	byte_stream_copy_to_uint16_little_endian(
-	 &( chunk_data[ element_name_offset + 6 ] ),
-	 element_name_size );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		byte_stream_copy_to_uint32_little_endian(
-		 &( chunk_data[ element_name_offset ] ),
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: name unknown1\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		byte_stream_copy_to_uint16_little_endian(
-		 &( chunk_data[ element_name_offset + 4 ] ),
-		 value_16bit );
-		libcnotify_printf(
-		 "%s: name hash\t\t\t: 0x%04" PRIx16 "\n",
-		 function,
-		 value_16bit );
-
-		libcnotify_printf(
-		 "%s: name number of characters\t: %" PRIu16 "\n",
-		 function,
-		 element_name_size );
-	}
-#endif
-	element_name_size += 1;
-	element_name_size *= 2;
-
-	if( ( element_name_offset + 8 + element_name_size ) > chunk_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid element name size value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: name data:\n",
-		 function );
-		libcnotify_print_data(
-		 &( chunk_data[ element_name_offset + 8 ] ),
-		 element_name_size,
-		 0 );
-	}
-#endif
-	if( libfvalue_value_initialize(
-	     &( xml_tag->name ),
-	     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create name value.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfvalue_value_set_data(
-	     xml_tag->name,
-	     &( chunk_data[ element_name_offset + 8 ] ),
-	     element_name_size,
-	     LIBFVALUE_ENDIAN_LITTLE,
-	     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set name value data.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: name\t\t\t\t: ",
-		 function );
-
-		if( libfvalue_debug_print_value(
-		     xml_tag->name,
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print name value.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "\n" );
-
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	if( chunk_data_offset == element_name_offset )
-	{
-		binary_xml_token->size += 8 + element_name_size;
-		chunk_data_offset      += 8 + element_name_size;
-		element_size           -= 8 + element_name_size;
-	}
 	if( libevtx_binary_xml_token_initialize(
 	     &binary_xml_sub_token,
 	     error ) != 1 )
@@ -1249,9 +1075,369 @@ int libevtx_binary_xml_document_read_element(
 
 		goto on_error;
 	}
-	if( ( binary_xml_token->type & LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA ) != 0 )
+	do
 	{
-		if( ( chunk_data_offset + 4 ) > chunk_data_size )
+		if( libevtx_xml_tag_initialize(
+		     &element_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create element XML tag.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: element data:\n",
+			 function );
+			libcnotify_print_data(
+			 binary_xml_document_data,
+			 11,
+			 0 );
+		}
+#endif
+		byte_stream_copy_to_uint32_little_endian(
+		 &( binary_xml_document_data[ 3 ] ),
+		 element_size );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 &( binary_xml_document_data[ 7 ] ),
+		 element_name_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
+			 function,
+			 binary_xml_document_data[ 0 ] );
+
+			byte_stream_copy_to_uint16_little_endian(
+			 &( binary_xml_document_data[ 1 ] ),
+			 value_16bit );
+			libcnotify_printf(
+			 "%s: dependency identifier\t\t: %" PRIi16 " (0x%04" PRIx16 ")\n",
+			 function,
+			 (int16_t) value_16bit,
+			 value_16bit );
+
+			libcnotify_printf(
+			 "%s: size\t\t\t\t: %" PRIu32 "\n",
+			 function,
+			 element_size );
+
+			libcnotify_printf(
+			 "%s: name offset\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 element_name_offset );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		binary_xml_document_data_offset = 11;
+
+		/* The first 7 bytes are not included in the element size
+		 */
+		element_size -= 4;
+
+		if( element_name_offset > ( chunk_data_offset + binary_xml_document_data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid element data offset value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+		if( ( chunk_data_offset + binary_xml_document_data_offset ) < element_name_offset )
+		{
+			trailing_data_size = element_name_offset - ( chunk_data_offset + binary_xml_document_data_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: trailing data:\n",
+				 function );
+				libcnotify_print_data(
+				 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+				 trailing_data_size,
+				 0 );
+			}
+#endif
+			binary_xml_document_data_offset += trailing_data_size;
+			element_size                    -= trailing_data_size;
+		}
+		if( ( element_name_offset + 8 ) > chunk_data_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid binary XML document data size value too small.",
+			 function );
+
+			goto on_error;
+		}
+		byte_stream_copy_to_uint16_little_endian(
+		 &( chunk_data[ element_name_offset + 6 ] ),
+		 element_name_size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 &( chunk_data[ element_name_offset ] ),
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: name unknown1\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			byte_stream_copy_to_uint16_little_endian(
+			 &( chunk_data[ element_name_offset + 4 ] ),
+			 value_16bit );
+			libcnotify_printf(
+			 "%s: name hash\t\t\t: 0x%04" PRIx16 "\n",
+			 function,
+			 value_16bit );
+
+			libcnotify_printf(
+			 "%s: name number of characters\t: %" PRIu16 "\n",
+			 function,
+			 element_name_size );
+		}
+#endif
+		element_name_size += 1;
+		element_name_size *= 2;
+
+		if( ( element_name_offset + 8 + element_name_size ) > chunk_data_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid element name size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: name data:\n",
+			 function );
+			libcnotify_print_data(
+			 &( chunk_data[ element_name_offset + 8 ] ),
+			 element_name_size,
+			 0 );
+		}
+#endif
+		if( libfvalue_value_initialize(
+		     &( element_xml_tag->name ),
+		     LIBFVALUE_VALUE_TYPE_STRING_UTF16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create name value.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfvalue_value_set_data(
+		     element_xml_tag->name,
+		     &( chunk_data[ element_name_offset + 8 ] ),
+		     element_name_size,
+		     LIBFVALUE_ENDIAN_LITTLE,
+		     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set name value data.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: name\t\t\t\t: ",
+			 function );
+
+			if( libfvalue_debug_print_value(
+			     element_xml_tag->name,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print name value.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "\n" );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		if( ( chunk_data_offset + binary_xml_document_data_offset ) == element_name_offset )
+		{
+			binary_xml_document_data_offset += 8 + element_name_size;
+			element_size                    -= 8 + element_name_size;
+		}
+		if( ( binary_xml_token->type & LIBEVTX_BINARY_XML_TOKEN_FLAG_HAS_MORE_DATA ) != 0 )
+		{
+			if( ( chunk_data_offset + binary_xml_document_data_offset + 4 ) > chunk_data_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid binary XML document data size value too small.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: attribute list data:\n",
+				 function );
+				libcnotify_print_data(
+				 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+				 4,
+				 0 );
+			}
+#endif
+			byte_stream_copy_to_uint32_little_endian(
+			 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+			 attribute_list_size );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: attribute list size\t\t: %" PRIu32 "\n",
+				 function,
+				 attribute_list_size );
+
+				libcnotify_printf(
+				 "\n" );
+			}
+#endif
+			binary_xml_document_data_offset += 4;
+			element_size                    -= 4;
+
+			while( attribute_list_size > 0 )
+			{
+				if( libevtx_binary_xml_token_read(
+				     binary_xml_sub_token,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     chunk_data_offset + binary_xml_document_data_offset,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read binary XML sub token.",
+					 function );
+
+					goto on_error;
+				}
+				if( libevtx_binary_xml_document_read_attribute(
+				     binary_xml_document,
+				     binary_xml_sub_token,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     chunk_data_offset + binary_xml_document_data_offset,
+				     template_values_array,
+				     element_xml_tag,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read attribute.",
+					 function );
+
+					goto on_error;
+				}
+				binary_xml_document_data_offset += binary_xml_sub_token->size;
+				element_size                    -= binary_xml_sub_token->size;
+
+				if( attribute_list_size < binary_xml_sub_token->size )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid attribute list size value too small.",
+					 function );
+
+					goto on_error;
+				}
+				attribute_list_size -= binary_xml_sub_token->size;
+			}
+		}
+		if( libevtx_binary_xml_token_read(
+		     binary_xml_sub_token,
+		     io_handle,
+		     chunk_data,
+		     chunk_data_size,
+		     chunk_data_offset + binary_xml_document_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read binary XML sub token.",
+			 function );
+
+			goto on_error;
+		}
+		if( ( binary_xml_sub_token->type != LIBEVTX_BINARY_XML_TOKEN_CLOSE_START_ELEMENT_TAG )
+		 && ( binary_xml_sub_token->type != LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: invalid binary XML token - unsupported type: 0x%02" PRIx8 ".",
+			 function,
+			 binary_xml_token->type );
+
+			return( -1 );
+		}
+		if( ( chunk_data_offset + binary_xml_document_data_offset + 1 ) > chunk_data_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -1266,416 +1452,297 @@ int libevtx_binary_xml_document_read_element(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: attribute list data:\n",
+			 "%s: close element tag data:\n",
 			 function );
 			libcnotify_print_data(
-			 &( chunk_data[ chunk_data_offset ] ),
-			 4,
+			 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+			 1,
 			 0 );
 		}
 #endif
-		byte_stream_copy_to_uint32_little_endian(
-		 &( chunk_data[ chunk_data_offset ] ),
-		 attribute_list_size );
-
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: attribute list size\t\t: %" PRIu32 "\n",
+			 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
 			 function,
-			 attribute_list_size );
+			 binary_xml_document_data[ binary_xml_document_data_offset ] );
 
 			libcnotify_printf(
 			 "\n" );
 		}
 #endif
-		binary_xml_token->size += 4;
-		chunk_data_offset      += 4;
-		element_size           -= 4;
+		binary_xml_document_data_offset += 1;
+		element_size                    -= 1;
 
-		while( attribute_list_size > 0 )
+		if( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_CLOSE_START_ELEMENT_TAG )
 		{
-			if( libevtx_binary_xml_token_read(
-			     binary_xml_sub_token,
-			     io_handle,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     error ) != 1 )
+			result = 1;
+
+			while( element_size > 0 )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read binary XML sub token.",
-				 function );
+				if( libevtx_binary_xml_token_read(
+				     binary_xml_sub_token,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     chunk_data_offset + binary_xml_document_data_offset,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read binary XML sub token.",
+					 function );
 
-				goto on_error;
-			}
-			if( libevtx_xml_tag_initialize(
-			     &attribute_xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create attribute XML tag.",
-				 function );
+					goto on_error;
+				}
+				switch( binary_xml_sub_token->type & 0xbf )
+				{
+					case LIBEVTX_BINARY_XML_TOKEN_OPEN_START_ELEMENT_TAG:
+						if( libevtx_binary_xml_document_read_element(
+						     binary_xml_document,
+						     binary_xml_sub_token,
+						     io_handle,
+						     chunk_data,
+						     chunk_data_size,
+						     chunk_data_offset + binary_xml_document_data_offset,
+						     template_values_array,
+						     element_xml_tag,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_IO,
+							 LIBCERROR_IO_ERROR_READ_FAILED,
+							 "%s: unable to read element.",
+							 function );
 
-				goto on_error;
-			}
-			if( libevtx_binary_xml_document_read_attribute(
-			     binary_xml_document,
-			     binary_xml_sub_token,
-			     io_handle,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     template_values_array,
-			     attribute_xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read attribute.",
-				 function );
+							goto on_error;
+						}
+						break;
 
-				goto on_error;
-			}
-			if( libevtx_xml_tag_append_attribute(
-			     xml_tag,
-			     attribute_xml_tag,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append attribute to XML tag.",
-				 function );
+					case LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG:
+					case LIBEVTX_BINARY_XML_TOKEN_END_ELEMENT_TAG:
+						if( ( chunk_data_offset + binary_xml_document_data_offset + 1 ) > chunk_data_size )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+							 "%s: invalid binary XML document data size value too small.",
+							 function );
 
-				goto on_error;
-			}
-			attribute_xml_tag = NULL;
-
-			binary_xml_token->size += binary_xml_sub_token->size;
-			chunk_data_offset      += binary_xml_sub_token->size;
-			element_size           -= binary_xml_sub_token->size;
-
-			if( attribute_list_size < binary_xml_sub_token->size )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid attribute list size value too small.",
-				 function );
-
-				goto on_error;
-			}
-			attribute_list_size -= binary_xml_sub_token->size;
-		}
-	}
-	if( libevtx_binary_xml_token_read(
-	     binary_xml_sub_token,
-	     io_handle,
-	     chunk_data,
-	     chunk_data_size,
-	     chunk_data_offset,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read binary XML sub token.",
-		 function );
-
-		goto on_error;
-	}
-	if( ( binary_xml_sub_token->type != LIBEVTX_BINARY_XML_TOKEN_CLOSE_START_ELEMENT_TAG )
-	 && ( binary_xml_sub_token->type != LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: invalid binary XML token - unsupported type: 0x%02" PRIx8 ".",
-		 function,
-		 binary_xml_token->type );
-
-		return( -1 );
-	}
-	if( ( chunk_data_offset + 1 ) > chunk_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid binary XML document data size value too small.",
-		 function );
-
-		goto on_error;
-	}
+							goto on_error;
+						}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: close element tag data:\n",
-		 function );
-		libcnotify_print_data(
-		 &( chunk_data[ chunk_data_offset ] ),
-		 1,
-		 0 );
-	}
+						if( libcnotify_verbose != 0 )
+						{
+							libcnotify_printf(
+							 "%s: end element tag data:\n",
+							 function );
+							libcnotify_print_data(
+							 &( binary_xml_document_data[ binary_xml_document_data_offset ] ),
+							 1,
+							 0 );
+						}
 #endif
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
-		 function,
-		 chunk_data[ chunk_data_offset ] );
+						if( libcnotify_verbose != 0 )
+						{
+							libcnotify_printf(
+							 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
+							 function,
+							 binary_xml_document_data[ binary_xml_document_data_offset ] );
 
-		libcnotify_printf(
-		 "\n" );
-	}
+							libcnotify_printf(
+							 "\n" );
+						}
 #endif
-	binary_xml_token->size += 1;
-	chunk_data_offset      += 1;
-	element_size           -= 1;
+						binary_xml_sub_token->size = 1;
 
-	if( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_CLOSE_START_ELEMENT_TAG )
-	{
-		while( element_size > 0 )
-		{
-			if( libevtx_binary_xml_token_read(
-			     binary_xml_sub_token,
-			     io_handle,
-			     chunk_data,
-			     chunk_data_size,
-			     chunk_data_offset,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read binary XML sub token.",
-				 function );
+						break;
 
-				goto on_error;
-			}
-			switch( binary_xml_sub_token->type & 0xbf )
-			{
-				case LIBEVTX_BINARY_XML_TOKEN_OPEN_START_ELEMENT_TAG:
-					if( libevtx_xml_tag_initialize(
-					     &element_xml_tag,
-					     error ) != 1 )
-					{
+					case LIBEVTX_BINARY_XML_TOKEN_VALUE:
+						if( template_value_offset != 0 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+							 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+							 "%s: invalid template value offset value out of bounds.",
+							 function );
+
+							goto on_error;
+						}
+						if( libevtx_binary_xml_document_read_value(
+						     binary_xml_document,
+						     binary_xml_sub_token,
+						     chunk_data,
+						     chunk_data_size,
+						     chunk_data_offset + binary_xml_document_data_offset,
+						     element_xml_tag,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_IO,
+							 LIBCERROR_IO_ERROR_READ_FAILED,
+							 "%s: unable to read value.",
+							 function );
+
+							goto on_error;
+						}
+						break;
+
+					case LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION:
+						result = libevtx_binary_xml_document_read_normal_substitution(
+							  binary_xml_document,
+							  binary_xml_sub_token,
+							  io_handle,
+							  chunk_data,
+							  chunk_data_size,
+							  chunk_data_offset + binary_xml_document_data_offset,
+							  template_values_array,
+							  &template_value_offset,
+							  element_xml_tag,
+							  error );
+
+						if( result == -1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_IO,
+							 LIBCERROR_IO_ERROR_READ_FAILED,
+							 "%s: unable to read normal substitution.",
+							 function );
+
+							goto on_error;
+						}
+						break;
+
+					case LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION:
+						result = libevtx_binary_xml_document_read_optional_substitution(
+							  binary_xml_document,
+							  binary_xml_sub_token,
+							  io_handle,
+							  chunk_data,
+							  chunk_data_size,
+							  chunk_data_offset + binary_xml_document_data_offset,
+							  template_values_array,
+							  &template_value_offset,
+							  element_xml_tag,
+							  error );
+
+						if( result == -1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_IO,
+							 LIBCERROR_IO_ERROR_READ_FAILED,
+							 "%s: unable to read optional substitution.",
+							 function );
+
+							goto on_error;
+						}
+						break;
+
+					default:
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-						 "%s: unable to create element XML tag.",
-						 function );
-
-						goto on_error;
-					}
-					if( libevtx_binary_xml_document_read_element(
-					     binary_xml_document,
-					     binary_xml_sub_token,
-					     io_handle,
-					     chunk_data,
-					     chunk_data_size,
-					     chunk_data_offset,
-					     template_values_array,
-					     element_xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_READ_FAILED,
-						 "%s: unable to read element.",
-						 function );
-
-						goto on_error;
-					}
-					if( libevtx_xml_tag_append_element(
-					     xml_tag,
-					     element_xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-						 "%s: unable to append element to XML tag.",
-						 function );
-
-						goto on_error;
-					}
-					element_xml_tag = NULL;
-
-					break;
-
-				case LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG:
-				case LIBEVTX_BINARY_XML_TOKEN_END_ELEMENT_TAG:
-					if( ( chunk_data_offset + 1 ) > chunk_data_size )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-						 "%s: invalid binary XML document data size value too small.",
-						 function );
-
-						goto on_error;
-					}
-#if defined( HAVE_DEBUG_OUTPUT )
-					if( libcnotify_verbose != 0 )
-					{
-						libcnotify_printf(
-						 "%s: end element tag data:\n",
-						 function );
-						libcnotify_print_data(
-						 &( chunk_data[ chunk_data_offset ] ),
-						 1,
-						 0 );
-					}
-#endif
-#if defined( HAVE_DEBUG_OUTPUT )
-					if( libcnotify_verbose != 0 )
-					{
-						libcnotify_printf(
-						 "%s: type\t\t\t\t: 0x%02" PRIx8 "\n",
+						 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+						 "%s: invalid binary XML sub token - unsupported type: 0x%02" PRIx8 ".",
 						 function,
-						 chunk_data[ chunk_data_offset ] );
-
-						libcnotify_printf(
-						 "\n" );
-					}
-#endif
-					binary_xml_sub_token->size = 1;
-
-					break;
-
-				case LIBEVTX_BINARY_XML_TOKEN_VALUE:
-					if( libevtx_binary_xml_document_read_value(
-					     binary_xml_document,
-					     binary_xml_sub_token,
-					     chunk_data,
-					     chunk_data_size,
-					     chunk_data_offset,
-					     xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_READ_FAILED,
-						 "%s: unable to read value.",
-						 function );
+						 binary_xml_sub_token->type );
 
 						goto on_error;
-					}
-					break;
+				}
+				binary_xml_document_data_offset += binary_xml_sub_token->size;
 
-				case LIBEVTX_BINARY_XML_TOKEN_NORMAL_SUBSTITUTION:
-					if( libevtx_binary_xml_document_read_normal_substitution(
-					     binary_xml_document,
-					     binary_xml_sub_token,
-					     io_handle,
-					     chunk_data,
-					     chunk_data_size,
-					     chunk_data_offset,
-					     template_values_array,
-					     xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_READ_FAILED,
-						 "%s: unable to read normal substitution.",
-						 function );
-
-						goto on_error;
-					}
-					break;
-
-				case LIBEVTX_BINARY_XML_TOKEN_OPTIONAL_SUBSTITUTION:
-					if( libevtx_binary_xml_document_read_optional_substitution(
-					     binary_xml_document,
-					     binary_xml_sub_token,
-					     io_handle,
-					     chunk_data,
-					     chunk_data_size,
-					     chunk_data_offset,
-					     template_values_array,
-					     xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_READ_FAILED,
-						 "%s: unable to read optional substitution.",
-						 function );
-
-						goto on_error;
-					}
-					break;
-
-				default:
+				if( element_size < binary_xml_sub_token->size )
+				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: invalid binary XML sub token - unsupported type: 0x%02" PRIx8 ".",
-					 function,
-					 binary_xml_sub_token->type );
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid element size value too small.",
+					 function );
 
 					goto on_error;
+				}
+				element_size -= binary_xml_sub_token->size;
+
+				if( ( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG )
+				 || ( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_END_ELEMENT_TAG ) )
+				{
+					break;
+				}
 			}
-			binary_xml_token->size += binary_xml_sub_token->size;
-			chunk_data_offset      += binary_xml_sub_token->size;
+		}
+		else if( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG )
+		{
+			result = 1;
+		}
+		if( element_size > 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid element size value out of bounds.",
+			 function );
 
-			if( element_size < binary_xml_sub_token->size )
+			goto on_error;
+		}
+		if( result != 0 )
+		{
+			if( xml_tag != NULL )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid element size value too small.",
-				 function );
+				if( libevtx_xml_tag_append_element(
+				     xml_tag,
+				     element_xml_tag,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append element to XML tag.",
+					 function );
 
-				goto on_error;
+					goto on_error;
+				}
+				element_xml_tag = NULL;
 			}
-			element_size -= binary_xml_sub_token->size;
-
-			if( ( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_CLOSE_EMPTY_ELEMENT_TAG )
-			 || ( binary_xml_sub_token->type == LIBEVTX_BINARY_XML_TOKEN_END_ELEMENT_TAG ) )
+			else if(  binary_xml_document->root_xml_tag == NULL )
 			{
-				break;
+				binary_xml_document->root_xml_tag = element_xml_tag;
+
+				element_xml_tag = NULL;
 			}
 		}
 	}
-	if( element_size > 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid element size value out of bounds.",
-		 function );
+	while( template_value_offset > 0 );
 
-		goto on_error;
+	binary_xml_token->size = binary_xml_document_data_offset;
+
+	if( element_xml_tag != NULL )
+	{
+		if( libevtx_xml_tag_free(
+		     &element_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free element XML tag.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	if( libevtx_binary_xml_token_free(
 	     &binary_xml_sub_token,
@@ -1693,13 +1760,8 @@ int libevtx_binary_xml_document_read_element(
 	return( 1 );
 
 on_error:
-	if( attribute_xml_tag != NULL )
-	{
-		libevtx_xml_tag_free(
-		 &attribute_xml_tag,
-		 NULL );
-	}
-	if( element_xml_tag != NULL )
+	if( ( element_xml_tag != NULL )
+	 && ( element_xml_tag != binary_xml_document->root_xml_tag ) )
 	{
 		libevtx_xml_tag_free(
 		 &element_xml_tag,
@@ -1709,12 +1771,6 @@ on_error:
 	{
 		libevtx_binary_xml_token_free(
 		 &binary_xml_sub_token,
-		 NULL );
-	}
-	if( xml_tag->name != NULL )
-	{
-		libfvalue_value_free(
-		 &( xml_tag->name ),
 		 NULL );
 	}
 	return( -1 );
@@ -2045,17 +2101,16 @@ int libevtx_binary_xml_document_read_normal_substitution(
      size_t chunk_data_size,
      size_t chunk_data_offset,
      libevtx_array_t *template_values_array,
+     size_t *template_value_offset,
      libevtx_xml_tag_t *xml_tag,
-     size_t *repeat_offset,
      libcerror_error_t **error )
 {
-	libevtx_binary_xml_template_value_t *template_value = NULL;
-	const uint8_t *binary_xml_document_data             = NULL;
-	static char *function                               = "libevtx_binary_xml_document_read_normal_substitution";
-	size_t binary_xml_document_data_size                = 0;
-	uint16_t template_value_index                       = 0;
-	uint8_t template_value_type                         = 0;
-	uint8_t value_type                                  = 0;
+	const uint8_t *binary_xml_document_data = NULL;
+	static char *function                   = "libevtx_binary_xml_document_read_normal_substitution";
+	size_t binary_xml_document_data_size    = 0;
+	uint16_t template_value_index           = 0;
+	uint8_t template_value_type             = 0;
+	int result                              = 0;
 
 	if( binary_xml_document == NULL )
 	{
@@ -2124,28 +2179,6 @@ int libevtx_binary_xml_document_read_normal_substitution(
 
 		return( -1 );
 	}
-	if( xml_tag == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid XML tag.",
-		 function );
-
-		return( -1 );
-	}
-	if( repeat_offset == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid repeat offset.",
-		 function );
-
-		return( -1 );
-	}
 	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
 
@@ -2158,7 +2191,7 @@ int libevtx_binary_xml_document_read_normal_substitution(
 		 "%s: invalid binary XML document data size value too small.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -2199,232 +2232,42 @@ int libevtx_binary_xml_document_read_normal_substitution(
 		 template_value_type );
 		libcnotify_printf(
 		 ")\n" );
+
+		libcnotify_printf(
+		 "\n" );
 	}
 #endif
 	binary_xml_token->size = 4;
 	chunk_data_offset     += 4;
 
-	if( libevtx_array_get_entry_by_index(
-	     template_values_array,
-	     (int) template_value_index,
-	     (intptr_t **) &template_value,
-	     error ) != 1 )
+	result = libevtx_binary_xml_document_substitute_template_value(
+	          binary_xml_document,
+	          io_handle,
+	          chunk_data,
+	          chunk_data_size,
+	          template_values_array,
+	          template_value_index,
+	          template_value_type,
+	          template_value_offset,
+	          xml_tag,
+	          error );
+
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve template value: %" PRIu16 " from array.",
-		 function,
-		 template_value_index );
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to substitute template value.",
+		 function );
 
-		goto on_error;
-	}
-/* TODO check type with template type
- * NULL seems to be allowed
- */
-	switch( template_value_type )
-	{
-		case LIBEVTX_VALUE_TYPE_NULL:
-			break;
-
-		case LIBEVTX_VALUE_TYPE_STRING_UTF16:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_UTF16:
-			value_type = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_BYTE_STREAM:
-			value_type = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_8BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_8BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_8BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_8BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_16BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_16BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_16BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_32BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_32BIT:
-		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_32BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_64BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_64BIT:
-		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_64BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BOOLEAN:
-			value_type = LIBFVALUE_VALUE_TYPE_BOOLEAN;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BINARY_DATA:
-			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_GUID:
-			value_type = LIBFVALUE_VALUE_TYPE_GUID;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_SIZE:
-			if( template_value->data_size == 4 )
-			{
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
-			}
-			else if( template_value->data_size == 8 )
-			{
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
-			}
-			else
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported value data size: %" PRIu16 ".",
-				 function,
-				 template_value->data_size );
-
-				goto on_error;
-			}
-			break;
-
-		case LIBEVTX_VALUE_TYPE_FILETIME:
-			value_type = LIBFVALUE_VALUE_TYPE_FILETIME;
-			break;
-
-/* TODO improve */
-		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
-			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BINARY_XML:
-		default:
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported value type: 0x%02" PRIx8 ".",
-			 function,
-			 value_type );
-
-			goto on_error;
-	}
-	if( value_type != 0 )
-	{
-		if( libfvalue_value_initialize(
-		     &( xml_tag->value ),
-		     value_type,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create value.",
-			 function );
-
-			goto on_error;
-		}
-		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
-		{
-			if( libfvalue_value_set_codepage(
-			     xml_tag->value,
-			     io_handle->ascii_codepage,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set value data.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		if( ( value_type & LIBEVTX_VALUE_TYPE_ARRAY ) != 0 )
-		{
-		}
-		if( libfvalue_value_set_data(
-		     xml_tag->value,
-		     template_value->data,
-		     template_value->data_size,
-		     LIBFVALUE_ENDIAN_LITTLE,
-		     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set value data.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: value\t\t: ",
-			 function );
-
-			if( libfvalue_debug_print_value(
-			     xml_tag->value,
-			     0,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print value.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "\n" );
-
-			libcnotify_printf(
-			 "\n" );
-		}
-#endif
+		return( -1 );
 	}
 	return( 1 );
-
-on_error:
-	if( xml_tag->value != NULL )
-	{
-		libfvalue_value_free(
-		 &( xml_tag->value ),
-		 NULL );
-	}
-	return( -1 );
 }
 
 /* Reads an optional substitution from a binary XML document
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if no substitution or -1 on error
  */
 int libevtx_binary_xml_document_read_optional_substitution(
      libevtx_binary_xml_document_t *binary_xml_document,
@@ -2434,18 +2277,16 @@ int libevtx_binary_xml_document_read_optional_substitution(
      size_t chunk_data_size,
      size_t chunk_data_offset,
      libevtx_array_t *template_values_array,
+     size_t *template_value_offset,
      libevtx_xml_tag_t *xml_tag,
      libcerror_error_t **error )
 {
-	libevtx_binary_xml_template_value_t *template_value = NULL;
-	libevtx_binary_xml_token_t *binary_xml_sub_token    = NULL;
-	libevtx_xml_tag_t *element_xml_tag                  = NULL;
-	const uint8_t *binary_xml_document_data             = NULL;
-	static char *function                               = "libevtx_binary_xml_document_read_optional_substitution";
-	size_t binary_xml_document_data_size                = 0;
-	uint16_t template_value_index                       = 0;
-	uint8_t template_value_type                         = 0;
-	uint8_t value_type                                  = 0;
+	const uint8_t *binary_xml_document_data = NULL;
+	static char *function                   = "libevtx_binary_xml_document_read_optional_substitution";
+	size_t binary_xml_document_data_size    = 0;
+	uint16_t template_value_index           = 0;
+	uint8_t template_value_type             = 0;
+	int result                              = 0;
 
 	if( binary_xml_document == NULL )
 	{
@@ -2514,17 +2355,6 @@ int libevtx_binary_xml_document_read_optional_substitution(
 
 		return( -1 );
 	}
-	if( xml_tag == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid XML tag.",
-		 function );
-
-		return( -1 );
-	}
 	binary_xml_document_data      = &( chunk_data[ chunk_data_offset ] );
 	binary_xml_document_data_size = chunk_data_size - chunk_data_offset;
 
@@ -2537,7 +2367,7 @@ int libevtx_binary_xml_document_read_optional_substitution(
 		 "%s: invalid binary XML document data size value too small.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -2578,338 +2408,38 @@ int libevtx_binary_xml_document_read_optional_substitution(
 		 template_value_type );
 		libcnotify_printf(
 		 ")\n" );
+
+		libcnotify_printf(
+		 "\n" );
 	}
 #endif
 	binary_xml_token->size = 4;
 	chunk_data_offset     += 4;
 
-	if( libevtx_array_get_entry_by_index(
-	     template_values_array,
-	     (int) template_value_index,
-	     (intptr_t **) &template_value,
-	     error ) != 1 )
+	result = libevtx_binary_xml_document_substitute_template_value(
+	          binary_xml_document,
+	          io_handle,
+	          chunk_data,
+	          chunk_data_size,
+	          template_values_array,
+	          template_value_index,
+	          template_value_type,
+	          template_value_offset,
+	          xml_tag,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve template value: %" PRIu16 " from array.",
-		 function,
-		 template_value_index );
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to substitute template value.",
+		 function );
 
-		goto on_error;
+		return( -1 );
 	}
-/* TODO check type with template type
- * NULL seems to be allowed
- */
-
-	switch( template_value_type )
-	{
-		case LIBEVTX_VALUE_TYPE_NULL:
-			break;
-
-		case LIBEVTX_VALUE_TYPE_STRING_UTF16:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_UTF16:
-			value_type = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_BYTE_STREAM:
-			value_type = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_8BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_8BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_8BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_8BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_16BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_16BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_16BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_32BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_32BIT:
-		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_32BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_INTEGER_64BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_64BIT:
-		case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_64BIT:
-			value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BOOLEAN:
-			value_type = LIBFVALUE_VALUE_TYPE_BOOLEAN;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BINARY_DATA:
-			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_GUID:
-			value_type = LIBFVALUE_VALUE_TYPE_GUID;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_SIZE:
-			if( template_value->data_size == 4 )
-			{
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
-			}
-			else if( template_value->data_size == 8 )
-			{
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
-			}
-			else
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported value data size: %" PRIu16 ".",
-				 function,
-				 template_value->data_size );
-
-				goto on_error;
-			}
-			break;
-
-		case LIBEVTX_VALUE_TYPE_FILETIME:
-			value_type = LIBFVALUE_VALUE_TYPE_FILETIME;
-			break;
-
-/* TODO improve */
-		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
-		case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
-			value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
-			break;
-
-		case LIBEVTX_VALUE_TYPE_BINARY_XML:
-			break;
-
-		default:
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported value type: 0x%02" PRIx8 ".",
-			 function,
-			 value_type );
-
-			goto on_error;
-	}
-	if( template_value_type == LIBEVTX_VALUE_TYPE_NULL )
-	{
-		/* Leave the value empty */
-	}
-	else if( template_value_type == LIBEVTX_VALUE_TYPE_BINARY_XML )
-	{
-		if( libevtx_binary_xml_token_initialize(
-		     &binary_xml_sub_token,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create binary XML sub token.",
-			 function );
-
-			goto on_error;
-		}
-		if( libevtx_binary_xml_token_read(
-		     binary_xml_sub_token,
-		     io_handle,
-		     chunk_data,
-		     chunk_data_size,
-		     template_value->chunk_data_offset,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read binary XML sub token.",
-			 function );
-
-			goto on_error;
-		}
-		if( libevtx_xml_tag_initialize(
-		     &element_xml_tag,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create element XML tag.",
-			 function );
-
-			goto on_error;
-		}
-		if( libevtx_binary_xml_document_read_fragment(
-		     binary_xml_document,
-		     binary_xml_sub_token,
-		     io_handle,
-		     chunk_data,
-		     chunk_data_size,
-		     template_value->chunk_data_offset,
-		     element_xml_tag,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read fragment header.",
-			 function );
-
-			goto on_error;
-		}
-		if( libevtx_xml_tag_append_element(
-		     xml_tag,
-		     element_xml_tag,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append element to XML tag.",
-			 function );
-
-			goto on_error;
-		}
-		element_xml_tag = NULL;
-
-		if( libevtx_binary_xml_token_free(
-		     &binary_xml_sub_token,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free binary XML sub token.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	else if( value_type != 0 )
-	{
-		if( libfvalue_value_initialize(
-		     &( xml_tag->value ),
-		     value_type,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create value.",
-			 function );
-
-			goto on_error;
-		}
-		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
-		{
-			if( libfvalue_value_set_codepage(
-			     xml_tag->value,
-			     io_handle->ascii_codepage,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set value data.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		if( libfvalue_value_set_data(
-		     xml_tag->value,
-		     template_value->data,
-		     template_value->data_size,
-		     LIBFVALUE_ENDIAN_LITTLE,
-		     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set value data.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: value\t\t: ",
-			 function );
-
-			if( libfvalue_debug_print_value(
-			     xml_tag->value,
-			     0,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print value.",
-				 function );
-
-				goto on_error;
-			}
-			libcnotify_printf(
-			 "\n" );
-
-			libcnotify_printf(
-			 "\n" );
-		}
-#endif
-	}
-	return( 1 );
-
-on_error:
-	if( xml_tag->value != NULL )
-	{
-		libfvalue_value_free(
-		 &( xml_tag->value ),
-		 NULL );
-	}
-	if( element_xml_tag != NULL )
-	{
-		libevtx_xml_tag_free(
-		 &element_xml_tag,
-		 NULL );
-	}
-	if( binary_xml_sub_token != NULL )
-	{
-		libevtx_binary_xml_token_free(
-		 &binary_xml_sub_token,
-		 NULL );
-	}
-	return( -1 );
+	return( result );
 }
 
 /* Reads a template instance from a binary XML document
@@ -3617,7 +3147,7 @@ int libevtx_binary_xml_document_read_template_instance_values(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: template instance value data:\n",
+		 "%s: values data:\n",
 		 function );
 		libcnotify_print_data(
 		 &( chunk_data[ chunk_data_offset ] ),
@@ -3652,7 +3182,7 @@ int libevtx_binary_xml_document_read_template_instance_values(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: template instance value: %" PRIu32 " data:\n",
+			 "%s: value: %02" PRIu32 " data:\n",
 			 function,
 			 template_value_index );
 			libcnotify_print_data(
@@ -3948,6 +3478,455 @@ on_error:
 	{
 		libfvalue_value_free(
 		 &( xml_tag->value ),
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Substitutes a substitution placeholder with a template value
+ * Returns 1 if successful, 0 if no substitution or -1 on error
+ */
+int libevtx_binary_xml_document_substitute_template_value(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     libevtx_array_t *template_values_array,
+     uint16_t template_value_index,
+     uint8_t template_value_type,
+     size_t *template_value_offset,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error )
+{
+	libevtx_binary_xml_template_value_t *template_value = NULL;
+	libevtx_binary_xml_token_t *binary_xml_sub_token    = NULL;
+	static char *function                               = "libevtx_binary_xml_document_substitute_template_value";
+	size_t value_data_size                              = 0;
+	uint8_t value_type                                  = 0;
+
+	if( binary_xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid binary XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( template_value_offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template value offset.",
+		 function );
+
+		return( -1 );
+	}
+	if( xml_tag == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid XML tag.",
+		 function );
+
+		return( -1 );
+	}
+	if( libevtx_array_get_entry_by_index(
+	     template_values_array,
+	     (int) template_value_index,
+	     (intptr_t **) &template_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve template value: %" PRIu16 " from array.",
+		 function,
+		 template_value_index );
+
+		goto on_error;
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: value: %02" PRIu32 " size\t: %" PRIu16 "\n",
+		 function,
+		 template_value_index,
+		 template_value->data_size );
+
+		libcnotify_printf(
+		 "%s: value: %02" PRIu32 " type\t: 0x%02" PRIx8 " (",
+		 function,
+		 template_value_index,
+		 template_value->type );
+		libevtx_debug_print_value_type(
+		 template_value->type );
+		libcnotify_printf(
+		 ")\n" );
+
+		libcnotify_printf(
+		 "%s: value: %02" PRIu32 " data:\n",
+		 function,
+		 template_value_index );
+		libcnotify_print_data(
+		 template_value->data,
+		 template_value->data_size,
+		 0 );
+
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif
+	/* No substitution
+	 */
+	if( template_value->type == LIBEVTX_VALUE_TYPE_NULL )
+	{
+		return( 0 );
+	}
+#if defined( HAVE_VERBOSE_OUTPUT )
+	if( template_value_type != template_value->type )
+	{
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: mismatch in value type ( 0x%02" PRIx8 " != 0x%02" PRIx8 " ).\n",
+			 function,
+			 template_value_type,
+			 template_value->type );
+		}
+	}
+#endif
+	if( template_value->type == LIBEVTX_VALUE_TYPE_BINARY_XML )
+	{
+		if( libevtx_binary_xml_token_initialize(
+		     &binary_xml_sub_token,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create binary XML sub token.",
+			 function );
+
+			goto on_error;
+		}
+		if( libevtx_binary_xml_token_read(
+		     binary_xml_sub_token,
+		     io_handle,
+		     chunk_data,
+		     chunk_data_size,
+		     template_value->chunk_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read binary XML sub token.",
+			 function );
+
+			goto on_error;
+		}
+		if( libevtx_binary_xml_document_read_fragment(
+		     binary_xml_document,
+		     binary_xml_sub_token,
+		     io_handle,
+		     chunk_data,
+		     chunk_data_size,
+		     template_value->chunk_data_offset,
+		     xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read fragment header.",
+			 function );
+
+			goto on_error;
+		}
+		if( libevtx_binary_xml_token_free(
+		     &binary_xml_sub_token,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free binary XML sub token.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	else
+	{
+		switch( template_value->type )
+		{
+			case LIBEVTX_VALUE_TYPE_STRING_UTF16:
+			case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_UTF16:
+				value_type = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_STRING_BYTE_STREAM:
+			case LIBEVTX_VALUE_TYPE_ARRAY_OF_STRING_BYTE_STREAM:
+				value_type = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_INTEGER_8BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_8BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_8BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_8BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_INTEGER_16BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_16BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_16BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_INTEGER_32BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_32BIT:
+			case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_32BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_INTEGER_64BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_64BIT:
+			case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_64BIT:
+				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_BOOLEAN:
+				value_type = LIBFVALUE_VALUE_TYPE_BOOLEAN;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_BINARY_DATA:
+				value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_GUID:
+				value_type = LIBFVALUE_VALUE_TYPE_GUID;
+				break;
+
+			case LIBEVTX_VALUE_TYPE_SIZE:
+				if( template_value->data_size == 4 )
+				{
+					value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
+				}
+				else if( template_value->data_size == 8 )
+				{
+					value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
+				}
+				else
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+					 "%s: unsupported value data size: %" PRIu16 ".",
+					 function,
+					 template_value->data_size );
+
+					goto on_error;
+				}
+				break;
+
+			case LIBEVTX_VALUE_TYPE_FILETIME:
+				value_type = LIBFVALUE_VALUE_TYPE_FILETIME;
+				break;
+
+/* TODO improve */
+			case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
+			case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
+				value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
+				break;
+
+			default:
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 "%s: unsupported value type: 0x%02" PRIx8 ".",
+				 function,
+				 value_type );
+
+				goto on_error;
+		}
+		if( libfvalue_value_initialize(
+		     &( xml_tag->value ),
+		     value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create value.",
+			 function );
+
+			goto on_error;
+		}
+		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
+		{
+			if( libfvalue_value_set_codepage(
+			     xml_tag->value,
+			     io_handle->ascii_codepage,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set value data.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		if( ( template_value->type & LIBEVTX_VALUE_TYPE_ARRAY ) != 0 )
+		{
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_STRING_UTF16 ) )
+			{
+				if( template_value->data_size > 0 )
+				{
+					if( *template_value_offset >= template_value->data_size )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+						 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+						 "%s: invalid template value offset value out of bounds.",
+						 function );
+
+						return( -1 );
+					}
+					if( libfvalue_value_set_data_string(
+					     xml_tag->value,
+					     &( template_value->data[ *template_value_offset ] ),
+					     template_value->data_size - *template_value_offset,
+					     LIBFVALUE_ENDIAN_LITTLE,
+					     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+						 "%s: unable to set value data.",
+						 function );
+
+						goto on_error;
+					}
+					if( libfvalue_value_get_data_size(
+					     xml_tag->value,
+					     &value_data_size,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+						 "%s: unable to retrieve value data size.",
+						 function );
+
+						goto on_error;
+					}
+					*template_value_offset += value_data_size;
+				}
+			}
+			else
+			{
+/* TODO */
+			}
+			if( *template_value_offset == template_value->data_size )
+			{
+				*template_value_offset = 0;
+			}
+		}
+		else
+		{
+			if( libfvalue_value_set_data(
+			     xml_tag->value,
+			     template_value->data,
+			     template_value->data_size,
+			     LIBFVALUE_ENDIAN_LITTLE,
+			     LIBFVALUE_VALUE_DATA_FLAG_NON_MANAGED,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set value data.",
+				 function );
+
+				goto on_error;
+			}
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: value\t\t: ",
+			 function );
+
+			if( libfvalue_debug_print_value(
+			     xml_tag->value,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print value.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "\n" );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+	}
+	return( 1 );
+
+on_error:
+	if( xml_tag->value != NULL )
+	{
+		libfvalue_value_free(
+		 &( xml_tag->value ),
+		 NULL );
+	}
+	if( binary_xml_sub_token != NULL )
+	{
+		libevtx_binary_xml_token_free(
+		 &binary_xml_sub_token,
 		 NULL );
 	}
 	return( -1 );
