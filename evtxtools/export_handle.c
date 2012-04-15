@@ -686,9 +686,11 @@ int export_handle_export_record(
 
 			goto on_error;
 		}
+		/* Note that the event XML ends with a new line
+		 */
 		fprintf(
 		 export_handle->notify_stream,
-		 "Event XML\n%" PRIs_LIBCSTRING_SYSTEM "\n\n",
+		 "Event XML:\n%" PRIs_LIBCSTRING_SYSTEM "",
 		 event_xml );
 
 		memory_free(

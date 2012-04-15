@@ -2,15 +2,18 @@ TODO
 * libfvalue:
   - improve to value to string type support
 * libevtx:
-  - create XML string
-  - merge <File><File/>
+  - fix SystemTime=""
+  - add support for Binary type (todo debug)
+  - add support for GUID type
+  - add support for NT SID type
 * evtxeport:
   - rewrite using evtexport
   - export format: xml
+  - non-xml export format use evtexport like approach (add functions to get
+    specific event data)
 * add recovery scan
 * combine binary xml value subsitution code into single function?
 * add debug function for binary XML token types
-* chunk similar to libesedb page
 * code clean up
   - behavior of initialize functions
 * codepage support
@@ -20,7 +23,8 @@ Recovery:
 * scan for records in chunk free space
 
 20120415
-* worke on libfvalue to copy to string functions
+* worked on libfvalue to copy to string functions
+* code now merges <File></File> to <File/>
 
 20120414
 * worked on API

@@ -403,28 +403,10 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 	 *   element name
 	 *   1 x '>' character
 	 *   1 x '\n' character
+	 *   1 x '\0' character
 	 */
 	*utf8_string_size = ( xml_tag_level * 2 ) + name_size + 3;
 
-	if( number_of_elements == 0 )
-	{
-		/* The size of:
-		 *   1 x '/' character
-		 */
-		*utf8_string_size += 1;
-	}
-	else
-	{
-		/* The size of:
-		 *   2 x ' ' character per indentation level
-		 *   1 x '<' character
-		 *   1 x '/' character
-		 *   element name
-		 *   1 x '>' character
-		 *   1 x '\n' character
-		 */
-		*utf8_string_size += ( xml_tag_level * 2 ) + name_size + 4;
-	}
 	if( number_of_attributes > 0 )
 	{
 		for( attribute_index = 0;
@@ -481,7 +463,7 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			 *   1 x '=' character
 			 *   2 x '"' character
 			 */
-			*utf8_string_size += string_size + 4;
+			*utf8_string_size += string_size + 3;
 
 			if( libfvalue_value_get_utf8_string_size(
 			     attribute_xml_tag->value,
@@ -499,6 +481,7 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 
 				return( -1 );
 			}
+			*utf8_string_size += string_size - 1;
 		}
 	}
 	if( xml_tag->value != NULL )
@@ -518,10 +501,24 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 
 			return( -1 );
 		}
-		/* The size of:
-		 *   value formatted as a string
-		 */
-		*utf8_string_size += string_size;
+		if( string_size > 1 )
+		{
+			/* The size of:
+			 *   value formatted as a string
+			 *   1 x '<' character
+			 *   1 x '/' character
+			 *   element name
+			 *   1 x '>' character
+			 */
+			*utf8_string_size += name_size + string_size + 1;
+		}
+		else
+		{
+			/* The size of:
+			 *   1 x '/' character
+			 */
+			*utf8_string_size += 1;
+		}
 	}
 	else if( number_of_elements > 0 )
 	{
@@ -564,8 +561,24 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			/* The size of:
 			 *   sub element formatted as a string
 			 */
-			*utf8_string_size += string_size;
+			*utf8_string_size += string_size - 1;
 		}
+		/* The size of:
+		 *   2 x ' ' character per indentation level
+		 *   1 x '<' character
+		 *   1 x '/' character
+		 *   element name
+		 *   1 x '>' character
+		 *   1 x '\n' character
+		 */
+		*utf8_string_size += ( xml_tag_level * 2 ) + name_size + 3;
+	}
+	else
+	{
+		/* The size of:
+		 *   1 x '/' character
+		 */
+		*utf8_string_size += 1;
 	}
 	return( 1 );
 }
@@ -573,18 +586,19 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 /* Retrieves the UTF-8 formatted string of the XML tag 
  * Returns 1 if successful or -1 on error
  */
-int libevtx_xml_tag_get_utf8_xml_string(
+int libevtx_xml_tag_get_utf8_xml_string_with_index(
      libevtx_xml_tag_t *xml_tag,
      int xml_tag_level,
      uint8_t *utf8_string,
      size_t utf8_string_size,
+     size_t *utf8_string_index,
      libcerror_error_t **error )
 {
 	libevtx_xml_tag_t *attribute_xml_tag = NULL;
 	libevtx_xml_tag_t *element_xml_tag   = NULL;
-	static char *function                = "libevtx_xml_tag_get_utf8_xml_string_size";
+	static char *function                = "libevtx_xml_tag_get_utf8_xml_string_with_index";
+	size_t string_index                  = 0;
 	size_t string_size                   = 0;
-	size_t utf8_string_index             = 0;
 	int attribute_index                  = 0;
 	int element_index                    = 0;
 	int indentation_iterator             = 0;
@@ -624,6 +638,21 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 		return( -1 );
 	}
+	if( utf8_string_index == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UTF-8 string index.",
+		 function );
+
+		return( -1 );
+	}
+	string_index = *utf8_string_index;
+
+	utf8_string[ string_index ] = 0;
+
 	if( libevtx_array_get_number_of_entries(
 	     xml_tag->attributes_array,
 	     &number_of_attributes,
@@ -652,7 +681,7 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 		return( -1 );
 	}
-	if( ( utf8_string_index + ( xml_tag_level * 2 ) + 1 ) > utf8_string_size )
+	if( ( string_index + ( xml_tag_level * 2 ) + 1 ) > utf8_string_size )
 	{
 		libcerror_error_set(
 		 error,
@@ -667,17 +696,17 @@ int libevtx_xml_tag_get_utf8_xml_string(
 	     indentation_iterator < xml_tag_level;
 	     indentation_iterator++ )
 	{
-		utf8_string[ utf8_string_index++ ] = (uint8_t) ' ';
-		utf8_string[ utf8_string_index++ ] = (uint8_t) ' ';
+		utf8_string[ string_index++ ] = (uint8_t) ' ';
+		utf8_string[ string_index++ ] = (uint8_t) ' ';
 	}
-	utf8_string[ utf8_string_index++ ] = (uint8_t) '<';
+	utf8_string[ string_index++ ] = (uint8_t) '<';
 
 	if( libfvalue_value_copy_to_utf8_string_with_index(
 	     xml_tag->name,
 	     0,
 	     utf8_string,
 	     utf8_string_size,
-	     &utf8_string_index,
+	     &string_index,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -689,6 +718,8 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 		return( -1 );
 	}
+	string_index--;
+
 	if( number_of_attributes > 0 )
 	{
 		for( attribute_index = 0;
@@ -723,7 +754,7 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			if( ( utf8_string_index + 1 ) > utf8_string_size )
+			if( ( string_index + 1 ) > utf8_string_size )
 			{
 				libcerror_error_set(
 				 error,
@@ -734,14 +765,14 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			utf8_string[ utf8_string_index++ ] = (uint8_t) ' ';
+			utf8_string[ string_index++ ] = (uint8_t) ' ';
 
 			if( libfvalue_value_copy_to_utf8_string_with_index(
 			     attribute_xml_tag->name,
 			     0,
 			     utf8_string,
 			     utf8_string_size,
-			     &utf8_string_index,
+			     &string_index,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -754,7 +785,9 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			if( ( utf8_string_index + 2 ) > utf8_string_size )
+			string_index--;
+
+			if( ( string_index + 2 ) > utf8_string_size )
 			{
 				libcerror_error_set(
 				 error,
@@ -765,15 +798,15 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			utf8_string[ utf8_string_index++ ] = (uint8_t) '=';
-			utf8_string[ utf8_string_index++ ] = (uint8_t) '"';
+			utf8_string[ string_index++ ] = (uint8_t) '=';
+			utf8_string[ string_index++ ] = (uint8_t) '"';
 
 			if( libfvalue_value_copy_to_utf8_string_with_index(
 			     attribute_xml_tag->value,
 			     0,
 			     utf8_string,
 			     utf8_string_size,
-			     &utf8_string_index,
+			     &string_index,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -786,7 +819,9 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			if( ( utf8_string_index + 1 ) > utf8_string_size )
+			string_index--;
+
+			if( ( string_index + 1 ) > utf8_string_size )
 			{
 				libcerror_error_set(
 				 error,
@@ -797,13 +832,112 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			utf8_string[ utf8_string_index++ ] = (uint8_t) '"';
+			utf8_string[ string_index++ ] = (uint8_t) '"';
 		}
 	}
-	if( ( xml_tag->value != NULL )
-	 || ( number_of_elements > 0 ) )
+	if( xml_tag->value != NULL )
 	{
-		if( ( utf8_string_index + 2 ) > utf8_string_size )
+		if( libfvalue_value_get_utf8_string_size(
+		     xml_tag->value,
+		     0,
+		     &string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of value.",
+			 function );
+
+			return( -1 );
+		}
+		if( string_size > 1 )
+		{
+			if( ( string_index + 1 ) > utf8_string_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: UTF-8 string size too small.",
+				 function );
+
+				return( -1 );
+			}
+			utf8_string[ string_index++ ] = (uint8_t) '>';
+
+			if( libfvalue_value_copy_to_utf8_string_with_index(
+			     xml_tag->value,
+			     0,
+			     utf8_string,
+			     utf8_string_size,
+			     &string_index,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+				 "%s: unable to copy value to UTF-8 string.",
+				 function );
+
+				return( -1 );
+			}
+			string_index--;
+
+			if( ( string_index + 2 ) > utf8_string_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: UTF-8 string size too small.",
+				 function );
+
+				return( -1 );
+			}
+			utf8_string[ string_index++ ] = (uint8_t) '<';
+			utf8_string[ string_index++ ] = (uint8_t) '/';
+
+			if( libfvalue_value_copy_to_utf8_string_with_index(
+			     xml_tag->name,
+			     0,
+			     utf8_string,
+			     utf8_string_size,
+			     &string_index,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+				 "%s: unable to copy name to UTF-8 string.",
+				 function );
+
+				return( -1 );
+			}
+			string_index--;
+		}
+		else
+		{
+			if( ( string_index + 1 ) > utf8_string_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+				 "%s: UTF-8 string size too small.",
+				 function );
+
+				return( -1 );
+			}
+			utf8_string[ string_index++ ] = (uint8_t) '/';
+		}
+	}
+	else if( number_of_elements > 0 )
+	{
+		if( ( string_index + 2 ) > utf8_string_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -814,31 +948,9 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 			return( -1 );
 		}
-		utf8_string[ utf8_string_index++ ] = (uint8_t) '>';
-		utf8_string[ utf8_string_index++ ] = (uint8_t) '\n';
-	}
-	if( xml_tag->value != NULL )
-	{
-		if( libfvalue_value_copy_to_utf8_string_with_index(
-		     xml_tag->value,
-		     0,
-		     utf8_string,
-		     utf8_string_size,
-		     &utf8_string_index,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value to UTF-8 string.",
-			 function );
+		utf8_string[ string_index++ ] = (uint8_t) '>';
+		utf8_string[ string_index++ ] = (uint8_t) '\n';
 
-			return( -1 );
-		}
-	}
-	else if( number_of_elements > 0 )
-	{
 		for( element_index = 0;
 		     element_index < number_of_elements;
 		     element_index++ )
@@ -859,27 +971,12 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			if( libevtx_xml_tag_get_utf8_xml_string_size(
+			if( libevtx_xml_tag_get_utf8_xml_string_with_index(
 			     element_xml_tag,
 			     xml_tag_level + 1,
-			     &string_size,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve UTF-8 string size of sub element: %d.",
-				 function,
-				 element_index );
-
-				return( -1 );
-			}
-			if( libevtx_xml_tag_get_utf8_xml_string(
-			     element_xml_tag,
-			     xml_tag_level + 1,
-			     &( utf8_string[ utf8_string_index ] ),
-			     utf8_string_size - utf8_string_index,
+			     utf8_string,
+			     utf8_string_size,
+			     &string_index,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -892,9 +989,9 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 				return( -1 );
 			}
-			utf8_string_index += string_size;
+			string_index--;
 		}
-		if( ( utf8_string_index + ( xml_tag_level * 2 ) ) > utf8_string_size )
+		if( ( string_index + ( xml_tag_level * 2 ) ) > utf8_string_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -909,14 +1006,10 @@ int libevtx_xml_tag_get_utf8_xml_string(
 		     indentation_iterator < xml_tag_level;
 		     indentation_iterator++ )
 		{
-			utf8_string[ utf8_string_index++ ] = (uint8_t) ' ';
-			utf8_string[ utf8_string_index++ ] = (uint8_t) ' ';
+			utf8_string[ string_index++ ] = (uint8_t) ' ';
+			utf8_string[ string_index++ ] = (uint8_t) ' ';
 		}
-	}
-	if( ( xml_tag->value != NULL )
-	 || ( number_of_elements > 0 ) )
-	{
-		if( ( utf8_string_index + 2 ) > utf8_string_size )
+		if( ( string_index + 2 ) > utf8_string_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -927,15 +1020,15 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 			return( -1 );
 		}
-		utf8_string[ utf8_string_index++ ] = (uint8_t) '<';
-		utf8_string[ utf8_string_index++ ] = (uint8_t) '/';
+		utf8_string[ string_index++ ] = (uint8_t) '<';
+		utf8_string[ string_index++ ] = (uint8_t) '/';
 
 		if( libfvalue_value_copy_to_utf8_string_with_index(
 		     xml_tag->name,
 		     0,
 		     utf8_string,
 		     utf8_string_size,
-		     &utf8_string_index,
+		     &string_index,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -947,10 +1040,11 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 			return( -1 );
 		}
+		string_index--;
 	}
 	else
 	{
-		if( ( utf8_string_index + 1 ) > utf8_string_size )
+		if( ( string_index + 1 ) > utf8_string_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -961,9 +1055,9 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 			return( -1 );
 		}
-		utf8_string[ utf8_string_index++ ] = (uint8_t) '/';
+		utf8_string[ string_index++ ] = (uint8_t) '/';
 	}
-	if( ( utf8_string_index + 2 ) > utf8_string_size )
+	if( ( string_index + 3 ) > utf8_string_size )
 	{
 		libcerror_error_set(
 		 error,
@@ -974,8 +1068,11 @@ int libevtx_xml_tag_get_utf8_xml_string(
 
 		return( -1 );
 	}
-	utf8_string[ utf8_string_index++ ] = (uint8_t) '>';
-	utf8_string[ utf8_string_index++ ] = (uint8_t) '\n';
+	utf8_string[ string_index++ ] = (uint8_t) '>';
+	utf8_string[ string_index++ ] = (uint8_t) '\n';
+	utf8_string[ string_index++ ] = 0;
+
+	*utf8_string_index = string_index;
 
 	return( 1 );
 }
@@ -996,11 +1093,12 @@ int libevtx_xml_tag_get_utf16_xml_string_size(
 /* Retrieves the UTF-16 formatted string of the XML tag 
  * Returns 1 if successful or -1 on error
  */
-int libevtx_xml_tag_get_utf16_xml_string(
+int libevtx_xml_tag_get_utf16_xml_string_with_index(
      libevtx_xml_tag_t *xml_tag,
      int xml_tag_level,
      uint16_t *utf16_string,
      size_t utf16_string_size,
+     size_t *utf16_string_index,
      libcerror_error_t **error )
 {
 /* TODO */
@@ -1020,6 +1118,7 @@ int libevtx_xml_tag_debug_print(
 	libevtx_xml_tag_t *attribute_xml_tag = NULL;
 	libevtx_xml_tag_t *element_xml_tag   = NULL;
 	static char *function                = "libevtx_xml_tag_debug_print";
+	size_t string_size                   = 0;
 	int attribute_index                  = 0;
 	int element_index                    = 0;
 	int indentation_iterator             = 0;
@@ -1091,9 +1190,6 @@ int libevtx_xml_tag_debug_print(
 	}
 	if( number_of_attributes > 0 )
 	{
-		libcnotify_printf(
-		 " " );
-
 		for( attribute_index = 0;
 		     attribute_index < number_of_attributes;
 		     attribute_index++ )
@@ -1126,16 +1222,9 @@ int libevtx_xml_tag_debug_print(
 
 				return( -1 );
 			}
-			if( attribute_index != 0 )
-			{
-				for( indentation_iterator = 0;
-				     indentation_iterator < ( xml_tag_level + 1 );
-				     indentation_iterator++ )
-				{
-					libcnotify_printf(
-					 "  " );
-				}
-			}
+			libcnotify_printf(
+			 " " );
+
 			if( libfvalue_debug_print_value(
 			     attribute_xml_tag->name,
 			     0,
@@ -1173,46 +1262,72 @@ int libevtx_xml_tag_debug_print(
 			}
 			libcnotify_printf(
 			 "\"" );
-
-			if( ( ( attribute_index + 1 ) != number_of_attributes )
-			 && ( ( attribute_index > 0 )
-			  ||  ( number_of_attributes > 1 ) ) )
-			{
-				libcnotify_printf(
-				 "\n" );
-			}
 		}
 	}
-	if( ( xml_tag->value == NULL )
-	 && ( number_of_elements == 0 ) )
-	{
-		libcnotify_printf(
-		 "/" );
-	}
-	libcnotify_printf(
-	 ">" );
-
 	if( xml_tag->value != NULL )
 	{
-		if( libfvalue_debug_print_value(
+		if( libfvalue_value_get_utf8_string_size(
 		     xml_tag->value,
 		     0,
+		     &string_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print value.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of value.",
 			 function );
 
 			return( -1 );
 		}
+		if( string_size > 1 )
+		{
+			libcnotify_printf(
+			 ">" );
+
+			if( libfvalue_debug_print_value(
+			     xml_tag->value,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print value.",
+				 function );
+
+				return( -1 );
+			}
+			libcnotify_printf(
+			 "</" );
+
+			if( libfvalue_debug_print_value(
+			     xml_tag->name,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print name.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		else
+		{
+			libcnotify_printf(
+			 "/" );
+		}
 	}
-	else
+	else if( number_of_elements > 0 )
 	{
 		libcnotify_printf(
-		 "\n" );
+		 ">\n" );
 
 		for( element_index = 0;
 		     element_index < number_of_elements;
@@ -1250,9 +1365,6 @@ int libevtx_xml_tag_debug_print(
 				return( -1 );
 			}
 		}
-	}
-	if( number_of_elements > 0 )
-	{
 		for( indentation_iterator = 0;
 		     indentation_iterator < xml_tag_level;
 		     indentation_iterator++ )
@@ -1260,12 +1372,8 @@ int libevtx_xml_tag_debug_print(
 			libcnotify_printf(
 			 "  " );
 		}
-	}
-	if( ( xml_tag->value != NULL )
-	 || ( number_of_elements > 0 ) )
-	{
 		libcnotify_printf(
-		 "<" );
+		 "</" );
 
 		if( libfvalue_debug_print_value(
 		     xml_tag->name,
@@ -1281,14 +1389,15 @@ int libevtx_xml_tag_debug_print(
 
 			return( -1 );
 		}
-		libcnotify_printf(
-		 "/>\n" );
 	}
-	if( xml_tag_level == 0 )
+	else
 	{
 		libcnotify_printf(
-		 "\n" );
+		 "/" );
 	}
+	libcnotify_printf(
+	 ">\n" );
+
 	return( 1 );
 }
 

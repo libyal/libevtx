@@ -775,7 +775,8 @@ int libevtx_record_values_get_utf8_xml_string(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_record_values_get_utf8_xml_string";
+	static char *function    = "libevtx_record_values_get_utf8_xml_string";
+	size_t utf8_string_index = 0;
 
 	if( record_values == NULL )
 	{
@@ -788,7 +789,7 @@ int libevtx_record_values_get_utf8_xml_string(
 
 		return( -1 );
 	}
-	if( record_values->xml_document != NULL )
+	if( record_values->xml_document == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -799,11 +800,12 @@ int libevtx_record_values_get_utf8_xml_string(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf8_xml_string(
+	if( libevtx_xml_tag_get_utf8_xml_string_with_index(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf8_string,
 	     utf8_string_size,
+	     &utf8_string_index,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -840,7 +842,7 @@ int libevtx_record_values_get_utf16_xml_string_size(
 
 		return( -1 );
 	}
-	if( record_values->xml_document != NULL )
+	if( record_values->xml_document == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -879,7 +881,8 @@ int libevtx_record_values_get_utf16_xml_string(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_record_values_get_utf16_xml_string";
+	static char *function     = "libevtx_record_values_get_utf16_xml_string";
+	size_t utf16_string_index = 0;
 
 	if( record_values == NULL )
 	{
@@ -892,7 +895,7 @@ int libevtx_record_values_get_utf16_xml_string(
 
 		return( -1 );
 	}
-	if( record_values->xml_document != NULL )
+	if( record_values->xml_document == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -903,11 +906,12 @@ int libevtx_record_values_get_utf16_xml_string(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf16_xml_string(
+	if( libevtx_xml_tag_get_utf16_xml_string_with_index(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf16_string,
 	     utf16_string_size,
+	     &utf16_string_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
