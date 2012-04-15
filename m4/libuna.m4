@@ -1,6 +1,6 @@
 dnl Functions for libuna
 dnl
-dnl Version: 20120406
+dnl Version: 20120415
 
 dnl Function to detect if libuna is available as library
 dnl ac_libuna_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -281,12 +281,37 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf8_string_with_index_copy_from_byte_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_size_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_with_index_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf8_string_size_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf8_string_copy_from_utf8_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_with_index_copy_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
@@ -301,12 +326,22 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf8_string_with_index_copy_from_utf16_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf8_string_size_from_utf32_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf8_string_copy_from_utf32_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_with_index_copy_from_utf32_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
@@ -321,12 +356,22 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf8_string_with_index_copy_from_utf16,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf8_string_size_from_utf32,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf8_string_copy_from_utf32,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf8_string_copy_with_index_from_utf32,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
  
@@ -343,12 +388,37 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf16_string_with_index_copy_from_byte_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_size_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_with_index_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf16_string_size_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf16_string_copy_from_utf8_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_with_index_copy_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
@@ -363,6 +433,11 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf16_string_with_index_copy_from_utf16_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf16_string_size_from_utf32_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
@@ -373,12 +448,37 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf16_string_with_index_copy_from_utf32_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf16_string_size_from_utf8,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf16_string_copy_from_utf8,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_with_index_copy_from_utf8,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_size_from_utf32,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_copy_from_utf32,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf16_string_with_index_copy_from_utf32,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
  
@@ -395,12 +495,37 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf32_string_with_index_copy_from_byte_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_size_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_with_index_copy_from_utf7_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf32_string_size_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf32_string_copy_from_utf8_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_with_index_copy_from_utf8_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
@@ -415,6 +540,11 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf32_string_with_index_copy_from_utf16_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf32_string_size_from_utf32_stream,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
@@ -425,12 +555,38 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
+    libuna_utf32_string_with_index_copy_from_utf32_stream,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
     libuna_utf32_string_size_from_utf8,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    AC_CHECK_LIB(
     una,
     libuna_utf32_string_copy_from_utf8,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   ])
+   AC_CHECK_LIB(
+    libuna_utf32_string_with_index_copy_from_utf8,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   ])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_size_from_utf16,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_copy_from_utf16,
+    [ac_cv_libuna_dummy=yes],
+    [ac_cv_libuna=no])
+   AC_CHECK_LIB(
+    una,
+    libuna_utf32_string_with_index_copy_from_utf16,
     [ac_cv_libuna_dummy=yes],
     [ac_cv_libuna=no])
    ])
@@ -471,7 +627,7 @@ AC_DEFUN([AX_LIBUNA_CHECK_ENABLE],
   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
   [PKG_CHECK_MODULES(
    [libuna],
-   [libuna >= 20120405],
+   [libuna >= 20120415],
    [ac_cv_libuna=yes],
    [ac_cv_libuna=no])
 

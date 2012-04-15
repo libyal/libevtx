@@ -3502,6 +3502,7 @@ int libevtx_binary_xml_document_substitute_template_value(
 	libevtx_binary_xml_token_t *binary_xml_sub_token    = NULL;
 	static char *function                               = "libevtx_binary_xml_document_substitute_template_value";
 	size_t value_data_size                              = 0;
+	uint8_t value_format                                = 0;
 	uint8_t value_type                                  = 0;
 
 	if( binary_xml_document == NULL )
@@ -3684,37 +3685,53 @@ int libevtx_binary_xml_document_substitute_template_value(
 				break;
 
 			case LIBEVTX_VALUE_TYPE_INTEGER_8BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_8BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_INTEGER_8BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_8BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_8BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_8BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_INTEGER_16BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_16BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_16BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_16BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_INTEGER_32BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_32BIT:
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
+				break;
+
 			case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_32BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_HEXADECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_32BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_INTEGER_64BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_UNSIGNED_INTEGER_64BIT:
+				value_format = LIBFVALUE_VALUE_FORMAT_DECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
+				break;
+
 			case LIBEVTX_VALUE_TYPE_HEXADECIMAL_INTEGER_64BIT:
-				value_type = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
+				value_format = LIBFVALUE_VALUE_FORMAT_HEXADECIMAL;
+				value_type   = LIBFVALUE_VALUE_TYPE_UNSIGNED_INTEGER_64BIT;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_BOOLEAN:
@@ -3786,6 +3803,23 @@ int libevtx_binary_xml_document_substitute_template_value(
 			 function );
 
 			goto on_error;
+		}
+		if( value_format != 0 )
+		{
+			if( libfvalue_value_set_format(
+			     xml_tag->value,
+			     value_format,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set value format.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		if( value_type == LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM )
 		{

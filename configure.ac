@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20120414],
+ [20120415],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -93,7 +93,7 @@ dnl Check for enabling libfvalue for file value support
 AX_LIBFVALUE_CHECK_ENABLE
 
 dnl Check for library function support
-AX_LIBREGF_CHECK_LOCAL
+AX_LIBEVTX_CHECK_LOCAL
 
 dnl Check for enabling libfwnt for file Windows NT type support
 AX_LIBFWNT_CHECK_ENABLE
