@@ -3637,24 +3637,62 @@ int libevtx_binary_xml_document_substitute_template_value(
 
 			goto on_error;
 		}
-		if( libevtx_binary_xml_document_read_fragment(
-		     binary_xml_document,
-		     binary_xml_sub_token,
-		     io_handle,
-		     chunk_data,
-		     chunk_data_size,
-		     template_value->chunk_data_offset,
-		     xml_tag,
-		     error ) != 1 )
+		switch( binary_xml_sub_token->type & 0xbf )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read fragment header.",
-			 function );
+			case LIBEVTX_BINARY_XML_TOKEN_FRAGMENT_HEADER:
+				if( libevtx_binary_xml_document_read_fragment(
+				     binary_xml_document,
+				     binary_xml_sub_token,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     template_value->chunk_data_offset,
+				     xml_tag,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read fragment header.",
+					 function );
 
-			goto on_error;
+					goto on_error;
+				}
+				break;
+
+			case LIBEVTX_BINARY_XML_TOKEN_TEMPLATE_INSTANCE:
+				if( libevtx_binary_xml_document_read_template_instance(
+				     binary_xml_document,
+				     binary_xml_sub_token,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     template_value->chunk_data_offset,
+				     xml_tag,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read document template instance.",
+					 function );
+
+					goto on_error;
+				}
+				break;
+
+			default:
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 "%s: invalid binary XML token - unsupported type: 0x%02" PRIx8 ".",
+				 function,
+				 binary_xml_sub_token->type );
+
+				goto on_error;
 		}
 		if( libevtx_binary_xml_token_free(
 		     &binary_xml_sub_token,
