@@ -401,11 +401,8 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 	 *   2 x ' ' character per indentation level
 	 *   1 x '<' character
 	 *   element name
-	 *   1 x '>' character
-	 *   1 x '\n' character
-	 *   1 x '\0' character
 	 */
-	*utf8_string_size = ( xml_tag_level * 2 ) + name_size + 3;
+	*utf8_string_size = ( xml_tag_level * 2 ) + name_size;
 
 	if( number_of_attributes > 0 )
 	{
@@ -461,9 +458,9 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			 *   1 x ' ' character
 			 *   attribute name
 			 *   1 x '=' character
-			 *   2 x '"' character
+			 *   1 x '"' character
 			 */
-			*utf8_string_size += string_size + 3;
+			*utf8_string_size += string_size + 2;
 
 			if( libfvalue_value_get_utf8_string_size(
 			     attribute_xml_tag->value,
@@ -481,7 +478,11 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 
 				return( -1 );
 			}
-			*utf8_string_size += string_size - 1;
+			/* The size of:
+			 *   attribute value formatted as a string
+			 *   1 x '"' character
+			 */
+			*utf8_string_size += string_size;
 		}
 	}
 	if( xml_tag->value != NULL )
@@ -504,13 +505,13 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 		if( string_size > 1 )
 		{
 			/* The size of:
+			 *   1 x '>' character
 			 *   value formatted as a string
 			 *   1 x '<' character
 			 *   1 x '/' character
 			 *   element name
-			 *   1 x '>' character
 			 */
-			*utf8_string_size += name_size + string_size + 1;
+			*utf8_string_size += string_size + name_size + 1;
 		}
 		else
 		{
@@ -564,12 +565,12 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			*utf8_string_size += string_size - 1;
 		}
 		/* The size of:
+		 *   1 x '>' character
+		 *   1 x '\n' character
 		 *   2 x ' ' character per indentation level
 		 *   1 x '<' character
 		 *   1 x '/' character
 		 *   element name
-		 *   1 x '>' character
-		 *   1 x '\n' character
 		 */
 		*utf8_string_size += ( xml_tag_level * 2 ) + name_size + 3;
 	}
@@ -580,6 +581,13 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 		 */
 		*utf8_string_size += 1;
 	}
+	/* The size of:
+	 *   1 x '>' character
+	 *   1 x '\n' character
+	 *   1 x '\0' character
+	 */
+	*utf8_string_size += 3;
+
 	return( 1 );
 }
 

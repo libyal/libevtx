@@ -2,9 +2,9 @@ TODO
 * libfvalue:
   - improve to value to string type support
 * libevtx:
-  - fix SystemTime=""
+  - filetime add Z
+  - GUID string formatting (add {}, upper/lower case)
   - add support for Binary type (todo debug)
-  - add support for GUID type
   - add support for NT SID type
 * evtxeport:
   - rewrite using evtexport
@@ -21,6 +21,11 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120417
+* added libexe, libregf, libwrc, libcdirectory
+* updated libfdatetime
+* worked on libfvalue
 
 20120415
 * worked on libfvalue to copy to string functions

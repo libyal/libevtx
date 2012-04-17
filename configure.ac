@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20120416],
+ [20120417],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -89,14 +89,26 @@ AX_LIBFDATETIME_CHECK_ENABLE
 dnl Check for enabling libfguid for file GUID/UUID support
 AX_LIBFGUID_CHECK_ENABLE
 
+dnl Check for enabling libfwnt for file Windows NT type support
+AX_LIBFWNT_CHECK_ENABLE
+
 dnl Check for enabling libfvalue for file value support
 AX_LIBFVALUE_CHECK_ENABLE
 
 dnl Check for library function support
 AX_LIBEVTX_CHECK_LOCAL
 
-dnl Check for enabling libfwnt for file Windows NT type support
-AX_LIBFWNT_CHECK_ENABLE
+dnl Check for enabling libexe for MZ, PE/COFF executable support
+AX_LIBEXE_CHECK_ENABLE
+
+dnl Check for enabling libregf for Windows Registry file support
+AX_LIBREGF_CHECK_ENABLE
+
+dnl Check for enabling libwrc for Windows Resource support
+AX_LIBWRC_CHECK_ENABLE
+
+dnl Check for enabling libcpath for cross-platform C directory functions
+AX_LIBCDIRECTORY_CHECK_ENABLE
 
 dnl Check for enabling libcsystem for cross-platform C generic system functions
 AX_LIBCSYSTEM_CHECK_ENABLE
@@ -143,7 +155,7 @@ AM_CONDITIONAL(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwnt" = xyes],
  [AC_SUBST(
   [libevtx_spec_requires],
   [Requires:])
@@ -153,7 +165,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libcsystem" = xyes],
+ [test "x$ac_cv_libexe" = xyes || test "x$ac_cv_libregf" = xyes || test "x$ac_cv_libwrc" = xyes || test "x$ac_cv_libcdirectory" = xyes || test "x$ac_cv_libcsystem" = xyes],
  [AC_SUBST(
   [libevtx_spec_tools_build_requires],
   [BuildRequires:])
@@ -181,8 +193,12 @@ AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
-AC_CONFIG_FILES([libevtx/Makefile])
 AC_CONFIG_FILES([libfwnt/Makefile])
+AC_CONFIG_FILES([libevtx/Makefile])
+AC_CONFIG_FILES([libexe/Makefile])
+AC_CONFIG_FILES([libregf/Makefile])
+AC_CONFIG_FILES([libwrc/Makefile])
+AC_CONFIG_FILES([libcdirectory/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([evtxtools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
@@ -224,6 +240,10 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfwnt support:                           $ac_cv_libfwnt
+   libexe support:                            $ac_cv_libexe
+   libregf support:                           $ac_cv_libregf
+   libwrc support:                            $ac_cv_libwrc
+   libcdirectory support:                     $ac_cv_libcdirectory
    libcsystem support:                        $ac_cv_libcsystem
 
 Features:

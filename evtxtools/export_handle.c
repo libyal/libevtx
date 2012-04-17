@@ -566,16 +566,16 @@ int export_handle_export_record(
 		  filetime,
 		  (uint16_t *) filetime_string,
 		  32,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
 		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #else
 	result = libfdatetime_filetime_copy_to_utf8_string(
 		  filetime,
 		  (uint8_t *) filetime_string,
 		  32,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
 		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #endif
 	if( result != 1 )

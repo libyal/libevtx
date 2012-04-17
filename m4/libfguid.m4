@@ -1,6 +1,6 @@
 dnl Functions for libfguid
 dnl
-dnl Version: 20120406
+dnl Version: 20120417
 
 dnl Function to detect if libfguid is available
 dnl ac_libfguid_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -27,12 +27,62 @@ AC_DEFUN([AX_LIBFGUID_CHECK_LIB],
    [ac_cv_libfguid=no],
    [ac_cv_libfguid=yes
    AC_CHECK_LIB(
-    fdatetime,
+    fguid,
     libfguid_get_version,
     [ac_cv_libfguid_dummy=yes],
     [ac_cv_libfguid=no])
   
-   dnl TODO add functions
+   dnl identifier functions
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_initialize,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_free,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_from_byte_stream,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_get_string_size,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf8_string,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf8_string_with_index,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf16_string,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf16_string_with_index,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf32_string,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
+   AC_CHECK_LIB(
+    fguid,
+    libfguid_identifier_copy_to_utf32_string_with_index,
+    [ac_cv_libfguid_dummy=yes],
+    [ac_cv_libfguid=no])
    ])
   ])
 
@@ -71,7 +121,7 @@ AC_DEFUN([AX_LIBFGUID_CHECK_ENABLE],
   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
   [PKG_CHECK_MODULES(
    [libfguid],
-   [libfguid >= 20120405],
+   [libfguid >= 20120417],
    [ac_cv_libfguid=yes],
    [ac_cv_libfguid=no])
 

@@ -1,6 +1,6 @@
 dnl Functions for libfdatetime
 dnl
-dnl Version: 20120406
+dnl Version: 20120417
 
 dnl Function to detect if libfdatetime is available
 dnl ac_libfdatetime_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -61,7 +61,27 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_LIB],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
     fdatetime,
+    libfdatetime_fat_date_time_copy_to_utf8_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
     libfdatetime_fat_date_time_copy_to_utf16_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_fat_date_time_copy_to_utf16_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_fat_date_time_copy_to_utf32_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_fat_date_time_copy_to_utf32_string_with_index,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
   
@@ -93,7 +113,27 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_LIB],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
     fdatetime,
+    libfdatetime_filetime_copy_to_utf8_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
     libfdatetime_filetime_copy_to_utf16_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_filetime_copy_to_utf16_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_filetime_copy_to_utf32_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_filetime_copy_to_utf32_string_with_index,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
@@ -130,7 +170,27 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_LIB],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
     fdatetime,
+    libfdatetime_nsf_timedate_copy_to_utf8_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
     libfdatetime_nsf_timedate_copy_to_utf16_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_nsf_timedate_copy_to_utf16_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_nsf_timedate_copy_to_utf32_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_nsf_timedate_copy_to_utf32_string_with_index,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
 
@@ -157,12 +217,37 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_LIB],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
     fdatetime,
+    libfdatetime_posix_time_copy_from_uint64,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
     libfdatetime_posix_time_copy_to_utf8_string,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
    AC_CHECK_LIB(
     fdatetime,
+    libfdatetime_posix_time_copy_to_utf8_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
     libfdatetime_posix_time_copy_to_utf16_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_posix_time_copy_to_utf16_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_posix_time_copy_to_utf32_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_posix_time_copy_to_utf32_string_with_index,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
   ])
@@ -203,7 +288,7 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_ENABLE],
   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
   [PKG_CHECK_MODULES(
    [libfdatetime],
-   [libfdatetime >= 20120405],
+   [libfdatetime >= 20120417],
    [ac_cv_libfdatetime=yes],
    [ac_cv_libfdatetime=no])
 
