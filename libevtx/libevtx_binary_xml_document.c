@@ -35,6 +35,10 @@
 #include "libevtx_libuna.h"
 #include "libevtx_xml_tag.h"
 
+/* TODO only used for value format flags definitions */
+#include "libevtx_libfdatetime.h"
+#include "libevtx_libfguid.h"
+
 /* Initialize binary XML document
  * Make sure the value binary XML document is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
@@ -3502,8 +3506,9 @@ int libevtx_binary_xml_document_substitute_template_value(
 	libevtx_binary_xml_token_t *binary_xml_sub_token    = NULL;
 	static char *function                               = "libevtx_binary_xml_document_substitute_template_value";
 	size_t value_data_size                              = 0;
-	uint8_t value_format                                = 0;
+	uint32_t value_format_flags                         = 0;
 	uint8_t value_type                                  = 0;
+	int value_format                                    = 0;
 
 	if( binary_xml_document == NULL )
 	{
@@ -3777,11 +3782,17 @@ int libevtx_binary_xml_document_substitute_template_value(
 				break;
 
 			case LIBEVTX_VALUE_TYPE_BINARY_DATA:
-				value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
+/* TODO improve: change libuna flags to fvalue flags ? */
+				value_format       = LIBFVALUE_VALUE_FORMAT_BASE16;
+				value_format_flags = LIBUNA_BASE16_VARIANT_CASE_UPPER | LIBUNA_BASE16_VARIANT_CHARACTER_LIMIT_NONE;
+				value_type         = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_GUID:
-				value_type = LIBFVALUE_VALUE_TYPE_GUID;
+/* TODO improve: change libfguid flags to fvalue flags ? */
+				value_format       = LIBFVALUE_VALUE_FORMAT_GUID;
+				value_format_flags = LIBFGUID_STRING_FORMAT_USE_UPPER_CASE | LIBFGUID_STRING_FORMAT_USE_SURROUNDING_BRACES;
+				value_type         = LIBFVALUE_VALUE_TYPE_GUID;
 				break;
 
 			case LIBEVTX_VALUE_TYPE_SIZE:
@@ -3808,13 +3819,18 @@ int libevtx_binary_xml_document_substitute_template_value(
 				break;
 
 			case LIBEVTX_VALUE_TYPE_FILETIME:
-				value_type = LIBFVALUE_VALUE_TYPE_FILETIME;
+/* TODO improve: change libfdatetime flags to fvalue flags ? */
+				value_format       = LIBFVALUE_VALUE_FORMAT_DATE_TIME_ISO8601;
+				value_format_flags = LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS;
+				value_type         = LIBFVALUE_VALUE_TYPE_FILETIME;
 				break;
 
 /* TODO improve */
 			case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:
 			case LIBEVTX_VALUE_TYPE_ARRAY_OF_NT_SECURITY_IDENTIFIER:
-				value_type = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
+				value_format       = LIBFVALUE_VALUE_FORMAT_BASE16;
+				value_format_flags = LIBUNA_BASE16_VARIANT_CASE_UPPER | LIBUNA_BASE16_VARIANT_CHARACTER_LIMIT_NONE;
+				value_type         = LIBFVALUE_VALUE_TYPE_BINARY_DATA;
 				break;
 
 			default:
@@ -3847,6 +3863,7 @@ int libevtx_binary_xml_document_substitute_template_value(
 			if( libfvalue_value_set_format(
 			     xml_tag->value,
 			     value_format,
+			     value_format_flags,
 			     error ) != 1 )
 			{
 				libcerror_error_set(

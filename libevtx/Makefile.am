@@ -47,6 +47,7 @@ libevtx_la_SOURCES = \
 	libevtx_libfcache.h \
 	libevtx_libfdata.h \
 	libevtx_libfdatetime.h \
+	libevtx_libfguid.h \
 	libevtx_libfvalue.h \
 	libevtx_libuna.h \
 	libevtx_list_type.c libevtx_list_type.h \
