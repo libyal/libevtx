@@ -16,8 +16,12 @@ SUBDIRS = \
 	libfdatetime \
 	libfguid \
 	libfvalue \
-	libevtx \
 	libfwnt \
+	libevtx \
+	libexe \
+	libregf \
+	libwrc \
+	libcdirectory \
 	libcsystem \
 	evtxtools \
 	po \

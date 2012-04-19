@@ -138,7 +138,7 @@ int libevtx_check_file_signature(
 		 "%s: invalid filename.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_initialize(
 	     &file_io_handle,
@@ -151,7 +151,7 @@ int libevtx_check_file_signature(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_set_name(
 	     file_io_handle,
@@ -166,11 +166,7 @@ int libevtx_check_file_signature(
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	result = libevtx_check_file_signature_file_io_handle(
 	          file_io_handle,
@@ -185,11 +181,7 @@ int libevtx_check_file_signature(
 		 "%s: unable to check file signature using a file handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_free(
 	     &file_io_handle,
@@ -202,9 +194,18 @@ int libevtx_check_file_signature(
 		 "%s: unable to free file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( result );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -257,7 +258,7 @@ int libevtx_check_file_signature_wide(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_file_set_name_wide(
 	     file_io_handle,
@@ -272,11 +273,7 @@ int libevtx_check_file_signature_wide(
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	result = libevtx_check_file_signature_file_io_handle(
 	          file_io_handle,
@@ -291,11 +288,7 @@ int libevtx_check_file_signature_wide(
 		 "%s: unable to check file signature using a file handle.",
 		 function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	if( libbfio_handle_free(
 	     &file_io_handle,
@@ -308,9 +301,18 @@ int libevtx_check_file_signature_wide(
 		 "%s: unable to free file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( result );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #endif
@@ -352,7 +354,7 @@ int libevtx_check_file_signature_file_io_handle(
 		 "%s: unable to open file.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( file_io_handle_is_open == 0 )
 	{
@@ -368,7 +370,7 @@ int libevtx_check_file_signature_file_io_handle(
 			 "%s: unable to open file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	if( libbfio_handle_seek_offset(
@@ -384,13 +386,7 @@ int libevtx_check_file_signature_file_io_handle(
 		 "%s: unable to seek file header offset: 0.",
 		 function );
 
-		if( file_io_handle_is_open == 0 )
-		{
-			libbfio_handle_close(
-			 file_io_handle,
-			 error );
-		}
-		return( -1 );
+		goto on_error;
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
@@ -407,13 +403,7 @@ int libevtx_check_file_signature_file_io_handle(
 		 "%s: unable to read signature.",
 		 function );
 
-		if( file_io_handle_is_open == 0 )
-		{
-			libbfio_handle_close(
-			 file_io_handle,
-			 error );
-		}
-		return( -1 );
+		goto on_error;
 	}
 	if( file_io_handle_is_open == 0 )
 	{
@@ -428,7 +418,7 @@ int libevtx_check_file_signature_file_io_handle(
 			 "%s: unable to close file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	if( memory_compare(
@@ -439,5 +429,14 @@ int libevtx_check_file_signature_file_io_handle(
 		return( 1 );
 	}
 	return( 0 );
+
+on_error:
+	if( file_io_handle_is_open == 0 )
+	{
+		libbfio_handle_close(
+		 file_io_handle,
+		 error );
+	}
+	return( -1 );
 }
 

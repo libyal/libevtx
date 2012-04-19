@@ -606,7 +606,7 @@ int libevtx_file_open_file_io_handle(
 		 "%s: unable to open file.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( file_io_handle_is_open == 0 )
 	{
@@ -622,8 +622,9 @@ int libevtx_file_open_file_io_handle(
 			 "%s: unable to open file IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
+		internal_file->file_io_handle_opened_in_library = 1;
 	}
 	if( libevtx_file_open_read(
 	     internal_file,
@@ -636,9 +637,21 @@ int libevtx_file_open_file_io_handle(
 		 "%s: unable to read from file handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	return( 1 );
+
+on_error:
+	if( file_io_handle_is_open == 0 )
+	{
+		libbfio_handle_close(
+		 file_io_handle,
+		 error );
+	}
+	internal_file->file_io_handle                   = NULL;
+	internal_file->file_io_handle_opened_in_library = 0;
+
+	return( -1 );
 }
 
 /* Closes a file
@@ -696,18 +709,22 @@ int libevtx_file_close(
 			}
 		}
 #endif
-		if( libbfio_handle_close(
-		     internal_file->file_io_handle,
-		     error ) != 0 )
+		if( internal_file->file_io_handle_opened_in_library != 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close file IO handle.",
-			 function );
+			if( libbfio_handle_close(
+			     internal_file->file_io_handle,
+			     error ) != 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close file IO handle.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
+			internal_file->file_io_handle_opened_in_library = 0;
 		}
 		if( libbfio_handle_free(
 		     &( internal_file->file_io_handle ),
@@ -1270,11 +1287,13 @@ int libevtx_file_open_read(
 	return( 1 );
 
 on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( trailing_data != NULL )
 	{
 		memory_free(
 		 trailing_data );
 	}
+#endif
 	if( chunk != NULL )
 	{
 		libevtx_chunk_free(

@@ -52,6 +52,10 @@ struct libevtx_internal_file
 	 */
 	uint8_t file_io_handle_created_in_library;
 
+	/* Value to indicate if the file IO handle was opened inside the library
+	 */
+	uint8_t file_io_handle_opened_in_library;
+
 	/* The chunks vector
 	 */
 	libfdata_vector_t *chunks_vector;

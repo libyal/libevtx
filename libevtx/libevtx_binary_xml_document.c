@@ -3820,8 +3820,8 @@ int libevtx_binary_xml_document_substitute_template_value(
 
 			case LIBEVTX_VALUE_TYPE_FILETIME:
 /* TODO improve: change libfdatetime flags to fvalue flags ? */
-				value_format       = LIBFVALUE_VALUE_FORMAT_DATE_TIME_ISO8601;
-				value_format_flags = LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS;
+				value_format       = LIBFVALUE_VALUE_FORMAT_DATE_TIME;
+				value_format_flags = LIBFDATETIME_STRING_FORMAT_TYPE_ISO8601 | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS;
 				value_type         = LIBFVALUE_VALUE_TYPE_FILETIME;
 				break;
 
