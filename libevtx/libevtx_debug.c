@@ -92,6 +92,16 @@ void libevtx_debug_print_value_type(
 			 "Integer 64-bit unsigned" );
 			break;
 
+		case LIBEVTX_VALUE_TYPE_FLOATING_POINT_32BIT:
+			libcnotify_printf(
+			 "Floating point 32-bit (single precision)" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_FLOATING_POINT_64BIT:
+			libcnotify_printf(
+			 "Floating point 64-bit (double precision)" );
+			break;
+
 		case LIBEVTX_VALUE_TYPE_BOOLEAN:
 			libcnotify_printf(
 			 "Boolean" );
@@ -115,6 +125,11 @@ void libevtx_debug_print_value_type(
 		case LIBEVTX_VALUE_TYPE_FILETIME:
 			libcnotify_printf(
 			 "Filetime" );
+			break;
+
+		case LIBEVTX_VALUE_TYPE_SYSTEMTIME:
+			libcnotify_printf(
+			 "Systemtime" );
 			break;
 
 		case LIBEVTX_VALUE_TYPE_NT_SECURITY_IDENTIFIER:

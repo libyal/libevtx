@@ -49,9 +49,9 @@ struct libevtx_record_values
 	 */
 	uint64_t identifier;
 
-	/* The creation time
+	/* The last written time
 	 */
-	uint64_t creation_time;
+	uint64_t last_written_time;
 
 	/* The event identifier
 	 */

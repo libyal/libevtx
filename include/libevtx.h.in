@@ -321,14 +321,14 @@ int libevtx_record_get_identifier(
      uint64_t *identifier,
      libevtx_error_t **error );
 
-/* Retrieves the creation time
+/* Retrieves the last written time
  * The timestamp is a 64-bit FILETIME date and time value
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_record_get_creation_time(
+int libevtx_record_get_last_written_time(
      libevtx_record_t *record,
-     uint64_t *creation_time,
+     uint64_t *last_written_time,
      libevtx_error_t **error );
 
 /* Retrieves the event identifier

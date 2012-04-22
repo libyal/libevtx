@@ -38,6 +38,8 @@ install_libevtx_tools:
 	install -p -m755 debian/tmp/usr/bin/* debian/libevtx-tools/usr/bin
 	install -p -m755 debian/tmp/usr/share/man/man1/* debian/libevtx-tools/usr/share/man/man1
 
+override_dh_auto_test:
+
 override_dh_installinit: install_libevtx install_libevtx_dev install_libevtx_tools
 
 override_dh_installmenu:

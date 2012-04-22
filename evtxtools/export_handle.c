@@ -533,7 +533,7 @@ int export_handle_export_record(
 	 "Event number\t\t: %" PRIu64 "\n",
 	 value_64bit );
 
-	if( libevtx_record_get_creation_time(
+	if( libevtx_record_get_last_written_time(
 	     record,
 	     &value_64bit,
 	     error ) != 1 )
@@ -542,7 +542,7 @@ int export_handle_export_record(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve creation time.",
+		 "%s: unable to retrieve last written time.",
 		 function );
 
 		goto on_error;
@@ -566,16 +566,14 @@ int export_handle_export_record(
 		  filetime,
 		  (uint16_t *) filetime_string,
 		  32,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #else
 	result = libfdatetime_filetime_copy_to_utf8_string(
 		  filetime,
 		  (uint8_t *) filetime_string,
 		  32,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #endif
 	if( result != 1 )
@@ -591,7 +589,7 @@ int export_handle_export_record(
 	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Creation time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+	 "Last written time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 	 filetime_string );
 
 	if( libfdatetime_filetime_free(

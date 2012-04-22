@@ -382,8 +382,8 @@ int libevtx_record_values_read_header(
 	 record_values->identifier );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_event_record_header_t *) event_record_data )->creation_time,
-	 record_values->creation_time );
+	 ( (evtx_event_record_header_t *) event_record_data )->last_written_time,
+	 record_values->last_written_time );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -421,7 +421,7 @@ int libevtx_record_values_read_header(
 		}
 		if( libfdatetime_filetime_copy_from_byte_stream(
 		     filetime,
-		     ( (evtx_event_record_header_t *) event_record_data )->creation_time,
+		     ( (evtx_event_record_header_t *) event_record_data )->last_written_time,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
 		     error ) != 1 )
@@ -440,16 +440,14 @@ int libevtx_record_values_read_header(
 			  filetime,
 			  (uint16_t *) filetime_string,
 			  32,
-			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			  error );
 #else
 		result = libfdatetime_filetime_copy_to_utf8_string(
 			  filetime,
 			  (uint8_t *) filetime_string,
 			  32,
-			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			  error );
 #endif
 		if( result != 1 )
@@ -464,7 +462,7 @@ int libevtx_record_values_read_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: creation time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "%s: last written time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
 
@@ -540,7 +538,6 @@ int libevtx_record_values_read_xml_document(
 	static char *function             = "libevtx_record_values_read_xml_document";
 	size_t chunk_data_offset          = 0;
 	size_t event_record_data_size     = 0;
-	uint32_t copy_of_size             = 0;
 
 	if( record_values == NULL )
 	{
@@ -911,7 +908,7 @@ int libevtx_record_values_get_utf16_xml_string(
 	     0,
 	     utf16_string,
 	     utf16_string_size,
-	     &utf16_string_size,
+	     &utf16_string_index,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

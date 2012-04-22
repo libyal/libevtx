@@ -331,6 +331,7 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 	int element_index                    = 0;
 	int number_of_attributes             = 0;
 	int number_of_elements               = 0;
+	int value_type                       = 0;
 
 	if( xml_tag == NULL )
 	{
@@ -462,6 +463,20 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			 */
 			*utf8_string_size += string_size + 2;
 
+			if( libfvalue_value_get_type(
+			     attribute_xml_tag->value,
+			     &value_type,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve attribute value type.",
+				 function );
+
+				return( -1 );
+			}
 			if( libfvalue_value_get_utf8_string_size(
 			     attribute_xml_tag->value,
 			     0,
@@ -483,10 +498,33 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			 *   1 x '"' character
 			 */
 			*utf8_string_size += string_size;
+
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				/* The size of:
+				 *   1 x 'Z' character
+				 */
+				*utf8_string_size += 1;
+			}
 		}
 	}
 	if( xml_tag->value != NULL )
 	{
+		if( libfvalue_value_get_type(
+		     xml_tag->value,
+		     &value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve attribute value type.",
+			 function );
+
+			return( -1 );
+		}
 		if( libfvalue_value_get_utf8_string_size(
 		     xml_tag->value,
 		     0,
@@ -512,6 +550,15 @@ int libevtx_xml_tag_get_utf8_xml_string_size(
 			 *   element name
 			 */
 			*utf8_string_size += string_size + name_size + 1;
+
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				/* The size of:
+				 *   1 x 'Z' character
+				 */
+				*utf8_string_size += 1;
+			}
 		}
 		else
 		{
@@ -612,6 +659,7 @@ int libevtx_xml_tag_get_utf8_xml_string_with_index(
 	int indentation_iterator             = 0;
 	int number_of_attributes             = 0;
 	int number_of_elements               = 0;
+	int value_type                       = 0;
 
 	if( xml_tag == NULL )
 	{
@@ -809,6 +857,20 @@ int libevtx_xml_tag_get_utf8_xml_string_with_index(
 			utf8_string[ string_index++ ] = (uint8_t) '=';
 			utf8_string[ string_index++ ] = (uint8_t) '"';
 
+			if( libfvalue_value_get_type(
+			     attribute_xml_tag->value,
+			     &value_type,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve attribute value type.",
+				 function );
+
+				return( -1 );
+			}
 			if( libfvalue_value_copy_to_utf8_string_with_index(
 			     attribute_xml_tag->value,
 			     0,
@@ -840,11 +902,41 @@ int libevtx_xml_tag_get_utf8_xml_string_with_index(
 
 				return( -1 );
 			}
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				if( ( string_index + 1 ) > utf8_string_size )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+					 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+					 "%s: UTF-8 string size too small.",
+					 function );
+
+					return( -1 );
+				}
+				utf8_string[ string_index++ ] = (uint8_t) 'Z';
+			}
 			utf8_string[ string_index++ ] = (uint8_t) '"';
 		}
 	}
 	if( xml_tag->value != NULL )
 	{
+		if( libfvalue_value_get_type(
+		     xml_tag->value,
+		     &value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve attribute value type.",
+			 function );
+
+			return( -1 );
+		}
 		if( libfvalue_value_get_utf8_string_size(
 		     xml_tag->value,
 		     0,
@@ -894,6 +986,22 @@ int libevtx_xml_tag_get_utf8_xml_string_with_index(
 			}
 			string_index--;
 
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				if( ( string_index + 1 ) > utf8_string_size )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+					 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+					 "%s: UTF-8 string size too small.",
+					 function );
+
+					return( -1 );
+				}
+				utf8_string[ string_index++ ] = (uint8_t) 'Z';
+			}
 			if( ( string_index + 2 ) > utf8_string_size )
 			{
 				libcerror_error_set(
@@ -1132,6 +1240,7 @@ int libevtx_xml_tag_debug_print(
 	int indentation_iterator             = 0;
 	int number_of_attributes             = 0;
 	int number_of_elements               = 0;
+	int value_type                       = 0;
 
 	if( xml_tag == NULL )
 	{
@@ -1182,8 +1291,9 @@ int libevtx_xml_tag_debug_print(
 	libcnotify_printf(
 	 "<" );
 
-	if( libfvalue_debug_print_value(
+	if( libfvalue_value_print(
 	     xml_tag->name,
+	     0,
 	     0,
 	     error ) != 1 )
 	{
@@ -1233,8 +1343,9 @@ int libevtx_xml_tag_debug_print(
 			libcnotify_printf(
 			 " " );
 
-			if( libfvalue_debug_print_value(
+			if( libfvalue_value_print(
 			     attribute_xml_tag->name,
+			     0,
 			     0,
 			     error ) != 1 )
 			{
@@ -1250,23 +1361,40 @@ int libevtx_xml_tag_debug_print(
 			libcnotify_printf(
 			 "=\"" );
 
-/* TODO as long as substitutions are not handled this is necessary */
-			if( attribute_xml_tag->value != NULL )
+			if( libfvalue_value_get_type(
+			     attribute_xml_tag->value,
+			     &value_type,
+			     error ) != 1 )
 			{
-				if( libfvalue_debug_print_value(
-				     attribute_xml_tag->value,
-				     0,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-					 "%s: unable to print attribute value.",
-					 function );
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve attribute value type.",
+				 function );
 
-					return( -1 );
-				}
+				return( -1 );
+			}
+			if( libfvalue_value_print(
+			     attribute_xml_tag->value,
+			     0,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print attribute value.",
+				 function );
+
+				return( -1 );
+			}
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				libcnotify_printf(
+				 "Z" );
 			}
 			libcnotify_printf(
 			 "\"" );
@@ -1274,6 +1402,20 @@ int libevtx_xml_tag_debug_print(
 	}
 	if( xml_tag->value != NULL )
 	{
+		if( libfvalue_value_get_type(
+		     xml_tag->value,
+		     &value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve attribute value type.",
+			 function );
+
+			return( -1 );
+		}
 		if( libfvalue_value_get_utf8_string_size(
 		     xml_tag->value,
 		     0,
@@ -1294,8 +1436,9 @@ int libevtx_xml_tag_debug_print(
 			libcnotify_printf(
 			 ">" );
 
-			if( libfvalue_debug_print_value(
+			if( libfvalue_value_print(
 			     xml_tag->value,
+			     0,
 			     0,
 			     error ) != 1 )
 			{
@@ -1308,11 +1451,18 @@ int libevtx_xml_tag_debug_print(
 
 				return( -1 );
 			}
+			if( ( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+			 || ( value_type == LIBFVALUE_VALUE_TYPE_SYSTEMTIME ) )
+			{
+				libcnotify_printf(
+				 "Z" );
+			}
 			libcnotify_printf(
 			 "</" );
 
-			if( libfvalue_debug_print_value(
+			if( libfvalue_value_print(
 			     xml_tag->name,
+			     0,
 			     0,
 			     error ) != 1 )
 			{
@@ -1383,8 +1533,9 @@ int libevtx_xml_tag_debug_print(
 		libcnotify_printf(
 		 "</" );
 
-		if( libfvalue_debug_print_value(
+		if( libfvalue_value_print(
 		     xml_tag->name,
+		     0,
 		     0,
 		     error ) != 1 )
 		{

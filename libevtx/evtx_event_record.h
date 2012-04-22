@@ -49,11 +49,11 @@ struct evtx_event_record_header
 	 */
 	uint8_t identifier[ 8 ];
 
-	/* The creation time
+	/* The last written time
 	 * Consists 8 bytes
 	 * Contains a filetime
 	 */
-	uint8_t creation_time[ 8 ];
+	uint8_t last_written_time[ 8 ];
 };
 
 #if defined( __cplusplus )

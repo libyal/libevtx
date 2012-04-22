@@ -1,13 +1,12 @@
 TODO
+* deal with entity reference in fvalue ?
+* binary XML: merge value text and CDATA text into single function
+* binary XML: merge attribute and entry refenrence name into single function
+* check for memory leaks
 * deal with trailing empty data
 * remove libevtx_libfguid.h once libfvalue wraps the format flags
 * libfvalue:
   - improve to value to string type support
-* libevtx:
-  - filetime add Z
-  - GUID string formatting (add {}, upper/lower case)
-  - add support for Binary type (todo debug)
-  - add support for NT SID type
 * evtxeport:
   - rewrite using evtexport
   - export format: xml
@@ -23,6 +22,10 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120422
+* libfvalue update
+* improvement for reading and converting to XML
 
 20120419
 * code clean up

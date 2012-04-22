@@ -28,6 +28,7 @@
  */
 #if defined( HAVE_LOCAL_LIBFVALUE )
 
+#include <libfvalue_debug.h>
 #include <libfvalue_codepage.h>
 #include <libfvalue_definitions.h>
 #include <libfvalue_split_string.h>
@@ -35,10 +36,7 @@
 #include <libfvalue_table.h>
 #include <libfvalue_types.h>
 #include <libfvalue_value.h>
-
-#if defined( HAVE_DEBUG_OUTPUT )
-#include <libfvalue_debug.h>
-#endif
+#include <libfvalue_value_type.h>
 
 #elif defined( HAVE_LIBFVALUE_H )
 

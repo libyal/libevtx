@@ -1,6 +1,6 @@
 dnl Functions for libfdatetime
 dnl
-dnl Version: 20120417
+dnl Version: 20120422
 
 dnl Function to detect if libfdatetime is available
 dnl ac_libfdatetime_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -248,6 +248,58 @@ AC_DEFUN([AX_LIBFDATETIME_CHECK_LIB],
    AC_CHECK_LIB(
     fdatetime,
     libfdatetime_posix_time_copy_to_utf32_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+
+   dnl Systemtime functions
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_initialize,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_free,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_from_byte_stream,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_from_uint64,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf8_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf8_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf16_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf16_string_with_index,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf32_string,
+    [ac_cv_libfdatetime_dummy=yes],
+    [ac_cv_libfdatetime=no])
+   AC_CHECK_LIB(
+    fdatetime,
+    libfdatetime_systemetime_copy_to_utf32_string_with_index,
     [ac_cv_libfdatetime_dummy=yes],
     [ac_cv_libfdatetime=no])
   ])

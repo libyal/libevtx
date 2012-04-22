@@ -298,17 +298,17 @@ int libevtx_record_get_identifier(
 	return( 1 );
 }
 
-/* Retrieves the creation time
+/* Retrieves the last written time
  * The timestamp is a 64-bit FILETIME date and time value
  * Returns 1 if successful or -1 on error
  */
-int libevtx_record_get_creation_time(
+int libevtx_record_get_last_written_time(
      libevtx_record_t *record,
-     uint64_t *creation_time,
+     uint64_t *last_written_time,
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                     = "libevtx_record_get_creation_time";
+	static char *function                     = "libevtx_record_get_last_written_time";
 
 	if( record == NULL )
 	{
@@ -334,18 +334,18 @@ int libevtx_record_get_creation_time(
 
 		return( -1 );
 	}
-	if( creation_time == NULL )
+	if( last_written_time == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid creation time.",
+		 "%s: invalid last written time.",
 		 function );
 
 		return( -1 );
 	}
-	*creation_time = internal_record->record_values->creation_time;
+	*last_written_time = internal_record->record_values->last_written_time;
 
 	return( 1 );
 }
@@ -359,7 +359,7 @@ int libevtx_record_get_event_identifier(
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                     = "libevtx_record_get_event_identifier";
+	static char *function                      = "libevtx_record_get_event_identifier";
 
 	if( record == NULL )
 	{
