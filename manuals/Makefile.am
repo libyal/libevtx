@@ -1,10 +1,10 @@
 man_MANS = \
-	esedbinfo.1 \
-	libesedb.3
+	evtxinfo.1 \
+	libevtx.3
 
 EXTRA_DIST = \
-	esedbinfo.1 \
-	libesedb.3
+	evtxinfo.1 \
+	libevtx.3
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
