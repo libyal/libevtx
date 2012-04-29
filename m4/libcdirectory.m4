@@ -1,6 +1,6 @@
 dnl Functions for libcdirectory
 dnl
-dnl Version: 20120409
+dnl Version: 20120428
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -19,20 +19,38 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
  AS_IF(
   [test "x$ac_cv_with_libcdirectory" = xno],
   [ac_cv_libcdirectory=no],
-  [dnl Check for headers
-  AC_CHECK_HEADERS([libcdirectory.h])
- 
+  [dnl Check for a pkg-config file
   AS_IF(
-   [test "x$ac_cv_header_libcdirectory_h" = xno],
-   [ac_cv_libcdirectory=no],
-   [ac_cv_libcdirectory=yes
-   AC_CHECK_LIB(
-    fdatetime,
-    libcdirectory_get_version,
-    [ac_cv_libcdirectory_dummy=yes],
+   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
+   [PKG_CHECK_MODULES(
+    [libcdirectory],
+    [libcdirectory >= 20120423],
+    [ac_cv_libcdirectory=yes],
     [ac_cv_libcdirectory=no])
+   ])
+
+  AS_IF(
+   [test "x$ac_cv_libcdirectory" = xyes],
+   [ac_cv_libcdirectory_CPPFLAGS="$pkg_cv_libcdirectory_CFLAGS"
+   ac_cv_libcdirectory_LIBADD="$pkg_cv_libcdirectory_LIBS"],
+   [dnl Check for headers
+   AC_CHECK_HEADERS([libcdirectory.h])
+ 
+   AS_IF(
+    [test "x$ac_cv_header_libcdirectory_h" != xno],
+    [dnl Check for the individual functions
+    ac_cv_libcdirectory=yes
+
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_get_version,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
   
-   dnl TODO add functions
+    dnl TODO add functions
+
+    ac_cv_libcdirectory_LIBADD="-lcdirectory"
+    ])
    ])
   ])
 
@@ -42,8 +60,6 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
    [HAVE_LIBCDIRECTORY],
    [1],
    [Define to 1 if you have the `cdirectory' library (-lcdirectory).])
-
-  ac_cv_libcdirectory_LIBADD="-lcdirectory"
   ])
 
  AS_IF(
@@ -104,23 +120,8 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_ENABLE],
   [auto-detect],
   [DIR])
 
- dnl Check for a pkg-config file
- AS_IF(
-  [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
-  [PKG_CHECK_MODULES(
-   [libcdirectory],
-   [libcdirectory >= 20120405],
-   [ac_cv_libcdirectory=yes],
-   [ac_cv_libcdirectory=no])
-
-  ac_cv_libcdirectory_CPPFLAGS="$pkg_cv_libcdirectory_CFLAGS"
-  ac_cv_libcdirectory_LIBADD="$pkg_cv_libcdirectory_LIBS"
- ])
-
  dnl Check for a shared library version
- AS_IF(
-  [test "x$ac_cv_libcdirectory" != xyes],
-  [AX_LIBCDIRECTORY_CHECK_LIB])
+ AX_LIBCDIRECTORY_CHECK_LIB
 
  dnl Check if the dependencies for the local library version
  AS_IF(

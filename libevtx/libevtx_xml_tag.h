@@ -37,6 +37,10 @@ typedef struct libevtx_xml_tag libevtx_xml_tag_t;
 
 struct libevtx_xml_tag
 {
+	/* The type
+	 */
+	uint8_t type;
+
 	/* The name (value)
 	 */
 	libfvalue_value_t *name;
@@ -70,6 +74,34 @@ int libevtx_xml_tag_append_attribute(
 int libevtx_xml_tag_append_element(
      libevtx_xml_tag_t *xml_tag,
      libevtx_xml_tag_t *element_xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_attribute_by_utf8_name(
+     libevtx_xml_tag_t *xml_tag,
+     const uint8_t *utf8_string,
+     size_t utf8_string_length,
+     libevtx_xml_tag_t **attribute_xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_attribute_by_utf16_name(
+     libevtx_xml_tag_t *xml_tag,
+     const uint16_t *utf16_string,
+     size_t utf16_string_length,
+     libevtx_xml_tag_t **attribute_xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_element_by_utf8_name(
+     libevtx_xml_tag_t *xml_tag,
+     const uint8_t *utf8_string,
+     size_t utf8_string_length,
+     libevtx_xml_tag_t **element_xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_xml_tag_get_element_by_utf16_name(
+     libevtx_xml_tag_t *xml_tag,
+     const uint16_t *utf16_string,
+     size_t utf16_string_length,
+     libevtx_xml_tag_t **element_xml_tag,
      libcerror_error_t **error );
 
 int libevtx_xml_tag_get_utf8_xml_string_size(

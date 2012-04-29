@@ -298,17 +298,17 @@ int libevtx_record_get_identifier(
 	return( 1 );
 }
 
-/* Retrieves the last written time
+/* Retrieves the written time
  * The timestamp is a 64-bit FILETIME date and time value
  * Returns 1 if successful or -1 on error
  */
-int libevtx_record_get_last_written_time(
+int libevtx_record_get_written_time(
      libevtx_record_t *record,
-     uint64_t *last_written_time,
+     uint64_t *written_time,
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                     = "libevtx_record_get_last_written_time";
+	static char *function                     = "libevtx_record_get_written_time";
 
 	if( record == NULL )
 	{
@@ -334,18 +334,18 @@ int libevtx_record_get_last_written_time(
 
 		return( -1 );
 	}
-	if( last_written_time == NULL )
+	if( written_time == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid last written time.",
+		 "%s: invalid written time.",
 		 function );
 
 		return( -1 );
 	}
-	*last_written_time = internal_record->record_values->last_written_time;
+	*written_time = internal_record->record_values->written_time;
 
 	return( 1 );
 }
@@ -355,7 +355,7 @@ int libevtx_record_get_last_written_time(
  */
 int libevtx_record_get_event_identifier(
      libevtx_record_t *record,
-     uint64_t *event_identifier,
+     uint32_t *event_identifier,
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
@@ -374,30 +374,405 @@ int libevtx_record_get_event_identifier(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( internal_record->record_values == NULL )
+	if( libevtx_record_values_get_event_identifier(
+	     internal_record->record_values,
+	     event_identifier,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event identifier from record values.",
 		 function );
 
 		return( -1 );
 	}
-	if( event_identifier == NULL )
+	return( 1 );
+}
+
+/* Retrieves the event level
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_event_level(
+     libevtx_record_t *record,
+     uint8_t *event_level,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_event_level";
+
+	if( record == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid event identifier.",
+		 "%s: invalid record.",
 		 function );
 
 		return( -1 );
 	}
-	*event_identifier = internal_record->record_values->event_identifier;
+	internal_record = (libevtx_internal_record_t *) record;
 
+	if( libevtx_record_values_get_event_level(
+	     internal_record->record_values,
+	     event_level,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event level from record values.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded source name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_source_name_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_source_name_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_source_name_size(
+	     internal_record->record_values,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of source name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded source name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_source_name(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_source_name";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_source_name(
+	     internal_record->record_values,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy source name to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded source name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_source_name_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_source_name_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_source_name_size(
+	     internal_record->record_values,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of source name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded source name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_source_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_source_name";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_source_name(
+	     internal_record->record_values,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy source name to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded computer name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_computer_name_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_computer_name_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_computer_name_size(
+	     internal_record->record_values,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of computer name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded computer name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_computer_name(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_computer_name";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_computer_name(
+	     internal_record->record_values,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy computer name to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded computer name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_computer_name_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_computer_name_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_computer_name_size(
+	     internal_record->record_values,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of computer name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded computer name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_computer_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_computer_name";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_computer_name(
+	     internal_record->record_values,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy computer name to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 
@@ -435,7 +810,7 @@ int libevtx_record_get_utf8_xml_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of record values XML.",
+		 "%s: unable to retrieve UTF-8 string size of event XML.",
 		 function );
 
 		return( -1 );
@@ -479,7 +854,7 @@ int libevtx_record_get_utf8_xml_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy record values XML to UTF-8 string.",
+		 "%s: unable to copy event XML to UTF-8 string.",
 		 function );
 
 		return( -1 );
@@ -521,7 +896,7 @@ int libevtx_record_get_utf16_xml_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of record values XML.",
+		 "%s: unable to retrieve UTF-16 string size of event XML.",
 		 function );
 
 		return( -1 );
@@ -565,7 +940,7 @@ int libevtx_record_get_utf16_xml_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy record values XML to UTF-16 string.",
+		 "%s: unable to copy event XML to UTF-16 string.",
 		 function );
 
 		return( -1 );

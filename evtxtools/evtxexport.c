@@ -56,8 +56,9 @@ void usage_fprint(
 	fprintf( stream, "Use evtxexport to export items stored in a Windows XML Event Viewer\n"
 	                 "Log (EVTX) file.\n\n" );
 
-	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -l log_file ] [ -m mode ]\n"
-	                 "                  [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -f format ] [ -l log_file ]\n"
+	                 "                  [ -m mode ] [ -p message_files_path ]\n"
+	                 "                  [ -s system_file ] [ -hvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
@@ -65,12 +66,15 @@ void usage_fprint(
 	                 "\t        windows-932, windows-936, windows-1250, windows-1251,\n"
 	                 "\t        windows-1252 (default), windows-1253, windows-1254,\n"
 	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
+	fprintf( stream, "\t-f:     output format, options: xml, text (default)\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
 	fprintf( stream, "\t-m:     export mode, option: all, items (default), recovered\n"
 	                 "\t        'all' exports the (allocated) items and recovered items,\n"
 	                 "\t        'items' exports the (allocated) items and 'recovered' exports\n"
 	                 "\t        the recovered items\n" );
+	fprintf( stream, "\t-p:     search PATH for the message files\n" );
+	fprintf( stream, "\t-s:     filename of the SYSTEM (Windows) Registry file\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -122,17 +126,21 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                             = NULL;
-	log_handle_t *log_handle                             = NULL;
-	libcstring_system_character_t *option_ascii_codepage = NULL;
-	libcstring_system_character_t *option_event_log_type = NULL;
-	libcstring_system_character_t *option_export_mode    = NULL;
-	libcstring_system_character_t *option_log_filename   = NULL;
-	libcstring_system_character_t *source                = NULL;
-	char *program                                        = "evtxexport";
-	libcstring_system_integer_t option                   = 0;
-	int result                                           = 0;
-	int verbose                                          = 0;
+	libcerror_error_t *error                                       = NULL;
+	log_handle_t *log_handle                                       = NULL;
+	libcstring_system_character_t *option_ascii_codepage           = NULL;
+	libcstring_system_character_t *option_event_log_type           = NULL;
+	libcstring_system_character_t *option_export_format            = NULL;
+	libcstring_system_character_t *option_export_mode              = NULL;
+	libcstring_system_character_t *option_log_filename             = NULL;
+	libcstring_system_character_t *option_message_files_path       = NULL;
+	libcstring_system_character_t *option_preferred_language       = NULL;
+	libcstring_system_character_t *option_system_registry_filename = NULL;
+	libcstring_system_character_t *source                          = NULL;
+	char *program                                                  = "evtxexport";
+	libcstring_system_integer_t option                             = 0;
+	int result                                                     = 0;
+	int verbose                                                    = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -167,7 +175,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:m:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:f:hl:m:p:s:vV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -188,6 +196,11 @@ int main( int argc, char * const argv[] )
 
 				break;
 
+			case (libcstring_system_integer_t) 'f':
+				option_export_format = optarg;
+
+				break;
+
 			case (libcstring_system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
@@ -201,6 +214,16 @@ int main( int argc, char * const argv[] )
 
 			case (libcstring_system_integer_t) 'm':
 				option_export_mode = optarg;
+
+				break;
+
+			case (libcstring_system_integer_t) 'p':
+				option_message_files_path = optarg;
+
+				break;
+
+			case (libcstring_system_integer_t) 's':
+				option_system_registry_filename = optarg;
 
 				break;
 
@@ -279,6 +302,28 @@ int main( int argc, char * const argv[] )
 			 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
 		}
 	}
+	if( option_export_format != NULL )
+	{
+		result = export_handle_set_export_format(
+			  evtxexport_export_handle,
+			  option_export_format,
+			  &error );
+
+		if( result == -1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set export format.\n" );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			fprintf(
+			 stderr,
+			 "Unsupported export format defaulting to: text.\n" );
+		}
+	}
 	if( option_export_mode != NULL )
 	{
 		result = export_handle_set_export_mode(
@@ -301,6 +346,20 @@ int main( int argc, char * const argv[] )
 			 "Unsupported export mode defaulting to: items.\n" );
 		}
 	}
+	if( option_message_files_path != NULL )
+	{
+		evtxexport_export_handle->message_files_path = option_message_files_path;
+	}
+	if( option_system_registry_filename != NULL )
+	{
+		evtxexport_export_handle->system_registry_filename = option_system_registry_filename;
+	}
+/* TODO
+	if( option_preferred_language != NULL )
+	{
+		evtxexport_export_handle->preferred_language_identifier = 0x0413;
+	}
+*/
 	if( log_handle_open(
 	     log_handle,
 	     option_log_filename,

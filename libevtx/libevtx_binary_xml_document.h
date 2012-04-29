@@ -89,6 +89,15 @@ int libevtx_binary_xml_document_read_cdata_section(
      libevtx_xml_tag_t *xml_tag,
      libcerror_error_t **error );
 
+int libevtx_binary_xml_document_read_character_reference(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
 int libevtx_binary_xml_document_read_element(
      libevtx_binary_xml_document_t *binary_xml_document,
      libevtx_binary_xml_token_t *binary_xml_token,
@@ -127,6 +136,15 @@ int libevtx_binary_xml_document_read_fragment_header(
      size_t chunk_data_offset,
      libcerror_error_t **error );
 
+int libevtx_binary_xml_document_read_name(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     uint32_t *name_data_size,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
 int libevtx_binary_xml_document_read_normal_substitution(
      libevtx_binary_xml_document_t *binary_xml_document,
      libevtx_binary_xml_token_t *binary_xml_token,
@@ -148,6 +166,25 @@ int libevtx_binary_xml_document_read_optional_substitution(
      size_t chunk_data_offset,
      libevtx_array_t *template_values_array,
      size_t *template_value_offset,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_binary_xml_document_read_pi_data(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
+     libevtx_xml_tag_t *xml_tag,
+     libcerror_error_t **error );
+
+int libevtx_binary_xml_document_read_pi_target(
+     libevtx_binary_xml_document_t *binary_xml_document,
+     libevtx_binary_xml_token_t *binary_xml_token,
+     libevtx_io_handle_t *io_handle,
+     const uint8_t *chunk_data,
+     size_t chunk_data_size,
+     size_t chunk_data_offset,
      libevtx_xml_tag_t *xml_tag,
      libcerror_error_t **error );
 

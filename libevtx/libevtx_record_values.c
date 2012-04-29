@@ -30,6 +30,7 @@
 #include "libevtx_libcnotify.h"
 #include "libevtx_libfdatetime.h"
 #include "libevtx_record_values.h"
+#include "libevtx_xml_tag.h"
 
 #include "evtx_event_record.h"
 
@@ -382,8 +383,8 @@ int libevtx_record_values_read_header(
 	 record_values->identifier );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_event_record_header_t *) event_record_data )->last_written_time,
-	 record_values->last_written_time );
+	 ( (evtx_event_record_header_t *) event_record_data )->written_time,
+	 record_values->written_time );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -421,7 +422,7 @@ int libevtx_record_values_read_header(
 		}
 		if( libfdatetime_filetime_copy_from_byte_stream(
 		     filetime,
-		     ( (evtx_event_record_header_t *) event_record_data )->last_written_time,
+		     ( (evtx_event_record_header_t *) event_record_data )->written_time,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
 		     error ) != 1 )
@@ -462,7 +463,7 @@ int libevtx_record_values_read_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: last written time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "%s: written time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
 
@@ -709,6 +710,1176 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
+}
+
+/* Retrieves the event identifier
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_event_identifier(
+     libevtx_record_values_t *record_values,
+     uint32_t *event_identifier,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *eventid_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag  = NULL;
+	static char *function              = "libevtx_record_values_get_event_identifier";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->event_identifier_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "EventID",
+		     7,
+		     &eventid_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve EventID XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( eventid_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing EventID XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->event_identifier_value = eventid_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_32bit(
+	     record_values->event_identifier_value,
+	     0,
+	     event_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy value to event identifier.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the event level
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_event_level(
+     libevtx_record_values_t *record_values,
+     uint8_t *event_level,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *level_xml_tag  = NULL;
+	libevtx_xml_tag_t *system_xml_tag = NULL;
+	static char *function             = "libevtx_record_values_get_event_level";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->level_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Level",
+		     5,
+		     &level_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Level XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( level_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Level XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->level_value = level_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_8bit(
+	     record_values->level_value,
+	     0,
+	     event_level,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy value to event level.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded source name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf8_source_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *provider_xml_tag      = NULL;
+	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                    = "libevtx_record_values_get_utf8_source_name_size";
+	int result                               = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->provider_name_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Provider",
+		     8,
+		     &provider_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Provider XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		          provider_xml_tag,
+		          (uint8_t *) "EventSourceName",
+		          15,
+		          &provider_name_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve EventSourceName XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+				  provider_xml_tag,
+				  (uint8_t *) "Name",
+				  4,
+				  &provider_name_xml_tag,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve Name XML attribute.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		if( result == 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing source name attribute.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->provider_name_value = provider_name_xml_tag->value;
+	}
+	if( libfvalue_value_get_utf8_string_size(
+	     record_values->provider_name_value,
+	     0,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of source name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded source name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf8_source_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *provider_xml_tag      = NULL;
+	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                    = "libevtx_record_values_get_utf8_source_name";
+	int result                               = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->provider_name_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Provider",
+		     8,
+		     &provider_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Provider XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		          provider_xml_tag,
+		          (uint8_t *) "EventSourceName",
+		          15,
+		          &provider_name_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve EventSourceName XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+				  provider_xml_tag,
+				  (uint8_t *) "Name",
+				  4,
+				  &provider_name_xml_tag,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve Name XML attribute.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		if( result == 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing source name attribute.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->provider_name_value = provider_name_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_utf8_string(
+	     record_values->provider_name_value,
+	     0,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy source name to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded source name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf16_source_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *provider_xml_tag      = NULL;
+	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                    = "libevtx_record_values_get_utf16_source_name_size";
+	int result                               = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->provider_name_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Provider",
+		     8,
+		     &provider_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Provider XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		          provider_xml_tag,
+		          (uint8_t *) "EventSourceName",
+		          15,
+		          &provider_name_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve EventSourceName XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+				  provider_xml_tag,
+				  (uint8_t *) "Name",
+				  4,
+				  &provider_name_xml_tag,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve Name XML attribute.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		if( result == 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing source name attribute.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->provider_name_value = provider_name_xml_tag->value;
+	}
+	if( libfvalue_value_get_utf16_string_size(
+	     record_values->provider_name_value,
+	     0,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of source name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded source name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf16_source_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *provider_xml_tag      = NULL;
+	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                    = "libevtx_record_values_get_utf16_source_name";
+	int result                               = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->provider_name_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Provider",
+		     8,
+		     &provider_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Provider XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		          provider_xml_tag,
+		          (uint8_t *) "EventSourceName",
+		          15,
+		          &provider_name_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve EventSourceName XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+				  provider_xml_tag,
+				  (uint8_t *) "Name",
+				  4,
+				  &provider_name_xml_tag,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve Name XML attribute.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		if( result == 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing source name attribute.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->provider_name_value = provider_name_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_utf16_string(
+	     record_values->provider_name_value,
+	     0,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy source name to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-8 encoded computer name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf8_computer_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *computer_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag   = NULL;
+	static char *function               = "libevtx_record_values_get_utf8_computer_name_size";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->computer_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Computer",
+		     8,
+		     &computer_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( computer_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->computer_value = computer_xml_tag->value;
+	}
+	if( libfvalue_value_get_utf8_string_size(
+	     record_values->computer_value,
+	     0,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of computer name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded computer name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf8_computer_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *computer_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag   = NULL;
+	static char *function               = "libevtx_record_values_get_utf8_computer_name";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->computer_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Computer",
+		     8,
+		     &computer_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( computer_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->computer_value = computer_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_utf8_string(
+	     record_values->computer_value,
+	     0,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy computer name to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded computer name
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf16_computer_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *computer_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag   = NULL;
+	static char *function               = "libevtx_record_values_get_utf16_computer_name_size";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->computer_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Computer",
+		     8,
+		     &computer_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( computer_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->computer_value = computer_xml_tag->value;
+	}
+	if( libfvalue_value_get_utf16_string_size(
+	     record_values->computer_value,
+	     0,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of computer name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded computer name
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_utf16_computer_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_xml_tag_t *computer_xml_tag = NULL;
+	libevtx_xml_tag_t *system_xml_tag   = NULL;
+	static char *function               = "libevtx_record_values_get_utf16_computer_name";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->computer_value == NULL )
+	{
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     record_values->xml_document->root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libevtx_xml_tag_get_element_by_utf8_name(
+		     system_xml_tag,
+		     (uint8_t *) "Computer",
+		     8,
+		     &computer_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( computer_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Computer XML element.",
+			 function );
+
+			return( -1 );
+		}
+		record_values->computer_value = computer_xml_tag->value;
+	}
+	if( libfvalue_value_copy_to_utf16_string(
+	     record_values->computer_value,
+	     0,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy computer name to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Retrieves the size of the UTF-8 encoded XML string

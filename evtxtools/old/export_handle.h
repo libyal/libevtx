@@ -29,8 +29,6 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
-#include "evtxtools_libfcache.h"
-#include "evtxtools_libregf.h"
 #include "log_handle.h"
 
 #if defined( __cplusplus )
@@ -44,12 +42,6 @@ enum EXPORT_MODES
 	EXPORT_MODE_RECOVERED			= (int) 'r'
 };
 
-enum EXPORT_FORMATS
-{
-	EXPORT_FORMAT_TEXT			= (int) 't',
-	EXPORT_FORMAT_XML			= (int) 'x'
-};
-
 typedef struct export_handle export_handle_t;
 
 struct export_handle
@@ -58,53 +50,9 @@ struct export_handle
 	 */
 	uint8_t export_mode;
 
-	/* The export format
-	 */
-	uint8_t export_format;
-
-	/* The libevtx input file
+	/* The libevt input file
 	 */
 	libevtx_file_t *input_file;
-
-	/* The libregf system registry file
-	 */
-	libregf_file_t *system_registry_file;
-
-	/* The current control set
-	 */
-	uint32_t current_control_set;
-
-	/* The control set 1 key
-	 */
-	libregf_key_t *control_set1_key;
-
-	/* The control set 2 key
-	 */
-	libregf_key_t *control_set2_key;
-
-	/* The preferred language identifier
-	 */
-	uint32_t preferred_language_identifier;
-
-	/* The message file cache
-	 */
-	libfcache_cache_t *message_file_cache;
-
-	/* The next available message file cache index
-	 */
-	int next_message_file_cache_index;
-
-	/* The event log type
-	 */
-	int event_log_type;
-
-	/* The messages files path
-	 */
-	const libcstring_system_character_t *message_files_path;
-
-	/* The system registry filename
-	 */
-	const libcstring_system_character_t *system_registry_filename;
 
 	/* Value to indicate the input is open
 	 */
@@ -140,29 +88,9 @@ int export_handle_set_export_mode(
      const libcstring_system_character_t *string,
      libcerror_error_t **error );
 
-int export_handle_set_export_format(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
-     libcerror_error_t **error );
-
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
      const libcstring_system_character_t *string,
-     libcerror_error_t **error );
-
-int export_handle_set_event_log_type(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
-     libcerror_error_t **error );
-
-int export_handle_set_event_log_type_from_filename(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
-     libcerror_error_t **error );
-
-int export_handle_open_system_registry_file(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_open_input(
@@ -176,51 +104,7 @@ int export_handle_close_input(
 
 /* Record specific export functions
  */
-int export_handle_get_message_filename(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *event_source,
-     size_t event_source_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
-     libcerror_error_t **error );
-
-int export_handle_get_message_file_path(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     libcstring_system_character_t **message_file_path,
-     size_t *message_file_path_size,
-     libcerror_error_t **error );
-
-int export_handle_get_message_string(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
-     libcerror_error_t **error );
-
-int export_handle_message_string_fprint(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_string,
-     size_t message_string_length,
-     libevtx_record_t *record,
-     libcerror_error_t **error );
-
 int export_handle_export_record(
-     export_handle_t *export_handle,
-     libevtx_record_t *record,
-     log_handle_t *log_handle,
-     libcerror_error_t **error );
-
-int export_handle_export_record_text(
-     export_handle_t *export_handle,
-     libevtx_record_t *record,
-     log_handle_t *log_handle,
-     libcerror_error_t **error );
-
-int export_handle_export_record_xml(
      export_handle_t *export_handle,
      libevtx_record_t *record,
      log_handle_t *log_handle,

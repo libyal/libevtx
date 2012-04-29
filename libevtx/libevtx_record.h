@@ -77,15 +77,73 @@ int libevtx_record_get_identifier(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_record_get_last_written_time(
+int libevtx_record_get_written_time(
      libevtx_record_t *record,
-     uint64_t *last_written_time,
+     uint64_t *written_time,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
 int libevtx_record_get_event_identifier(
      libevtx_record_t *record,
-     uint64_t *event_identifier,
+     uint32_t *event_identifier,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_event_level(
+     libevtx_record_t *record,
+     uint8_t *event_level,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_source_name_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_source_name(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_source_name_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_source_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_computer_name_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_computer_name(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_computer_name_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_computer_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \

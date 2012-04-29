@@ -1,27 +1,31 @@
 TODO
-* deal with entity reference in fvalue ?
-* binary XML: merge value text and CDATA text into single function
-* binary XML: merge attribute and entry refenrence name into single function
-* check for memory leaks
-* deal with trailing empty data
+* fix message filename retrieval, registry bering read wrong ?
+* implement libevtx_xml_tag_get_attribute_by_utf8_path (and utf16 equivalent) ?
+* implement libevtx_xml_tag_get_element_by_utf8_path (and utf16 equivalent) ?
+* store name hash in value identifier
+* deal with corruption scenario
+* deal with trailing empty data ?
 * remove libevtx_libfguid.h once libfvalue wraps the format flags
-* libfvalue:
-  - improve to value to string type support
 * evtxeport:
   - rewrite using evtexport
   - export format: xml
   - non-xml export format use evtexport like approach (add functions to get
     specific event data)
 * add recovery scan
-* combine binary xml value subsitution code into single function?
 * add debug function for binary XML token types
-* code clean up
-  - behavior of initialize functions
 * codepage support
 * flag internally if the file is corrupted (CRC mismatch)
 
 Recovery:
 * scan for records in chunk free space
+
+20120429
+* worked on split value support
+* worked on character and entity reference support
+
+20120428
+* updated dependencies
+* worked on PI support
 
 20120423
 * fixes for deployment

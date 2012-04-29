@@ -9,10 +9,16 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBFCACHE_CPPFLAGS@ \
+	@LIBFDATA_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
+	@LIBEXE_CPPFLAGS@ \
+	@LIBREGF_CPPFLAGS@ \
+	@LIBWRC_CPPFLAGS@ \
+	@LIBCDIRECTORY_CPPFLAGS@ \
 	@LIBCSYSTEM_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
@@ -25,18 +31,26 @@ bin_PROGRAMS = \
 
 evtxexport_SOURCES = \
 	evtxexport.c \
+	evtxinput.c evtxinput.h \
 	evtxoutput.c evtxoutput.h \
+	evtxtools_libcdirectory.h \
 	evtxtools_libcerror.h \
 	evtxtools_libclocale.h \
 	evtxtools_libcnotify.h \
+	evtxtools_libcpath.h \
 	evtxtools_libcsystem.h \
 	evtxtools_libcstring.h \
 	evtxtools_libevtx.h \
+	evtxtools_libfcache.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
+	evtxtools_libexe.h \
+	evtxtools_libregf.h \
 	evtxtools_libuna.h \
+	evtxtools_libwrc.h \
 	export_handle.c export_handle.h \
-	log_handle.c log_handle.h
+	log_handle.c log_handle.h \
+	message_file.c message_file.h
 
 evtxexport_LDADD  = \
 	@LIBCSTRING_LIBADD@ \
@@ -48,6 +62,11 @@ evtxexport_LDADD  = \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
+	@LIBEXE_LIBADD@ \
+	@LIBREGF_LIBADD@ \
+	@LIBWRC_LIBADD@ \
+	@LIBCDIRECTORY_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
 	@LIBCSYSTEM_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@

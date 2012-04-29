@@ -1,6 +1,6 @@
 dnl Functions for libexe
 dnl
-dnl Version: 20120408
+dnl Version: 20120428
 
 dnl Function to detect if libexe is available
 dnl ac_libexe_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -19,20 +19,38 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
  AS_IF(
   [test "x$ac_cv_with_libexe" = xno],
   [ac_cv_libexe=no],
-  [dnl Check for headers
-  AC_CHECK_HEADERS([libexe.h])
- 
+  [dnl Check for a pkg-config file
   AS_IF(
-   [test "x$ac_cv_header_libexe_h" = xno],
-   [ac_cv_libexe=no],
-   [ac_cv_libexe=yes
-   AC_CHECK_LIB(
-    exe,
-    libexe_get_version,
-    [ac_cv_libexe_dummy=yes],
+   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
+   [PKG_CHECK_MODULES(
+    [libexe],
+    [libexe >= 20120405],
+    [ac_cv_libexe=yes],
     [ac_cv_libexe=no])
+   ])
+
+  AS_IF(
+   [test "x$ac_cv_libexe" = xyes],
+   [ac_cv_libexe_CPPFLAGS="$pkg_cv_libexe_CFLAGS"
+   ac_cv_libexe_LIBADD="$pkg_cv_libexe_LIBS"],
+   [dnl Check for headers
+   AC_CHECK_HEADERS([libexe.h])
   
-   dnl TODO add functions
+   AS_IF(
+    [test "x$ac_cv_header_libexe_h" != xno],
+    [dnl Check for the individual functions
+    ac_cv_libexe=yes
+
+    AC_CHECK_LIB(
+     exe,
+     libexe_get_version,
+     [ac_cv_libexe_dummy=yes],
+     [ac_cv_libexe=no])
+   
+    dnl TODO add functions
+ 
+    ac_cv_libexe_LIBADD="-lexe"
+    ])
    ])
   ])
 
@@ -42,8 +60,6 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
    [HAVE_LIBEXE],
    [1],
    [Define to 1 if you have the `exe' library (-lexe).])
-
-  ac_cv_libexe_LIBADD="-lexe"
   ])
 
  AS_IF(
@@ -66,23 +82,8 @@ AC_DEFUN([AX_LIBEXE_CHECK_ENABLE],
   [auto-detect],
   [DIR])
 
- dnl Check for a pkg-config file
- AS_IF(
-  [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
-  [PKG_CHECK_MODULES(
-   [libexe],
-   [libexe >= 20120405],
-   [ac_cv_libexe=yes],
-   [ac_cv_libexe=no])
-
-  ac_cv_libexe_CPPFLAGS="$pkg_cv_libexe_CFLAGS"
-  ac_cv_libexe_LIBADD="$pkg_cv_libexe_LIBS"
- ])
-
  dnl Check for a shared library version
- AS_IF(
-  [test "x$ac_cv_libexe" != xyes],
-  [AX_LIBEXE_CHECK_LIB])
+ AX_LIBEXE_CHECK_LIB
 
  dnl Check if the dependencies for the local library version
  AS_IF(

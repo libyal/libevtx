@@ -1,5 +1,5 @@
 /*
- * The event record definition of a Windows XML Event Log (EVTX) file
+ * Common input functions for the evtxtools
  *
  * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,42 +19,38 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _EVTX_EVENT_RECORD_H )
-#define _EVTX_EVENT_RECORD_H
+#if !defined( _EVTXINPUT_H )
+#define _EVTXINPUT_H
 
 #include <common.h>
 #include <types.h>
+
+#include "evtxtools_libcerror.h"
+#include "evtxtools_libcstring.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct evtx_event_record_header evtx_event_record_header_t;
-
-struct evtx_event_record_header
+enum EVTXTOOLS_EVENT_LOG_TYPES
 {
-	/* The file signature
-	 * Consists of 4 bytes
-	 * Consists of: "\x2a\x2a\x00\x00"
-	 */
-	uint8_t signature[ 4 ];
-
-	/* The size
-	 * Consists 4 bytes
-	 */
-	uint8_t size[ 4 ];
-
-	/* The identifier
-	 * Consists 8 bytes
-	 */
-	uint8_t identifier[ 8 ];
-
-	/* The written time
-	 * Consists 8 bytes
-	 * Contains a filetime
-	 */
-	uint8_t written_time[ 8 ];
+	EVTXTOOLS_EVENT_LOG_TYPE_UNKNOWN,
+	EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION,
+	EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER,
+	EVTXTOOLS_EVENT_LOG_TYPE_SECURITY,
+	EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM,
+	EVTXTOOLS_EVENT_LOG_TYPE_WINDOWS_POWERSHELL,
 };
+
+int evtxinput_determine_event_log_type(
+     const libcstring_system_character_t *string,
+     int *event_log_type,
+     libcerror_error_t **error );
+
+int evtxinput_determine_event_log_type_from_filename(
+     const libcstring_system_character_t *filename,
+     int *event_log_type,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

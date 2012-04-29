@@ -1,6 +1,6 @@
 dnl Functions for libregf
 dnl
-dnl Version: 20120408
+dnl Version: 20120428
 
 dnl Function to detect if libregf is available
 dnl ac_libregf_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -19,20 +19,36 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
  AS_IF(
   [test "x$ac_cv_with_libregf" = xno],
   [ac_cv_libregf=no],
-  [dnl Check for headers
-  AC_CHECK_HEADERS([libregf.h])
- 
+  [dnl Check for a pkg-config file
   AS_IF(
-   [test "x$ac_cv_header_libregf_h" = xno],
-   [ac_cv_libregf=no],
-   [ac_cv_libregf=yes
-   AC_CHECK_LIB(
-    regf,
-    libregf_get_version,
-    [ac_cv_libregf_dummy=yes],
+   [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
+   [PKG_CHECK_MODULES(
+    [libregf],
+    [libregf >= 20120405],
+    [ac_cv_libregf=yes],
     [ac_cv_libregf=no])
+   ])
+
+  AS_IF(
+   [test "x$ac_cv_libregf" = xyes],
+   [ac_cv_libregf_CPPFLAGS="$pkg_cv_libregf_CFLAGS"
+   ac_cv_libregf_LIBADD="$pkg_cv_libregf_LIBS"],
+   [dnl Check for headers
+   AC_CHECK_HEADERS([libregf.h])
+ 
+   AS_IF(
+    [test "x$ac_cv_header_libregf_h" != xno],
+    [ac_cv_libregf=yes
+    AC_CHECK_LIB(
+     regf,
+     libregf_get_version,
+     [ac_cv_libregf_dummy=yes],
+     [ac_cv_libregf=no])
   
-   dnl TODO add functions
+    dnl TODO add functions
+
+    ac_cv_libregf_LIBADD="-lexe"
+    ])
    ])
   ])
 
@@ -42,8 +58,6 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
    [HAVE_LIBREGF],
    [1],
    [Define to 1 if you have the `regf' library (-lregf).])
-
-  ac_cv_libregf_LIBADD="-lexe"
   ])
 
  AS_IF(
@@ -89,23 +103,8 @@ AC_DEFUN([AX_LIBREGF_CHECK_ENABLE],
   [auto-detect],
   [DIR])
 
- dnl Check for a pkg-config file
- AS_IF(
-  [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
-  [PKG_CHECK_MODULES(
-   [libregf],
-   [libregf >= 20120405],
-   [ac_cv_libregf=yes],
-   [ac_cv_libregf=no])
-
-  ac_cv_libregf_CPPFLAGS="$pkg_cv_libregf_CFLAGS"
-  ac_cv_libregf_LIBADD="$pkg_cv_libregf_LIBS"
- ])
-
  dnl Check for a shared library version
- AS_IF(
-  [test "x$ac_cv_libregf" != xyes],
-  [AX_LIBREGF_CHECK_LIB])
+ AX_LIBREGF_CHECK_LIB
 
  dnl Check if the dependencies for the local library version
  AS_IF(

@@ -28,6 +28,7 @@
 #include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
+#include "libevtx_libfvalue.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -49,17 +50,49 @@ struct libevtx_record_values
 	 */
 	uint64_t identifier;
 
-	/* The last written time
+	/* The written time
 	 */
-	uint64_t last_written_time;
-
-	/* The event identifier
-	 */
-	uint64_t event_identifier;
+	uint64_t written_time;
 
 	/* The XML document
 	 */
 	libevtx_binary_xml_document_t *xml_document;
+
+	/* Reference to the provider name value
+	 */
+	libfvalue_value_t *provider_name_value;
+
+	/* Reference to the event identifier value
+	 */
+	libfvalue_value_t *event_identifier_value;
+
+	/* Reference to the level value
+	 */
+	libfvalue_value_t *level_value;
+
+	/* Reference to the task value
+	 */
+	libfvalue_value_t *task_value;
+
+	/* Reference to the oppcode value
+	 */
+	libfvalue_value_t *oppcode_value;
+
+	/* Reference to the keywords value
+	 */
+	libfvalue_value_t *keywords_value;
+
+	/* Reference to the channel value
+	 */
+	libfvalue_value_t *channel_value;
+
+	/* Reference to the computer value
+	 */
+	libfvalue_value_t *computer_value;
+
+	/* Reference to the user security identifier (SID) value
+	 */
+	libfvalue_value_t *user_sid_value;
 };
 
 int libevtx_record_values_initialize(
@@ -88,6 +121,60 @@ int libevtx_record_values_read_xml_document(
      libevtx_io_handle_t *io_handle,
      const uint8_t *chunk_data,
      size_t chunk_data_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_event_identifier(
+     libevtx_record_values_t *record_values,
+     uint32_t *event_identifier,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_event_level(
+     libevtx_record_values_t *record_values,
+     uint8_t *event_level,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_source_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_source_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_source_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_source_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_computer_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_computer_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_computer_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_computer_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_utf8_xml_string_size(

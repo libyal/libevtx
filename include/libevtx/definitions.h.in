@@ -24,11 +24,11 @@
 
 #include <libevtx/types.h>
 
-#define LIBEVTX_VERSION					@VERSION@
+#define LIBEVTX_VERSION						@VERSION@
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING				"@VERSION@"
+#define LIBEVTX_VERSION_STRING					"@VERSION@"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -37,18 +37,29 @@
  */
 enum LIBEVTX_ACCESS_FLAGS
 {
-	LIBEVTX_ACCESS_FLAG_READ			= 0x01,
+	LIBEVTX_ACCESS_FLAG_READ				= 0x01,
 /* Reserved: not supported yet */
-	LIBEVTX_ACCESS_FLAG_WRITE			= 0x02
+	LIBEVTX_ACCESS_FLAG_WRITE				= 0x02
 };
 
 /* The file access macros
  */
-#define LIBEVTX_OPEN_READ				( LIBEVTX_ACCESS_FLAG_READ )
+#define LIBEVTX_OPEN_READ					( LIBEVTX_ACCESS_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBEVTX_OPEN_WRITE				( LIBEVTX_ACCESS_FLAG_WRITE )
+#define LIBEVTX_OPEN_WRITE					( LIBEVTX_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBEVTX_OPEN_READ_WRITE				( LIBEVTX_ACCESS_FLAG_READ | LIBEVTX_ACCESS_FLAG_WRITE )
+#define LIBEVTX_OPEN_READ_WRITE					( LIBEVTX_ACCESS_FLAG_READ | LIBEVTX_ACCESS_FLAG_WRITE )
+
+/* The event level definitions
+ */
+enum LIBEVTX_EVENT_LEVELS
+{
+	LIBEVTX_EVENT_LEVEL_CRITICAL				= 1,
+	LIBEVTX_EVENT_LEVEL_ERROR				= 2,
+	LIBEVTX_EVENT_LEVEL_WARNING				= 3,
+	LIBEVTX_EVENT_LEVEL_INFORMATION				= 4,
+	LIBEVTX_EVENT_LEVEL_VERBOSE				= 5,
+};
 
 #endif
 

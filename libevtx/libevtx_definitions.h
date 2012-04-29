@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20120423
+#define LIBEVTX_VERSION						20120429
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20120423"
+#define LIBEVTX_VERSION_STRING					"20120429"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -62,6 +62,17 @@ enum LIBEVTX_ACCESS_FLAGS
 #define LIBEVTX_OPEN_WRITE					( LIBEVTX_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
 #define LIBEVTX_OPEN_READ_WRITE					( LIBEVTX_ACCESS_FLAG_READ | LIBEVTX_ACCESS_FLAG_WRITE )
+
+/* The event level definitions
+ */
+enum LIBEVTX_EVENT_LEVELS
+{
+	LIBEVTX_EVENT_LEVEL_CRITICAL				= 1,
+	LIBEVTX_EVENT_LEVEL_ERROR				= 2,
+	LIBEVTX_EVENT_LEVEL_WARNING				= 3,
+	LIBEVTX_EVENT_LEVEL_INFORMATION				= 4,
+	LIBEVTX_EVENT_LEVEL_VERBOSE				= 5,
+};
 
 #endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 
@@ -160,6 +171,15 @@ enum LIBEVTX_RECORD_FLAGS
 };
 
 #define LIBEVTX_RECORD_FLAGS_DEFAULT				LIBEVTX_RECORD_FLAG_NON_MANAGED_FILE_IO_HANDLE
+
+/* The XML tag type definitions
+ */
+enum LIBEVTX_XML_TAG_TYPES
+{
+	LIBEVTX_XML_TAG_TYPE_NODE,
+	LIBEVTX_XML_TAG_TYPE_CDATA,
+	LIBEVTX_XML_TAG_TYPE_PI
+};
 
 /* The maximum number of cache entries defintions
  */
