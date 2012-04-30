@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "evtxinput.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libclocale.h"
 #include "evtxtools_libcstring.h"
@@ -258,6 +259,47 @@ int info_handle_set_ascii_codepage(
 	return( result );
 }
 
+/* Sets the event log type from the filename
+ * Returns 1 if successful or -1 on error
+ */
+int info_handle_set_event_log_type_from_filename(
+     info_handle_t *info_handle,
+     const libcstring_system_character_t *filename,
+     libcerror_error_t **error )
+{
+	static char *function = "info_handle_set_event_log_type_from_filename";
+	int result            = 0;
+
+	if( info_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = evtxinput_determine_event_log_type_from_filename(
+	          filename,
+	          &( info_handle->event_log_type ),
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine event log type from filename.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Opens the info handle
  * Returns 1 if successful or -1 on error
  */
@@ -348,11 +390,12 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	static char *function           = "evtxinfo_file_info_fprint";
-	uint16_t major_version          = 0;
-	uint16_t minor_version          = 0;
-	int number_of_recovered_records = 0;
-	int number_of_records           = 0;
+	const libcstring_system_character_t *event_log_type = NULL;
+	static char *function                               = "evtxinfo_file_info_fprint";
+	uint16_t major_version                              = 0;
+	uint16_t minor_version                              = 0;
+	int number_of_recovered_records                     = 0;
+	int number_of_records                               = 0;
 
 	if( info_handle == NULL )
 	{
@@ -428,6 +471,47 @@ int info_handle_file_fprint(
 	 "\tNumber of recovered records\t: %d\n",
 	 number_of_recovered_records );
 
+	switch( info_handle->event_log_type )
+	{
+		case EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Application" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_DFS_REPLICATION:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "DFS Replication" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_HARDWARE_EVENTS:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Hardware Events" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Internet Explorer" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_KEY_MANAGEMENT_SERVICE:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Key Management Service" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_MEDIA_CENTER:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Media Center" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_SECURITY:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Security" );
+			break;
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM:
+			event_log_type = _LIBCSTRING_SYSTEM_STRING( "System" );
+			break;
+	}
+	if( event_log_type != NULL )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tLog type\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 event_log_type );
+	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );

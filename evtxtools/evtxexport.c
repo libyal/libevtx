@@ -302,6 +302,22 @@ int main( int argc, char * const argv[] )
 			 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
 		}
 	}
+	if( option_event_log_type != NULL )
+	{
+		result = export_handle_set_event_log_type(
+		          evtxexport_export_handle,
+		          option_event_log_type,
+		          &error );
+
+		if( result == -1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set event log type in export handle.\n" );
+
+			goto on_error;
+		}
+	}
 	if( option_export_format != NULL )
 	{
 		result = export_handle_set_export_format(
@@ -344,6 +360,23 @@ int main( int argc, char * const argv[] )
 			fprintf(
 			 stderr,
 			 "Unsupported export mode defaulting to: items.\n" );
+		}
+	}
+	if( ( option_event_log_type == NULL )
+	 || ( result == 0 ) )
+	{
+		result = export_handle_set_event_log_type_from_filename(
+			  evtxexport_export_handle,
+			  source,
+			  &error );
+
+		if( result == -1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set event log type from filename in export handle.\n" );
+
+			goto on_error;
 		}
 	}
 	if( option_message_files_path != NULL )

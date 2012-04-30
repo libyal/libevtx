@@ -73,6 +73,7 @@ evtxexport_LDADD  = \
 
 evtxinfo_SOURCES = \
 	evtxinfo.c \
+	evtxinput.c evtxinput.h \
 	evtxoutput.c evtxoutput.h \
 	evtxtools_libcerror.h \
 	evtxtools_libclocale.h \

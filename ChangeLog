@@ -1,7 +1,9 @@
 TODO
-* recovery: pass what type of chunk is being read
-* recovery: pass flag to binary xml parsing to ignore parsing errors ?
-  or make this the default behavior
+* recovery:
+  - pass what type of chunk is being read
+  - pass flag to binary xml parsing to ignore parsing errors ?
+    or make this the default behavior
+  - move read xml out of init record function ?
 * fix message filename retrieval, registry bering read wrong ?
 * implement libevtx_xml_tag_get_attribute_by_utf8_path (and utf16 equivalent) ?
 * implement libevtx_xml_tag_get_element_by_utf8_path (and utf16 equivalent) ?

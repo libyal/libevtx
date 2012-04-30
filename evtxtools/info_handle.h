@@ -42,6 +42,10 @@ struct info_handle
 	 */
 	libevtx_file_t *input_file;
 
+	/* The event log type
+	 */
+	int event_log_type;
+
 	/* The ascii codepage
 	 */
 	int ascii_codepage;
@@ -70,6 +74,11 @@ int info_handle_signal_abort(
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
      const libcstring_system_character_t *string,
+     libcerror_error_t **error );
+
+int info_handle_set_event_log_type_from_filename(
+     info_handle_t *info_handle,
+     const libcstring_system_character_t *filename,
      libcerror_error_t **error );
 
 int info_handle_open(

@@ -48,17 +48,26 @@ const char *export_handle_get_event_log_type(
 		case EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION:
 			return( "Application" );
 
+		case EVTXTOOLS_EVENT_LOG_TYPE_DFS_REPLICATION:
+			return( "DFS Replication" );
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_HARDWARE_EVENTS:
+			return( "Hardware Events" );
+
 		case EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER:
 			return( "Internet Explorer" );
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_KEY_MANAGEMENT_SERVICE:
+			return( "Key Management Service" );
+
+		case EVTXTOOLS_EVENT_LOG_TYPE_MEDIA_CENTER:
+			return( "Media Center" );
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_SECURITY:
 			return( "Security" );
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM:
 			return( "System" );
-
-		case EVTXTOOLS_EVENT_LOG_TYPE_WINDOWS_POWERSHELL:
-			return( "Windows PowerShell" );
 
 		default:
 			break;
@@ -877,7 +886,7 @@ int export_handle_open_system_registry_file(
 		                export_handle->event_log_type );
 
 		sub_key_path_length = libcstring_system_string_length(
-				   sub_key_path );
+		                       sub_key_path );
 
 		result = libregf_key_get_sub_key_by_utf8_name(
 			  sub_key,
@@ -945,7 +954,7 @@ int export_handle_open_system_registry_file(
 		                export_handle->event_log_type );
 
 		sub_key_path_length = libcstring_system_string_length(
-				       sub_key_path );
+		                       sub_key_path );
 
 		result = libregf_key_get_sub_key_by_utf8_name(
 			  sub_key,

@@ -68,6 +68,18 @@ struct libevtx_io_handle
 	 */
 	uint32_t flags;
 
+	/* The first record identifier
+	 */
+	uint64_t first_record_identifier;
+
+	/* The last record identifier
+	 */
+	uint64_t last_record_identifier;
+
+	/* The previous record identifier
+	 */
+	uint64_t previous_record_identifier;
+
 	/* The codepage of the ASCII strings
 	 */
 	int ascii_codepage;

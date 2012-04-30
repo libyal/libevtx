@@ -1170,6 +1170,29 @@ int libevtx_file_open_read(
 
 				goto on_error;
 			}
+			if( record_values->identifier < internal_file->io_handle->first_record_identifier )
+			{
+				internal_file->io_handle->first_record_identifier = record_values->identifier;
+			}
+			if( record_values->identifier > internal_file->io_handle->last_record_identifier )
+			{
+				internal_file->io_handle->last_record_identifier = record_values->identifier;
+			}
+			if( record_values->identifier != ( internal_file->io_handle->previous_record_identifier + 1 ) )
+			{
+#if defined( HAVE_VERBOSE_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: gap in record identifier ( %" PRIu64 " != %" PRIu64 " ).\n",
+					 function,
+					 internal_file->io_handle->previous_record_identifier + 1,
+					 record_values->identifier );
+				}
+#endif
+			}
+			internal_file->io_handle->previous_record_identifier = record_values->identifier;
+
 			/* The chunk index is stored in the element data size
 			 */
 			if( libfdata_list_append_element(
@@ -1240,24 +1263,28 @@ int libevtx_file_open_read(
 
 				goto on_error;
 			}
-			/* The chunk index is stored in the element data size
-			 */
-			if( libfdata_list_append_element(
-			     internal_file->recovered_records_list,
-			     &element_index,
-			     file_offset + record_values->chunk_data_offset,
-			     (size64_t) chunk_index,
-			     0,
-			     error ) != 1 )
+			if( ( record_values->identifier < internal_file->io_handle->first_record_identifier )
+			 || ( record_values->identifier > internal_file->io_handle->last_record_identifier ) )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append element to recovered records list.",
-				 function );
+				/* The chunk index is stored in the element data size
+				 */
+				if( libfdata_list_append_element(
+				     internal_file->recovered_records_list,
+				     &element_index,
+				     file_offset + record_values->chunk_data_offset,
+				     (size64_t) chunk_index,
+				     0,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append element to recovered records list.",
+					 function );
 
-				goto on_error;
+					goto on_error;
+				}
 			}
 /* TODO cache recovered record values ? */
 		}

@@ -116,6 +116,7 @@ int main( int argc, char * const argv[] )
 	libcstring_system_character_t *source = NULL;
 	char *program                         = "evtxinfo";
 	libcstring_system_integer_t option    = 0;
+	int result                            = 0;
 	int verbose                           = 0;
 
 	libcnotify_stream_set(
@@ -213,6 +214,19 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "Unable to initialize info handle.\n" );
+
+		goto on_error;
+	}
+	result = info_handle_set_event_log_type_from_filename(
+	          evtxinfo_info_handle,
+	          source,
+	          &error );
+
+	if( result == -1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to set event log type from filename in info handle.\n" );
 
 		goto on_error;
 	}

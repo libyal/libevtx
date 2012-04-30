@@ -156,38 +156,91 @@ int evtxinput_determine_event_log_type_from_filename(
 		filename_length = libcstring_system_string_length(
 		                   path_separator );
 	}
-	if( filename_length == 12 )
+	if( filename_length == 11 )
 	{
 		if( libcstring_system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "AppEvent.Evt" ),
-		     12 ) == 0 )
+		     _LIBCSTRING_SYSTEM_STRING( "System.evtx" ),
+		     11 ) == 0 )
 		{
-			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION;
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM;
 			result          = 1;
 		}
-		else if( libcstring_system_string_compare_no_case(
-		          path_separator,
-		          _LIBCSTRING_SYSTEM_STRING( "Internet.Evt" ),
-		          12 ) == 0 )
-		{
-			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER;
-			result          = 1;
-		}
-		else if( libcstring_system_string_compare_no_case(
-		          path_separator,
-		          _LIBCSTRING_SYSTEM_STRING( "SecEvent.Evt" ),
-		          12 ) == 0 )
+	}
+	else if( filename_length == 13 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "Security.evtx" ),
+		     13 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SECURITY;
 			result          = 1;
 		}
-		else if( libcstring_system_string_compare_no_case(
-		          path_separator,
-		          _LIBCSTRING_SYSTEM_STRING( "SysEvent.Evt" ),
-		          12 ) == 0 )
+	}
+	else if( filename_length == 16 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "Application.evtx" ),
+		     16 ) == 0 )
 		{
-			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM;
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION;
+			result          = 1;
+		}
+	}
+	else if( filename_length == 17 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "Media Center.evtx" ),
+		     17 ) == 0 )
+		{
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_MEDIA_CENTER;
+			result          = 1;
+		}
+	}
+	else if( filename_length == 19 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "HardwareEvents.evtx" ),
+		     19 ) == 0 )
+		{
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_HARDWARE_EVENTS;
+			result          = 1;
+		}
+	}
+	else if( filename_length == 20 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "DFS Replication.evtx" ),
+		     20 ) == 0 )
+		{
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_DFS_REPLICATION;
+			result          = 1;
+		}
+	}
+	else if( filename_length == 22 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "Internet Explorer.evtx" ),
+		     22 ) == 0 )
+		{
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER;
+			result          = 1;
+		}
+	}
+	else if( filename_length == 27 )
+	{
+		if( libcstring_system_string_compare_no_case(
+		     path_separator,
+		     _LIBCSTRING_SYSTEM_STRING( "Key Management Service.evtx" ),
+		     27 ) == 0 )
+		{
+			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_KEY_MANAGEMENT_SERVICE;
 			result          = 1;
 		}
 	}
