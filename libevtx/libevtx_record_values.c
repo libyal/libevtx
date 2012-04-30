@@ -34,7 +34,7 @@
 
 #include "evtx_event_record.h"
 
-const uint8_t *evtx_event_record_signature = (uint8_t *) "\x2a\x2a\x00\x00";
+const uint8_t evtx_event_record_signature[ 4 ] = { 0x2a, 0x2a, 0x00, 0x00 };
 
 /* Initialize record values
  * Make sure the value record values is pointing to is set to NULL

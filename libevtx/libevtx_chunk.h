@@ -54,6 +54,10 @@ struct libevtx_chunk
 	/* The records array
 	 */
 	libevtx_array_t *records_array;
+
+	/* The recovered records array
+	 */
+	libevtx_array_t *recovered_records_array;
 };
 
 int libevtx_chunk_initialize(
@@ -77,6 +81,17 @@ int libevtx_chunk_get_number_of_records(
      libcerror_error_t **error );
 
 int libevtx_chunk_get_record(
+     libevtx_chunk_t *chunk,
+     uint16_t record_index,
+     libevtx_record_values_t **record_values,
+     libcerror_error_t **error );
+
+int libevtx_chunk_get_number_of_recovered_records(
+     libevtx_chunk_t *chunk,
+     uint16_t *number_of_records,
+     libcerror_error_t **error );
+
+int libevtx_chunk_get_recovered_record(
      libevtx_chunk_t *chunk,
      uint16_t record_index,
      libevtx_record_values_t **record_values,

@@ -1184,12 +1184,82 @@ int libevtx_file_open_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append segment to chunks vector.",
+				 "%s: unable to append element to records list.",
 				 function );
 
 				goto on_error;
 			}
 /* TODO cache record values ? */
+		}
+		if( libevtx_chunk_get_number_of_recovered_records(
+		     chunk,
+		     &number_of_records,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve chunk: %" PRIu16 " number of recovered records.",
+			 function,
+			 chunk_index );
+
+			goto on_error;
+		}
+		for( record_index = 0;
+		     record_index < number_of_records;
+		     record_index++ )
+		{
+			if( libevtx_chunk_get_recovered_record(
+			     chunk,
+			     record_index,
+			     &record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+				 function,
+				 chunk_index,
+				 record_index );
+
+				goto on_error;
+			}
+			if( record_values == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+				 function,
+				 chunk_index,
+				 record_index );
+
+				goto on_error;
+			}
+			/* The chunk index is stored in the element data size
+			 */
+			if( libfdata_list_append_element(
+			     internal_file->recovered_records_list,
+			     &element_index,
+			     file_offset + record_values->chunk_data_offset,
+			     (size64_t) chunk_index,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append element to recovered records list.",
+				 function );
+
+				goto on_error;
+			}
+/* TODO cache recovered record values ? */
 		}
 		file_offset += chunk->data_size;
 

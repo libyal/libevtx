@@ -306,6 +306,61 @@ int libevtx_chunks_table_read_record(
 			break;
 		}
 	}
+/* TODO allow to control look up in normal vs recovered */
+	if( chunk_record_values->chunk_data_offset != chunk_data_offset )
+	{
+		if( libevtx_chunk_get_number_of_recovered_records(
+		     chunk,
+		     &number_of_records,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of recovered records from chunk.",
+			 function );
+
+			goto on_error;
+		}
+		for( record_index = 0;
+		     record_index < number_of_records;
+		     record_index++ )
+		{
+			if( libevtx_chunk_get_recovered_record(
+			     chunk,
+			     record_index,
+			     &chunk_record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve recovered record: %" PRIu16 " from chunk.",
+				 function,
+				 record_index );
+
+				goto on_error;
+			}
+			if( chunk_record_values == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing recovered record: %" PRIu16 ".",
+				 function,
+				 record_index );
+
+				goto on_error;
+			}
+			if( chunk_record_values->chunk_data_offset == chunk_data_offset )
+			{
+				break;
+			}
+		}
+	}
 	if( chunk_record_values->chunk_data_offset != chunk_data_offset )
 	{
 		libcerror_error_set(

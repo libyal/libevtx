@@ -95,7 +95,12 @@ int libevtx_chunk_initialize(
 		 "%s: unable to clear chunk.",
 		 function );
 
-		goto on_error;
+		memory_free(
+		 *chunk );
+
+		*chunk = NULL;
+
+		return( -1 );
 	}
 	if( libevtx_array_initialize(
 	     &( ( *chunk )->records_array ),
@@ -111,11 +116,32 @@ int libevtx_chunk_initialize(
 
 		goto on_error;
 	}
+	if( libevtx_array_initialize(
+	     &( ( *chunk )->recovered_records_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create chunk recovered records array.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
 	if( *chunk != NULL )
 	{
+		if( ( *chunk )->records_array != NULL )
+		{
+			libevtx_array_free(
+			 &( ( *chunk )->records_array ),
+			 NULL,
+			 NULL );
+		}
 		memory_free(
 		 *chunk );
 
@@ -147,6 +173,20 @@ int libevtx_chunk_free(
 	}
 	if( *chunk != NULL )
 	{
+		if( libevtx_array_free(
+		     &( ( *chunk )->recovered_records_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free the chunk recovered records array.",
+			 function );
+
+			result = -1;
+		}
 		if( libevtx_array_free(
 		     &( ( *chunk )->records_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
@@ -580,8 +620,9 @@ int libevtx_chunk_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record values header.",
-			 function );
+			 "%s: unable to read record values header at chunk data offset: %" PRIzd ".",
+			 function,
+			 chunk_data_offset );
 
 			goto on_error;
 		}
@@ -597,7 +638,7 @@ int libevtx_chunk_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append record values to array.",
+			 "%s: unable to append record values to records array.",
 			 function );
 
 			goto on_error;
@@ -622,6 +663,109 @@ int libevtx_chunk_read(
 			 0 );
 		}
 #endif
+		while( chunk_data_offset < chunk_data_size )
+		{
+			if( memory_compare(
+			     &( chunk_data[ chunk_data_offset ] ),
+			     evtx_event_record_signature,
+			     4 ) == 0 )
+			{
+				if( record_values == NULL )
+				{
+					if( libevtx_record_values_initialize(
+					     &record_values,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+						 "%s: unable to create record values.",
+						 function );
+
+						goto on_error;
+					}
+				}
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: reading recovered record at chunk data offset: %" PRIzd " (0x%08" PRIzx ")\n",
+					 function,
+					 chunk_data_offset,
+					 chunk_data_offset );
+				}
+#endif
+				if( libevtx_record_values_read_header(
+				     record_values,
+				     io_handle,
+				     chunk_data,
+				     chunk_data_size,
+				     chunk_data_offset,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read record values header at chunk data offset: %" PRIzd ".",
+					 function,
+					 chunk_data_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+					if( libcnotify_verbose != 0 )
+					{
+						if( ( error != NULL )
+						 && ( *error != NULL ) )
+						{
+							libcnotify_print_error_backtrace(
+							 *error );
+						}
+					}
+#endif
+					libcerror_error_free(
+					 error );
+				}
+				else
+				{
+					chunk_data_offset += record_values->data_size - 4;
+
+					if( libevtx_array_append_entry(
+					     chunk->recovered_records_array,
+					     &entry_index,
+					     (intptr_t *) record_values,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+						 "%s: unable to append record values to recovered records array.",
+						 function );
+
+						goto on_error;
+					}
+					record_values = NULL;
+				}
+			}
+			chunk_data_offset += 4;
+		}
+		if( record_values != NULL )
+		{
+			if( libevtx_record_values_free(
+			     &record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free record values.",
+				 function );
+
+				goto on_error;
+			}
+		}
 	}
 
 /* TODO validate number of event records */
@@ -731,6 +875,110 @@ int libevtx_chunk_get_record(
 	}
 	if( libevtx_array_get_entry_by_index(
 	     chunk->records_array,
+	     (int) record_index,
+	     (intptr_t **) record_values,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve record: %" PRIu16 ".",
+		 function,
+		 record_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the number of recovered records
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_chunk_get_number_of_recovered_records(
+     libevtx_chunk_t *chunk,
+     uint16_t *number_of_records,
+     libcerror_error_t **error )
+{
+	static char *function       = "libevtx_chunk_get_number_of_recovered_records";
+	int chunk_number_of_records = 0;
+
+	if( chunk == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid chunk.",
+		 function );
+
+		return( -1 );
+	}
+	if( number_of_records == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid number of records.",
+		 function );
+
+		return( -1 );
+	}
+	if( libevtx_array_get_number_of_entries(
+	     chunk->recovered_records_array,
+	     &chunk_number_of_records,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of records.",
+		 function );
+
+		return( -1 );
+	}
+	if( chunk_number_of_records > (int) UINT16_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid number of chunk records value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	*number_of_records = (uint16_t) chunk_number_of_records;
+
+	return( 1 );
+}
+
+/* Retrieves the recovered record at the index
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_chunk_get_recovered_record(
+     libevtx_chunk_t *chunk,
+     uint16_t record_index,
+     libevtx_record_values_t **record_values,
+     libcerror_error_t **error )
+{
+	static char *function = "libevtx_chunk_get_recovered_record";
+
+	if( chunk == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid chunk.",
+		 function );
+
+		return( -1 );
+	}
+	if( libevtx_array_get_entry_by_index(
+	     chunk->recovered_records_array,
 	     (int) record_index,
 	     (intptr_t **) record_values,
 	     error ) != 1 )

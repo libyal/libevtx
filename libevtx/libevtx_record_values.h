@@ -34,6 +34,8 @@
 extern "C" {
 #endif
 
+extern const uint8_t evtx_event_record_signature[ 4 ];
+
 typedef struct libevtx_record_values libevtx_record_values_t;
 
 struct libevtx_record_values

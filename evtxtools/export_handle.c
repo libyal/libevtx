@@ -3611,13 +3611,22 @@ int export_handle_export_recovered_records(
 			 function,
 			 record_index );
 
-			return( -1 );
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( ( error != NULL )
+			 && ( *error != NULL ) )
+			{
+				libcnotify_print_error_backtrace(
+				 *error );
+			}
+#endif
+			libcerror_error_free(
+			 error );
 		}
-		if( export_handle_export_record(
-		     export_handle,
-		     record,
-		     log_handle,
-		     error ) != 1 )
+		else if( export_handle_export_record(
+		          export_handle,
+		          record,
+		          log_handle,
+		          error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
