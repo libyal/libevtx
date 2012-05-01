@@ -265,12 +265,12 @@ int libevtx_io_handle_read_file_header(
 	 last_chunk_number );
 
 	byte_stream_copy_to_uint16_little_endian(
-	 ( (evtx_file_header_t *) file_header_data )->major_version,
-	 io_handle->major_version );
-
-	byte_stream_copy_to_uint16_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->minor_version,
 	 io_handle->minor_version );
+
+	byte_stream_copy_to_uint16_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->major_version,
+	 io_handle->major_version );
 
 	byte_stream_copy_to_uint16_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->header_block_size,
@@ -326,14 +326,14 @@ int libevtx_io_handle_read_file_header(
 		 value_32bit );
 
 		libcnotify_printf(
-		 "%s: major version\t\t\t: %" PRIu16 "\n",
-		 function,
-		 io_handle->major_version );
-
-		libcnotify_printf(
 		 "%s: minor version\t\t\t: %" PRIu16 "\n",
 		 function,
 		 io_handle->minor_version );
+
+		libcnotify_printf(
+		 "%s: major version\t\t\t: %" PRIu16 "\n",
+		 function,
+		 io_handle->major_version );
 
 		libcnotify_printf(
 		 "%s: header block size\t\t\t: %" PRIi64 "\n",

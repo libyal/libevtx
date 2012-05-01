@@ -33,7 +33,7 @@
 #include <libcdirectory_directory_entry.h>
 #include <libcdirectory_types.h>
 
-#elif defined( HAVE_LIBCDIRECTORY_H )
+#else
 
 /* If libtool DLL support is enabled set LIBCDIRECTORY_DLL_IMPORT
  * before including libcdirectory.h
@@ -44,8 +44,6 @@
 
 #include <libcdirectory.h>
 
-#else
-#error Missing libcdirectory.h
 #endif
 
 #endif

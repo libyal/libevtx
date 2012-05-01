@@ -33,7 +33,7 @@
 #include <libexe_section.h>
 #include <libexe_types.h>
 
-#elif defined( HAVE_LIBEXE_H )
+#else
 
 /* If libtool DLL support is enabled set LIBEXE_DLL_IMPORT
  * before including libexe.h
@@ -44,8 +44,6 @@
 
 #include <libexe.h>
 
-#else
-#error Missing libexe.h
 #endif
 
 #endif

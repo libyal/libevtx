@@ -37,7 +37,7 @@
 #include <libwrc_version.h>
 #include <libwrc_types.h>
 
-#elif defined( HAVE_LIBWRC_H )
+#else
 
 /* If libtool DLL support is enabled set LIBWRC_DLL_IMPORT
  * before including libwrc.h
@@ -48,8 +48,6 @@
 
 #include <libwrc.h>
 
-#else
-#error Missing libwrc.h
 #endif
 
 #endif

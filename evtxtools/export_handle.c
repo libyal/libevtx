@@ -89,6 +89,7 @@ const char *export_handle_get_event_level(
 		case LIBEVTX_EVENT_LEVEL_WARNING:
 			return( "Warning" );
 
+		case 0:
 		case LIBEVTX_EVENT_LEVEL_INFORMATION:
 			return( "Information" );
 
@@ -1503,7 +1504,7 @@ on_error:
 }
 
 /* Retrieves the path of the message file based on the message filename
- * Returns 1 if successful or -1 error
+ * Returns 1 if successful, 0 if no path can be found or -1 error
  */
 int export_handle_get_message_file_path(
      export_handle_t *export_handle,
@@ -1766,11 +1767,23 @@ int export_handle_get_message_file_path(
 		else if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
 		      && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
 		{
-			if( ( message_filename_string_segment_size - 1 ) == 12 )
+			if( ( message_filename_string_segment_size - 1 ) == 8 )
+			{
+				/* Expand %WinDir% to WINDOWS
+				 */
+				if( libcstring_system_string_compare_no_case(
+				     message_filename_string_segment,
+				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
+				     8 ) == 0 )
+				{
+					message_filename_string_segment_size = 8;
+				}
+			}
+			else if( ( message_filename_string_segment_size - 1 ) == 12 )
 			{
 				/* Expand %SystemRoot% to WINDOWS
 				 */
-				if( libcstring_system_string_compare(
+				if( libcstring_system_string_compare_no_case(
 				     message_filename_string_segment,
 				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
 				     12 ) == 0 )
@@ -1859,11 +1872,24 @@ int export_handle_get_message_file_path(
 		if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
 		 && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
 		{
-			if( ( message_filename_string_segment_size - 1 ) == 12 )
+			if( ( message_filename_string_segment_size - 1 ) == 8 )
+			{
+				/* Expand %WinDir% to WINDOWS
+				 */
+				if( libcstring_system_string_compare_no_case(
+				     message_filename_string_segment,
+				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
+				     8 ) == 0 )
+				{
+					message_filename_string_segment      = _LIBCSTRING_SYSTEM_STRING( "Windows" );
+					message_filename_string_segment_size = 8;
+				}
+			}
+			else if( ( message_filename_string_segment_size - 1 ) == 12 )
 			{
 				/* Expand %SystemRoot% to WINDOWS
 				 */
-				if( libcstring_system_string_compare(
+				if( libcstring_system_string_compare_no_case(
 				     message_filename_string_segment,
 				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
 				     12 ) == 0 )
@@ -2065,6 +2091,10 @@ int export_handle_get_message_file_path(
 
 			goto on_error;
 		}
+		if( result == 0 )
+		{
+			break;
+		}
 	}
 	( *message_file_path )[ message_file_path_index - 1 ] = 0;
 
@@ -2087,7 +2117,7 @@ int export_handle_get_message_file_path(
 
 		goto on_error;
 	}
-	return( 1 );
+	return( result );
 
 on_error:
 	if( directory_entry != NULL )
@@ -2261,13 +2291,15 @@ int export_handle_get_message_string(
 	}
 	if( message_file == NULL )
 	{
-		if( export_handle_get_message_file_path(
-		     export_handle,
-		     message_filename,
-		     message_filename_length,
-		     &message_file_path,
-		     &message_file_path_size,
-		     error ) != 1 )
+		result = export_handle_get_message_file_path(
+		          export_handle,
+		          message_filename,
+		          message_filename_length,
+		          &message_file_path,
+		          &message_file_path_size,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -2278,110 +2310,121 @@ int export_handle_get_message_string(
 
 			goto on_error;
 		}
-		if( message_file_initialize(
-		     &message_file,
-		     error ) != 1 )
+		else if( result != 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create message file.",
-			 function );
+			if( message_file_initialize(
+			     &message_file,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create message file.",
+				 function );
 
-			goto on_error;
-		}
-		if( message_file_set_name(
-		     message_file,
-		     message_filename,
-		     message_filename_length,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set name in message file.",
-			 function );
+				goto on_error;
+			}
+			if( message_file_set_name(
+			     message_file,
+			     message_filename,
+			     message_filename_length,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set name in message file.",
+				 function );
 
-			message_file_free(
-			 &message_file,
-			 NULL );
+				message_file_free(
+				 &message_file,
+				 NULL );
 
-			goto on_error;
-		}
-		if( message_file_open(
-		     message_file,
-		     message_file_path,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
+				goto on_error;
+			}
+			if( message_file_open(
+			     message_file,
+			     message_file_path,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 message_file_path );
+
+				message_file_free(
+				 &message_file,
+				 NULL );
+
+				goto on_error;
+			}
+			if( libfcache_cache_set_value_by_index(
+			     export_handle->message_file_cache,
+			     export_handle->next_message_file_cache_index,
+			     export_handle->next_message_file_cache_index,
+			     libfcache_date_time_get_timestamp(),
+			     (intptr_t *) message_file,
+			     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
+			     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set message file in cache entry: %d.",
+				 function,
+				 export_handle->next_message_file_cache_index );
+
+				message_file_free(
+				 &message_file,
+				 NULL );
+
+				goto on_error;
+			}
+			export_handle->next_message_file_cache_index++;
+
+			if( export_handle->next_message_file_cache_index == 16 )
+			{
+				export_handle->next_message_file_cache_index = 0;
+			}
+			memory_free(
 			 message_file_path );
 
-			message_file_free(
-			 &message_file,
-			 NULL );
-
-			goto on_error;
+			message_file_path = NULL;
 		}
-		if( libfcache_cache_set_value_by_index(
-		     export_handle->message_file_cache,
-		     export_handle->next_message_file_cache_index,
-		     export_handle->next_message_file_cache_index,
-		     libfcache_date_time_get_timestamp(),
-		     (intptr_t *) message_file,
-		     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
-		     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
-		     error ) != 1 )
+	}
+	if( message_file != NULL )
+	{
+		result = message_file_get_string(
+			  message_file,
+			  export_handle->preferred_language_identifier,
+			  message_identifier,
+			  message_string,
+			  message_string_size,
+			  error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set message file in cache entry: %d.",
-			 function,
-			 export_handle->next_message_file_cache_index );
-
-			message_file_free(
-			 &message_file,
-			 NULL );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message string: 0x%" PRIx32 ".",
+			 function );
 
 			goto on_error;
 		}
-		export_handle->next_message_file_cache_index++;
-
-		if( export_handle->next_message_file_cache_index == 16 )
+		if( result == 0 )
 		{
-			export_handle->next_message_file_cache_index = 0;
+/* TODO */
+fprintf( stderr, "MISSING: 0x%08" PRIx32 " in %s\n", message_identifier, message_filename );
 		}
-		memory_free(
-		 message_file_path );
-
-		message_file_path = NULL;
-	}
-	result = message_file_get_string(
-		  message_file,
-		  export_handle->preferred_language_identifier,
-		  message_identifier,
-		  message_string,
-		  message_string_size,
-		  error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message string: 0x%" PRIx32 ".",
-		 function );
-
-		goto on_error;
 	}
 	return( result );
 
@@ -2732,6 +2775,7 @@ int export_handle_export_record_text(
 	libcstring_system_character_t *message_filename                = NULL;
 	libcstring_system_character_t *message_filename_string_segment = NULL;
 	libcstring_system_character_t *message_string                  = NULL;
+	libcstring_system_character_t *mui_message_filename            = NULL;
 	libcstring_system_character_t *value_string                    = NULL;
 	libfdatetime_filetime_t *filetime                              = NULL;
 	static char *function                                          = "export_handle_export_record_text";
@@ -2739,6 +2783,8 @@ int export_handle_export_record_text(
 	size_t message_filename_size                                   = 0;
 	size_t message_filename_string_segment_size                    = 0;
 	size_t message_string_size                                     = 0;
+	size_t mui_message_filename_index                              = 0;
+	size_t mui_message_filename_size                               = 0;
 	size_t value_string_size                                       = 0;
 	uint64_t value_64bit                                           = 0;
 	uint32_t event_identifier                                      = 0;
@@ -3176,11 +3222,72 @@ int export_handle_export_record_text(
 
 					goto on_error;
 				}
+/* TODO improve: add the language string and .mui */
+				mui_message_filename_size = message_filename_string_segment_size + 6 + 4;
+
+				mui_message_filename = libcstring_system_string_allocate(
+				                        mui_message_filename_size );
+
+				if( mui_message_filename == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create MUI message filename.",
+					 function );
+
+					goto on_error;
+				}
+				if( libcstring_system_string_copy(
+				     mui_message_filename,
+				     message_filename_string_segment,
+				     message_filename_string_segment_size ) == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+					 "%s: unable to copy message filename to MUI message filename.",
+					 function );
+
+					goto on_error;
+				}
+				mui_message_filename_index = mui_message_filename_size - 1;
+
+				mui_message_filename[ mui_message_filename_index-- ] = 0;
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'i';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'u';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'm';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '.';
+
+				while( mui_message_filename_index >= 6 )
+				{
+					if( mui_message_filename[ mui_message_filename_index - 6 ] == (libcstring_system_character_t) '\\' )
+					{
+						mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '\\';
+
+						break;
+					}
+					mui_message_filename[ mui_message_filename_index ] = mui_message_filename[ mui_message_filename_index - 6 ];
+
+					mui_message_filename_index--;
+				}
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'S';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'U';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '-';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'n';
+				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'e';
+
+				/* Check for the %PATH%/%LANGUAGE%/%FILE%.mui variant first
+				 * otherwise fallback to %PATH%/%FILE%
+				 */
+/* TODO improve mapping event identifier */
 				result = export_handle_get_message_string(
 					  export_handle,
-					  message_filename_string_segment,
-					  message_filename_string_segment_size - 1,
-					  event_identifier,
+					  mui_message_filename,
+					  mui_message_filename_size - 1,
+					  event_identifier | 0x40000000UL,
 					  &message_string,
 					  &message_string_size,
 					  error );
@@ -3197,7 +3304,31 @@ int export_handle_export_record_text(
 
 					goto on_error;
 				}
-				else if( result != 0 )
+				else if( result == 0 )
+				{
+					result = export_handle_get_message_string(
+						  export_handle,
+						  message_filename_string_segment,
+						  message_filename_string_segment_size - 1,
+						  event_identifier,
+						  &message_string,
+						  &message_string_size,
+						  error );
+
+					if( result == -1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
+						 function,
+						 event_identifier );
+
+						goto on_error;
+					}
+				}
+				if( result != 0 )
 				{
 					if( export_handle_message_string_fprint(
 					     export_handle,
@@ -3222,6 +3353,10 @@ int export_handle_export_record_text(
 
 					break;
 				}
+				memory_free(
+				 mui_message_filename );
+
+				mui_message_filename = NULL;
 			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			if( libcpath_wide_split_string_free(
@@ -3263,6 +3398,11 @@ on_error:
 	{
 		memory_free(
 		 message_string );
+	}
+	if( mui_message_filename != NULL )
+	{
+		memory_free(
+		 mui_message_filename );
 	}
 	if( message_filename_split_string != NULL )
 	{

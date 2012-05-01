@@ -59,15 +59,15 @@ struct evtx_file_header
 	 */
 	uint8_t header_size[ 4 ];
 
-	/* The major version
-	 * Consists of 2 bytes
-	 */
-	uint8_t major_version[ 2 ];
-
 	/* The minor version
 	 * Consists of 2 bytes
 	 */
 	uint8_t minor_version[ 2 ];
+
+	/* The major version
+	 * Consists of 2 bytes
+	 */
+	uint8_t major_version[ 2 ];
 
 	/* The header block_size
 	 * Consists of 2 bytes

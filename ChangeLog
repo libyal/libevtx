@@ -1,4 +1,6 @@
 TODO
+* export_handle_get_message_file_path
+  return 0 if no corresponding file has been found
 * recovery:
   - pass what type of chunk is being read
   - pass flag to binary xml parsing to ignore parsing errors ?
@@ -24,8 +26,13 @@ TODO
 Recovery:
 * scan for records in chunk free space
 
+20120501
+* applied updates
+* worked on text format export
+
 20120430
 * worked on record recovery
+* worked on text format export
 
 20120429
 * worked on split value support

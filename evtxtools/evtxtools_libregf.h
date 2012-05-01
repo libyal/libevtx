@@ -34,7 +34,7 @@
 #include <libregf_value.h>
 #include <libregf_types.h>
 
-#elif defined( HAVE_LIBREGF_H )
+#else
 
 /* If libtool DLL support is enabled set LIBREGF_DLL_IMPORT
  * before including libregf.h
@@ -45,8 +45,6 @@
 
 #include <libregf.h>
 
-#else
-#error Missing libregf.h
 #endif
 
 #endif

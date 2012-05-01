@@ -1,6 +1,6 @@
 dnl Functions for libfwnt
 dnl
-dnl Version: 20120426
+dnl Version: 20120501
 
 dnl Function to detect if libfwnt is available
 dnl ac_libfwnt_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -37,7 +37,8 @@ AC_DEFUN([AX_LIBFWNT_CHECK_LIB],
    AC_CHECK_HEADERS([libfwnt.h])
  
   AS_IF(
-    [test "x$ac_cv_header_libfwnt_h" != xno],
+    [test "x$ac_cv_header_libfwnt_h" = xno],
+    [ac_cv_libfwnt=no],
     [dnl Check for the individual functions
     ac_cv_libfwnt=yes
 

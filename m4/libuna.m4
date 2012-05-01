@@ -1,6 +1,6 @@
 dnl Functions for libuna
 dnl
-dnl Version: 20120425
+dnl Version: 20120501
 
 dnl Function to detect if libuna is available as library
 dnl ac_libuna_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -37,7 +37,8 @@ AC_DEFUN([AX_LIBUNA_CHECK_LIB],
    AC_CHECK_HEADERS([libuna.h])
 
    AS_IF(
-    [test "x$ac_cv_header_libuna_h" != xno],
+    [test "x$ac_cv_header_libuna_h" = xno],
+    [ac_cv_libuna=no],
     [dnl Check for the individual functions
     ac_cv_libuna=yes
 

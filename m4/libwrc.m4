@@ -1,6 +1,6 @@
 dnl Functions for libwrc
 dnl
-dnl Version: 20120428
+dnl Version: 20120501
 
 dnl Function to detect if libwrc is available
 dnl ac_libwrc_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -37,8 +37,11 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
    AC_CHECK_HEADERS([libwrc.h])
  
    AS_IF(
-    [test "x$ac_cv_header_libwrc_h" != xno],
-    [ac_cv_libwrc=yes
+    [test "x$ac_cv_header_libwrc_h" = xno],
+    [ac_cv_libwrc=no],
+    [dnl Check for the individual functions
+    ac_cv_libwrc=yes
+
     AC_CHECK_LIB(
      wrc,
      libwrc_get_version,
@@ -47,7 +50,7 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
   
     dnl TODO add functions
 
-    ac_cv_libwrc_LIBADD="-lexe"
+    ac_cv_libwrc_LIBADD="-lwrc"
     ])
    ])
   ])

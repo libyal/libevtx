@@ -383,21 +383,6 @@ int message_file_open(
 
 		goto on_error;
 	}
-	if( libwrc_stream_get_resource_by_type(
-	     message_file->resource_stream,
-	     LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE,
-	     &( message_file->message_table_resource ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message table resource.",
-		 function );
-
-		goto on_error;
-	}
 	message_file->is_open = 1;
 
 	return( 1 );
@@ -569,6 +554,30 @@ int message_file_get_string(
 		 function );
 
 		return( -1 );
+	}
+	if( message_file->message_table_resource == NULL )
+	{
+		result = libwrc_stream_get_resource_by_type(
+		          message_file->resource_stream,
+		          LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE,
+		          &( message_file->message_table_resource ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message table resource.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 	}
 /* TODO cache message strings */
 	if( libwrc_message_table_get_number_of_languages(
