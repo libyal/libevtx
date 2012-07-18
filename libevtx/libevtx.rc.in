@@ -24,11 +24,11 @@ BEGIN
       VALUE "FileDescription",		"Library to support the Windows XML Event Log (EVTX) format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libevtx.dll\0"
-      VALUE "LegalCopyright",		"(c) 2011 Joachim Metz <jbmetz@users.sourceforge.net>\0"
+      VALUE "LegalCopyright",		"(c) 2011 Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libevtx.dll\0"
       VALUE "ProductName",		"libevtx\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://libevtx.sourceforge.net\0"
+      VALUE "Comments",			"For more information visit http://code.google.com/p/libevtx/\0"
     END
   END
   BLOCK "VarFileInfo"

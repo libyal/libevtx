@@ -7,6 +7,7 @@ SUBDIRS = \
 	libcerror \
 	libclocale \
 	libcnotify \
+	libcsplit \
 	libuna \
 	libcfile \
 	libcpath \
@@ -16,6 +17,7 @@ SUBDIRS = \
 	libfdatetime \
 	libfguid \
 	libfvalue \
+	libfwevt \
 	libfwnt \
 	libevtx \
 	libexe \
@@ -81,6 +83,7 @@ library:
 	(cd $(srcdir)/libcerror && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libclocale && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcnotify && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcsplit && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcfile && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcpath && $(MAKE) $(AM_MAKEFLAGS))
@@ -90,6 +93,8 @@ library:
 	(cd $(srcdir)/libfdatetime && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfwevt && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfwnt && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libevtx && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -110,6 +115,7 @@ splint:
 	(cd $(srcdir)/libcerror && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libclocale && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcnotify && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcsplit && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcfile && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcpath && $(MAKE) splint $(AM_MAKEFLAGS))
@@ -121,6 +127,7 @@ splint:
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfwevt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/evtxtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))

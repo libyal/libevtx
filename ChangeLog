@@ -1,4 +1,6 @@
 TODO
+* merge libevtx with libfwevt
+
 * export_handle_get_message_file_path
   return 0 if no corresponding file has been found
 * recovery:
@@ -25,6 +27,10 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120718
+* applied updates
+* added libcstring, libfwevt
 
 20120501
 * applied updates

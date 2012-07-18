@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -29,6 +29,7 @@
 #include "evtxtools_libcnotify.h"
 #include "evtxtools_libclocale.h"
 #include "evtxtools_libcpath.h"
+#include "evtxtools_libcsplit.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfcache.h"
@@ -1530,9 +1531,9 @@ int export_handle_get_message_file_path(
 	int result                                                     = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	libcpath_wide_split_string_t *message_filename_split_string    = NULL;
+	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
 #else
-	libcpath_narrow_split_string_t *message_filename_split_string  = NULL;
+	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
 #endif
 
 	if( export_handle == NULL )
@@ -1636,14 +1637,14 @@ int export_handle_get_message_file_path(
 		}
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcpath_wide_string_split(
+	if( libcsplit_wide_string_split(
 	     &( message_filename[ message_filename_directory_name_index ] ),
 	     message_filename_length - message_filename_directory_name_index + 1,
 	     (libcstring_system_character_t) '\\',
 	     &message_filename_split_string,
 	     error ) != 1 )
 #else
-	if( libcpath_narrow_string_split(
+	if( libcsplit_narrow_string_split(
 	     &( message_filename[ message_filename_directory_name_index ] ),
 	     message_filename_length - message_filename_directory_name_index + 1,
 	     (libcstring_system_character_t) '\\',
@@ -1661,12 +1662,12 @@ int export_handle_get_message_file_path(
 		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcpath_wide_split_string_get_number_of_segments(
+	if( libcsplit_wide_split_string_get_number_of_segments(
 	     message_filename_split_string,
 	     &message_filename_number_of_segments,
 	     error ) != 1 )
 #else
-	if( libcpath_narrow_split_string_get_number_of_segments(
+	if( libcsplit_narrow_split_string_get_number_of_segments(
 	     message_filename_split_string,
 	     &message_filename_number_of_segments,
 	     error ) != 1 )
@@ -1688,14 +1689,14 @@ int export_handle_get_message_file_path(
 	     message_filename_segment_index++ )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcpath_wide_split_string_get_segment_by_index(
+		if( libcsplit_wide_split_string_get_segment_by_index(
 		     message_filename_split_string,
 		     message_filename_segment_index,
 		     &message_filename_string_segment,
 		     &message_filename_string_segment_size,
 		     error ) != 1 )
 #else
-		if( libcpath_narrow_split_string_get_segment_by_index(
+		if( libcsplit_narrow_split_string_get_segment_by_index(
 		     message_filename_split_string,
 		     message_filename_segment_index,
 		     &message_filename_string_segment,
@@ -1832,14 +1833,14 @@ int export_handle_get_message_file_path(
 	     message_filename_segment_index++ )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcpath_wide_split_string_get_segment_by_index(
+		if( libcsplit_wide_split_string_get_segment_by_index(
 		     message_filename_split_string,
 		     message_filename_segment_index,
 		     &message_filename_string_segment,
 		     &message_filename_string_segment_size,
 		     error ) != 1 )
 #else
-		if( libcpath_narrow_split_string_get_segment_by_index(
+		if( libcsplit_narrow_split_string_get_segment_by_index(
 		     message_filename_split_string,
 		     message_filename_segment_index,
 		     &message_filename_string_segment,
@@ -2099,11 +2100,11 @@ int export_handle_get_message_file_path(
 	( *message_file_path )[ message_file_path_index - 1 ] = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcpath_wide_split_string_free(
+	if( libcsplit_wide_split_string_free(
 	     &message_filename_split_string,
 	     error ) != 1 )
 #else
-	if( libcpath_narrow_split_string_free(
+	if( libcsplit_narrow_split_string_free(
 	     &message_filename_split_string,
 	     error ) != 1 )
 #endif
@@ -2135,11 +2136,11 @@ on_error:
 	if( message_filename_split_string != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		libcpath_wide_split_string_free(
+		libcsplit_wide_split_string_free(
 		 &message_filename_split_string,
 		 NULL );
 #else
-		libcpath_narrow_split_string_free(
+		libcsplit_narrow_split_string_free(
 		 &message_filename_split_string,
 		 NULL );
 #endif
@@ -2794,9 +2795,9 @@ int export_handle_export_record_text(
 	int result                                                     = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	libcpath_wide_split_string_t *message_filename_split_string    = NULL;
+	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
 #else
-	libcpath_narrow_split_string_t *message_filename_split_string  = NULL;
+	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
 #endif
 
 	if( export_handle == NULL )
@@ -3135,14 +3136,14 @@ int export_handle_export_record_text(
 			 * separated by ;
 			 */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			if( libcpath_wide_string_split(
+			if( libcsplit_wide_string_split(
 			     message_filename,
 			     message_filename_size,
 			     (libcstring_system_character_t) ';',
 			     &message_filename_split_string,
 			     error ) != 1 )
 #else
-			if( libcpath_narrow_string_split(
+			if( libcsplit_narrow_string_split(
 			     message_filename,
 			     message_filename_size,
 			     (libcstring_system_character_t) ';',
@@ -3160,12 +3161,12 @@ int export_handle_export_record_text(
 				goto on_error;
 			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			if( libcpath_wide_split_string_get_number_of_segments(
+			if( libcsplit_wide_split_string_get_number_of_segments(
 			     message_filename_split_string,
 			     &message_filename_number_of_segments,
 			     error ) != 1 )
 #else
-			if( libcpath_narrow_split_string_get_number_of_segments(
+			if( libcsplit_narrow_split_string_get_number_of_segments(
 			     message_filename_split_string,
 			     &message_filename_number_of_segments,
 			     error ) != 1 )
@@ -3185,14 +3186,14 @@ int export_handle_export_record_text(
 			     message_filename_segment_index++ )
 			{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				if( libcpath_wide_split_string_get_segment_by_index(
+				if( libcsplit_wide_split_string_get_segment_by_index(
 				     message_filename_split_string,
 				     message_filename_segment_index,
 				     &message_filename_string_segment,
 				     &message_filename_string_segment_size,
 				     error ) != 1 )
 #else
-				if( libcpath_narrow_split_string_get_segment_by_index(
+				if( libcsplit_narrow_split_string_get_segment_by_index(
 				     message_filename_split_string,
 				     message_filename_segment_index,
 				     &message_filename_string_segment,
@@ -3359,11 +3360,11 @@ int export_handle_export_record_text(
 				mui_message_filename = NULL;
 			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			if( libcpath_wide_split_string_free(
+			if( libcsplit_wide_split_string_free(
 			     &message_filename_split_string,
 			     error ) != 1 )
 #else
-			if( libcpath_narrow_split_string_free(
+			if( libcsplit_narrow_split_string_free(
 			     &message_filename_split_string,
 			     error ) != 1 )
 #endif
@@ -3407,11 +3408,11 @@ on_error:
 	if( message_filename_split_string != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		libcpath_wide_split_string_free(
+		libcsplit_wide_split_string_free(
 		 &message_filename_split_string,
 		 NULL );
 #else
-		libcpath_narrow_split_string_free(
+		libcsplit_narrow_split_string_free(
 		 &message_filename_split_string,
 		 NULL );
 #endif

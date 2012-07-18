@@ -1,7 +1,7 @@
 /*
  * The internal libcpath header
  *
- * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -29,12 +29,7 @@
 #if defined( HAVE_LOCAL_LIBCPATH )
 
 #include <libcpath_definitions.h>
-#include <libcpath_narrow_split_string.h>
-#include <libcpath_narrow_string.h>
 #include <libcpath_path.h>
-#include <libcpath_types.h>
-#include <libcpath_wide_split_string.h>
-#include <libcpath_wide_string.h>
 
 #else
 

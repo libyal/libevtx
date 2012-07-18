@@ -1,7 +1,7 @@
 /*
- * Configuration file for Borland/CodeGear C++ Builder compiler
+ * The internal libcsplit header
  *
- * Copyright (c) 2006-2012, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,30 +19,34 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _CONFIG_BORLANDC_H )
-#define _CONFIG_BORLANDC_H
+#if !defined( _EVTXTOOLS_LIBCSPLIT_H )
+#define _EVTXTOOLS_LIBCSPLIT_H
 
-/* Define to the address where bug reports for this package should be sent.
- */
-#define PACKAGE_BUGREPORT "joachim.metz@gmail.com"
+#include <common.h>
 
-/* Define the size of the wide character for WINAPI
+/* Define HAVE_LOCAL_LIBCSPLIT for local use of libcsplit
  */
-#if !defined( SIZEOF_WCHAR_T )
-#define SIZEOF_WCHAR_T          2
+#if defined( HAVE_LOCAL_LIBCSPLIT )
+
+#include <libcsplit_definitions.h>
+#include <libcsplit_narrow_split_string.h>
+#include <libcsplit_narrow_string.h>
+#include <libcsplit_types.h>
+#include <libcsplit_wide_split_string.h>
+#include <libcsplit_wide_string.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCSPLIT_DLL_IMPORT
+ * before including libcsplit.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCSPLIT_DLL_IMPORT
 #endif
 
-/* Use the C Runtime (CRT) functions instead of the WINAPI functions
-#define USE_CRT_FUNCTIONS	1
- */
+#include <libcsplit.h>
 
-/* Enable verbose output
-#define HAVE_VERBOSE_OUTPUT     1
- */
-
-/* Enable debug output
-#define HAVE_DEBUG_OUTPUT       1
- */
+#endif
 
 #endif
 

@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
+	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
@@ -38,8 +39,9 @@ evtxexport_SOURCES = \
 	evtxtools_libclocale.h \
 	evtxtools_libcnotify.h \
 	evtxtools_libcpath.h \
-	evtxtools_libcsystem.h \
+	evtxtools_libcsplit.h \
 	evtxtools_libcstring.h \
+	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfcache.h \
 	evtxtools_libfdatetime.h \
@@ -53,21 +55,22 @@ evtxexport_SOURCES = \
 	message_file.c message_file.h
 
 evtxexport_LDADD  = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	../libevtx/libevtx.la \
-	@LIBFDATETIME_LIBADD@ \
-	@LIBFGUID_LIBADD@ \
-	@LIBFVALUE_LIBADD@ \
-	@LIBFWNT_LIBADD@ \
-	@LIBEXE_LIBADD@ \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBREGF_LIBADD@ \
 	@LIBWRC_LIBADD@ \
-	@LIBCDIRECTORY_LIBADD@ \
+	@LIBEXE_LIBADD@ \
+	@LIBFVALUE_LIBADD@ \
+	@LIBFWNT_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
-	@LIBCSYSTEM_LIBADD@ \
+	@LIBCDIRECTORY_LIBADD@ \
+	../libevtx/libevtx.la \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
@@ -87,12 +90,12 @@ evtxinfo_SOURCES = \
 	info_handle.c info_handle.h
 
 evtxinfo_LDADD  = \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	../libevtx/libevtx.la \
 	@LIBCSYSTEM_LIBADD@ \
+	../libevtx/libevtx.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
