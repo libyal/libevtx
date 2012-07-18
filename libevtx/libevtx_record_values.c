@@ -24,13 +24,13 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libcnotify.h"
 #include "libevtx_libfdatetime.h"
+#include "libevtx_libfvalue.h"
+#include "libevtx_libfwevt.h"
 #include "libevtx_record_values.h"
-#include "libevtx_xml_tag.h"
 
 #include "evtx_event_record.h"
 
@@ -134,7 +134,7 @@ int libevtx_record_values_free(
 	{
 		if( ( *record_values )->xml_document != NULL )
 		{
-			if( libevtx_binary_xml_document_free(
+			if( libfwevt_xml_document_free(
 			     &( ( *record_values )->xml_document ),
 			     error ) != 1 )
 			{
@@ -226,7 +226,7 @@ int libevtx_record_values_clone(
 
 	if( source_record_values->xml_document != NULL )
 	{
-		if( libevtx_binary_xml_document_clone(
+		if( libfwevt_xml_document_clone(
 		     &( ( *destination_record_values )->xml_document ),
 		     source_record_values->xml_document,
 		     error ) != 1 )
@@ -635,7 +635,7 @@ int libevtx_record_values_read_xml_document(
 	}
 	event_record_data = &( chunk_data[ chunk_data_offset ] );
 
-	if( libevtx_binary_xml_document_initialize(
+	if( libfwevt_xml_document_initialize(
 	     &( record_values->xml_document ),
 	     error ) != 1 )
 	{
@@ -660,12 +660,13 @@ int libevtx_record_values_read_xml_document(
 		 0 );
 	}
 #endif
-	if( libevtx_binary_xml_document_read(
+	if( libfwevt_xml_document_read(
 	     record_values->xml_document,
-	     io_handle,
 	     chunk_data,
 	     chunk_data_size,
 	     chunk_data_offset,
+	     io_handle->ascii_codepage,
+	     LIBFWEVT_XML_DOCUMENT_READ_FLAG_HAS_DATA_OFFSETS,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -684,7 +685,7 @@ int libevtx_record_values_read_xml_document(
 		 "%s: XML document:\n",
 		 function );
 
-		if( libevtx_xml_tag_debug_print(
+		if( libfwevt_xml_tag_debug_print(
 		     record_values->xml_document->root_xml_tag,
 		     0,
 		     error ) != 1 )
@@ -705,7 +706,7 @@ int libevtx_record_values_read_xml_document(
 on_error:
 	if( record_values->xml_document != NULL )
 	{
-		libevtx_binary_xml_document_free(
+		libfwevt_xml_document_free(
 		 &( record_values->xml_document ),
 		 NULL );
 	}
@@ -720,9 +721,9 @@ int libevtx_record_values_get_event_identifier(
      uint32_t *event_identifier,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *eventid_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag  = NULL;
-	static char *function              = "libevtx_record_values_get_event_identifier";
+	libfwevt_xml_tag_t *eventid_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	static char *function               = "libevtx_record_values_get_event_identifier";
 
 	if( record_values == NULL )
 	{
@@ -748,7 +749,7 @@ int libevtx_record_values_get_event_identifier(
 	}
 	if( record_values->event_identifier_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -764,7 +765,7 @@ int libevtx_record_values_get_event_identifier(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "EventID",
 		     7,
@@ -819,9 +820,9 @@ int libevtx_record_values_get_event_level(
      uint8_t *event_level,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *level_xml_tag  = NULL;
-	libevtx_xml_tag_t *system_xml_tag = NULL;
-	static char *function             = "libevtx_record_values_get_event_level";
+	libfwevt_xml_tag_t *level_xml_tag  = NULL;
+	libfwevt_xml_tag_t *system_xml_tag = NULL;
+	static char *function              = "libevtx_record_values_get_event_level";
 
 	if( record_values == NULL )
 	{
@@ -847,7 +848,7 @@ int libevtx_record_values_get_event_level(
 	}
 	if( record_values->level_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -863,7 +864,7 @@ int libevtx_record_values_get_event_level(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Level",
 		     5,
@@ -919,11 +920,11 @@ int libevtx_record_values_get_utf8_source_name_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *provider_xml_tag      = NULL;
-	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag        = NULL;
-	static char *function                    = "libevtx_record_values_get_utf8_source_name_size";
-	int result                               = 0;
+	libfwevt_xml_tag_t *provider_xml_tag      = NULL;
+	libfwevt_xml_tag_t *provider_name_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                     = "libevtx_record_values_get_utf8_source_name_size";
+	int result                                = 0;
 
 	if( record_values == NULL )
 	{
@@ -949,7 +950,7 @@ int libevtx_record_values_get_utf8_source_name_size(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -965,7 +966,7 @@ int libevtx_record_values_get_utf8_source_name_size(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Provider",
 		     8,
@@ -981,7 +982,7 @@ int libevtx_record_values_get_utf8_source_name_size(
 
 			return( -1 );
 		}
-		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
 		          (uint8_t *) "EventSourceName",
 		          15,
@@ -1001,7 +1002,7 @@ int libevtx_record_values_get_utf8_source_name_size(
 		}
 		else if( result == 0 )
 		{
-			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+			result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 				  provider_xml_tag,
 				  (uint8_t *) "Name",
 				  4,
@@ -1061,11 +1062,11 @@ int libevtx_record_values_get_utf8_source_name(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *provider_xml_tag      = NULL;
-	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag        = NULL;
-	static char *function                    = "libevtx_record_values_get_utf8_source_name";
-	int result                               = 0;
+	libfwevt_xml_tag_t *provider_xml_tag      = NULL;
+	libfwevt_xml_tag_t *provider_name_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                     = "libevtx_record_values_get_utf8_source_name";
+	int result                                = 0;
 
 	if( record_values == NULL )
 	{
@@ -1091,7 +1092,7 @@ int libevtx_record_values_get_utf8_source_name(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1107,7 +1108,7 @@ int libevtx_record_values_get_utf8_source_name(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Provider",
 		     8,
@@ -1123,7 +1124,7 @@ int libevtx_record_values_get_utf8_source_name(
 
 			return( -1 );
 		}
-		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
 		          (uint8_t *) "EventSourceName",
 		          15,
@@ -1143,7 +1144,7 @@ int libevtx_record_values_get_utf8_source_name(
 		}
 		else if( result == 0 )
 		{
-			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+			result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 				  provider_xml_tag,
 				  (uint8_t *) "Name",
 				  4,
@@ -1203,11 +1204,11 @@ int libevtx_record_values_get_utf16_source_name_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *provider_xml_tag      = NULL;
-	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag        = NULL;
-	static char *function                    = "libevtx_record_values_get_utf16_source_name_size";
-	int result                               = 0;
+	libfwevt_xml_tag_t *provider_xml_tag      = NULL;
+	libfwevt_xml_tag_t *provider_name_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                     = "libevtx_record_values_get_utf16_source_name_size";
+	int result                                = 0;
 
 	if( record_values == NULL )
 	{
@@ -1233,7 +1234,7 @@ int libevtx_record_values_get_utf16_source_name_size(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1249,7 +1250,7 @@ int libevtx_record_values_get_utf16_source_name_size(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Provider",
 		     8,
@@ -1265,7 +1266,7 @@ int libevtx_record_values_get_utf16_source_name_size(
 
 			return( -1 );
 		}
-		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
 		          (uint8_t *) "EventSourceName",
 		          15,
@@ -1285,7 +1286,7 @@ int libevtx_record_values_get_utf16_source_name_size(
 		}
 		else if( result == 0 )
 		{
-			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+			result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 				  provider_xml_tag,
 				  (uint8_t *) "Name",
 				  4,
@@ -1345,11 +1346,11 @@ int libevtx_record_values_get_utf16_source_name(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *provider_xml_tag      = NULL;
-	libevtx_xml_tag_t *provider_name_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag        = NULL;
-	static char *function                    = "libevtx_record_values_get_utf16_source_name";
-	int result                               = 0;
+	libfwevt_xml_tag_t *provider_xml_tag      = NULL;
+	libfwevt_xml_tag_t *provider_name_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag        = NULL;
+	static char *function                     = "libevtx_record_values_get_utf16_source_name";
+	int result                                = 0;
 
 	if( record_values == NULL )
 	{
@@ -1375,7 +1376,7 @@ int libevtx_record_values_get_utf16_source_name(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1391,7 +1392,7 @@ int libevtx_record_values_get_utf16_source_name(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Provider",
 		     8,
@@ -1407,7 +1408,7 @@ int libevtx_record_values_get_utf16_source_name(
 
 			return( -1 );
 		}
-		result = libevtx_xml_tag_get_attribute_by_utf8_name(
+		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
 		          (uint8_t *) "EventSourceName",
 		          15,
@@ -1427,7 +1428,7 @@ int libevtx_record_values_get_utf16_source_name(
 		}
 		else if( result == 0 )
 		{
-			result = libevtx_xml_tag_get_attribute_by_utf8_name(
+			result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 				  provider_xml_tag,
 				  (uint8_t *) "Name",
 				  4,
@@ -1487,9 +1488,9 @@ int libevtx_record_values_get_utf8_computer_name_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *computer_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag   = NULL;
-	static char *function               = "libevtx_record_values_get_utf8_computer_name_size";
+	libfwevt_xml_tag_t *computer_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag   = NULL;
+	static char *function                = "libevtx_record_values_get_utf8_computer_name_size";
 
 	if( record_values == NULL )
 	{
@@ -1515,7 +1516,7 @@ int libevtx_record_values_get_utf8_computer_name_size(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1531,7 +1532,7 @@ int libevtx_record_values_get_utf8_computer_name_size(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Computer",
 		     8,
@@ -1588,9 +1589,9 @@ int libevtx_record_values_get_utf8_computer_name(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *computer_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag   = NULL;
-	static char *function               = "libevtx_record_values_get_utf8_computer_name";
+	libfwevt_xml_tag_t *computer_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag   = NULL;
+	static char *function                = "libevtx_record_values_get_utf8_computer_name";
 
 	if( record_values == NULL )
 	{
@@ -1616,7 +1617,7 @@ int libevtx_record_values_get_utf8_computer_name(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1632,7 +1633,7 @@ int libevtx_record_values_get_utf8_computer_name(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Computer",
 		     8,
@@ -1689,9 +1690,9 @@ int libevtx_record_values_get_utf16_computer_name_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *computer_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag   = NULL;
-	static char *function               = "libevtx_record_values_get_utf16_computer_name_size";
+	libfwevt_xml_tag_t *computer_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag   = NULL;
+	static char *function                = "libevtx_record_values_get_utf16_computer_name_size";
 
 	if( record_values == NULL )
 	{
@@ -1717,7 +1718,7 @@ int libevtx_record_values_get_utf16_computer_name_size(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1733,7 +1734,7 @@ int libevtx_record_values_get_utf16_computer_name_size(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Computer",
 		     8,
@@ -1790,9 +1791,9 @@ int libevtx_record_values_get_utf16_computer_name(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libevtx_xml_tag_t *computer_xml_tag = NULL;
-	libevtx_xml_tag_t *system_xml_tag   = NULL;
-	static char *function               = "libevtx_record_values_get_utf16_computer_name";
+	libfwevt_xml_tag_t *computer_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag   = NULL;
+	static char *function                = "libevtx_record_values_get_utf16_computer_name";
 
 	if( record_values == NULL )
 	{
@@ -1818,7 +1819,7 @@ int libevtx_record_values_get_utf16_computer_name(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     record_values->xml_document->root_xml_tag,
 		     (uint8_t *) "System",
 		     6,
@@ -1834,7 +1835,7 @@ int libevtx_record_values_get_utf16_computer_name(
 
 			return( -1 );
 		}
-		if( libevtx_xml_tag_get_element_by_utf8_name(
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
 		     system_xml_tag,
 		     (uint8_t *) "Computer",
 		     8,
@@ -1915,7 +1916,7 @@ int libevtx_record_values_get_utf8_xml_string_size(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf8_xml_string_size(
+	if( libfwevt_xml_tag_get_utf8_xml_string_size(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf8_string_size,
@@ -1968,7 +1969,7 @@ int libevtx_record_values_get_utf8_xml_string(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf8_xml_string_with_index(
+	if( libfwevt_xml_tag_get_utf8_xml_string_with_index(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf8_string,
@@ -2021,7 +2022,7 @@ int libevtx_record_values_get_utf16_xml_string_size(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf16_xml_string_size(
+	if( libfwevt_xml_tag_get_utf16_xml_string_size(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf16_string_size,
@@ -2074,7 +2075,7 @@ int libevtx_record_values_get_utf16_xml_string(
 
 		return( -1 );
 	}
-	if( libevtx_xml_tag_get_utf16_xml_string_with_index(
+	if( libfwevt_xml_tag_get_utf16_xml_string_with_index(
 	     record_values->xml_document->root_xml_tag,
 	     0,
 	     utf16_string,

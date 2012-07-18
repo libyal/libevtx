@@ -31,6 +31,7 @@ Recovery:
 20120718
 * applied updates
 * added libcstring, libfwevt
+* worked on libfwevt integration into libevtx
 
 20120501
 * applied updates

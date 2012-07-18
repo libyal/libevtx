@@ -25,10 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include "libevtx_binary_xml_document.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libfvalue.h"
+#include "libevtx_libfwevt.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -58,7 +58,7 @@ struct libevtx_record_values
 
 	/* The XML document
 	 */
-	libevtx_binary_xml_document_t *xml_document;
+	libfwevt_xml_document_t *xml_document;
 
 	/* Reference to the provider name value
 	 */
