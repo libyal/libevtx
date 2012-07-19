@@ -1,6 +1,4 @@
 TODO
-* merge libevtx with libfwevt
-
 * export_handle_get_message_file_path
   return 0 if no corresponding file has been found
 * recovery:
@@ -32,6 +30,7 @@ Recovery:
 * applied updates
 * added libcstring, libfwevt
 * worked on libfwevt integration into libevtx
+* added support for empty element tag value
 
 20120501
 * applied updates
