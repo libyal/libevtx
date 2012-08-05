@@ -26,6 +26,9 @@ TODO
 Recovery:
 * scan for records in chunk free space
 
+20120805
+* applied updates
+
 20120718
 * applied updates
 * added libcstring, libfwevt
