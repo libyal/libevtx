@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20120805],
+ [20120814],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -128,6 +128,9 @@ AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
 dnl Check if libevtx should be build with debug output
 AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
+dnl Check if libevtx python bindings (pyevtx) should be build
+AX_PYTHON_CHECK_ENABLE
+
 dnl Check if DLL support is needed in evtxtools
 AS_IF(
  [test "x$enable_shared" = xyes && test "x$ac_cv_enable_static_executables" = xno],
@@ -209,6 +212,7 @@ AC_CONFIG_FILES([libwrc/Makefile])
 AC_CONFIG_FILES([libcdirectory/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([evtxtools/Makefile])
+AC_CONFIG_FILES([pyevtx/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
@@ -259,6 +263,7 @@ Building:
 Features:
    Wide character type support:               $ac_cv_enable_wide_character_type
    evtxtools are build as static executables: $ac_cv_enable_static_executables
+   Python (pyevtx) support:                   $ac_cv_enable_python
    Verbose output:                            $ac_cv_enable_verbose_output
    Debug output:                              $ac_cv_enable_debug_output
 ]);

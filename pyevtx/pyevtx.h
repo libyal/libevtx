@@ -1,7 +1,5 @@
 /*
- * The extern definition
- * This header should be included in header files that export or import
- * library functions
+ * Python bindings for libevtx (pyevtx)
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -21,22 +19,41 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_EXTERN_H )
-#define _LIBEVTX_EXTERN_H
+#if !defined( _PYEVTX_H )
+#define _PYEVTX_H
 
-/* To export functions from the libevtx DLL define LIBEVTX_DLL_EXPORT
- * To import functions from the libevtx DLL define LIBEVTX_DLL_IMPORT
- * Otherwise use default extern statement
- */
-#if defined( LIBEVTX_DLL_EXPORT )
-#define LIBEVTX_EXTERN __declspec(dllexport)
+#include <common.h>
+#include <types.h>
 
-#elif defined( LIBEVTX_DLL_IMPORT )
-#define LIBEVTX_EXTERN extern __declspec(dllimport)
+#include "pyevtx_python.h"
 
-#else
-#define LIBEVTX_EXTERN extern
+#if defined( __cplusplus )
+extern "C" {
+#endif
 
+#define PYEVTX_ERROR_STRING_SIZE		512
+
+PyObject *pyevtx_get_version(
+           PyObject *self );
+
+PyObject *pyevtx_get_access_flags_read(
+           PyObject *self );
+
+PyObject *pyevtx_check_file_signature(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyevtx_set_notify_values(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyMODINIT_FUNC initpyevtx(
+                void );
+
+#if defined( __cplusplus )
+}
 #endif
 
 #endif

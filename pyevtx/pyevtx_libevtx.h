@@ -1,7 +1,5 @@
 /*
- * The extern definition
- * This header should be included in header files that export or import
- * library functions
+ * The internal libevtx header
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -11,33 +9,29 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_EXTERN_H )
-#define _LIBEVTX_EXTERN_H
+#if !defined( _PYEVTX_LIBEVTX_H )
+#define _PYEVTX_LIBEVTX_H
 
-/* To export functions from the libevtx DLL define LIBEVTX_DLL_EXPORT
- * To import functions from the libevtx DLL define LIBEVTX_DLL_IMPORT
- * Otherwise use default extern statement
+#include <common.h>
+
+/* If Cygwin libtool DLL support is enabled set LIBEVTX_DLL_IMPORT
+ * before including libevtx.h
  */
-#if defined( LIBEVTX_DLL_EXPORT )
-#define LIBEVTX_EXTERN __declspec(dllexport)
-
-#elif defined( LIBEVTX_DLL_IMPORT )
-#define LIBEVTX_EXTERN extern __declspec(dllimport)
-
-#else
-#define LIBEVTX_EXTERN extern
-
+#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#define LIBEVTX_DLL_IMPORT
 #endif
+
+#include <libevtx.h>
 
 #endif
 

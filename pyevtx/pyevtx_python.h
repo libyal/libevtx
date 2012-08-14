@@ -1,7 +1,5 @@
 /*
- * The extern definition
- * This header should be included in header files that export or import
- * library functions
+ * The python header wrapper
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -21,23 +19,21 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_EXTERN_H )
-#define _LIBEVTX_EXTERN_H
+#if !defined( _PYEVTX_PYTHON_H )
+#define _PYEVTX_PYTHON_H
 
-/* To export functions from the libevtx DLL define LIBEVTX_DLL_EXPORT
- * To import functions from the libevtx DLL define LIBEVTX_DLL_IMPORT
- * Otherwise use default extern statement
+#include <common.h>
+
+/* Fix defines in pyconfig.h
  */
-#if defined( LIBEVTX_DLL_EXPORT )
-#define LIBEVTX_EXTERN __declspec(dllexport)
+#undef _POSIX_C_SOURCE
 
-#elif defined( LIBEVTX_DLL_IMPORT )
-#define LIBEVTX_EXTERN extern __declspec(dllimport)
+/* Fix defines in pyport.h
+ */
+#undef HAVE_FSTAT
+#undef HAVE_STAT
 
-#else
-#define LIBEVTX_EXTERN extern
-
-#endif
+#include <Python.h>
 
 #endif
 

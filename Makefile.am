@@ -26,6 +26,7 @@ SUBDIRS = \
 	libcdirectory \
 	libcsystem \
 	evtxtools \
+	pyevtx \
 	po \
 	manuals \
 	msvscpp
@@ -130,5 +131,6 @@ splint:
 	(cd $(srcdir)/libfwevt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/evtxtools && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/pyevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 

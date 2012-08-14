@@ -1,7 +1,7 @@
 /*
  * Library to support the Windows XML Event Log (EVTX) format
  *
- * Copyright (c) 2011-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -250,6 +250,24 @@ int libevtx_file_open_file_io_handle(
 LIBEVTX_EXTERN \
 int libevtx_file_close(
      libevtx_file_t *file,
+     libevtx_error_t **error );
+
+/* Retrieves the file ASCII codepage
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_get_ascii_codepage(
+     libevtx_file_t *file,
+     int *ascii_codepage,
+     libevtx_error_t **error );
+
+/* Sets the file ASCII codepage
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_set_ascii_codepage(
+     libevtx_file_t *file,
+     int ascii_codepage,
      libevtx_error_t **error );
 
 /* Retrieves the file version

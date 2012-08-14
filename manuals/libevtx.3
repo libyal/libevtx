@@ -1,9 +1,9 @@
-.Dd July 17, 2012
+.Dd August 14, 2012
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
 .Nm libevtx.h
-.Nd Library to support the Extensible Storage Engine (ESE) Database File (EDB) format
+.Nd Library to support the Windows XML Event Log (EVTX) format
 .Sh LIBRARY
 .Lb libevtx
 .Sh SYNOPSIS
@@ -60,6 +60,10 @@ File functions
 .Fn libevtx_file_open "libevtx_file_t *file, const char *filename, int flags, libevtx_error_t **error"
 .Ft int
 .Fn libevtx_file_close "libevtx_file_t *file, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_ascii_codepage "libevtx_file_t *file, int *ascii_codepage, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_set_ascii_codepage "libevtx_file_t *file, int ascii_codepage, libevtx_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
