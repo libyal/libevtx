@@ -89,7 +89,15 @@ PyObject *pyevtx_file_set_ascii_codepage(
 PyObject *pyevtx_file_get_number_of_records(
            pyevtx_file_t *pyevtx_file );
 
-PyObject *pyevtx_key_get_record(
+PyObject *pyevtx_file_get_record(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyevtx_file_get_number_of_recovered_records(
+           pyevtx_file_t *pyevtx_file );
+
+PyObject *pyevtx_file_get_recovered_record(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments,
            PyObject *keywords );

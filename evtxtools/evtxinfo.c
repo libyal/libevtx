@@ -56,10 +56,15 @@ void usage_fprint(
 	fprintf( stream, "Use evtxinfo to determine information about a Windows XML Event Viewer\n"
 	                 "Log (EVTX) file\n\n" );
 
-	fprintf( stream, "Usage: evtxinfo [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: evtxinfo [ -c codepage ] [ -hvV ] source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
+	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
+	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
+	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
+	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256\n"
+	                 "\t        windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
@@ -112,12 +117,13 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libevtx_error_t *error                = NULL;
-	libcstring_system_character_t *source = NULL;
-	char *program                         = "evtxinfo";
-	libcstring_system_integer_t option    = 0;
-	int result                            = 0;
-	int verbose                           = 0;
+	libevtx_error_t *error                               = NULL;
+	libcstring_system_character_t *option_ascii_codepage = NULL;
+	libcstring_system_character_t *source                = NULL;
+	char *program                                        = "evtxinfo";
+	libcstring_system_integer_t option                   = 0;
+	int result                                           = 0;
+	int verbose                                          = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -152,7 +158,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "hvV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:hvV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -167,6 +173,11 @@ int main( int argc, char * const argv[] )
 				 stdout );
 
 				return( EXIT_FAILURE );
+
+			case (libcstring_system_integer_t) 'c':
+				option_ascii_codepage = optarg;
+
+				break;
 
 			case (libcstring_system_integer_t) 'h':
 				usage_fprint(
@@ -216,6 +227,28 @@ int main( int argc, char * const argv[] )
 		 "Unable to initialize info handle.\n" );
 
 		goto on_error;
+	}
+	if( option_ascii_codepage != NULL )
+	{
+		result = info_handle_set_ascii_codepage(
+		          evtxinfo_info_handle,
+		          option_ascii_codepage,
+		          &error );
+
+		if( result == -1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set ASCII codepage in info handle.\n" );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			fprintf(
+			 stderr,
+			 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
+		}
 	}
 	result = info_handle_set_event_log_type_from_filename(
 	          evtxinfo_info_handle,

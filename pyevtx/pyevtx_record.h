@@ -60,6 +60,21 @@ void pyevtx_record_free(
 PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record );
 
+PyObject *pyevtx_record_get_event_identifier(
+           pyevtx_record_t *pyevtx_record );
+
+PyObject *pyevtx_record_get_event_level(
+           pyevtx_record_t *pyevtx_record );
+
+PyObject *pyevtx_record_get_source_name(
+           pyevtx_record_t *pyevtx_record );
+
+PyObject *pyevtx_record_get_computer_name(
+           pyevtx_record_t *pyevtx_record );
+
+PyObject *pyevtx_record_get_xml_string(
+           pyevtx_record_t *pyevtx_record );
+
 #if defined( __cplusplus )
 }
 #endif

@@ -46,6 +46,41 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Returns the written date and time" },
 
+	{ "get_event_identifier",
+	  (PyCFunction) pyevtx_record_get_event_identifier,
+	  METH_NOARGS,
+	  "get_event_identifier() -> Integer\n"
+	  "\n"
+	  "Retrieves the event identifier" },
+
+	{ "get_event_level",
+	  (PyCFunction) pyevtx_record_get_event_level,
+	  METH_NOARGS,
+	  "get_event_level() -> Integer\n"
+	  "\n"
+	  "Retrieves the event level" },
+
+	{ "get_source_name",
+	  (PyCFunction) pyevtx_record_get_source_name,
+	  METH_NOARGS,
+	  "get_source_name -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the source name" },
+
+	{ "get_computer_name",
+	  (PyCFunction) pyevtx_record_get_computer_name,
+	  METH_NOARGS,
+	  "get_computer_name -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the computer name" },
+
+	{ "get_xml_string",
+	  (PyCFunction) pyevtx_record_get_xml_string,
+	  METH_NOARGS,
+	  "get_xml_string -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the XML string" },
+
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
@@ -56,6 +91,36 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_written_time,
 	  (setter) 0,
 	  "The written date and time",
+	  NULL },
+
+	{ "event_identifier",
+	  (getter) pyevtx_record_get_event_identifier,
+	  (setter) 0,
+	  "The event identifier",
+	  NULL },
+
+	{ "event_level",
+	  (getter) pyevtx_record_get_event_level,
+	  (setter) 0,
+	  "The event level",
+	  NULL },
+
+	{ "source_name",
+	  (getter) pyevtx_record_get_source_name,
+	  (setter) 0,
+	  "The source name",
+	  NULL },
+
+	{ "computer_name",
+	  (getter) pyevtx_record_get_computer_name,
+	  (setter) 0,
+	  "The computer name",
+	  NULL },
+
+	{ "xml_string",
+	  (getter) pyevtx_record_get_xml_string,
+	  (setter) 0,
+	  "The XML string",
 	  NULL },
 
 	/* Sentinel */
@@ -362,5 +427,536 @@ PyObject *pyevtx_record_get_written_time(
 	                    filetime );
 
 	return( date_time_object );
+}
+
+/* Retrieves the event identifier
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_event_identifier(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_record_get_event_identifier";
+	uint32_t event_identifier = 0;
+	int result                = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_event_identifier(
+	          pyevtx_record->record,
+	          &event_identifier,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve event identifier.",
+			 function );
+		}
+		else
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve event identifier.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	return( PyInt_FromLong(
+	         (long) event_identifier ) );
+}
+
+/* Retrieves the event level
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_event_level(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_event_level";
+	uint8_t event_level      = 0;
+	int result               = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_event_level(
+	          pyevtx_record->record,
+	          &event_level,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve event level.",
+			 function );
+		}
+		else
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve event level.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	return( PyInt_FromLong(
+	         (long) event_level ) );
+}
+
+/* Retrieves the source name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_source_name(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error = NULL;
+	PyObject *string_object  = NULL;
+	const char *errors       = NULL;
+	uint8_t *source_name     = NULL;
+	static char *function    = "pyevtx_record_get_source_name";
+	size_t source_name_size  = 0;
+	int result               = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_source_name_size(
+	          pyevtx_record->record,
+	          &source_name_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve source name size.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve source name size.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( source_name_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	source_name = (uint8_t *) memory_allocate(
+	                           sizeof( uint8_t ) * source_name_size );
+
+	if( source_name == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to create source name.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_source_name(
+		  pyevtx_record->record,
+		  source_name,
+		  source_name_size,
+		  &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve source name.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve source name.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8
+	 * otherwise it makes the end of string character is part
+	 * of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+			 (char *) source_name,
+			 (Py_ssize_t) source_name_size - 1,
+			 errors );
+
+	memory_free(
+	 source_name );
+
+	return( string_object );
+
+on_error:
+	if( source_name != NULL )
+	{
+		memory_free(
+		 source_name );
+	}
+	return( NULL );
+}
+
+/* Retrieves the computer name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_computer_name(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error  = NULL;
+	PyObject *string_object   = NULL;
+	const char *errors        = NULL;
+	uint8_t *computer_name    = NULL;
+	static char *function     = "pyevtx_record_get_computer_name";
+	size_t computer_name_size = 0;
+	int result                = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_computer_name_size(
+	          pyevtx_record->record,
+	          &computer_name_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve computer name size.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve computer name size.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( computer_name_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	computer_name = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * computer_name_size );
+
+	if( computer_name == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to create computer name.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_computer_name(
+		  pyevtx_record->record,
+		  computer_name,
+		  computer_name_size,
+		  &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve computer name.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve computer name.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8
+	 * otherwise it makes the end of string character is part
+	 * of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+			 (char *) computer_name,
+			 (Py_ssize_t) computer_name_size - 1,
+			 errors );
+
+	memory_free(
+	 computer_name );
+
+	return( string_object );
+
+on_error:
+	if( computer_name != NULL )
+	{
+		memory_free(
+		 computer_name );
+	}
+	return( NULL );
+}
+
+/* Retrieves the XML string
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_xml_string(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error = NULL;
+	PyObject *string_object  = NULL;
+	const char *errors       = NULL;
+	uint8_t *xml_string      = NULL;
+	static char *function    = "pyevtx_record_get_xml_string";
+	size_t xml_string_size   = 0;
+	int result               = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_xml_string_size(
+	          pyevtx_record->record,
+	          &xml_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve XML string size.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve XML string size.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( xml_string_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	xml_string = (uint8_t *) memory_allocate(
+	                          sizeof( uint8_t ) * xml_string_size );
+
+	if( xml_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to create XML string.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_xml_string(
+		  pyevtx_record->record,
+		  xml_string,
+		  xml_string_size,
+		  &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve XML string.",
+			 function );
+		}
+		else
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve XML string.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8
+	 * otherwise it makes the end of string character is part
+	 * of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+			 (char *) xml_string,
+			 (Py_ssize_t) xml_string_size - 1,
+			 errors );
+
+	memory_free(
+	 xml_string );
+
+	return( string_object );
+
+on_error:
+	if( xml_string != NULL )
+	{
+		memory_free(
+		 xml_string );
+	}
+	return( NULL );
 }
 
