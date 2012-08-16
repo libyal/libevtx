@@ -913,7 +913,7 @@ int libevtx_record_values_get_event_level(
 
 /* Retrieves the size of the UTF-8 encoded source name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf8_source_name_size(
      libevtx_record_values_t *record_values,
@@ -950,12 +950,14 @@ int libevtx_record_values_get_utf8_source_name_size(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -966,12 +968,18 @@ int libevtx_record_values_get_utf8_source_name_size(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Provider",
-		     8,
-		     &provider_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Provider",
+		          8,
+		          &provider_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -981,6 +989,10 @@ int libevtx_record_values_get_utf8_source_name_size(
 			 function );
 
 			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
 		}
 		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
@@ -1023,11 +1035,15 @@ int libevtx_record_values_get_utf8_source_name_size(
 		}
 		if( result == 0 )
 		{
+			return( 0 );
+		}
+		if( provider_name_xml_tag == NULL )
+		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source name attribute.",
+			 "%s: missing provider name XML tag.",
 			 function );
 
 			return( -1 );
@@ -1054,7 +1070,7 @@ int libevtx_record_values_get_utf8_source_name_size(
 
 /* Retrieves the UTF-8 encoded source name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf8_source_name(
      libevtx_record_values_t *record_values,
@@ -1092,12 +1108,14 @@ int libevtx_record_values_get_utf8_source_name(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1108,12 +1126,18 @@ int libevtx_record_values_get_utf8_source_name(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Provider",
-		     8,
-		     &provider_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Provider",
+		          8,
+		          &provider_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1123,6 +1147,10 @@ int libevtx_record_values_get_utf8_source_name(
 			 function );
 
 			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
 		}
 		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
@@ -1165,11 +1193,15 @@ int libevtx_record_values_get_utf8_source_name(
 		}
 		if( result == 0 )
 		{
+			return( 0 );
+		}
+		if( provider_name_xml_tag == NULL )
+		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source name attribute.",
+			 "%s: missing provider name XML tag.",
 			 function );
 
 			return( -1 );
@@ -1197,7 +1229,7 @@ int libevtx_record_values_get_utf8_source_name(
 
 /* Retrieves the size of the UTF-16 encoded source name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf16_source_name_size(
      libevtx_record_values_t *record_values,
@@ -1234,12 +1266,14 @@ int libevtx_record_values_get_utf16_source_name_size(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1250,12 +1284,18 @@ int libevtx_record_values_get_utf16_source_name_size(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Provider",
-		     8,
-		     &provider_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Provider",
+		          8,
+		          &provider_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1265,6 +1305,10 @@ int libevtx_record_values_get_utf16_source_name_size(
 			 function );
 
 			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
 		}
 		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
@@ -1307,11 +1351,15 @@ int libevtx_record_values_get_utf16_source_name_size(
 		}
 		if( result == 0 )
 		{
+			return( 0 );
+		}
+		if( provider_name_xml_tag == NULL )
+		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source name attribute.",
+			 "%s: missing provider name XML tag.",
 			 function );
 
 			return( -1 );
@@ -1338,7 +1386,7 @@ int libevtx_record_values_get_utf16_source_name_size(
 
 /* Retrieves the UTF-16 encoded source name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf16_source_name(
      libevtx_record_values_t *record_values,
@@ -1376,12 +1424,14 @@ int libevtx_record_values_get_utf16_source_name(
 	}
 	if( record_values->provider_name_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1392,12 +1442,18 @@ int libevtx_record_values_get_utf16_source_name(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Provider",
-		     8,
-		     &provider_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Provider",
+		          8,
+		          &provider_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1407,6 +1463,10 @@ int libevtx_record_values_get_utf16_source_name(
 			 function );
 
 			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
 		}
 		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
 		          provider_xml_tag,
@@ -1449,11 +1509,15 @@ int libevtx_record_values_get_utf16_source_name(
 		}
 		if( result == 0 )
 		{
+			return( 0 );
+		}
+		if( provider_name_xml_tag == NULL )
+		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing source name attribute.",
+			 "%s: missing provider name XML tag.",
 			 function );
 
 			return( -1 );
@@ -1481,7 +1545,7 @@ int libevtx_record_values_get_utf16_source_name(
 
 /* Retrieves the size of the UTF-8 encoded computer name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf8_computer_name_size(
      libevtx_record_values_t *record_values,
@@ -1491,6 +1555,7 @@ int libevtx_record_values_get_utf8_computer_name_size(
 	libfwevt_xml_tag_t *computer_xml_tag = NULL;
 	libfwevt_xml_tag_t *system_xml_tag   = NULL;
 	static char *function                = "libevtx_record_values_get_utf8_computer_name_size";
+	int result                           = 0;
 
 	if( record_values == NULL )
 	{
@@ -1516,12 +1581,14 @@ int libevtx_record_values_get_utf8_computer_name_size(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1532,12 +1599,18 @@ int libevtx_record_values_get_utf8_computer_name_size(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Computer",
-		     8,
-		     &computer_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Computer",
+		          8,
+		          &computer_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1548,13 +1621,17 @@ int libevtx_record_values_get_utf8_computer_name_size(
 
 			return( -1 );
 		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 		if( computer_xml_tag == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing Computer XML element.",
+			 "%s: missing computer XML tag.",
 			 function );
 
 			return( -1 );
@@ -1581,7 +1658,7 @@ int libevtx_record_values_get_utf8_computer_name_size(
 
 /* Retrieves the UTF-8 encoded computer name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf8_computer_name(
      libevtx_record_values_t *record_values,
@@ -1592,6 +1669,7 @@ int libevtx_record_values_get_utf8_computer_name(
 	libfwevt_xml_tag_t *computer_xml_tag = NULL;
 	libfwevt_xml_tag_t *system_xml_tag   = NULL;
 	static char *function                = "libevtx_record_values_get_utf8_computer_name";
+	int result                           = 0;
 
 	if( record_values == NULL )
 	{
@@ -1617,12 +1695,14 @@ int libevtx_record_values_get_utf8_computer_name(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1633,12 +1713,18 @@ int libevtx_record_values_get_utf8_computer_name(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Computer",
-		     8,
-		     &computer_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Computer",
+		          8,
+		          &computer_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1649,13 +1735,17 @@ int libevtx_record_values_get_utf8_computer_name(
 
 			return( -1 );
 		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 		if( computer_xml_tag == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing Computer XML element.",
+			 "%s: missing computer XML tag.",
 			 function );
 
 			return( -1 );
@@ -1683,7 +1773,7 @@ int libevtx_record_values_get_utf8_computer_name(
 
 /* Retrieves the size of the UTF-16 encoded computer name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf16_computer_name_size(
      libevtx_record_values_t *record_values,
@@ -1693,6 +1783,7 @@ int libevtx_record_values_get_utf16_computer_name_size(
 	libfwevt_xml_tag_t *computer_xml_tag = NULL;
 	libfwevt_xml_tag_t *system_xml_tag   = NULL;
 	static char *function                = "libevtx_record_values_get_utf16_computer_name_size";
+	int result                           = 0;
 
 	if( record_values == NULL )
 	{
@@ -1718,12 +1809,14 @@ int libevtx_record_values_get_utf16_computer_name_size(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1734,12 +1827,18 @@ int libevtx_record_values_get_utf16_computer_name_size(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Computer",
-		     8,
-		     &computer_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Computer",
+		          8,
+		          &computer_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1750,13 +1849,17 @@ int libevtx_record_values_get_utf16_computer_name_size(
 
 			return( -1 );
 		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 		if( computer_xml_tag == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing Computer XML element.",
+			 "%s: missing computer XML tag.",
 			 function );
 
 			return( -1 );
@@ -1783,7 +1886,7 @@ int libevtx_record_values_get_utf16_computer_name_size(
 
 /* Retrieves the UTF-16 encoded computer name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_utf16_computer_name(
      libevtx_record_values_t *record_values,
@@ -1794,6 +1897,7 @@ int libevtx_record_values_get_utf16_computer_name(
 	libfwevt_xml_tag_t *computer_xml_tag = NULL;
 	libfwevt_xml_tag_t *system_xml_tag   = NULL;
 	static char *function                = "libevtx_record_values_get_utf16_computer_name";
+	int result                           = 0;
 
 	if( record_values == NULL )
 	{
@@ -1819,12 +1923,14 @@ int libevtx_record_values_get_utf16_computer_name(
 	}
 	if( record_values->computer_value == NULL )
 	{
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     record_values->xml_document->root_xml_tag,
-		     (uint8_t *) "System",
-		     6,
-		     &system_xml_tag,
-		     error ) != 1 )
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          record_values->xml_document->root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1835,12 +1941,18 @@ int libevtx_record_values_get_utf16_computer_name(
 
 			return( -1 );
 		}
-		if( libfwevt_xml_tag_get_element_by_utf8_name(
-		     system_xml_tag,
-		     (uint8_t *) "Computer",
-		     8,
-		     &computer_xml_tag,
-		     error ) != 1 )
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Computer",
+		          8,
+		          &computer_xml_tag,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1851,13 +1963,17 @@ int libevtx_record_values_get_utf16_computer_name(
 
 			return( -1 );
 		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
 		if( computer_xml_tag == NULL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing Computer XML element.",
+			 "%s: missing computer XML tag.",
 			 function );
 
 			return( -1 );

@@ -434,7 +434,7 @@ int libevtx_record_get_event_level(
 
 /* Retrieves the size of the UTF-8 encoded source name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf8_source_name_size(
      libevtx_record_t *record,
@@ -443,6 +443,7 @@ int libevtx_record_get_utf8_source_name_size(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf8_source_name_size";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -457,10 +458,12 @@ int libevtx_record_get_utf8_source_name_size(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf8_source_name_size(
-	     internal_record->record_values,
-	     utf8_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf8_source_name_size(
+	          internal_record->record_values,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -471,12 +474,12 @@ int libevtx_record_get_utf8_source_name_size(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded source name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf8_source_name(
      libevtx_record_t *record,
@@ -486,6 +489,7 @@ int libevtx_record_get_utf8_source_name(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf8_source_name";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -500,11 +504,13 @@ int libevtx_record_get_utf8_source_name(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf8_source_name(
-	     internal_record->record_values,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf8_source_name(
+	          internal_record->record_values,
+	          utf8_string,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -515,12 +521,12 @@ int libevtx_record_get_utf8_source_name(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded source name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf16_source_name_size(
      libevtx_record_t *record,
@@ -529,6 +535,7 @@ int libevtx_record_get_utf16_source_name_size(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf16_source_name_size";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -543,10 +550,12 @@ int libevtx_record_get_utf16_source_name_size(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf16_source_name_size(
-	     internal_record->record_values,
-	     utf16_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf16_source_name_size(
+	          internal_record->record_values,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -557,12 +566,12 @@ int libevtx_record_get_utf16_source_name_size(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded source name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf16_source_name(
      libevtx_record_t *record,
@@ -572,6 +581,7 @@ int libevtx_record_get_utf16_source_name(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf16_source_name";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -586,11 +596,13 @@ int libevtx_record_get_utf16_source_name(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf16_source_name(
-	     internal_record->record_values,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf16_source_name(
+	          internal_record->record_values,
+	          utf16_string,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -601,12 +613,12 @@ int libevtx_record_get_utf16_source_name(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded computer name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf8_computer_name_size(
      libevtx_record_t *record,
@@ -615,6 +627,7 @@ int libevtx_record_get_utf8_computer_name_size(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf8_computer_name_size";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -629,10 +642,12 @@ int libevtx_record_get_utf8_computer_name_size(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf8_computer_name_size(
-	     internal_record->record_values,
-	     utf8_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf8_computer_name_size(
+	          internal_record->record_values,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -643,12 +658,12 @@ int libevtx_record_get_utf8_computer_name_size(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded computer name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf8_computer_name(
      libevtx_record_t *record,
@@ -658,6 +673,7 @@ int libevtx_record_get_utf8_computer_name(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf8_computer_name";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -672,11 +688,13 @@ int libevtx_record_get_utf8_computer_name(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf8_computer_name(
-	     internal_record->record_values,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf8_computer_name(
+	          internal_record->record_values,
+	          utf8_string,
+	          utf8_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -687,12 +705,12 @@ int libevtx_record_get_utf8_computer_name(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded computer name
  * The returned size includes the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf16_computer_name_size(
      libevtx_record_t *record,
@@ -701,6 +719,7 @@ int libevtx_record_get_utf16_computer_name_size(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf16_computer_name_size";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -715,10 +734,12 @@ int libevtx_record_get_utf16_computer_name_size(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf16_computer_name_size(
-	     internal_record->record_values,
-	     utf16_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf16_computer_name_size(
+	          internal_record->record_values,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -729,12 +750,12 @@ int libevtx_record_get_utf16_computer_name_size(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded computer name
  * The size should include the end of string character
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_utf16_computer_name(
      libevtx_record_t *record,
@@ -744,6 +765,7 @@ int libevtx_record_get_utf16_computer_name(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_utf16_computer_name";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -758,11 +780,13 @@ int libevtx_record_get_utf16_computer_name(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_utf16_computer_name(
-	     internal_record->record_values,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	result = libevtx_record_values_get_utf16_computer_name(
+	          internal_record->record_values,
+	          utf16_string,
+	          utf16_string_size,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -773,7 +797,7 @@ int libevtx_record_get_utf16_computer_name(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded XML string

@@ -1,4 +1,13 @@
 TODO
+* XML output change
+  - Keywords add 0x no leading 0's
+
+* API
+  - add functions for user security identifier function: system/security#userid
+  - get op code (0 => Info)
+  - task category (none if not set)
+  - keywords
+
 * export_handle_get_message_file_path
   return 0 if no corresponding file has been found
 * recovery:
@@ -25,6 +34,9 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120815
+* worked on library
 
 20120814
 * worked on python bindings

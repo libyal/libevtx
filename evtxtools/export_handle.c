@@ -3004,7 +3004,7 @@ int export_handle_export_record_text(
 	          &event_source_size,
 	          error );
 #endif
-	if( result != 1 )
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -3015,7 +3015,8 @@ int export_handle_export_record_text(
 
 		goto on_error;
 	}
-	if( event_source_size > 0 )
+	if( ( result != 0 )
+	 && ( event_source_size > 0 ) )
 	{
 		event_source = libcstring_system_string_allocate(
 		                event_source_size );
@@ -3071,7 +3072,7 @@ int export_handle_export_record_text(
 	          &value_string_size,
 	          error );
 #endif
-	if( result != 1 )
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -3082,7 +3083,8 @@ int export_handle_export_record_text(
 
 		goto on_error;
 	}
-	if( value_string_size > 0 )
+	if( ( result != 0 )
+	 && ( value_string_size > 0 ) )
 	{
 		value_string = libcstring_system_string_allocate(
 		                value_string_size );
@@ -3359,27 +3361,6 @@ int export_handle_export_record_text(
 				}
 				if( result != 0 )
 				{
-					if( export_handle_message_string_fprint(
-					     export_handle,
-					     message_string,
-					     message_string_size - 1,
-					     record,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-						 "%s: unable to print message string.",
-						 function );
-
-						goto on_error;
-					}
-					memory_free(
-					 message_string );
-
-					message_string = NULL;
-
 					break;
 				}
 				memory_free(
@@ -3415,6 +3396,29 @@ int export_handle_export_record_text(
 		 event_source );
 
 		event_source = NULL;
+	}
+	if( message_string != NULL )
+	{
+		if( export_handle_message_string_fprint(
+		     export_handle,
+		     message_string,
+		     message_string_size - 1,
+		     record,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print message string.",
+			 function );
+
+			goto on_error;
+		}
+		memory_free(
+		 message_string );
+
+		message_string = NULL;
 	}
 	fprintf(
 	 export_handle->notify_stream,
