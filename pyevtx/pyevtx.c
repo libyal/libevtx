@@ -28,6 +28,7 @@
 
 #include "pyevtx.h"
 #include "pyevtx_file.h"
+#include "pyevtx_file_iterator.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libcstring.h"
 #include "pyevtx_libevtx.h"
@@ -168,10 +169,11 @@ PyObject *pyevtx_check_file_signature(
 PyMODINIT_FUNC initpyevtx(
                 void ) 
 {
-	PyObject *module                 = NULL;
-	PyTypeObject *file_type_object   = NULL;
-	PyTypeObject *record_type_object = NULL;
-	PyGILState_STATE gil_state       = 0;
+	PyObject *module                        = NULL;
+	PyTypeObject *file_iterator_type_object = NULL;
+	PyTypeObject *file_type_object          = NULL;
+	PyTypeObject *record_type_object        = NULL;
+	PyGILState_STATE gil_state              = 0;
 
 	PyEval_InitThreads();
 
@@ -202,6 +204,25 @@ PyMODINIT_FUNC initpyevtx(
 	 module,
 	"file",
 	(PyObject *) file_type_object );
+
+	/* Setup the file iterator type object
+	 */
+	pyevtx_file_iterator_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pyevtx_file_iterator_type_object ) < 0 )
+	{
+		return;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyevtx_file_iterator_type_object );
+
+	file_iterator_type_object = &pyevtx_file_iterator_type_object;
+
+	PyModule_AddObject(
+	 module,
+	"_file_iterator",
+	(PyObject *) file_iterator_type_object );
 
 	/* Setup the record type object
 	 */

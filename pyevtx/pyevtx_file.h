@@ -49,7 +49,7 @@ extern PyMethodDef pyevtx_file_object_methods[];
 extern PyTypeObject pyevtx_file_type_object;
 
 PyObject *pyevtx_file_new(
-           PyObject *self );
+           void );
 
 PyObject *pyevtx_file_new_open(
            PyObject *self,
@@ -89,13 +89,24 @@ PyObject *pyevtx_file_set_ascii_codepage(
 PyObject *pyevtx_file_get_number_of_records(
            pyevtx_file_t *pyevtx_file );
 
+PyObject *pyevtx_file_get_record_by_index(
+           pyevtx_file_t *pyevtx_file,
+           int record_index );
+
 PyObject *pyevtx_file_get_record(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments,
            PyObject *keywords );
 
+PyObject *pyevtx_file_get_records_iter(
+           pyevtx_file_t *pyevtx_file );
+
 PyObject *pyevtx_file_get_number_of_recovered_records(
            pyevtx_file_t *pyevtx_file );
+
+PyObject *pyevtx_file_get_recovered_record_by_index(
+           pyevtx_file_t *pyevtx_file,
+           int record_index );
 
 PyObject *pyevtx_file_get_recovered_record(
            pyevtx_file_t *pyevtx_file,

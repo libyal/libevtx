@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libevtx record
+ * Python object definition of the file iterator
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,12 +19,13 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_RECORD_H )
-#define _PYEVTX_RECORD_H
+#if !defined( _PYEVTX_FILE_ITERATOR_H )
+#define _PYEVTX_FILE_ITERATOR_H
 
 #include <common.h>
 #include <types.h>
 
+#include "pyevtx_file.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 
@@ -32,48 +33,49 @@
 extern "C" {
 #endif
 
-typedef struct pyevtx_record pyevtx_record_t;
+enum PYEVTX_FILE_ITERATOR_MODES
+{
+	PYEVTX_FILE_ITERATOR_MODE_ITEMS		= 0,
+	PYEVTX_FILE_ITERATOR_MODE_RECOVERED	= 1
+};
 
-struct pyevtx_record
+typedef struct pyevtx_file_iterator pyevtx_file_iterator_t;
+
+struct pyevtx_file_iterator
 {
 	/* Python object initialization
 	 */
 	PyObject_HEAD
 
-	/* The libevtx record
+	/* The pyevtx file object
 	 */
-	libevtx_record_t *record;
+	pyevtx_file_t *file_object;
+
+	/* The mode
+	 */
+	int mode;
+
+	/* The (current) record index
+	 */
+	int record_index;
+
+	/* The number of records
+	 */
+	int number_of_records;
 };
 
-extern PyMethodDef pyevtx_record_object_methods[];
-extern PyTypeObject pyevtx_record_type_object;
+extern PyTypeObject pyevtx_file_iterator_type_object;
 
-PyObject *pyevtx_record_new(
-           libevtx_record_t *record );
+PyObject *pyevtx_file_iterator_new(
+           pyevtx_file_t *file_object,
+           int mode,
+           int number_of_records );
 
-int pyevtx_record_init(
-     pyevtx_record_t *pyevtx_record );
+int pyevtx_file_iterator_init(
+     pyevtx_file_iterator_t *pyevtx_file_iterator );
 
-void pyevtx_record_free(
-      pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_written_time(
-           pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_event_identifier(
-           pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_event_level(
-           pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_source_name(
-           pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_computer_name(
-           pyevtx_record_t *pyevtx_record );
-
-PyObject *pyevtx_record_get_xml_string(
-           pyevtx_record_t *pyevtx_record );
+void pyevtx_file_iterator_free(
+      pyevtx_file_iterator_t *pyevtx_file_iterator );
 
 #if defined( __cplusplus )
 }

@@ -29,8 +29,8 @@
 
 #include "pyevtx.h"
 #include "pyevtx_codepage.h"
-#include "pyevtx_datetime.h"
 #include "pyevtx_file.h"
+#include "pyevtx_file_iterator.h"
 #include "pyevtx_file_object_io_handle.h"
 #include "pyevtx_libbfio.h"
 #include "pyevtx_libcerror.h"
@@ -144,6 +144,12 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 	  "The number of records",
 	  NULL },
 
+	{ "records",
+	  (getter) pyevtx_file_get_records_iter,
+	  (setter) 0,
+	  "Iterator of the records",
+	  NULL },
+
 	{ "number_of_recovered_records",
 	  (getter) pyevtx_file_get_number_of_recovered_records,
 	  (setter) 0,
@@ -255,14 +261,14 @@ PyTypeObject pyevtx_file_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_new(
-           PyObject *self )
+           void )
 {
 	pyevtx_file_t *pyevtx_file = NULL;
 	static char *function      = "pyevtx_file_new";
 
 	pyevtx_file = PyObject_New(
-	              struct pyevtx_file,
-	              &pyevtx_file_type_object );
+	               struct pyevtx_file,
+	               &pyevtx_file_type_object );
 
 	if( pyevtx_file == NULL )
 	{
@@ -304,8 +310,7 @@ PyObject *pyevtx_file_new_open(
 {
 	PyObject *pyevtx_file = NULL;
 
-	pyevtx_file = pyevtx_file_new(
-	              self );
+	pyevtx_file = pyevtx_file_new();
 
 	pyevtx_file_open(
 	 (pyevtx_file_t *) pyevtx_file,
@@ -1029,23 +1034,20 @@ PyObject *pyevtx_file_get_number_of_records(
 	         (long) number_of_records ) );
 }
 
-/* Retrieves a specific record
+/* Retrieves a specific record by index
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_file_get_record(
+PyObject *pyevtx_file_get_record_by_index(
            pyevtx_file_t *pyevtx_file,
-           PyObject *arguments,
-           PyObject *keywords )
+           int record_index )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
-	libcerror_error_t *error    = NULL;
-	libevtx_record_t *record    = NULL;
-	PyObject *record_object     = NULL;
-	static char *keyword_list[] = { "record_index", NULL };
-	static char *function       = "pyevtx_file_get_record";
-	int record_index            = 0;
-	int result                  = 0;
+	libcerror_error_t *error = NULL;
+	libevtx_record_t *record = NULL;
+	PyObject *record_object  = NULL;
+	static char *function    = "pyevtx_file_get_record_by_index";
+	int result               = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1056,15 +1058,6 @@ PyObject *pyevtx_file_get_record(
 
 		return( NULL );
 	}
-	if( PyArg_ParseTupleAndKeywords(
-	     arguments,
-	     keywords,
-	     "i",
-	     keyword_list,
-	     &record_index ) == 0 )
-        {
-		goto on_error;
-        }
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_file_get_record(
@@ -1103,7 +1096,7 @@ PyObject *pyevtx_file_get_record(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
-	                 NULL );
+	                 record );
 
 	if( record_object == NULL )
 	{
@@ -1114,8 +1107,6 @@ PyObject *pyevtx_file_get_record(
 
 		goto on_error;
 	}
-	( (pyevtx_record_t *) record_object )->record = record;
-
 	return( record_object );
 
 on_error:
@@ -1126,6 +1117,109 @@ on_error:
 		 NULL );
 	}
 	return( NULL );
+}
+
+/* Retrieves a specific record
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_get_record(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *record_object     = NULL;
+	static char *keyword_list[] = { "record_index", NULL };
+	static char *function       = "pyevtx_file_get_record";
+	int record_index            = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &record_index ) == 0 )
+        {
+		return( NULL );
+        }
+	record_object = pyevtx_file_get_record_by_index(
+	                 pyevtx_file,
+	                 record_index );
+
+	return( record_object );
+}
+
+/* Retrieves a file iterator for the records
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_get_records_iter(
+           pyevtx_file_t *pyevtx_file )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error       = NULL;
+	PyObject *file_iterator_object = NULL;
+	static char *function          = "pyevtx_file_get_records_iter";
+	int number_of_records          = 0;
+	int result                     = 0;
+
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_get_number_of_records(
+	          pyevtx_file->file,
+	          &number_of_records,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve number of records.",
+			 function );
+		}
+		else
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve number of records.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	file_iterator_object = pyevtx_file_iterator_new(
+	                        pyevtx_file,
+	                        PYEVTX_FILE_ITERATOR_MODE_ITEMS,
+	                        number_of_records );
+
+	if( file_iterator_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file iterator object.",
+		 function );
+
+		return( NULL );
+	}
+	return( file_iterator_object );
 }
 
 /* Retrieves the number of recovered records
@@ -1188,23 +1282,20 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
 	         (long) number_of_records ) );
 }
 
-/* Retrieves a specific recovered record
+/* Retrieves a specific recovered record by index
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_file_get_recovered_record(
+PyObject *pyevtx_file_get_recovered_record_by_index(
            pyevtx_file_t *pyevtx_file,
-           PyObject *arguments,
-           PyObject *keywords )
+           int record_index )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
-	libcerror_error_t *error    = NULL;
-	libevtx_record_t *record    = NULL;
-	PyObject *record_object     = NULL;
-	static char *keyword_list[] = { "record_index", NULL };
-	static char *function       = "pyevtx_file_get_recovered_record";
-	int record_index            = 0;
-	int result                  = 0;
+	libcerror_error_t *error = NULL;
+	libevtx_record_t *record = NULL;
+	PyObject *record_object  = NULL;
+	static char *function    = "pyevtx_file_get_recovered_record_by_index";
+	int result               = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1215,15 +1306,6 @@ PyObject *pyevtx_file_get_recovered_record(
 
 		return( NULL );
 	}
-	if( PyArg_ParseTupleAndKeywords(
-	     arguments,
-	     keywords,
-	     "i",
-	     keyword_list,
-	     &record_index ) == 0 )
-        {
-		goto on_error;
-        }
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_file_get_recovered_record(
@@ -1262,7 +1344,7 @@ PyObject *pyevtx_file_get_recovered_record(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
-	                 NULL );
+	                 record );
 
 	if( record_object == NULL )
 	{
@@ -1273,8 +1355,6 @@ PyObject *pyevtx_file_get_recovered_record(
 
 		goto on_error;
 	}
-	( (pyevtx_record_t *) record_object )->record = record;
-
 	return( record_object );
 
 on_error:
@@ -1285,5 +1365,34 @@ on_error:
 		 NULL );
 	}
 	return( NULL );
+}
+
+/* Retrieves a specific recovered record
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_get_recovered_record(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *record_object     = NULL;
+	static char *keyword_list[] = { "record_index", NULL };
+	static char *function       = "pyevtx_file_get_recovered_record";
+	int record_index            = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &record_index ) == 0 )
+        {
+		return( NULL );
+        }
+	record_object = pyevtx_file_get_recovered_record_by_index(
+	                 pyevtx_file,
+	                 record_index );
+
+	return( record_object );
 }
 

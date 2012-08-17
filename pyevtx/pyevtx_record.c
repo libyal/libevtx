@@ -228,14 +228,23 @@ PyTypeObject pyevtx_record_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_new(
-           PyObject *self )
+           libevtx_record_t *record )
 {
 	pyevtx_record_t *pyevtx_record = NULL;
-	static char *function    = "pyevtx_record_new";
+	static char *function          = "pyevtx_record_new";
 
+	if( record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
 	pyevtx_record = PyObject_New(
-	              struct pyevtx_record,
-	              &pyevtx_record_type_object );
+	                 struct pyevtx_record,
+	                 &pyevtx_record_type_object );
 
 	if( pyevtx_record == NULL )
 	{
@@ -256,6 +265,8 @@ PyObject *pyevtx_record_new(
 
 		goto on_error;
 	}
+	pyevtx_record->record = record;
+
 	return( (PyObject *) pyevtx_record );
 
 on_error:
