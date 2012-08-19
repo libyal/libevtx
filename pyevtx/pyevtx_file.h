@@ -98,7 +98,7 @@ PyObject *pyevtx_file_get_record(
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pyevtx_file_get_records_iter(
+PyObject *pyevtx_file_get_records(
            pyevtx_file_t *pyevtx_file );
 
 PyObject *pyevtx_file_get_number_of_recovered_records(
@@ -112,6 +112,9 @@ PyObject *pyevtx_file_get_recovered_record(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments,
            PyObject *keywords );
+
+PyObject *pyevtx_file_get_recovered_records(
+           pyevtx_file_t *pyevtx_file );
 
 #if defined( __cplusplus )
 }

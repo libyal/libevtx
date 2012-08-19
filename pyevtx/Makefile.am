@@ -18,7 +18,6 @@ pyevtx_la_SOURCES = \
 	pyevtx_codepage.c pyevtx_codepage.h \
 	pyevtx_datetime.c pyevtx_datetime.h \
 	pyevtx_file.c pyevtx_file.h \
-	pyevtx_file_iterator.c pyevtx_file_iterator.h \
 	pyevtx_file_object_io_handle.c pyevtx_file_object_io_handle.h \
 	pyevtx_libbfio.h \
 	pyevtx_libcerror.h \
@@ -26,7 +25,8 @@ pyevtx_la_SOURCES = \
 	pyevtx_libcstring.h \
 	pyevtx_libevtx.h \
 	pyevtx_python.h \
-	pyevtx_record.c pyevtx_record.h
+	pyevtx_record.c pyevtx_record.h \
+	pyevtx_records.c pyevtx_records.h
 
 pyevtx_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \

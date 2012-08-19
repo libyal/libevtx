@@ -1,5 +1,5 @@
 /*
- * Python object definition of the file iterator
+ * Python object definition of the records sequence and iterator
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_FILE_ITERATOR_H )
-#define _PYEVTX_FILE_ITERATOR_H
+#if !defined( _PYEVTX_RECORDS_H )
+#define _PYEVTX_RECORDS_H
 
 #include <common.h>
 #include <types.h>
@@ -33,15 +33,9 @@
 extern "C" {
 #endif
 
-enum PYEVTX_FILE_ITERATOR_MODES
-{
-	PYEVTX_FILE_ITERATOR_MODE_ITEMS		= 0,
-	PYEVTX_FILE_ITERATOR_MODE_RECOVERED	= 1
-};
+typedef struct pyevtx_records pyevtx_records_t;
 
-typedef struct pyevtx_file_iterator pyevtx_file_iterator_t;
-
-struct pyevtx_file_iterator
+struct pyevtx_records
 {
 	/* Python object initialization
 	 */
@@ -51,9 +45,11 @@ struct pyevtx_file_iterator
 	 */
 	pyevtx_file_t *file_object;
 
-	/* The mode
+	/* The get record by index callback function
 	 */
-	int mode;
+	PyObject* (*get_record_by_index)(
+	             pyevtx_file_t *file_object,
+	             int record_index );
 
 	/* The (current) record index
 	 */
@@ -64,18 +60,33 @@ struct pyevtx_file_iterator
 	int number_of_records;
 };
 
-extern PyTypeObject pyevtx_file_iterator_type_object;
+extern PyTypeObject pyevtx_records_type_object;
 
-PyObject *pyevtx_file_iterator_new(
+PyObject *pyevtx_records_new(
            pyevtx_file_t *file_object,
-           int mode,
+           PyObject* (*get_record_by_index)(
+                        pyevtx_file_t *file_object,
+                        int record_index ),
            int number_of_records );
 
-int pyevtx_file_iterator_init(
-     pyevtx_file_iterator_t *pyevtx_file_iterator );
+int pyevtx_records_init(
+     pyevtx_records_t *pyevtx_records );
 
-void pyevtx_file_iterator_free(
-      pyevtx_file_iterator_t *pyevtx_file_iterator );
+void pyevtx_records_free(
+      pyevtx_records_t *pyevtx_records );
+
+Py_ssize_t pyevtx_records_len(
+            pyevtx_records_t *pyevtx_records );
+
+PyObject *pyevtx_records_getitem(
+           pyevtx_records_t *pyevtx_records,
+           Py_ssize_t item_index );
+
+PyObject *pyevtx_records_iter(
+           pyevtx_records_t *pyevtx_records );
+
+PyObject *pyevtx_records_iternext(
+           pyevtx_records_t *pyevtx_records );
 
 #if defined( __cplusplus )
 }

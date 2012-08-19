@@ -30,7 +30,6 @@
 #include "pyevtx.h"
 #include "pyevtx_codepage.h"
 #include "pyevtx_file.h"
-#include "pyevtx_file_iterator.h"
 #include "pyevtx_file_object_io_handle.h"
 #include "pyevtx_libbfio.h"
 #include "pyevtx_libcerror.h"
@@ -39,6 +38,7 @@
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"
+#include "pyevtx_records.h"
 
 #if !defined( LIBEVTX_HAVE_BFIO )
 LIBEVTX_EXTERN \
@@ -145,15 +145,21 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 	  NULL },
 
 	{ "records",
-	  (getter) pyevtx_file_get_records_iter,
+	  (getter) pyevtx_file_get_records,
 	  (setter) 0,
-	  "Iterator of the records",
+	  "The records",
 	  NULL },
 
 	{ "number_of_recovered_records",
 	  (getter) pyevtx_file_get_number_of_recovered_records,
 	  (setter) 0,
 	  "The number of records",
+	  NULL },
+
+	{ "recoverd_records",
+	  (getter) pyevtx_file_get_recovered_records,
+	  (setter) 0,
+	  "The recovered records",
 	  NULL },
 
 	/* Sentinel */
@@ -1148,19 +1154,19 @@ PyObject *pyevtx_file_get_record(
 	return( record_object );
 }
 
-/* Retrieves a file iterator for the records
+/* Retrieves a records sequence and iterator object for the records
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_file_get_records_iter(
+PyObject *pyevtx_file_get_records(
            pyevtx_file_t *pyevtx_file )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
-	libcerror_error_t *error       = NULL;
-	PyObject *file_iterator_object = NULL;
-	static char *function          = "pyevtx_file_get_records_iter";
-	int number_of_records          = 0;
-	int result                     = 0;
+	libcerror_error_t *error = NULL;
+	PyObject *records_object = NULL;
+	static char *function    = "pyevtx_file_get_records";
+	int number_of_records    = 0;
+	int result               = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1205,21 +1211,21 @@ PyObject *pyevtx_file_get_records_iter(
 
 		return( NULL );
 	}
-	file_iterator_object = pyevtx_file_iterator_new(
-	                        pyevtx_file,
-	                        PYEVTX_FILE_ITERATOR_MODE_ITEMS,
-	                        number_of_records );
+	records_object = pyevtx_records_new(
+	                  pyevtx_file,
+	                  &pyevtx_file_get_record_by_index,
+	                  number_of_records );
 
-	if( file_iterator_object == NULL )
+	if( records_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create file iterator object.",
+		 "%s: unable to create records object.",
 		 function );
 
 		return( NULL );
 	}
-	return( file_iterator_object );
+	return( records_object );
 }
 
 /* Retrieves the number of recovered records
@@ -1394,5 +1400,79 @@ PyObject *pyevtx_file_get_recovered_record(
 	                 record_index );
 
 	return( record_object );
+}
+
+/* Retrieves a records sequence and iterator object for the recoverd records
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_get_recovered_records(
+           pyevtx_file_t *pyevtx_file )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error = NULL;
+	PyObject *records_object = NULL;
+	static char *function    = "pyevtx_file_get_recovered_records";
+	int number_of_records    = 0;
+	int result               = 0;
+
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_get_number_of_recovered_records(
+	          pyevtx_file->file,
+	          &number_of_records,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+                {
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve number of recovered records.",
+			 function );
+		}
+		else
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve number of recovered records.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	records_object = pyevtx_records_new(
+	                  pyevtx_file,
+	                  &pyevtx_file_get_recovered_record_by_index,
+	                  number_of_records );
+
+	if( records_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create records object.",
+		 function );
+
+		return( NULL );
+	}
+	return( records_object );
 }
 
