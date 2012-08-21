@@ -40,8 +40,8 @@ install_libevtx_tools:
 
 install_libevtx_python:
 	# Set up libevtx-python package directories and files
-	mkdir -p debian/libevtx-python/usr/lib/python2.7/dist-packages/
-	install -p -m775 debian/tmp/usr/lib/python2.7/dist-packages/pyevtx.* debian/libevtx-python/usr/lib/python2.7/dist-packages/
+	mkdir -p debian/libevtx-python/$(shell cd debian/tmp && ls -d usr/lib/python?.?/dist-packages/)
+	install -p -m775 debian/tmp/usr/lib/python?.?/dist-packages/pyevtx.* debian/libevtx-python/usr/lib/python?.?/dist-packages/
 
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-python

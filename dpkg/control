@@ -30,7 +30,7 @@ Description: Several tools for reading Windows XML Event Log (EVTX) files
 Package: libevtx-python
 Section: python
 Architecture: any
-Depends: libevtx (= ${Source-Version}), ${shlibs:Depends}
+Depends: libevtx (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
 Description: Python bindings for libevtx
  Python bindings for libevtx.
 
