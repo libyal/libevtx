@@ -1,4 +1,6 @@
 TODO
+* add libcdata support
+* updated msvscpp files
 * get %SystemRoot% from:
   SOFTWARE\Microsoft\Windows NT\CurrentVersion\
 
@@ -37,6 +39,9 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20120912
+* applied updates
 
 20120819
 * applied updates

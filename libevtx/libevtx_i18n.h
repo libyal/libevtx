@@ -29,10 +29,12 @@
 #include <libintl.h>
 #endif
 
-#include <gettext.h>
-
+/* TODO disabled for now
 #define	_( string ) \
 	dgettext( "libevtx", string )
+*/
+#define	_( string ) \
+	string
 
 #include "libevtx_libcerror.h"
 
