@@ -27,7 +27,6 @@ libevtx_la_SOURCES = \
 	evtx_event_record.h \
 	evtx_file_header.h \
 	libevtx.c \
-	libevtx_array_type.c libevtx_array_type.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
 	libevtx_chunks_table.c libevtx_chunks_table.h \
@@ -40,6 +39,7 @@ libevtx_la_SOURCES = \
 	libevtx_i18n.c libevtx_i18n.h \
 	libevtx_io_handle.c libevtx_io_handle.h \
 	libevtx_libbfio.h \
+	libevtx_libcdata.h \
 	libevtx_libcerror.h \
 	libevtx_libclocale.h \
 	libevtx_libcnotify.h \
@@ -51,7 +51,6 @@ libevtx_la_SOURCES = \
 	libevtx_libfvalue.h \
 	libevtx_libfwevt.h \
 	libevtx_libuna.h \
-	libevtx_list_type.c libevtx_list_type.h \
 	libevtx_notify.c libevtx_notify.h \
 	libevtx_record.c libevtx_record.h \
 	libevtx_record_values.c libevtx_record_values.h \

@@ -25,9 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include "libevtx_array_type.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcdata.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_record_values.h"
 
@@ -53,11 +53,11 @@ struct libevtx_chunk
 
 	/* The records array
 	 */
-	libevtx_array_t *records_array;
+	libcdata_array_t *records_array;
 
 	/* The recovered records array
 	 */
-	libevtx_array_t *recovered_records_array;
+	libcdata_array_t *recovered_records_array;
 };
 
 int libevtx_chunk_initialize(

@@ -23,12 +23,12 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libevtx_array_type.h"
 #include "libevtx_checksum.h"
 #include "libevtx_chunk.h"
 #include "libevtx_definitions.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
+#include "libevtx_libcdata.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libcnotify.h"
 #include "libevtx_record_values.h"
@@ -102,7 +102,7 @@ int libevtx_chunk_initialize(
 
 		return( -1 );
 	}
-	if( libevtx_array_initialize(
+	if( libcdata_array_initialize(
 	     &( ( *chunk )->records_array ),
 	     0,
 	     error ) != 1 )
@@ -116,7 +116,7 @@ int libevtx_chunk_initialize(
 
 		goto on_error;
 	}
-	if( libevtx_array_initialize(
+	if( libcdata_array_initialize(
 	     &( ( *chunk )->recovered_records_array ),
 	     0,
 	     error ) != 1 )
@@ -137,7 +137,7 @@ on_error:
 	{
 		if( ( *chunk )->records_array != NULL )
 		{
-			libevtx_array_free(
+			libcdata_array_free(
 			 &( ( *chunk )->records_array ),
 			 NULL,
 			 NULL );
@@ -173,7 +173,7 @@ int libevtx_chunk_free(
 	}
 	if( *chunk != NULL )
 	{
-		if( libevtx_array_free(
+		if( libcdata_array_free(
 		     &( ( *chunk )->recovered_records_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
 		     error ) != 1 )
@@ -187,7 +187,7 @@ int libevtx_chunk_free(
 
 			result = -1;
 		}
-		if( libevtx_array_free(
+		if( libcdata_array_free(
 		     &( ( *chunk )->records_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
 		     error ) != 1 )
@@ -628,7 +628,7 @@ int libevtx_chunk_read(
 		}
 		chunk_data_offset += record_values->data_size;
 
-		if( libevtx_array_append_entry(
+		if( libcdata_array_append_entry(
 		     chunk->records_array,
 		     &entry_index,
 		     (intptr_t *) record_values,
@@ -730,7 +730,7 @@ int libevtx_chunk_read(
 				{
 					chunk_data_offset += record_values->data_size - 4;
 
-					if( libevtx_array_append_entry(
+					if( libcdata_array_append_entry(
 					     chunk->recovered_records_array,
 					     &entry_index,
 					     (intptr_t *) record_values,
@@ -821,7 +821,7 @@ int libevtx_chunk_get_number_of_records(
 
 		return( -1 );
 	}
-	if( libevtx_array_get_number_of_entries(
+	if( libcdata_array_get_number_of_entries(
 	     chunk->records_array,
 	     &chunk_number_of_records,
 	     error ) != 1 )
@@ -873,7 +873,7 @@ int libevtx_chunk_get_record(
 
 		return( -1 );
 	}
-	if( libevtx_array_get_entry_by_index(
+	if( libcdata_array_get_entry_by_index(
 	     chunk->records_array,
 	     (int) record_index,
 	     (intptr_t **) record_values,
@@ -925,7 +925,7 @@ int libevtx_chunk_get_number_of_recovered_records(
 
 		return( -1 );
 	}
-	if( libevtx_array_get_number_of_entries(
+	if( libcdata_array_get_number_of_entries(
 	     chunk->recovered_records_array,
 	     &chunk_number_of_records,
 	     error ) != 1 )
@@ -977,7 +977,7 @@ int libevtx_chunk_get_recovered_record(
 
 		return( -1 );
 	}
-	if( libevtx_array_get_entry_by_index(
+	if( libcdata_array_get_entry_by_index(
 	     chunk->recovered_records_array,
 	     (int) record_index,
 	     (intptr_t **) record_values,
