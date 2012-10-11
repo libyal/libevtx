@@ -52,7 +52,9 @@ evtxexport_SOURCES = \
 	evtxtools_libwrc.h \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
-	message_file.c message_file.h
+	message_file.c message_file.h \
+	path_handle.c path_handle.h \
+	registry_file.c registry_file.h
 
 evtxexport_LDADD  = \
 	@LIBCSYSTEM_LIBADD@ \

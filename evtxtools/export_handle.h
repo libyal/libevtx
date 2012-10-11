@@ -32,6 +32,8 @@
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
 #include "log_handle.h"
+#include "path_handle.h"
+#include "registry_file.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -66,9 +68,25 @@ struct export_handle
 	 */
 	libevtx_file_t *input_file;
 
-	/* The libregf system registry file
+	/* The SOFTWARE registry file
 	 */
-	libregf_file_t *system_registry_file;
+	registry_file_t *software_registry_file;
+
+	/* The %SystemRoot% path
+	 */
+	libcstring_system_character_t *system_root_path;
+
+	/* The %SystemRoot% path size
+	 */
+	size_t system_root_path_size;
+
+	/* The path handle
+	 */
+	path_handle_t *path_handle;
+
+	/* The SYSTEM registry file
+	 */
+	registry_file_t *system_registry_file;
 
 	/* The current control set
 	 */
@@ -102,9 +120,29 @@ struct export_handle
 	 */
 	const libcstring_system_character_t *message_files_path;
 
-	/* The system registry filename
+	/* The SOFTWARE registry filename
 	 */
-	const libcstring_system_character_t *system_registry_filename;
+	libcstring_system_character_t *software_registry_filename;
+
+	/* The SOFTWARE registry filename size
+	 */
+	size_t software_registry_filename_size;
+
+	/* The SYSTEM registry filename
+	 */
+	libcstring_system_character_t *system_registry_filename;
+
+	/* The SYSTEM registry filename size
+	 */
+	size_t system_registry_filename_size;
+
+	/* The name of the directory containing the SOFTWARE and SYSTEM registry filename
+	 */
+	libcstring_system_character_t *registry_directory_name;
+
+	/* The size of the name of the directory containing the SOFTWARE and SYSTEM registry filename
+	 */
+	size_t registry_directory_name_size;
 
 	/* Value to indicate the input is open
 	 */
@@ -160,9 +198,27 @@ int export_handle_set_event_log_type_from_filename(
      const libcstring_system_character_t *filename,
      libcerror_error_t **error );
 
-int export_handle_open_system_registry_file(
+int export_handle_set_software_registry_filename(
      export_handle_t *export_handle,
      const libcstring_system_character_t *filename,
+     libcerror_error_t **error );
+
+int export_handle_set_system_registry_filename(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *filename,
+     libcerror_error_t **error );
+
+int export_handle_set_registry_directory_name(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *filename,
+     libcerror_error_t **error );
+
+int export_handle_open_software_registry_file(
+     export_handle_t *export_handle,
+     libcerror_error_t **error );
+
+int export_handle_open_system_registry_file(
+     export_handle_t *export_handle,
      libcerror_error_t **error );
 
 int export_handle_open_input(

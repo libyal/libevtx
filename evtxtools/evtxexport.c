@@ -58,7 +58,10 @@ void usage_fprint(
 
 	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -f format ] [ -l log_file ]\n"
 	                 "                  [ -m mode ] [ -p message_files_path ]\n"
-	                 "                  [ -s system_file ] [ -hvV ] source\n\n" );
+	                 "                  [ -r registy_files_path ] [ -s system_file ]\n"
+	                 "                  [ -S software_file ] [ -t event_log_type ]\n"
+	                 "                  [ -hvV ] source\n\n" );
+
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
@@ -75,7 +78,12 @@ void usage_fprint(
 	                 "\t        'items' exports the (allocated) items and 'recovered' exports\n"
 	                 "\t        the recovered items\n" );
 	fprintf( stream, "\t-p:     search PATH for the message files\n" );
-	fprintf( stream, "\t-s:     filename of the SYSTEM (Windows) Registry file\n" );
+	fprintf( stream, "\t-r:     name of the directory containing the SOFTWARE and SYSTEM\n"
+	                 "\t        (Windows) Registry file\n" );
+	fprintf( stream, "\t-s:     filename of the SYSTEM (Windows) Registry file.\n"
+	                 "\t        This option overrides the path provided by -r" );
+	fprintf( stream, "\t-S:     filename of the SOFTWARE (Windows) Registry file.\n"
+	                 "\t        This option overrides the path provided by -r" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -127,21 +135,23 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error                                       = NULL;
-	log_handle_t *log_handle                                       = NULL;
-	libcstring_system_character_t *option_ascii_codepage           = NULL;
-	libcstring_system_character_t *option_event_log_type           = NULL;
-	libcstring_system_character_t *option_export_format            = NULL;
-	libcstring_system_character_t *option_export_mode              = NULL;
-	libcstring_system_character_t *option_log_filename             = NULL;
-	libcstring_system_character_t *option_message_files_path       = NULL;
-	libcstring_system_character_t *option_preferred_language       = NULL;
-	libcstring_system_character_t *option_system_registry_filename = NULL;
-	libcstring_system_character_t *source                          = NULL;
-	char *program                                                  = "evtxexport";
-	libcstring_system_integer_t option                             = 0;
-	int result                                                     = 0;
-	int verbose                                                    = 0;
+	libcerror_error_t *error                                         = NULL;
+	log_handle_t *log_handle                                         = NULL;
+	libcstring_system_character_t *option_ascii_codepage             = NULL;
+	libcstring_system_character_t *option_event_log_type             = NULL;
+	libcstring_system_character_t *option_export_format              = NULL;
+	libcstring_system_character_t *option_export_mode                = NULL;
+	libcstring_system_character_t *option_log_filename               = NULL;
+	libcstring_system_character_t *option_message_files_path         = NULL;
+	libcstring_system_character_t *option_preferred_language         = NULL;
+	libcstring_system_character_t *option_registry_directory_name    = NULL;
+	libcstring_system_character_t *option_software_registry_filename = NULL;
+	libcstring_system_character_t *option_system_registry_filename   = NULL;
+	libcstring_system_character_t *source                            = NULL;
+	char *program                                                    = "evtxexport";
+	libcstring_system_integer_t option                               = 0;
+	int result                                                       = 0;
+	int verbose                                                      = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -176,7 +186,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:f:hl:m:p:s:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:f:hl:m:p:r:s:S:vV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -223,8 +233,18 @@ int main( int argc, char * const argv[] )
 
 				break;
 
+			case (libcstring_system_integer_t) 'r':
+				option_registry_directory_name = optarg;
+
+				break;
+
 			case (libcstring_system_integer_t) 's':
 				option_system_registry_filename = optarg;
+
+				break;
+
+			case (libcstring_system_integer_t) 'S':
+				option_software_registry_filename = optarg;
 
 				break;
 
@@ -384,9 +404,47 @@ int main( int argc, char * const argv[] )
 	{
 		evtxexport_export_handle->message_files_path = option_message_files_path;
 	}
+	if( option_software_registry_filename != NULL )
+	{
+		if( export_handle_set_software_registry_filename(
+		     evtxexport_export_handle,
+		     option_software_registry_filename,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set software registry filename in export handle.\n" );
+
+			goto on_error;
+		}
+	}
 	if( option_system_registry_filename != NULL )
 	{
-		evtxexport_export_handle->system_registry_filename = option_system_registry_filename;
+		if( export_handle_set_system_registry_filename(
+		     evtxexport_export_handle,
+		     option_system_registry_filename,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set system registry filename in export handle.\n" );
+
+			goto on_error;
+		}
+	}
+	if( option_registry_directory_name != NULL )
+	{
+		if( export_handle_set_registry_directory_name(
+		     evtxexport_export_handle,
+		     option_registry_directory_name,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set registry directory name in export handle.\n" );
+
+			goto on_error;
+		}
 	}
 /* TODO
 	if( option_preferred_language != NULL )
