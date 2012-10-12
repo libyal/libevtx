@@ -24,26 +24,21 @@
 #include <types.h>
 
 #include "evtxinput.h"
-#include "evtxtools_libcdirectory.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcnotify.h"
 #include "evtxtools_libclocale.h"
-#include "evtxtools_libcpath.h"
 #include "evtxtools_libcsplit.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
-#include "evtxtools_libfcache.h"
 #include "evtxtools_libfdatetime.h"
-#include "evtxtools_libregf.h"
 #include "export_handle.h"
 #include "log_handle.h"
 #include "message_file.h"
-#include "path_handle.h"
-#include "registry_file.h"
+#include "message_handle.h"
 
-#define EXPORT_HANDLE_NOTIFY_STREAM	stdout
+#define EXPORT_HANDLE_NOTIFY_STREAM		stdout
 
-const char *export_handle_get_event_log_type(
+const char *export_handle_get_event_log_key_name(
              int event_log_type )
 {
 	switch( event_log_type )
@@ -164,29 +159,15 @@ int export_handle_initialize(
 
 		goto on_error;
 	}
-	if( path_handle_initialize(
-	     &( ( *export_handle )->path_handle ),
+	if( message_handle_initialize(
+	     &( ( *export_handle )->message_handle ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create path handle.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfcache_cache_initialize(
-	     &( ( *export_handle )->message_file_cache ),
-	     16,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create message file cache.",
+		 "%s: unable to create message handle.",
 		 function );
 
 		goto on_error;
@@ -204,28 +185,21 @@ int export_handle_initialize(
 
 		goto on_error;
 	}
-	( *export_handle )->export_mode                   = EXPORT_MODE_ITEMS;
-	( *export_handle )->export_format                 = EXPORT_FORMAT_TEXT;
-	( *export_handle )->event_log_type                = EVTXTOOLS_EVENT_LOG_TYPE_UNKNOWN;
-	( *export_handle )->preferred_language_identifier = 0x00000409UL;
-	( *export_handle )->ascii_codepage                = LIBEVTX_CODEPAGE_WINDOWS_1252;
-	( *export_handle )->notify_stream                 = EXPORT_HANDLE_NOTIFY_STREAM;
+	( *export_handle )->export_mode    = EXPORT_MODE_ITEMS;
+	( *export_handle )->export_format  = EXPORT_FORMAT_TEXT;
+	( *export_handle )->event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_UNKNOWN;
+	( *export_handle )->ascii_codepage = LIBEVTX_CODEPAGE_WINDOWS_1252;
+	( *export_handle )->notify_stream  = EXPORT_HANDLE_NOTIFY_STREAM;
 
 	return( 1 );
 
 on_error:
 	if( *export_handle != NULL )
 	{
-		if( ( *export_handle )->message_file_cache != NULL )
+		if( ( *export_handle )->message_handle != NULL )
 		{
-			libfcache_cache_free(
-			 &( ( *export_handle )->message_file_cache ),
-			 NULL );
-		}
-		if( ( *export_handle )->path_handle != NULL )
-		{
-			path_handle_free(
-			 &( ( *export_handle )->path_handle ),
+			message_handle_free(
+			 &( ( *export_handle )->message_handle ),
 			 NULL );
 		}
 		memory_free(
@@ -275,55 +249,18 @@ int export_handle_free(
 				result = -1;
 			}
 		}
-		if( ( *export_handle )->software_registry_file != NULL )
-		{
-			if( registry_file_free(
-			     &( ( *export_handle )->software_registry_file ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free software registry file.",
-				 function );
-
-				result = -1;
-			}
-		}
-		if( ( *export_handle )->system_root_path != NULL )
-		{
-			memory_free(
-			 ( *export_handle )->system_root_path );
-		}
-		if( path_handle_free(
-		     &( ( *export_handle )->path_handle ),
+		if( message_handle_free(
+		     &( ( *export_handle )->message_handle ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free path handle.",
+			 "%s: unable to free message handle.",
 			 function );
 
 			result = -1;
-		}
-		if( ( *export_handle )->system_registry_file != NULL )
-		{
-			if( registry_file_free(
-			     &( ( *export_handle )->system_registry_file ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free system registry file.",
-				 function );
-
-				result = -1;
-			}
 		}
 		if( libevtx_file_free(
 		     &( ( *export_handle )->input_file ),
@@ -337,34 +274,6 @@ int export_handle_free(
 			 function );
 
 			result = -1;
-		}
-		if( libfcache_cache_free(
-		     &( ( *export_handle )->message_file_cache ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free message file cache.",
-			 function );
-
-			result = -1;
-		}
-		if( ( *export_handle )->software_registry_filename != NULL )
-		{
-			memory_free(
-			 ( *export_handle )->software_registry_filename );
-		}
-		if( ( *export_handle )->system_registry_filename != NULL )
-		{
-			memory_free(
-			 ( *export_handle )->system_registry_filename );
-		}
-		if( ( *export_handle )->registry_directory_name != NULL )
-		{
-			memory_free(
-			 ( *export_handle )->registry_directory_name );
 		}
 		memory_free(
 		 *export_handle );
@@ -396,37 +305,18 @@ int export_handle_signal_abort(
 	}
 	export_handle->abort = 1;
 
-	if( export_handle->software_registry_file != NULL )
+	if( message_handle_signal_abort(
+	     export_handle->message_handle,
+	     error ) != 1 )
 	{
-		if( registry_file_signal_abort(
-		     export_handle->software_registry_file,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal software registry file to abort.",
-			 function );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to signal message handle to abort.",
+		 function );
 
-			return( -1 );
-		}
-	}
-	if( export_handle->system_registry_file != NULL )
-	{
-		if( registry_file_signal_abort(
-		     export_handle->system_registry_file,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal system registry file to abort.",
-			 function );
-
-			return( -1 );
-		}
+		return( -1 );
 	}
 	if( export_handle->input_file != NULL )
 	{
@@ -632,7 +522,62 @@ int export_handle_set_ascii_codepage(
 
 		return( -1 );
 	}
+	else if( result != 0 )
+	{
+		if( message_handle_set_ascii_codepage(
+		     export_handle->message_handle,
+		     export_handle->ascii_codepage,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set ASCII codepage in message handle.",
+			 function );
+
+			return( -1 );
+		}
+	}
 	return( result );
+}
+
+/* Sets the preferred language identifier
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_set_preferred_language_identifier(
+     export_handle_t *export_handle,
+     uint32_t preferred_language_identifier,
+     libcerror_error_t **error )
+{
+	static char *function = "export_handle_set_preferred_language_identifier";
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_handle_set_preferred_language_identifier(
+	     export_handle->message_handle,
+	     preferred_language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set preferred language identifier in message handle.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Sets the event log type
@@ -725,8 +670,7 @@ int export_handle_set_software_registry_filename(
      const libcstring_system_character_t *filename,
      libcerror_error_t **error )
 {
-	static char *function  = "export_handle_set_software_registry_filename";
-	size_t filename_length = 0;
+	static char *function = "export_handle_set_software_registry_filename";
 
 	if( export_handle == NULL )
 	{
@@ -739,83 +683,21 @@ int export_handle_set_software_registry_filename(
 
 		return( -1 );
 	}
-	if( filename == NULL )
+	if( message_handle_set_software_registry_filename(
+	     export_handle->message_handle,
+	     filename,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set SOFTWARE registry filename in message handle.",
 		 function );
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
-	                    filename );
-
-	if( filename_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid filename length value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( export_handle->software_registry_filename != NULL )
-	{
-		memory_free(
-		 export_handle->software_registry_filename );
-
-		export_handle->software_registry_filename = NULL;
-	}
-	export_handle->software_registry_filename_size = filename_length + 1;
-
-	export_handle->software_registry_filename = libcstring_system_string_allocate(
-	                                             export_handle->software_registry_filename_size );
-
-	if( export_handle->software_registry_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create software registry filename.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcstring_system_string_copy(
-	     export_handle->software_registry_filename,
-	     filename,
-	     filename_length ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy software registry filename.",
-		 function );
-
-		goto on_error;
-	}
-	( export_handle->software_registry_filename )[ filename_length ] = 0;
-
 	return( 1 );
-
-on_error:
-	if( export_handle->software_registry_filename != NULL )
-	{
-		memory_free(
-		 export_handle->software_registry_filename );
-
-		export_handle->software_registry_filename = NULL;
-	}
-	export_handle->software_registry_filename_size = 0;
-
-	return( -1 );
 }
 
 /* Sets the name of the system registry file
@@ -826,8 +708,7 @@ int export_handle_set_system_registry_filename(
      const libcstring_system_character_t *filename,
      libcerror_error_t **error )
 {
-	static char *function  = "export_handle_set_system_registry_filename";
-	size_t filename_length = 0;
+	static char *function = "export_handle_set_system_registry_filename";
 
 	if( export_handle == NULL )
 	{
@@ -840,83 +721,21 @@ int export_handle_set_system_registry_filename(
 
 		return( -1 );
 	}
-	if( filename == NULL )
+	if( message_handle_set_system_registry_filename(
+	     export_handle->message_handle,
+	     filename,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set SYSTEM registry filename in message handle.",
 		 function );
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
-	                    filename );
-
-	if( filename_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid filename length value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( export_handle->system_registry_filename != NULL )
-	{
-		memory_free(
-		 export_handle->system_registry_filename );
-
-		export_handle->system_registry_filename = NULL;
-	}
-	export_handle->system_registry_filename_size = filename_length + 1;
-
-	export_handle->system_registry_filename = libcstring_system_string_allocate(
-	                                           export_handle->system_registry_filename_size );
-
-	if( export_handle->system_registry_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create system registry filename.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcstring_system_string_copy(
-	     export_handle->system_registry_filename,
-	     filename,
-	     filename_length ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy system registry filename.",
-		 function );
-
-		goto on_error;
-	}
-	( export_handle->system_registry_filename )[ filename_length ] = 0;
-
 	return( 1 );
-
-on_error:
-	if( export_handle->system_registry_filename != NULL )
-	{
-		memory_free(
-		 export_handle->system_registry_filename );
-
-		export_handle->system_registry_filename = NULL;
-	}
-	export_handle->system_registry_filename_size = 0;
-
-	return( -1 );
 }
 
 /* Sets the name of the directory containing the software and system registry file
@@ -924,11 +743,10 @@ on_error:
  */
 int export_handle_set_registry_directory_name(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const libcstring_system_character_t *name,
      libcerror_error_t **error )
 {
-	static char *function  = "export_handle_set_registry_directory_name";
-	size_t filename_length = 0;
+	static char *function = "export_handle_set_registry_directory_name";
 
 	if( export_handle == NULL )
 	{
@@ -941,808 +759,59 @@ int export_handle_set_registry_directory_name(
 
 		return( -1 );
 	}
-	if( filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-	filename_length = libcstring_system_string_length(
-	                    filename );
-
-	if( filename_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid filename length value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( export_handle->registry_directory_name != NULL )
-	{
-		memory_free(
-		 export_handle->registry_directory_name );
-
-		export_handle->registry_directory_name = NULL;
-	}
-	export_handle->registry_directory_name_size = filename_length + 1;
-
-	export_handle->registry_directory_name = libcstring_system_string_allocate(
-	                                          export_handle->registry_directory_name_size );
-
-	if( export_handle->registry_directory_name == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create registry directory name.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcstring_system_string_copy(
-	     export_handle->registry_directory_name,
-	     filename,
-	     filename_length ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy registry directory name.",
-		 function );
-
-		goto on_error;
-	}
-	( export_handle->registry_directory_name )[ filename_length ] = 0;
-
-	return( 1 );
-
-on_error:
-	if( export_handle->registry_directory_name != NULL )
-	{
-		memory_free(
-		 export_handle->registry_directory_name );
-
-		export_handle->registry_directory_name = NULL;
-	}
-	export_handle->registry_directory_name_size = 0;
-
-	return( -1 );
-}
-
-/* Opens the software registry file
- * Returns 1 if successful, 0 if no file was specified or -1 on error
- */
-int export_handle_open_software_registry_file(
-     export_handle_t *export_handle,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *key_path          = NULL;
-	libcstring_system_character_t *software_filename = NULL;
-	libregf_key_t *sub_key                           = NULL;
-	libregf_value_t *value                           = NULL;
-	const char *sub_key_path                         = NULL;
-	const char *value_name                           = NULL;
-	static char *function                            = "export_handle_open_software_registry_file";
-	size_t key_path_length                           = 0;
-	size_t value_name_length                         = 0;
-	int result                                       = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( export_handle->software_registry_filename == NULL )
-	 && ( export_handle->registry_directory_name != NULL ) )
-	{
-		software_filename = libcstring_system_string_allocate(
-		                     9 );
-
-		if( software_filename == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create software filename.",
-			 function );
-
-			goto on_error;
-		}
-		if( libcstring_system_string_copy(
-		     software_filename,
-		     _LIBCSTRING_SYSTEM_STRING( "SOFTWARE" ),
-		     8 ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to set software filename.",
-			 function );
-
-			goto on_error;
-		}
-		software_filename[ 8 ] = 0;
-
-		result = path_handle_get_directory_entry_name_by_name_no_case(
-		          export_handle->path_handle,
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  software_filename,
-			  9,
-		          LIBCDIRECTORY_ENTRY_TYPE_FILE,
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 software_filename );
-
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libcpath_path_join_wide(
-			  &( export_handle->software_registry_filename ),
-			  &( export_handle->software_registry_filename_size ),
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  software_filename,
-			  8,
-			  error );
-#else
-		result = libcpath_path_join(
-			  &( export_handle->software_registry_filename ),
-			  &( export_handle->software_registry_filename_size ),
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  software_filename,
-			  8,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable create software registry filename.",
-			 function );
-
-			return( -1 );
-		}
-		memory_free(
-		 software_filename );
-
-		software_filename = NULL;
-	}
-	if( export_handle->software_registry_filename != NULL )
-	{
-		if( registry_file_initialize(
-		     &( export_handle->software_registry_file ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize software registry file.",
-			 function );
-
-			return( -1 );
-		}
-		if( registry_file_set_ascii_codepage(
-		     export_handle->software_registry_file,
-		     export_handle->ascii_codepage,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set ASCII codepage in software registry file.",
-			 function );
-
-			return( -1 );
-		}
-		if( registry_file_open(
-		     export_handle->software_registry_file,
-		     export_handle->software_registry_filename,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open software registry file.",
-			 function );
-
-			return( -1 );
-		}
-		/* Get the value of %SystemRoot% from:
-		 * SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRoot
-		 */
-		key_path = _LIBCSTRING_SYSTEM_STRING( "Microsoft\\Windows NT\\CurrentVersion" );
-
-		key_path_length = libcstring_system_string_length(
-		                   key_path );
-
-		result = registry_file_get_key_by_path(
-			  export_handle->software_registry_file,
-			  key_path,
-			  key_path_length,
-			  &sub_key,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 sub_key_path );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			value_name = "SystemRoot";
-
-			value_name_length = libcstring_narrow_string_length(
-			                     value_name );
-
-			result = libregf_key_get_value_by_utf8_name(
-				  sub_key,
-				  (uint8_t *) value_name,
-				  value_name_length,
-				  &value,
-				  error );
-
-			if( result == -1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve value: %s.",
-				 function,
-				 value_name );
-
-				goto on_error;
-			}
-			else if( result != 0 )
-			{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libregf_value_get_value_utf16_string_size(
-					  value,
-					  &( export_handle->system_root_path_size ),
-					  error );
-#else
-				result = libregf_value_get_value_utf8_string_size(
-					  value,
-					  &( export_handle->system_root_path_size ),
-					  error );
-#endif
-				if( result == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve value: %s string size.",
-					 function,
-					 value_name );
-
-					goto on_error;
-				}
-				if( ( result != 0 )
-				 && ( export_handle->system_root_path_size > 0 ) )
-				{
-					if( ( export_handle->system_root_path_size > (size_t) SSIZE_MAX )
-					 || ( ( sizeof( libcstring_system_character_t ) * export_handle->system_root_path_size ) > (size_t) SSIZE_MAX ) )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-						 "%s: invalid system root path string size value exceeds maximum.",
-						 function );
-
-						goto on_error;
-					}
-					export_handle->system_root_path = libcstring_system_string_allocate(
-						                           export_handle->system_root_path_size );
-
-					if( export_handle->system_root_path == NULL )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_MEMORY,
-						 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-						 "%s: unable to create system root path string.",
-						 function );
-
-						goto on_error;
-					}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libregf_value_get_value_utf16_string(
-						  value,
-						  (uint16_t *) export_handle->system_root_path,
-						  export_handle->system_root_path_size,
-						  error );
-#else
-					result = libregf_value_get_value_utf8_string(
-						  value,
-						  (uint8_t *) export_handle->system_root_path,
-						  export_handle->system_root_path_size,
-						  error );
-#endif
-					if( result != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve value: %s string.",
-						 function,
-						 value_name );
-
-						memory_free(
-						 export_handle->system_root_path );
-
-						export_handle->system_root_path      = NULL;
-						export_handle->system_root_path_size = 0;
-
-						goto on_error;
-					}
-				}
-				if( libregf_value_free(
-				     &value,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free value.",
-					 function );
-
-					goto on_error;
-				}
-			}
-		}
-		if( libregf_key_free(
-		     &sub_key,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free sub key.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	/* Check if %SystemRoot% contains a sane value
-	 */
-/* TODO what if system root constists of multiple paths */
-	if( export_handle->system_root_path != NULL )
-	{
-		if( ( export_handle->system_root_path_size < 4 )
-		 || ( ( export_handle->system_root_path )[ 1 ] != (libcstring_system_character_t) ':' )
-		 || ( ( export_handle->system_root_path )[ 2 ] != (libcstring_system_character_t) '\\' ) )
-		{
-			memory_free(
-			 export_handle->system_root_path );
-
-			export_handle->system_root_path      = NULL;
-			export_handle->system_root_path_size = 0;
-		}
-	}
-	/* If no usable %SystemRoot% was found use the default: C:\Windows
-	 */
-	if( export_handle->system_root_path == NULL )
-	{
-		export_handle->system_root_path_size = 11;
-
-		export_handle->system_root_path = libcstring_system_string_allocate(
-		                                   export_handle->system_root_path_size );
-
-		if( export_handle->system_root_path == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create system root path string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libcstring_system_string_copy(
-		     export_handle->system_root_path,
-		     _LIBCSTRING_SYSTEM_STRING( "C:\\Windows" ),
-		     10 ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy default value to system root path string.",
-			 function );
-
-			memory_free(
-			 export_handle->system_root_path );
-
-			export_handle->system_root_path      = NULL;
-			export_handle->system_root_path_size = 0;
-
-			goto on_error;
-		}
-		( export_handle->system_root_path )[ 10 ] = 0;
-	}
-	return( 1 );
-
-on_error:
-	if( value != NULL )
-	{
-		libregf_value_free(
-		 &value,
-		 NULL );
-	}
-	if( sub_key != NULL )
-	{
-		libregf_key_free(
-		 &sub_key,
-		 NULL );
-	}
-	if( software_filename != NULL )
-	{
-		memory_free(
-		 software_filename );
-	}
-	return( -1 );
-}
-
-/* Opens the system registry file
- * Returns 1 if successful, 0 if no file was specified or -1 on error
- */
-int export_handle_open_system_registry_file(
-     export_handle_t *export_handle,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *key_path        = NULL;
-	libcstring_system_character_t *system_filename = NULL;
-	libregf_key_t *sub_key                         = NULL;
-	const char *sub_key_path                       = NULL;
-	static char *function                          = "export_handle_open_system_registry_file";
-	size_t key_path_length                         = 0;
-	size_t sub_key_path_length                     = 0;
-	int result                                     = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( export_handle->system_registry_filename == NULL )
-	 && ( export_handle->registry_directory_name != NULL ) )
-	{
-		system_filename = libcstring_system_string_allocate(
-		                   7 );
-
-		if( system_filename == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create system filename.",
-			 function );
-
-			goto on_error;
-		}
-		if( libcstring_system_string_copy(
-		     system_filename,
-		     _LIBCSTRING_SYSTEM_STRING( "SYSTEM" ),
-		     6 ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to set system filename.",
-			 function );
-
-			goto on_error;
-		}
-		system_filename[ 6 ] = 0;
-
-		result = path_handle_get_directory_entry_name_by_name_no_case(
-		          export_handle->path_handle,
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  system_filename,
-			  7,
-		          LIBCDIRECTORY_ENTRY_TYPE_FILE,
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 system_filename );
-
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libcpath_path_join_wide(
-			  &( export_handle->system_registry_filename ),
-			  &( export_handle->system_registry_filename_size ),
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  system_filename,
-			  6,
-			  error );
-#else
-		result = libcpath_path_join(
-			  &( export_handle->system_registry_filename ),
-			  &( export_handle->system_registry_filename_size ),
-			  export_handle->registry_directory_name,
-			  export_handle->registry_directory_name_size - 1,
-			  system_filename,
-			  6,
-			  error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable create system registry filename.",
-			 function );
-
-			return( -1 );
-		}
-		memory_free(
-		 system_filename );
-
-		system_filename = NULL;
-	}
-	if( export_handle->system_registry_filename == NULL )
-	{
-		return( 0 );
-	}
-	if( registry_file_initialize(
-	     &( export_handle->system_registry_file ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize system registry file.",
-		 function );
-
-		return( -1 );
-	}
-	if( registry_file_set_ascii_codepage(
-	     export_handle->system_registry_file,
-	     export_handle->ascii_codepage,
+	if( message_handle_set_registry_directory_name(
+	     export_handle->message_handle,
+	     name,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set ASCII codepage in system registry file.",
+		 "%s: unable to set registry directory name in message handle.",
 		 function );
 
 		return( -1 );
-	}
-	if( registry_file_open(
-	     export_handle->system_registry_file,
-	     export_handle->system_registry_filename,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open system registry file.",
-		 function );
-
-		return( -1 );
-	}
-/* TODO refactor */
-	/* Get the control set 1 event log key:
-	 * SYSTEM\ControlSet001\Services\Eventlog
-	 */
-	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet001\\Services\\Eventlog" );
-
-	key_path_length = libcstring_system_string_length(
-	                   key_path );
-
-	result = registry_file_get_key_by_path(
-		  export_handle->system_registry_file,
-		  key_path,
-		  key_path_length,
-		  &sub_key,
-		  error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 sub_key_path );
-
-		goto on_error;
-	}
-	else if( result != 0 )
-	{
-		sub_key_path = export_handle_get_event_log_type(
-		                export_handle->event_log_type );
-
-		sub_key_path_length = libcstring_narrow_string_length(
-		                       sub_key_path );
-
-		result = libregf_key_get_sub_key_by_utf8_name(
-			  sub_key,
-			  (uint8_t *) sub_key_path,
-			  sub_key_path_length,
-			  &( export_handle->control_set1_key ),
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %s.",
-			 function,
-			 sub_key_path );
-
-			goto on_error;
-		}
-	}
-	if( libregf_key_free(
-	     &sub_key,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free sub key.",
-		 function );
-
-		goto on_error;
-	}
-	/* Get the control set 2 event log key:
-	 * SYSTEM\ControlSet002\Services\Eventlog
-	 */
-	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet002\\Services\\Eventlog" );
-
-	key_path_length = libcstring_system_string_length(
-	                   key_path );
-
-	result = registry_file_get_key_by_path(
-		  export_handle->system_registry_file,
-		  key_path,
-		  key_path_length,
-		  &sub_key,
-		  error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 sub_key_path );
-
-		goto on_error;
-	}
-	else if( result != 0 )
-	{
-		sub_key_path = export_handle_get_event_log_type(
-		                export_handle->event_log_type );
-
-		sub_key_path_length = libcstring_narrow_string_length(
-				       sub_key_path );
-
-		result = libregf_key_get_sub_key_by_utf8_name(
-			  sub_key,
-			  (uint8_t *) sub_key_path,
-			  sub_key_path_length,
-			  &( export_handle->control_set2_key ),
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %s.",
-			 function,
-			 sub_key_path );
-
-			goto on_error;
-		}
-	}
-	if( libregf_key_free(
-	     &sub_key,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free sub key.",
-		 function );
-
-		goto on_error;
 	}
 	return( 1 );
+}
 
-on_error:
-	if( sub_key != NULL )
+/* Sets the path of the message files
+ * Returns 1 if successful or -1 error
+ */
+int export_handle_set_message_files_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *path,
+     libcerror_error_t **error )
+{
+	static char *function = "export_handle_set_message_files_path";
+
+	if( export_handle == NULL )
 	{
-		libregf_key_free(
-		 &sub_key,
-		 NULL );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
 	}
-	if( system_filename != NULL )
+	if( message_handle_set_message_files_path(
+	     export_handle->message_handle,
+	     path,
+	     error ) != 1 )
 	{
-		memory_free(
-		 system_filename );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set message files path in message handle.",
+		 function );
+
+		return( -1 );
 	}
-	return( -1 );
+	return( 1 );
 }
 
 /* Opens the input
@@ -1777,28 +846,17 @@ int export_handle_open_input(
 
 		return( -1 );
 	}
-	if( export_handle_open_software_registry_file(
-	     export_handle,
+	if( message_handle_open_input(
+	     export_handle->message_handle,
+	     export_handle_get_event_log_key_name(
+	      export_handle->event_log_type ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open software registry file.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_handle_open_system_registry_file(
-	     export_handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open system registry file.",
+		 "%s: unable to open input of message handle.",
 		 function );
 
 		return( -1 );
@@ -1868,37 +926,18 @@ int export_handle_close_input(
 	}
 	if( export_handle->input_is_open != 0 )
 	{
-		if( export_handle->software_registry_file != NULL )
+		if( message_handle_close_input(
+		     export_handle->message_handle,
+		     error ) != 0 )
 		{
-			if( registry_file_close(
-			     export_handle->software_registry_file,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close software registry file.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close input of message handle.",
+			 function );
 
-				result = -1;
-			}
-		}
-		if( export_handle->system_registry_file != NULL )
-		{
-			if( registry_file_close(
-			     export_handle->system_registry_file,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close system registry file.",
-				 function );
-
-				result = -1;
-			}
+			result = -1;
 		}
 		if( libevtx_file_close(
 		     export_handle->input_file,
@@ -1916,1218 +955,6 @@ int export_handle_close_input(
 		export_handle->input_is_open = 0;
 	}
 	return( result );
-}
-
-/* Retrieves the message filename for a specific event source
- * The message filename is retrieved from the SYSTEM Windows Registry File if available
- * Returns 1 if successful, 0 if such event source or -1 error
- */
-int export_handle_get_message_filename(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *event_source,
-     size_t event_source_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
-     libcerror_error_t **error )
-{
-	libregf_key_t *key       = NULL;
-	libregf_value_t *value   = NULL;
-	const char *value_name   = NULL;
-	static char *function    = "export_handle_get_message_filename";
-	size_t value_name_length = 0;
-	int result               = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( *message_filename != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message filename value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename size.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_handle->control_set1_key != NULL )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libregf_key_get_sub_key_by_utf16_name(
-			  export_handle->control_set1_key,
-			  (uint16_t *) event_source,
-			  event_source_length,
-			  &key,
-			  error );
-#else
-		result = libregf_key_get_sub_key_by_utf8_name(
-			  export_handle->control_set1_key,
-			  (uint8_t *) event_source,
-			  event_source_length,
-			  &key,
-			  error );
-#endif
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 event_source );
-
-			goto on_error;
-		}
-	}
-	if( result == 0 )
-	{
-		if( export_handle->control_set2_key != NULL )
-		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libregf_key_get_sub_key_by_utf16_name(
-				  export_handle->control_set2_key,
-				  (uint16_t *) event_source,
-				  event_source_length,
-				  &key,
-				  error );
-#else
-			result = libregf_key_get_sub_key_by_utf8_name(
-				  export_handle->control_set2_key,
-				  (uint8_t *) event_source,
-				  event_source_length,
-				  &key,
-				  error );
-#endif
-			if( result == -1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 event_source );
-
-				goto on_error;
-			}
-		}
-	}
-	if( result != 0 )
-	{
-		value_name = "EventMessageFile";
-
-		value_name_length = libcstring_narrow_string_length(
-		                     value_name );
-
-		result = libregf_key_get_value_by_utf8_name(
-			  key,
-			  (uint8_t *) value_name,
-			  value_name_length,
-			  &value,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: %s.",
-			 function,
-			 value_name );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libregf_value_get_value_utf16_string_size(
-			          value,
-			          message_filename_size,
-			          error );
-#else
-			result = libregf_value_get_value_utf8_string_size(
-			          value,
-			          message_filename_size,
-			          error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve value string size.",
-				 function );
-
-				goto on_error;
-			}
-			*message_filename = libcstring_system_string_allocate(
-					     *message_filename_size );
-
-			if( message_filename == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create value string.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libregf_value_get_value_utf16_string(
-				  value,
-				  (uint16_t *) *message_filename,
-				  *message_filename_size,
-				  error );
-#else
-			result = libregf_value_get_value_utf8_string(
-				  value,
-				  (uint8_t *) *message_filename,
-				  *message_filename_size,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve value string.",
-				 function );
-
-				goto on_error;
-			}
-			if( libregf_value_free(
-			     &value,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free value.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		if( libregf_key_free(
-		     &key,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free key.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	return( result );
-
-on_error:
-	if( value != NULL )
-	{
-		libregf_value_free(
-		 &value,
-		 NULL );
-	}
-	if( key != NULL )
-	{
-		libregf_key_free(
-		 &key,
-		 NULL );
-	}
-	if( *message_filename != NULL )
-	{
-		memory_free(
-		 *message_filename );
-
-		*message_filename = NULL;
-	}
-	*message_filename_size = 0;
-
-	return( -1 );
-}
-
-/* Retrieves the path of the message file based on the message filename
- * Returns 1 if successful, 0 if no path can be found or -1 error
- */
-int export_handle_get_message_file_path(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     libcstring_system_character_t **message_file_path,
-     size_t *message_file_path_size,
-     libcerror_error_t **error )
-{
-	libcdirectory_directory_t *directory                           = NULL;
-	libcdirectory_directory_entry_t *directory_entry               = NULL;
-	libcstring_system_character_t *directory_entry_name            = NULL;
-	libcstring_system_character_t *message_filename_string_segment = NULL;
-	static char *function                                          = "export_handle_get_message_file_path";
-	size_t directory_entry_name_length                             = 0;
-	size_t message_file_path_index                                 = 0;
-	size_t message_files_path_length                               = 0;
-	size_t message_filename_directory_name_index                   = 0;
-	size_t message_filename_string_segment_size                    = 0;
-	uint8_t directory_entry_type                                   = 0;
-	int message_filename_number_of_segments                        = 0;
-	int message_filename_segment_index                             = 0;
-	int result                                                     = 0;
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
-#endif
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename_length == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid message filenmae length is zero.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid message filename length value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_file_path == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file path.",
-		 function );
-
-		return( -1 );
-	}
-	if( *message_file_path != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message file path value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_file_path_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file path size.",
-		 function );
-
-		return( -1 );
-	}
-/* TODO make sure ->message_files_path is sane, check for path separator */
-	message_files_path_length = libcstring_system_string_length(
-	                             export_handle->message_files_path );
-
-	if( message_filename_length > 2 )
-	{
-		/* Check if the message filename starts with a volume letter
-		 */
-		if( ( message_filename[ 1 ] == (libcstring_system_character_t) ':' )
-		 && ( ( ( message_filename[ 0 ] >= (libcstring_system_character_t) 'A' )
-		   &&   ( message_filename[ 0 ] <= (libcstring_system_character_t) 'Z' ) )
-		  || ( ( message_filename[ 0 ] >= (libcstring_system_character_t) 'a' )
-		   &&  ( message_filename[ 0 ] <= (libcstring_system_character_t) 'z' ) ) ) )
-		{
-			message_filename_directory_name_index = 2;
-
-			if( ( message_filename_length >= 3 )
-			 && ( message_filename[ 2 ] == (libcstring_system_character_t) '\\' ) )
-			{
-				message_filename_directory_name_index += 1;
-			}
-		}
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
-	     &( message_filename[ message_filename_directory_name_index ] ),
-	     message_filename_length - message_filename_directory_name_index + 1,
-	     (libcstring_system_character_t) '\\',
-	     &message_filename_split_string,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     &( message_filename[ message_filename_directory_name_index ] ),
-	     message_filename_length - message_filename_directory_name_index + 1,
-	     (libcstring_system_character_t) '\\',
-	     &message_filename_split_string,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to split message filename.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
-	     message_filename_split_string,
-	     &message_filename_number_of_segments,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     message_filename_split_string,
-	     &message_filename_number_of_segments,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of message filename string segments.",
-		 function );
-
-		goto on_error;
-	}
-	*message_file_path_size = message_files_path_length + 1;
-
-	for( message_filename_segment_index = 0;
-	     message_filename_segment_index < message_filename_number_of_segments;
-	     message_filename_segment_index++ )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#endif
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		if( message_filename_string_segment == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		if( message_filename_string_segment_size == 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported empty message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		else if( ( message_filename_string_segment_size == 2 )
-		      && ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '.' ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported relative path in message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		else if( ( message_filename_string_segment_size == 3 )
-		      && ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '.' )
-		      && ( message_filename_string_segment[ 1 ] == (libcstring_system_character_t) '.' ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported relative path in message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		else if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
-		      && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
-		{
-			if( ( message_filename_string_segment_size - 1 ) == 8 )
-			{
-				/* Expand %WinDir% to WINDOWS
-				 */
-				if( libcstring_system_string_compare_no_case(
-				     message_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
-				     8 ) == 0 )
-				{
-					message_filename_string_segment_size = 8;
-				}
-			}
-			else if( ( message_filename_string_segment_size - 1 ) == 12 )
-			{
-				/* Expand %SystemRoot% to WINDOWS
-				 */
-				if( libcstring_system_string_compare_no_case(
-				     message_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
-				     12 ) == 0 )
-				{
-					message_filename_string_segment_size = 8;
-				}
-			}
-		}
-		*message_file_path_size += message_filename_string_segment_size;
-	}
-	message_file_path_index = 0;
-
-	*message_file_path = libcstring_system_string_allocate(
-	                      *message_file_path_size );
-
-	if( *message_file_path == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create message file path.",
-		 function );
-
-		goto on_error;
-	}
-/* TODO make sure ->message_files_path is sane */
-	if( libcstring_system_string_copy(
-	     &( ( *message_file_path )[ message_file_path_index ] ),
-	     export_handle->message_files_path,
-	     message_files_path_length ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy message files path to message file path.",
-		 function );
-
-		goto on_error;
-	}
-	message_file_path_index += message_files_path_length;
-
-	for( message_filename_segment_index = 0;
-	     message_filename_segment_index < message_filename_number_of_segments;
-	     message_filename_segment_index++ )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#endif
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		if( message_filename_string_segment == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
-		 && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
-		{
-			if( ( message_filename_string_segment_size - 1 ) == 8 )
-			{
-				/* Expand %WinDir% to WINDOWS
-				 */
-				if( libcstring_system_string_compare_no_case(
-				     message_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
-				     8 ) == 0 )
-				{
-					message_filename_string_segment      = _LIBCSTRING_SYSTEM_STRING( "Windows" );
-					message_filename_string_segment_size = 8;
-				}
-			}
-			else if( ( message_filename_string_segment_size - 1 ) == 12 )
-			{
-				/* Expand %SystemRoot% to WINDOWS
-				 */
-				if( libcstring_system_string_compare_no_case(
-				     message_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
-				     12 ) == 0 )
-				{
-					message_filename_string_segment      = _LIBCSTRING_SYSTEM_STRING( "Windows" );
-					message_filename_string_segment_size = 8;
-				}
-			}
-		}
-		/* Terminate the path string we currently have
-		 */
-		( *message_file_path )[ message_file_path_index ] = 0;
-
-		if( libcdirectory_directory_initialize(
-		     &directory,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create directory.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libcdirectory_directory_open_wide(
-		          directory,
-		          *message_file_path,
-		          error );
-#else
-		result = libcdirectory_directory_open(
-		          directory,
-		          *message_file_path,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open directory: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 message_file_path );
-
-			goto on_error;
-		}
-		if( libcdirectory_directory_entry_initialize(
-		     &directory_entry,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create directory entry.",
-			 function );
-
-			goto on_error;
-		}
-		if( message_filename_segment_index < ( message_filename_number_of_segments - 1 ) )
-		{
-			directory_entry_type = LIBCDIRECTORY_ENTRY_TYPE_DIRECTORY;
-		}
-		else
-		{
-			directory_entry_type = LIBCDIRECTORY_ENTRY_TYPE_FILE;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libcdirectory_directory_has_entry_wide(
-			  directory,
-			  directory_entry,
-			  message_filename_string_segment,
-			  message_filename_string_segment_size - 1,
-			  directory_entry_type,
-			  LIBCDIRECTORY_COMPARE_FLAG_NO_CASE,
-			  error );
-#else
-		result = libcdirectory_directory_has_entry(
-			  directory,
-			  directory_entry,
-			  message_filename_string_segment,
-			  message_filename_string_segment_size - 1,
-			  directory_entry_type,
-			  LIBCDIRECTORY_COMPARE_FLAG_NO_CASE,
-			  error );
-#endif
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 message_filename_string_segment );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libcdirectory_directory_entry_get_name_wide(
-			          directory_entry,
-			          &directory_entry_name,
-			          error );
-#else
-			result = libcdirectory_directory_entry_get_name(
-			          directory_entry,
-			          &directory_entry_name,
-			          error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve directory entry name.",
-				 function );
-
-				goto on_error;
-			}
-			directory_entry_name_length = libcstring_system_string_length(
-			                               directory_entry_name );
-
-			if( directory_entry_name_length != ( message_filename_string_segment_size - 1 ) )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: directory entry name length value out of bounds.",
-				 function );
-
-				goto on_error;
-			}
-			if( libcstring_system_string_copy(
-			     &( ( *message_file_path )[ message_file_path_index ] ),
-			     directory_entry_name,
-			     directory_entry_name_length ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set message filename string segment: %d in message file path.",
-				 function,
-				 message_filename_segment_index );
-
-				goto on_error;
-			}
-		}
-		message_file_path_index += message_filename_string_segment_size - 1;
-
-		( *message_file_path )[ message_file_path_index ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
-
-		message_file_path_index += 1;
-
-		if( libcdirectory_directory_entry_free(
-		     &directory_entry,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free directory entry.",
-			 function );
-
-			goto on_error;
-		}
-		if( libcdirectory_directory_close(
-		     directory,
-		     error ) != 0 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close directory.",
-			 function,
-			 message_file_path );
-
-			goto on_error;
-		}
-		if( libcdirectory_directory_free(
-		     &directory,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free directory.",
-			 function );
-
-			goto on_error;
-		}
-		if( result == 0 )
-		{
-			break;
-		}
-	}
-	( *message_file_path )[ message_file_path_index - 1 ] = 0;
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
-	     &message_filename_split_string,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &message_filename_split_string,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free message filename split string.",
-		 function );
-
-		goto on_error;
-	}
-	return( result );
-
-on_error:
-	if( directory_entry != NULL )
-	{
-		libcdirectory_directory_entry_free(
-		 &directory_entry,
-		 NULL );
-	}
-	if( directory != NULL )
-	{
-		libcdirectory_directory_free(
-		 &directory,
-		 NULL );
-	}
-	if( message_filename_split_string != NULL )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#endif
-	}
-	if( *message_file_path != NULL )
-	{
-		memory_free(
-		 *message_file_path );
-
-		*message_file_path = NULL;
-	}
-	*message_file_path_size = 0;
-
-	return( -1 );
-}
-
-/* Retrieves the message string from a specific message file
- * Returns 1 if successful, 0 if no such message or -1 error
- */
-int export_handle_get_message_string(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *message_file_path = NULL;
-	libfcache_cache_value_t *cache_value             = NULL;
-	message_file_t *message_file                     = NULL;
-	static char *function                            = "export_handle_get_message_string";
-	size_t message_file_path_size                    = 0;
-	int cache_index                                  = 0;
-	int result                                       = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( message_filename_length == 0 )
-	 || ( message_filename_length > (size_t) SSIZE_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid message filename length value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string size.",
-		 function );
-
-		return( -1 );
-	}
-	for( cache_index = 0;
-	     cache_index < 16;
-	     cache_index++ )
-	{
-		if( libfcache_cache_get_value_by_index(
-		     export_handle->message_file_cache,
-		     cache_index,
-		     &cache_value,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve cache value: %d.",
-			 function,
-			 cache_index );
-
-			return( -1 );
-		}
-		if( cache_value != NULL )
-		{
-			if( libfcache_cache_value_get_value(
-			     cache_value,
-			     (intptr_t **) &message_file,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message file from cache value: %d.",
-				 function,
-				 cache_index );
-
-				return( -1 );
-			}
-		}
-		if( message_file != NULL )
-		{
-			if( message_filename_length != ( message_file->name_size - 1 ) )
-			{
-				message_file = NULL;
-			}
-			else if( libcstring_system_string_compare(
-				  message_filename,
-				  message_file->name,
-				  message_filename_length ) != 0 )
-			{
-				message_file = NULL;
-			}
-		}
-		if( message_file != NULL )
-		{
-			break;
-		}
-	}
-	if( message_file == NULL )
-	{
-		result = export_handle_get_message_file_path(
-		          export_handle,
-		          message_filename,
-		          message_filename_length,
-		          &message_file_path,
-		          &message_file_path_size,
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message file path.",
-			 function );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			if( message_file_initialize(
-			     &message_file,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create message file.",
-				 function );
-
-				goto on_error;
-			}
-			if( message_file_set_name(
-			     message_file,
-			     message_filename,
-			     message_filename_length,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set name in message file.",
-				 function );
-
-				message_file_free(
-				 &message_file,
-				 NULL );
-
-				goto on_error;
-			}
-			if( message_file_open(
-			     message_file,
-			     message_file_path,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_OPEN_FAILED,
-				 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 message_file_path );
-
-				message_file_free(
-				 &message_file,
-				 NULL );
-
-				goto on_error;
-			}
-			if( libfcache_cache_set_value_by_index(
-			     export_handle->message_file_cache,
-			     export_handle->next_message_file_cache_index,
-			     export_handle->next_message_file_cache_index,
-			     libfcache_date_time_get_timestamp(),
-			     (intptr_t *) message_file,
-			     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
-			     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set message file in cache entry: %d.",
-				 function,
-				 export_handle->next_message_file_cache_index );
-
-				message_file_free(
-				 &message_file,
-				 NULL );
-
-				goto on_error;
-			}
-			export_handle->next_message_file_cache_index++;
-
-			if( export_handle->next_message_file_cache_index == 16 )
-			{
-				export_handle->next_message_file_cache_index = 0;
-			}
-			memory_free(
-			 message_file_path );
-
-			message_file_path = NULL;
-		}
-	}
-	if( message_file != NULL )
-	{
-		result = message_file_get_string(
-			  message_file,
-			  export_handle->preferred_language_identifier,
-			  message_identifier,
-			  message_string,
-			  message_string_size,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message string: 0x%" PRIx32 ".",
-			 function );
-
-			goto on_error;
-		}
-		if( result == 0 )
-		{
-/* TODO */
-fprintf( stderr, "MISSING: 0x%08" PRIx32 " in %s\n", message_identifier, message_filename );
-		}
-	}
-	return( result );
-
-on_error:
-	if( message_file_path != NULL )
-	{
-		memory_free(
-		 message_file_path );
-	}
-	if( message_string != NULL )
-	{
-		memory_free(
-		 *message_string );
-
-		*message_string = NULL;
-	}
-	*message_string_size = 0;
-
-	return( -1 );
 }
 
 /* Prints the message string
@@ -3791,10 +1618,12 @@ int export_handle_export_record_text(
 	}
 	if( event_source != NULL )
 	{
-		result = export_handle_get_message_filename(
-		          export_handle,
+		result = message_handle_get_message_filename(
+		          export_handle->message_handle,
 		          event_source,
 		          event_source_size - 1,
+		          _LIBCSTRING_SYSTEM_STRING( "EventMessageFile" ),
+		          16,
 		          &message_filename,
 		          &message_filename_size,
 		          error );
@@ -3969,8 +1798,8 @@ int export_handle_export_record_text(
 				 * otherwise fallback to %PATH%/%FILE%
 				 */
 /* TODO improve mapping event identifier */
-				result = export_handle_get_message_string(
-					  export_handle,
+				result = message_handle_get_message_string(
+					  export_handle->message_handle,
 					  mui_message_filename,
 					  mui_message_filename_size - 1,
 					  event_identifier | 0x40000000UL,
@@ -3992,8 +1821,8 @@ int export_handle_export_record_text(
 				}
 				else if( result == 0 )
 				{
-					result = export_handle_get_message_string(
-						  export_handle,
+					result = message_handle_get_message_string(
+						  export_handle->message_handle,
 						  message_filename_string_segment,
 						  message_filename_string_segment_size - 1,
 						  event_identifier,

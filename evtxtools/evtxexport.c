@@ -402,7 +402,17 @@ int main( int argc, char * const argv[] )
 	}
 	if( option_message_files_path != NULL )
 	{
-		evtxexport_export_handle->message_files_path = option_message_files_path;
+		if( export_handle_set_message_files_path(
+		     evtxexport_export_handle,
+		     option_message_files_path,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set message files path in export handle.\n" );
+
+			goto on_error;
+		}
 	}
 	if( option_software_registry_filename != NULL )
 	{
@@ -446,12 +456,21 @@ int main( int argc, char * const argv[] )
 			goto on_error;
 		}
 	}
-/* TODO
 	if( option_preferred_language != NULL )
 	{
-		evtxexport_export_handle->preferred_language_identifier = 0x0413;
+/* TODO set preferred language identifier from input */
+		if( export_handle_set_preferred_language_identifier(
+		     evtxexport_export_handle,
+		     0x0413,
+		     &error ) != 1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set preferred language identifier in export handle.\n" );
+
+			goto on_error;
+		}
 	}
-*/
 	if( log_handle_open(
 	     log_handle,
 	     option_log_filename,

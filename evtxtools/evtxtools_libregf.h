@@ -28,6 +28,7 @@
  */
 #if defined( HAVE_LOCAL_LIBREGF )
 
+#include <libregf_codepage.h>
 #include <libregf_definitions.h>
 #include <libregf_file.h>
 #include <libregf_key.h>

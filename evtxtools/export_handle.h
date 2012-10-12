@@ -29,11 +29,8 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
-#include "evtxtools_libfcache.h"
-#include "evtxtools_libregf.h"
+#include "message_handle.h"
 #include "log_handle.h"
-#include "path_handle.h"
-#include "registry_file.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -68,81 +65,13 @@ struct export_handle
 	 */
 	libevtx_file_t *input_file;
 
-	/* The SOFTWARE registry file
+	/* The message handle
 	 */
-	registry_file_t *software_registry_file;
-
-	/* The %SystemRoot% path
-	 */
-	libcstring_system_character_t *system_root_path;
-
-	/* The %SystemRoot% path size
-	 */
-	size_t system_root_path_size;
-
-	/* The path handle
-	 */
-	path_handle_t *path_handle;
-
-	/* The SYSTEM registry file
-	 */
-	registry_file_t *system_registry_file;
-
-	/* The current control set
-	 */
-	uint32_t current_control_set;
-
-	/* The control set 1 key
-	 */
-	libregf_key_t *control_set1_key;
-
-	/* The control set 2 key
-	 */
-	libregf_key_t *control_set2_key;
-
-	/* The preferred language identifier
-	 */
-	uint32_t preferred_language_identifier;
-
-	/* The message file cache
-	 */
-	libfcache_cache_t *message_file_cache;
-
-	/* The next available message file cache index
-	 */
-	int next_message_file_cache_index;
+	message_handle_t *message_handle;
 
 	/* The event log type
 	 */
 	int event_log_type;
-
-	/* The messages files path
-	 */
-	const libcstring_system_character_t *message_files_path;
-
-	/* The SOFTWARE registry filename
-	 */
-	libcstring_system_character_t *software_registry_filename;
-
-	/* The SOFTWARE registry filename size
-	 */
-	size_t software_registry_filename_size;
-
-	/* The SYSTEM registry filename
-	 */
-	libcstring_system_character_t *system_registry_filename;
-
-	/* The SYSTEM registry filename size
-	 */
-	size_t system_registry_filename_size;
-
-	/* The name of the directory containing the SOFTWARE and SYSTEM registry filename
-	 */
-	libcstring_system_character_t *registry_directory_name;
-
-	/* The size of the name of the directory containing the SOFTWARE and SYSTEM registry filename
-	 */
-	size_t registry_directory_name_size;
 
 	/* Value to indicate the input is open
 	 */
@@ -160,6 +89,12 @@ struct export_handle
 	 */
 	int abort;
 };
+
+const char *export_handle_get_event_log_key_name(
+             int event_log_type );
+
+const char *export_handle_get_event_level(
+             uint8_t event_level );
 
 int export_handle_initialize(
      export_handle_t **export_handle,
@@ -188,6 +123,11 @@ int export_handle_set_ascii_codepage(
      const libcstring_system_character_t *string,
      libcerror_error_t **error );
 
+int export_handle_set_preferred_language_identifier(
+     export_handle_t *export_handle,
+     uint32_t preferred_language_identifier,
+     libcerror_error_t **error );
+
 int export_handle_set_event_log_type(
      export_handle_t *export_handle,
      const libcstring_system_character_t *string,
@@ -210,15 +150,12 @@ int export_handle_set_system_registry_filename(
 
 int export_handle_set_registry_directory_name(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const libcstring_system_character_t *name,
      libcerror_error_t **error );
 
-int export_handle_open_software_registry_file(
+int export_handle_set_message_files_path(
      export_handle_t *export_handle,
-     libcerror_error_t **error );
-
-int export_handle_open_system_registry_file(
-     export_handle_t *export_handle,
+     const libcstring_system_character_t *path,
      libcerror_error_t **error );
 
 int export_handle_open_input(
@@ -232,31 +169,6 @@ int export_handle_close_input(
 
 /* Record specific export functions
  */
-int export_handle_get_message_filename(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *event_source,
-     size_t event_source_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
-     libcerror_error_t **error );
-
-int export_handle_get_message_file_path(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     libcstring_system_character_t **message_file_path,
-     size_t *message_file_path_size,
-     libcerror_error_t **error );
-
-int export_handle_get_message_string(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
-     libcerror_error_t **error );
-
 int export_handle_message_string_fprint(
      export_handle_t *export_handle,
      const libcstring_system_character_t *message_string,
