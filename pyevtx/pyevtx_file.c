@@ -1102,7 +1102,8 @@ PyObject *pyevtx_file_get_record_by_index(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
-	                 record );
+	                 record,
+	                 pyevtx_file );
 
 	if( record_object == NULL )
 	{
@@ -1350,7 +1351,8 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
-	                 record );
+	                 record,
+	                 pyevtx_file );
 
 	if( record_object == NULL )
 	{

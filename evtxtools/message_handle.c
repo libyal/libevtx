@@ -1430,6 +1430,7 @@ int message_handle_open_input(
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_open_input";
+	int result            = 0;
 
 	if( message_handle == NULL )
 	{
@@ -1442,9 +1443,11 @@ int message_handle_open_input(
 
 		return( -1 );
 	}
-	if( message_handle_open_software_registry_file(
-	     message_handle,
-	     error ) != 1 )
+	result = message_handle_open_software_registry_file(
+	          message_handle,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1455,10 +1458,12 @@ int message_handle_open_input(
 
 		return( -1 );
 	}
-	if( message_handle_open_system_registry_file(
-	     message_handle,
-	     eventlog_key_name,
-	     error ) != 1 )
+	result = message_handle_open_system_registry_file(
+	          message_handle,
+	          eventlog_key_name,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,

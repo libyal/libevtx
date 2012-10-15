@@ -800,6 +800,321 @@ int libevtx_record_get_utf16_computer_name(
 	return( result );
 }
 
+/* Retrieves the number of strings
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_number_of_strings(
+     libevtx_record_t *record,
+     int *number_of_strings,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_number_of_strings";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_number_of_strings(
+	     internal_record->record_values,
+	     number_of_strings,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve number of strings.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of a specific UTF-8 encoded string
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_string_size(
+     libevtx_record_t *record,
+     int string_index,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_string_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_string_size(
+	     internal_record->record_values,
+	     string_index,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve size of UTF-8 string: %d.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific UTF-8 encoded string
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf8_string(
+     libevtx_record_t *record,
+     int string_index,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf8_string";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf8_string(
+	     internal_record->record_values,
+	     string_index,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve UTF-8 string: %d.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of a specific UTF-16 encoded string
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_string_size(
+     libevtx_record_t *record,
+     int string_index,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_string_size";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_string_size(
+	     internal_record->record_values,
+	     string_index,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve size of UTF-16 string: %d.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific UTF-16 encoded string
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_utf16_string(
+     libevtx_record_t *record,
+     int string_index,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_utf16_string";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_utf16_string(
+	     internal_record->record_values,
+	     string_index,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve UTF-16 string: %d.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the data
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_get_data_size(
+     libevtx_record_t *record,
+     size_t *data_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_data_size";
+	int result                                 = 0;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	result = libevtx_record_values_get_data_size(
+	          internal_record->record_values,
+	          data_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve data size.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Retrieves the data
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_get_data(
+     libevtx_record_t *record,
+     uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_data";
+	int result                                 = 0;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	result = libevtx_record_values_get_data(
+	          internal_record->record_values,
+	          data,
+	          data_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to retrieve data.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Retrieves the size of the UTF-8 encoded XML string
  * The returned size includes the end of string character
  * Returns 1 if successful or -1 on error

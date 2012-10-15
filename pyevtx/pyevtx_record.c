@@ -228,7 +228,8 @@ PyTypeObject pyevtx_record_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_new(
-           libevtx_record_t *record )
+           libevtx_record_t *record,
+           pyevtx_file_t *file_object )
 {
 	pyevtx_record_t *pyevtx_record = NULL;
 	static char *function          = "pyevtx_record_new";
@@ -265,7 +266,11 @@ PyObject *pyevtx_record_new(
 
 		goto on_error;
 	}
-	pyevtx_record->record = record;
+	pyevtx_record->record      = record;
+	pyevtx_record->file_object = file_object;
+
+	Py_IncRef(
+	 (PyObject *) pyevtx_record->file_object );
 
 	return( (PyObject *) pyevtx_record );
 
@@ -372,6 +377,11 @@ void pyevtx_record_free(
 		}
 		libcerror_error_free(
 		 &error );
+	}
+	if( pyevtx_record->file_object != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pyevtx_record->file_object );
 	}
 	pyevtx_record->ob_type->tp_free(
 	 (PyObject*) pyevtx_record );

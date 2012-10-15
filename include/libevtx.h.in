@@ -451,6 +451,80 @@ int libevtx_record_get_utf16_computer_name(
      size_t utf16_string_size,
      libevtx_error_t **error );
 
+/* Retrieves the number of strings
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_number_of_strings(
+     libevtx_record_t *record,
+     int *number_of_strings,
+     libevtx_error_t **error );
+
+/* Retrieves the size of a specific UTF-8 encoded string
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_string_size(
+     libevtx_record_t *record,
+     int string_index,
+     size_t *utf8_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves a specific UTF-8 encoded string
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_string(
+     libevtx_record_t *record,
+     int string_index,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the size of a specific UTF-16 encoded string
+ * The returned size includes the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_string_size(
+     libevtx_record_t *record,
+     int string_index,
+     size_t *utf16_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves a specific UTF-16 encoded string
+ * The size should include the end of string character
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_string(
+     libevtx_record_t *record,
+     int string_index,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the size of the data
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_data_size(
+     libevtx_record_t *record,
+     size_t *data_size,
+     libevtx_error_t **error );
+
+/* Retrieves the data
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_data(
+     libevtx_record_t *record,
+     uint8_t *data,
+     size_t data_size,
+     libevtx_error_t **error );
+
 /* Retrieves the size of the UTF-8 encoded XML string
  * The returned size includes the end of string character
  * Returns 1 if successful or -1 on error

@@ -179,6 +179,48 @@ int libevtx_record_values_get_utf16_computer_name(
      size_t utf16_string_size,
      libcerror_error_t **error );
 
+int libevtx_record_values_get_number_of_strings(
+     libevtx_record_values_t *record_values,
+     int *number_of_strings,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_string_size(
+     libevtx_record_values_t *record_values,
+     int string_index,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_string(
+     libevtx_record_values_t *record_values,
+     int string_index,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_string_size(
+     libevtx_record_values_t *record_values,
+     int string_index,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_string(
+     libevtx_record_values_t *record_values,
+     int string_index,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_data_size(
+     libevtx_record_values_t *record_values,
+     size_t *data_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_data(
+     libevtx_record_values_t *record_values,
+     uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
 int libevtx_record_values_get_utf8_xml_string_size(
      libevtx_record_values_t *record_values,
      size_t *utf8_string_size,

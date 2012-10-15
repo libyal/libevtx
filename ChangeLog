@@ -1,10 +1,26 @@
 TODO
+* message handle
+  - allow open without system registry file ?
+
+* wevt
+  - xml tag make internal version
+  - get utf8 name function
+  - get utf16 name function
+
 * updated msvscpp files
 * get %SystemRoot% from:
   SOFTWARE\Microsoft\Windows NT\CurrentVersion\
 
 * XML output change
   - Keywords add 0x no leading 0's
+
+strings:
+- support non-contiguous data elements ?
+
+libfwevt optimization:
+- reference value while parsing?
+- count number of data elements (strings) while parsing
+- reference binary (data) while parsing
 
 * API
   - add functions for user security identifier function: system/security#userid
@@ -38,6 +54,9 @@ TODO
 
 Recovery:
 * scan for records in chunk free space
+
+20121016
+* changed default language
 
 20121013
 * worked on evtxexport

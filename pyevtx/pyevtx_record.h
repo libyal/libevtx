@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "pyevtx_file.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 
@@ -43,13 +44,18 @@ struct pyevtx_record
 	/* The libevtx record
 	 */
 	libevtx_record_t *record;
+
+	/* The file object
+	 */
+	pyevtx_file_t *file_object;
 };
 
 extern PyMethodDef pyevtx_record_object_methods[];
 extern PyTypeObject pyevtx_record_type_object;
 
 PyObject *pyevtx_record_new(
-           libevtx_record_t *record );
+           libevtx_record_t *record,
+           pyevtx_file_t *file_object );
 
 int pyevtx_record_init(
      pyevtx_record_t *pyevtx_record );
