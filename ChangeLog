@@ -1,11 +1,10 @@
 TODO
-* message handle
-  - allow open without system registry file ?
+* format string
+  - add support for %b
+  - add support for %10, ...
 
 * wevt
   - xml tag make internal version
-  - get utf8 name function
-  - get utf16 name function
 
 * updated msvscpp files
 * get %SystemRoot% from:
@@ -55,8 +54,15 @@ libfwevt optimization:
 Recovery:
 * scan for records in chunk free space
 
+20121017
+* code clean up
+* worked on formatted message strings
+* updated libwrc
+
 20121016
 * changed default language
+* worked on pyevtx
+* worked on formatted message strings
 
 20121013
 * worked on evtxexport

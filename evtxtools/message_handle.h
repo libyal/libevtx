@@ -1,4 +1,4 @@
-/* 
+/*
  * Message handle
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,6 +30,7 @@
 #include "evtxtools_libfcache.h"
 /* TODO refactor ? */
 #include "evtxtools_libregf.h"
+#include "message_file.h"
 #include "path_handle.h"
 #include "registry_file.h"
 
@@ -108,6 +109,14 @@ struct message_handle
 	/* The next available message file cache index
 	 */
 	int next_message_file_cache_index;
+
+	/* The MUI message file cache
+	 */
+	libfcache_cache_t *mui_message_file_cache;
+
+	/* The next available MUI message file cache index
+	 */
+	int next_mui_message_file_cache_index;
 
 	/* The ascii codepage
 	 */
@@ -199,6 +208,44 @@ int message_handle_get_message_file_path(
      size_t message_filename_length,
      libcstring_system_character_t **message_file_path,
      size_t *message_file_path_size,
+     libcerror_error_t **error );
+
+int message_handle_get_message_file(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     const libcstring_system_character_t *message_file_path,
+     message_file_t **message_file,
+     libcerror_error_t **error );
+
+int message_handle_get_message_file_from_cache(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     message_file_t **message_file,
+     libcerror_error_t **error );
+
+int message_handle_get_mui_message_file_path(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     libcstring_system_character_t **message_file_path,
+     size_t *message_file_path_size,
+     libcerror_error_t **error );
+
+int message_handle_get_mui_message_file(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     const libcstring_system_character_t *message_file_path,
+     message_file_t **message_file,
+     libcerror_error_t **error );
+
+int message_handle_get_mui_message_file_from_cache(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     message_file_t **message_file,
      libcerror_error_t **error );
 
 int message_handle_get_message_string_from_message_file(

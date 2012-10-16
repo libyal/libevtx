@@ -1,4 +1,4 @@
-/* 
+/*
  * Message handle
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -93,7 +93,12 @@ int message_handle_initialize(
 		 "%s: unable to clear message handle.",
 		 function );
 
-		goto on_error;
+		memory_free(
+		 *message_handle );
+
+		*message_handle = NULL;
+
+		return( -1 );
 	}
 	if( path_handle_initialize(
 	     &( ( *message_handle )->path_handle ),
@@ -122,6 +127,20 @@ int message_handle_initialize(
 
 		goto on_error;
 	}
+	if( libfcache_cache_initialize(
+	     &( ( *message_handle )->mui_message_file_cache ),
+	     16,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create MUI message file cache.",
+		 function );
+
+		goto on_error;
+	}
 	( *message_handle )->ascii_codepage                = LIBREGF_CODEPAGE_WINDOWS_1252;
 	( *message_handle )->preferred_language_identifier = 0x00000409UL;
 
@@ -130,6 +149,18 @@ int message_handle_initialize(
 on_error:
 	if( *message_handle != NULL )
 	{
+		if( ( *message_handle )->message_file_cache != NULL )
+		{
+			libfcache_cache_free(
+			 &( ( *message_handle )->message_file_cache ),
+			 NULL );
+		}
+		if( ( *message_handle )->path_handle != NULL )
+		{
+			path_handle_free(
+			 &( ( *message_handle )->path_handle ),
+			 NULL );
+		}
 		memory_free(
 		 *message_handle );
 
@@ -235,6 +266,19 @@ int message_handle_free(
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free message file cache.",
+			 function );
+
+			result = -1;
+		}
+		if( libfcache_cache_free(
+		     &( ( *message_handle )->mui_message_file_cache ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free MUI message file cache.",
 			 function );
 
 			result = -1;
@@ -1530,6 +1574,32 @@ int message_handle_close_input(
 			result = -1;
 		}
 	}
+	if( libfcache_cache_clear(
+	     message_handle->message_file_cache,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear message file cache.",
+		 function );
+
+		result = -1;
+	}
+	if( libfcache_cache_clear(
+	     message_handle->mui_message_file_cache,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear MUI message file cache.",
+		 function );
+
+		result = -1;
+	}
 	return( result );
 }
 
@@ -2376,6 +2446,606 @@ on_error:
 	return( -1 );
 }
 
+/* Retrieves a specific message file and adds it to the cache
+ * Returns 1 if successful, 0 if message file was not found or -1 error
+ */
+int message_handle_get_message_file(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     const libcstring_system_character_t *message_file_path,
+     message_file_t **message_file,
+     libcerror_error_t **error )
+{
+	static char *function = "message_handle_get_message_file";
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file_initialize(
+	     message_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create message file.",
+		 function );
+
+		goto on_error;
+	}
+	if( message_file_set_name(
+	     *message_file,
+	     message_filename,
+	     message_filename_length,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set name in message file.",
+		 function );
+
+		goto on_error;
+	}
+	if( message_file_open(
+	     *message_file,
+	     message_file_path,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 message_file_path );
+
+		goto on_error;
+	}
+	if( libfcache_cache_set_value_by_index(
+	     message_handle->message_file_cache,
+	     message_handle->next_message_file_cache_index,
+	     message_handle->next_message_file_cache_index,
+	     libfcache_date_time_get_timestamp(),
+	     (intptr_t *) *message_file,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
+	     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set message file in cache entry: %d.",
+		 function,
+		 message_handle->next_message_file_cache_index );
+
+		goto on_error;
+	}
+	message_handle->next_message_file_cache_index++;
+
+	if( message_handle->next_message_file_cache_index == 16 )
+	{
+		message_handle->next_message_file_cache_index = 0;
+	}
+	return( 1 );
+
+on_error:
+	if( *message_file != NULL )
+	{
+		message_file_free(
+		 message_file,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves a specific message file from the cache
+ * Returns 1 if successful, 0 if message file was not found or -1 error
+ */
+int message_handle_get_message_file_from_cache(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     message_file_t **message_file,
+     libcerror_error_t **error )
+{
+	libfcache_cache_value_t *cache_value = NULL;
+	static char *function                = "message_handle_get_message_file_from_cache";
+	int cache_index                      = 0;
+	int result                           = 0;
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	for( cache_index = 0;
+	     cache_index < 16;
+	     cache_index++ )
+	{
+		if( libfcache_cache_get_value_by_index(
+		     message_handle->message_file_cache,
+		     cache_index,
+		     &cache_value,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve cache value: %d.",
+			 function,
+			 cache_index );
+
+			return( -1 );
+		}
+		if( cache_value != NULL )
+		{
+			if( libfcache_cache_value_get_value(
+			     cache_value,
+			     (intptr_t **) message_file,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message file from cache value: %d.",
+				 function,
+				 cache_index );
+
+				return( -1 );
+			}
+		}
+		if( *message_file != NULL )
+		{
+			if( message_filename_length != ( ( *message_file )->name_size - 1 ) )
+			{
+				*message_file = NULL;
+			}
+			else if( libcstring_system_string_compare(
+				  message_filename,
+				  ( *message_file )->name,
+				  message_filename_length ) != 0 )
+			{
+				*message_file = NULL;
+			}
+		}
+		if( *message_file != NULL )
+		{
+			result = 1;
+
+			break;
+		}
+	}
+	return( result );
+}
+
+/* Retrieves the path of the MUI message file based on the message filename
+ * Returns 1 if successful, 0 if no path can be found or -1 error
+ */
+int message_handle_get_mui_message_file_path(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     libcstring_system_character_t **message_file_path,
+     size_t *message_file_path_size,
+     libcerror_error_t **error )
+{
+	const libcstring_system_character_t *language_string = NULL;
+	static char *function                                = "message_handle_get_mui_message_file_path";
+	size_t language_string_length                        = 0;
+	int message_file_path_index                          = 0;
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename_length == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 "%s: invalid message filenmae length is zero.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename_length > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid message filename length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file_path == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file path.",
+		 function );
+
+		return( -1 );
+	}
+	if( *message_file_path != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid message file path value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file_path_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file path size.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO determine language string based on language identifier */
+	language_string = _LIBCSTRING_SYSTEM_STRING( "en-US" );
+
+	language_string_length = libcstring_system_string_length(
+	                          language_string );
+
+	/* The MUI message file path is: %PATH%/%LANGUAGE%/%FILENAME%.mui
+	 */
+	*message_file_path_size = message_filename_length + language_string_length + 6;
+
+	*message_file_path = libcstring_system_string_allocate(
+	                      *message_file_path_size );
+
+	if( *message_file_path == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create message file path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libcstring_system_string_copy(
+	     *message_file_path,
+	     message_filename,
+	     message_filename_length ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy message filename to message file path.",
+		 function );
+
+		goto on_error;
+	}
+	message_file_path_index = *message_file_path_size - 1;
+
+	( *message_file_path )[ message_file_path_index-- ] = 0;
+	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'i';
+	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'u';
+	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'm';
+	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) '.';
+
+	while( message_file_path_index > message_filename_length )
+	{
+		( *message_file_path )[ message_file_path_index ] = ( *message_file_path )[ message_file_path_index - ( language_string_length + 1 ) ];
+
+		if( ( *message_file_path )[ message_file_path_index - ( language_string_length + 1 ) ] == (libcstring_system_character_t) '\\' )
+		{
+			break;
+		}
+		message_file_path_index--;
+	}
+	while( language_string_length > 0 )
+	{
+		language_string_length--;
+
+		( *message_file_path )[ message_file_path_index-- ] = language_string[ language_string_length ];
+	}
+	return( 1 );
+
+on_error:
+	if( *message_file_path != NULL )
+	{
+		memory_free(
+		 *message_file_path );
+
+		*message_file_path = NULL;
+	}
+	*message_file_path_size = 0;
+
+	return( -1 );
+}
+
+/* Retrieves a specific MUI message file and adds it to the cache
+ * Returns 1 if successful, 0 if message file was not found or -1 error
+ */
+int message_handle_get_mui_message_file(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     const libcstring_system_character_t *message_file_path,
+     message_file_t **message_file,
+     libcerror_error_t **error )
+{
+	static char *function = "message_handle_get_mui_message_file";
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file_initialize(
+	     message_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create message file.",
+		 function );
+
+		goto on_error;
+	}
+	if( message_file_set_name(
+	     *message_file,
+	     message_filename,
+	     message_filename_length,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set name in message file.",
+		 function );
+
+		goto on_error;
+	}
+	if( message_file_open(
+	     *message_file,
+	     message_file_path,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 message_file_path );
+
+		goto on_error;
+	}
+	if( libfcache_cache_set_value_by_index(
+	     message_handle->mui_message_file_cache,
+	     message_handle->next_mui_message_file_cache_index,
+	     message_handle->next_mui_message_file_cache_index,
+	     libfcache_date_time_get_timestamp(),
+	     (intptr_t *) *message_file,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
+	     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set message file in cache entry: %d.",
+		 function,
+		 message_handle->next_mui_message_file_cache_index );
+
+		goto on_error;
+	}
+	message_handle->next_mui_message_file_cache_index++;
+
+	if( message_handle->next_mui_message_file_cache_index == 16 )
+	{
+		message_handle->next_mui_message_file_cache_index = 0;
+	}
+	return( 1 );
+
+on_error:
+	if( message_file != NULL )
+	{
+		message_file_free(
+		 message_file,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves a specific MUI message file from the cache
+ * Returns 1 if successful, 0 if message file was not found or -1 error
+ */
+int message_handle_get_mui_message_file_from_cache(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     message_file_t **message_file,
+     libcerror_error_t **error )
+{
+	libfcache_cache_value_t *cache_value = NULL;
+	static char *function                = "message_handle_get_mui_message_file_from_cache";
+	int cache_index                      = 0;
+	int result                           = 0;
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	for( cache_index = 0;
+	     cache_index < 16;
+	     cache_index++ )
+	{
+		if( libfcache_cache_get_value_by_index(
+		     message_handle->mui_message_file_cache,
+		     cache_index,
+		     &cache_value,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve cache value: %d.",
+			 function,
+			 cache_index );
+
+			return( -1 );
+		}
+		if( cache_value != NULL )
+		{
+			if( libfcache_cache_value_get_value(
+			     cache_value,
+			     (intptr_t **) message_file,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message file from cache value: %d.",
+				 function,
+				 cache_index );
+
+				return( -1 );
+			}
+		}
+		if( *message_file != NULL )
+		{
+			if( message_filename_length != ( ( *message_file )->name_size - 1 ) )
+			{
+				*message_file = NULL;
+			}
+			else if( libcstring_system_string_compare(
+				  message_filename,
+				  ( *message_file )->name,
+				  message_filename_length ) != 0 )
+			{
+				*message_file = NULL;
+			}
+		}
+		if( *message_file != NULL )
+		{
+			result = 1;
+
+			break;
+		}
+	}
+	return( result );
+}
+
 /* Retrieves the message string from a specific message file
  * Returns 1 if successful, 0 if no such message or -1 error
  */
@@ -2389,11 +3059,10 @@ int message_handle_get_message_string_from_message_file(
      libcerror_error_t **error )
 {
 	libcstring_system_character_t *message_file_path = NULL;
-	libfcache_cache_value_t *cache_value             = NULL;
 	message_file_t *message_file                     = NULL;
 	static char *function                            = "message_handle_get_message_string_from_message_file";
 	size_t message_file_path_size                    = 0;
-	int cache_index                                  = 0;
+	uint32_t mui_file_type                           = 0;
 	int result                                       = 0;
 
 	if( message_handle == NULL )
@@ -2452,64 +3121,25 @@ int message_handle_get_message_string_from_message_file(
 
 		return( -1 );
 	}
-	for( cache_index = 0;
-	     cache_index < 16;
-	     cache_index++ )
+	result = message_handle_get_message_file_from_cache(
+		  message_handle,
+		  message_filename,
+		  message_filename_length,
+		  &message_file,
+		  error );
+
+	if( result == -1 )
 	{
-		if( libfcache_cache_get_value_by_index(
-		     message_handle->message_file_cache,
-		     cache_index,
-		     &cache_value,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve cache value: %d.",
-			 function,
-			 cache_index );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve message file from cache.",
+		 function );
 
-			return( -1 );
-		}
-		if( cache_value != NULL )
-		{
-			if( libfcache_cache_value_get_value(
-			     cache_value,
-			     (intptr_t **) &message_file,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message file from cache value: %d.",
-				 function,
-				 cache_index );
-
-				return( -1 );
-			}
-		}
-		if( message_file != NULL )
-		{
-			if( message_filename_length != ( message_file->name_size - 1 ) )
-			{
-				message_file = NULL;
-			}
-			else if( libcstring_system_string_compare(
-				  message_filename,
-				  message_file->name,
-				  message_filename_length ) != 0 )
-			{
-				message_file = NULL;
-			}
-		}
-		if( message_file != NULL )
-		{
-			break;
-		}
+		goto on_error;
 	}
-	if( message_file == NULL )
+	if( result == 0 )
 	{
 		result = message_handle_get_message_file_path(
 		          message_handle,
@@ -2532,86 +3162,23 @@ int message_handle_get_message_string_from_message_file(
 		}
 		else if( result != 0 )
 		{
-			if( message_file_initialize(
+			if( message_handle_get_message_file(
+			     message_handle,
+			     message_filename,
+			     message_filename_length,
+			     message_file_path,
 			     &message_file,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create message file.",
-				 function );
-
-				goto on_error;
-			}
-			if( message_file_set_name(
-			     message_file,
-			     message_filename,
-			     message_filename_length,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set name in message file.",
-				 function );
-
-				message_file_free(
-				 &message_file,
-				 NULL );
-
-				goto on_error;
-			}
-			if( message_file_open(
-			     message_file,
-			     message_file_path,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_OPEN_FAILED,
-				 "%s: unable to open message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message file: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
 				 message_file_path );
 
-				message_file_free(
-				 &message_file,
-				 NULL );
-
 				goto on_error;
-			}
-			if( libfcache_cache_set_value_by_index(
-			     message_handle->message_file_cache,
-			     message_handle->next_message_file_cache_index,
-			     message_handle->next_message_file_cache_index,
-			     libfcache_date_time_get_timestamp(),
-			     (intptr_t *) message_file,
-			     (int (*)(intptr_t **, libcerror_error_t **)) &message_file_free,
-			     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set message file in cache entry: %d.",
-				 function,
-				 message_handle->next_message_file_cache_index );
-
-				message_file_free(
-				 &message_file,
-				 NULL );
-
-				goto on_error;
-			}
-			message_handle->next_message_file_cache_index++;
-
-			if( message_handle->next_message_file_cache_index == 16 )
-			{
-				message_handle->next_message_file_cache_index = 0;
 			}
 			memory_free(
 			 message_file_path );
@@ -2621,6 +3188,114 @@ int message_handle_get_message_string_from_message_file(
 	}
 	if( message_file != NULL )
 	{
+		result = message_file_get_mui_file_type(
+			  message_file,
+			  message_handle->preferred_language_identifier,
+			  &mui_file_type,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve MUI file type.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			switch( mui_file_type )
+			{
+				case 0x00000011:
+/* TODO check for WEVT_TEMPLATE */
+					message_identifier |= 0x40000000UL;
+
+					result = message_handle_get_mui_message_file_path(
+						  message_handle,
+						  message_filename,
+						  message_filename_length,
+						  &message_file_path,
+						  &message_file_path_size,
+						  error );
+
+					if( result == -1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve message file path.",
+						 function );
+
+						goto on_error;
+					}
+					else if( result != 0 )
+					{
+						result = message_handle_get_mui_message_file_from_cache(
+							  message_handle,
+							  message_filename,
+							  message_filename_length,
+							  &message_file,
+							  error );
+
+						if( result == -1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+							 "%s: unable to retrieve MUI message file from cache.",
+							 function );
+
+							goto on_error;
+						}
+						else if( result == 0 )
+						{
+							if( message_handle_get_mui_message_file(
+							     message_handle,
+							     message_filename,
+							     message_filename_length,
+							     message_file_path,
+							     &message_file,
+							     error ) != 1 )
+							{
+								libcerror_error_set(
+								 error,
+								 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+								 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+								 "%s: unable to retrieve MUI message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+								 function,
+								 message_file_path );
+
+								goto on_error;
+							}
+						}
+						memory_free(
+						 message_file_path );
+
+						message_file_path = NULL;
+					}
+					break;
+
+				case 0x00000012:
+					/* This should already be a .mui file and contain the message table resource */
+					break;
+
+				default:
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+					 "%s: unsupported MUI file type: 0x%08" PRIx32 ".",
+					 function,
+					 mui_file_type );
+
+					goto on_error;
+			}
+		}
 		result = message_file_get_string(
 			  message_file,
 			  message_handle->preferred_language_identifier,

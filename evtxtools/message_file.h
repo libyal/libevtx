@@ -1,4 +1,4 @@
-/* 
+/*
  * Message file
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -66,6 +66,14 @@ struct message_file
 	 */
 	libwrc_resource_t *message_table_resource;
 
+	/* The libwrc MUI resource
+	 */
+	libwrc_resource_t *mui_resource;
+
+	/* The libwrc WEVT_TEMPLATE resource
+	 */
+	libwrc_resource_t *wevt_template_resource;
+
 	/* Value to indicate if the message file is open
 	 */
 	int is_open;
@@ -88,12 +96,25 @@ int message_file_close(
      message_file_t *message_file,
      libcerror_error_t **error );
 
+int message_file_get_resource_available_languague_identifier(
+     message_file_t *message_file,
+     libwrc_resource_t *resource,
+     uint32_t preferred_language_identifier,
+     uint32_t *language_identifier,
+     libcerror_error_t **error );
+
 int message_file_get_string(
      message_file_t *message_file,
      uint32_t preferred_language_identifier,
      uint32_t message_identifier,
      libcstring_system_character_t **message_string,
      size_t *message_string_size,
+     libcerror_error_t **error );
+
+int message_file_get_mui_file_type(
+     message_file_t *message_file,
+     uint32_t preferred_language_identifier,
+     uint32_t *file_type,
      libcerror_error_t **error );
 
 int message_file_set_name(

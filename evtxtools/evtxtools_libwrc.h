@@ -31,6 +31,7 @@
 #include <libwrc_definitions.h>
 #include <libwrc_manifest.h>
 #include <libwrc_message_table.h>
+#include <libwrc_mui.h>
 #include <libwrc_resource.h>
 #include <libwrc_stream.h>
 #include <libwrc_string.h>

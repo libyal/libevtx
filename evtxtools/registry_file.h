@@ -1,4 +1,4 @@
-/* 
+/*
  * Registry file
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>

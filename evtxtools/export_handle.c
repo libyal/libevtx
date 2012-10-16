@@ -1,4 +1,4 @@
-/* 
+/*
  * Export handle
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -1009,7 +1009,6 @@ int export_handle_message_string_fprint(
 
 		return( -1 );
 	}
-#ifdef TODO
 	if( libevtx_record_get_number_of_strings(
 	     record,
 	     &number_of_strings,
@@ -1024,37 +1023,56 @@ int export_handle_message_string_fprint(
 
 		goto on_error;
 	}
-#endif /* TODO */
 #if defined( HAVE_DEBUG_OUTPUT )
 	fprintf(
 	 export_handle->notify_stream,
-	 "Message format string\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+	 "Message format string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 	 message_string );
 
 	fprintf(
 	 export_handle->notify_stream,
-	 "Number of strings\t: %d\n",
+	 "Number of strings\t\t: %d\n",
 	 number_of_strings );
 #endif
-
 	fprintf(
 	 export_handle->notify_stream,
-	 "Message string\t\t: " );
+	 "Message string\t\t\t: " );
 
 	message_string_index = 0;
 
-#ifdef TODO
 	while( message_string_index < message_string_length )
 	{
 		if( ( message_string[ message_string_index ] == (libcstring_system_character_t) '%' )
 		 && ( ( message_string_index + 1 ) < message_string_length ) )
 		{
 /* TODO add support for more conversion specifiers */
-			/* Ignore %0 = end of string, %n = new line, %r = cariage return */
+			/* Ignore %0 = end of string, %r = cariage return */
 			if( ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) '0' )
-			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
+			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
 			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'r' ) )
 			{
+				message_string_index += 2;
+
+				continue;
+			}
+			/* Replace %n = new line */
+			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
+			{
+				fprintf(
+				 export_handle->notify_stream,
+				 "\n" );
+
+				message_string_index += 2;
+
+				continue;
+			}
+			/* Replace %t = tab */
+			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
+			{
+				fprintf(
+				 export_handle->notify_stream,
+				 "\t" );
+
 				message_string_index += 2;
 
 				continue;
@@ -1066,42 +1084,41 @@ int export_handle_message_string_fprint(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported conversion specifier: %%"
-				 "%" PRIc_LIBCSTRING_SYSTEM ".",
-				 function,
-				 message_string[ message_string_index + 1 ] );
+				 "%s: unsupported conversion specifier.",
+				 function );
 
 				goto on_error;
 			}
+			value_string_index = (int) message_string[ message_string_index + 1 ] - (int) '0' - 1;
+
 			conversion_specifier_length = 2;
 
-		 	if( ( ( message_string_index + 4 ) < message_string_length )
-			 && ( message_string[ message_string_index + 2 ] == (libcstring_system_character_t) '!' ) )
+		 	if( ( ( message_string_index + 3 ) < message_string_length )
+			 && ( message_string[ message_string_index + 2 ] >= (libcstring_system_character_t) '0' )
+			 && ( message_string[ message_string_index + 2 ] <= (libcstring_system_character_t) '9' ) )
 			{
-				if( ( message_string[ message_string_index + 3 ] != (libcstring_system_character_t) 's' )
-				 || ( message_string[ message_string_index + 4 ] != (libcstring_system_character_t) '!' ) )
+				value_string_index *= 10;
+				value_string_index += (int) message_string[ message_string_index + 2 ] - (int) '0';
+
+				conversion_specifier_length += 1;
+			}
+		 	if( ( ( message_string_index + conversion_specifier_length + 3 ) < message_string_length )
+			 && ( message_string[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
+			{
+				if( ( message_string[ message_string_index + conversion_specifier_length ] != (libcstring_system_character_t) 's' )
+				 || ( message_string[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) '!' ) )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported conversion specifier: %%"
-					 "%" PRIc_LIBCSTRING_SYSTEM "%" PRIc_LIBCSTRING_SYSTEM
-					 "%" PRIc_LIBCSTRING_SYSTEM "%" PRIc_LIBCSTRING_SYSTEM ".",
-					 function,
-					 message_string[ message_string_index + 1 ],
-					 message_string[ message_string_index + 2 ],
-					 message_string[ message_string_index + 3 ],
-					 message_string[ message_string_index + 4 ] );
+					 "%s: unsupported conversion specifier.",
+					 function );
 
 					goto on_error;
 				}
-				conversion_specifier_length = 5;
+				conversion_specifier_length += 3;
 			}
-			value_string_index = (int) message_string[ message_string_index + 1 ]
-			                   - (int) '0'
-			                   - 1;
-
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libevtx_record_get_utf16_string_size(
 				  record,
@@ -1194,7 +1211,6 @@ int export_handle_message_string_fprint(
 			message_string_index += 1;
 		}
 	}
-#endif /* TODO */
 	fprintf(
 	 export_handle->notify_stream,
 	 "\n" );
@@ -1210,99 +1226,32 @@ on_error:
 	return( -1 );
 }
 
-/* Exports the record
+/* Exports the record event message
  * Returns 1 if successful or -1 on error
  */
-int export_handle_export_record(
+int export_handle_export_record_event_message(
      export_handle_t *export_handle,
      libevtx_record_t *record,
+     const libcstring_system_character_t *event_source,
+     size_t event_source_length,
+     uint32_t event_identifier,
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	static char *function = "export_handle_export_record";
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_handle->export_format == EXPORT_FORMAT_TEXT )
-	{
-		if( export_handle_export_record_text(
-		     export_handle,
-		     record,
-		     log_handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GENERIC,
-			 "%s: unable to export record in text.",
-			 function );
-
-			return( -1 );
-		}
-	}
-	else if( export_handle->export_format == EXPORT_FORMAT_XML )
-	{
-		if( export_handle_export_record_xml(
-		     export_handle,
-		     record,
-		     log_handle,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GENERIC,
-			 "%s: unable to export record in XML.",
-			 function );
-
-			return( -1 );
-		}
-	}
-	return( 1 );
-}
-
-/* Exports the record in the text format
- * Returns 1 if successful or -1 on error
- */
-int export_handle_export_record_text(
-     export_handle_t *export_handle,
-     libevtx_record_t *record,
-     log_handle_t *log_handle,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t filetime_string[ 32 ];
-
-	libcstring_system_character_t *event_source                    = NULL;
 	libcstring_system_character_t *message_filename                = NULL;
 	libcstring_system_character_t *message_filename_string_segment = NULL;
 	libcstring_system_character_t *message_string                  = NULL;
-	libcstring_system_character_t *mui_message_filename            = NULL;
 	libcstring_system_character_t *value_string                    = NULL;
-	libfdatetime_filetime_t *filetime                              = NULL;
-	static char *function                                          = "export_handle_export_record_text";
-	size_t event_source_size                                       = 0;
+	static char *function                                          = "export_handle_export_record_event_message";
 	size_t message_filename_size                                   = 0;
 	size_t message_filename_string_segment_size                    = 0;
 	size_t message_string_size                                     = 0;
-	size_t mui_message_filename_index                              = 0;
-	size_t mui_message_filename_size                               = 0;
 	size_t value_string_size                                       = 0;
-	uint64_t value_64bit                                           = 0;
-	uint32_t event_identifier                                      = 0;
-	uint8_t event_level                                            = 0;
 	int message_filename_number_of_segments                        = 0;
 	int message_filename_segment_index                             = 0;
+	int number_of_strings                                          = 0;
 	int result                                                     = 0;
+	int value_string_index                                         = 0;
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
@@ -1321,307 +1270,12 @@ int export_handle_export_record_text(
 
 		return( -1 );
 	}
-	if( record == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid record.",
-		 function );
-
-		return( -1 );
-	}
-	if( libfdatetime_filetime_initialize(
-	     &filetime,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create filetime.",
-		 function );
-
-		goto on_error;
-	}
-	if( libevtx_record_get_identifier(
-	     record,
-	     &value_64bit,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve identifier.",
-		 function );
-
-		goto on_error;
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "Event number\t\t: %" PRIu64 "\n",
-	 value_64bit );
-
-	if( libevtx_record_get_written_time(
-	     record,
-	     &value_64bit,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve written time.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfdatetime_filetime_copy_from_64bit(
-	     filetime,
-	     value_64bit,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to copy filetime from 64-bit.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libfdatetime_filetime_copy_to_utf16_string(
-		  filetime,
-		  (uint16_t *) filetime_string,
-		  32,
-		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		  error );
-#else
-	result = libfdatetime_filetime_copy_to_utf8_string(
-		  filetime,
-		  (uint8_t *) filetime_string,
-		  32,
-		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-		  error );
-#endif
-	if( result != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to copy filetime to string.",
-		 function );
-
-		goto on_error;
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "Written time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
-	 filetime_string );
-
-	if( libfdatetime_filetime_free(
-	     &filetime,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free filetime.",
-		 function );
-
-		goto on_error;
-	}
-	if( libevtx_record_get_event_identifier(
-	     record,
-	     &event_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve event identifier.",
-		 function );
-
-		goto on_error;
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "Event identifier\t: 0x%08" PRIx32 "\n",
-	 event_identifier );
-
-	if( libevtx_record_get_event_level(
-	     record,
-	     &event_level,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve event level.",
-		 function );
-
-		goto on_error;
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "Event level\t\t: %s\n",
-	 export_handle_get_event_level(
-	  event_level ) );
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libevtx_record_get_utf16_source_name_size(
-	          record,
-	          &event_source_size,
-	          error );
-#else
-	result = libevtx_record_get_utf8_source_name_size(
-	          record,
-	          &event_source_size,
-	          error );
-#endif
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve source name size.",
-		 function );
-
-		goto on_error;
-	}
-	if( ( result != 0 )
-	 && ( event_source_size > 0 ) )
-	{
-		event_source = libcstring_system_string_allocate(
-		                event_source_size );
-
-		if( event_source == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create event source.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libevtx_record_get_utf16_source_name(
-		          record,
-		          (uint16_t *) event_source,
-		          event_source_size,
-		          error );
-#else
-		result = libevtx_record_get_utf8_source_name(
-		          record,
-		          (uint8_t *) event_source,
-		          event_source_size,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve source name.",
-			 function );
-
-			goto on_error;
-		}
-		fprintf(
-		 export_handle->notify_stream,
-		 "Source name\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-		 event_source );
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libevtx_record_get_utf16_computer_name_size(
-	          record,
-	          &value_string_size,
-	          error );
-#else
-	result = libevtx_record_get_utf8_computer_name_size(
-	          record,
-	          &value_string_size,
-	          error );
-#endif
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve computer name size.",
-		 function );
-
-		goto on_error;
-	}
-	if( ( result != 0 )
-	 && ( value_string_size > 0 ) )
-	{
-		value_string = libcstring_system_string_allocate(
-		                value_string_size );
-
-		if( value_string == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create value string.",
-			 function );
-
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libevtx_record_get_utf16_computer_name(
-		          record,
-		          (uint16_t *) value_string,
-		          value_string_size,
-		          error );
-#else
-		result = libevtx_record_get_utf8_computer_name(
-		          record,
-		          (uint8_t *) value_string,
-		          value_string_size,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve computer name.",
-			 function );
-
-			goto on_error;
-		}
-		fprintf(
-		 export_handle->notify_stream,
-		 "Computer name\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-		 value_string );
-
-		memory_free(
-		 value_string );
-
-		value_string = NULL;
-	}
 	if( event_source != NULL )
 	{
 		result = message_handle_get_message_filename(
 		          export_handle->message_handle,
 		          event_source,
-		          event_source_size - 1,
+		          event_source_length,
 		          _LIBCSTRING_SYSTEM_STRING( "EventMessageFile" ),
 		          16,
 		          &message_filename,
@@ -1643,7 +1297,7 @@ int export_handle_export_record_text(
 		{
 			fprintf(
 			 export_handle->notify_stream,
-			 "Message filename\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+			 "Message filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 			 message_filename );
 
 			/* The message filename can contain multiple file names
@@ -1737,72 +1391,11 @@ int export_handle_export_record_text(
 
 					goto on_error;
 				}
-/* TODO improve: add the language string and .mui */
-				mui_message_filename_size = message_filename_string_segment_size + 6 + 4;
-
-				mui_message_filename = libcstring_system_string_allocate(
-				                        mui_message_filename_size );
-
-				if( mui_message_filename == NULL )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create MUI message filename.",
-					 function );
-
-					goto on_error;
-				}
-				if( libcstring_system_string_copy(
-				     mui_message_filename,
-				     message_filename_string_segment,
-				     message_filename_string_segment_size ) == NULL )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-					 "%s: unable to copy message filename to MUI message filename.",
-					 function );
-
-					goto on_error;
-				}
-				mui_message_filename_index = mui_message_filename_size - 1;
-
-				mui_message_filename[ mui_message_filename_index-- ] = 0;
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'i';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'u';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'm';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '.';
-
-				while( mui_message_filename_index >= 6 )
-				{
-					if( mui_message_filename[ mui_message_filename_index - 6 ] == (libcstring_system_character_t) '\\' )
-					{
-						mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '\\';
-
-						break;
-					}
-					mui_message_filename[ mui_message_filename_index ] = mui_message_filename[ mui_message_filename_index - 6 ];
-
-					mui_message_filename_index--;
-				}
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'S';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'U';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) '-';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'n';
-				mui_message_filename[ mui_message_filename_index-- ] = (libcstring_system_character_t) 'e';
-
-				/* Check for the %PATH%/%LANGUAGE%/%FILE%.mui variant first
-				 * otherwise fallback to %PATH%/%FILE%
-				 */
-/* TODO improve mapping event identifier */
 				result = message_handle_get_message_string(
 					  export_handle->message_handle,
-					  mui_message_filename,
-					  mui_message_filename_size - 1,
-					  event_identifier | 0x40000000UL,
+					  message_filename_string_segment,
+					  message_filename_string_segment_size - 1,
+					  event_identifier,
 					  &message_string,
 					  &message_string_size,
 					  error );
@@ -1813,44 +1406,17 @@ int export_handle_export_record_text(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
+					 "%s: unable to retrieve message string: 0x%08" PRIx32 " from: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
-					 event_identifier );
+					 event_identifier,
+					 message_filename_string_segment );
 
 					goto on_error;
 				}
-				else if( result == 0 )
-				{
-					result = message_handle_get_message_string(
-						  export_handle->message_handle,
-						  message_filename_string_segment,
-						  message_filename_string_segment_size - 1,
-						  event_identifier,
-						  &message_string,
-						  &message_string_size,
-						  error );
-
-					if( result == -1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
-						 function,
-						 event_identifier );
-
-						goto on_error;
-					}
-				}
-				if( result != 0 )
+				else if( result != 0 )
 				{
 					break;
 				}
-				memory_free(
-				 mui_message_filename );
-
-				mui_message_filename = NULL;
 			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			if( libcsplit_wide_split_string_free(
@@ -1876,10 +1442,6 @@ int export_handle_export_record_text(
 
 			message_filename = NULL;
 		}
-		memory_free(
-		 event_source );
-
-		event_source = NULL;
 	}
 	if( message_string != NULL )
 	{
@@ -1904,22 +1466,131 @@ int export_handle_export_record_text(
 
 		message_string = NULL;
 	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "\n" );
+	else
+	{
+		if( libevtx_record_get_number_of_strings(
+		     record,
+		     &number_of_strings,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of strings in record.",
+			 function );
 
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Number of strings\t\t: %d\n",
+		 number_of_strings );
+
+		for( value_string_index = 0;
+		     value_string_index < number_of_strings;
+		     value_string_index++ )
+		{
+			fprintf(
+			 export_handle->notify_stream,
+			 "String: %d\t\t\t: ",
+			 value_string_index );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libevtx_record_get_utf16_string_size(
+				  record,
+				  value_string_index,
+				  &value_string_size,
+				  error );
+#else
+			result = libevtx_record_get_utf8_string_size(
+				  record,
+				  value_string_index,
+				  &value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve string: %d size.",
+				 function,
+				 value_string_index );
+
+				goto on_error;
+			}
+			if( value_string_size > 0 )
+			{
+				value_string = libcstring_system_string_allocate(
+						value_string_size );
+
+				if( value_string == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create value string.",
+					 function );
+
+					goto on_error;
+				}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+				result = libevtx_record_get_utf16_string(
+					  record,
+					  value_string_index,
+					  (uint16_t *) value_string,
+					  value_string_size,
+					  error );
+#else
+				result = libevtx_record_get_utf8_string(
+					  record,
+					  value_string_index,
+					  (uint8_t *) value_string,
+					  value_string_size,
+					  error );
+#endif
+				if( result != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve string: %d.",
+					 function,
+					 value_string_index );
+
+					goto on_error;
+				}
+				fprintf(
+				 export_handle->notify_stream,
+				 "%" PRIs_LIBCSTRING_SYSTEM "",
+				 value_string );
+
+				memory_free(
+				 value_string );
+
+				value_string = NULL;
+			}
+			fprintf(
+			 export_handle->notify_stream,
+			 "\n" );
+		}
+	}
 	return( 1 );
 
 on_error:
+	if( value_string != NULL )
+	{
+		memory_free(
+		 value_string );
+	}
 	if( message_string != NULL )
 	{
 		memory_free(
 		 message_string );
-	}
-	if( mui_message_filename != NULL )
-	{
-		memory_free(
-		 mui_message_filename );
 	}
 	if( message_filename_split_string != NULL )
 	{
@@ -1938,6 +1609,432 @@ on_error:
 		memory_free(
 		 message_filename );
 	}
+	return( -1 );
+}
+
+/* Exports the record
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_export_record(
+     export_handle_t *export_handle,
+     libevtx_record_t *record,
+     log_handle_t *log_handle,
+     libcerror_error_t **error )
+{
+	static char *function = "export_handle_export_record";
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_handle->export_format == EXPORT_FORMAT_TEXT )
+	{
+		if( export_handle_export_record_text(
+		     export_handle,
+		     record,
+		     log_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to export record in text.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	else if( export_handle->export_format == EXPORT_FORMAT_XML )
+	{
+		if( export_handle_export_record_xml(
+		     export_handle,
+		     record,
+		     log_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to export record in XML.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
+
+/* Exports the record in the text format
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_export_record_text(
+     export_handle_t *export_handle,
+     libevtx_record_t *record,
+     log_handle_t *log_handle,
+     libcerror_error_t **error )
+{
+	libcstring_system_character_t filetime_string[ 32 ];
+
+	libcstring_system_character_t *event_source = NULL;
+	libcstring_system_character_t *value_string = NULL;
+	libfdatetime_filetime_t *filetime           = NULL;
+	static char *function                       = "export_handle_export_record_text";
+	size_t event_source_size                    = 0;
+	size_t value_string_size                    = 0;
+	uint64_t value_64bit                        = 0;
+	uint32_t event_identifier                   = 0;
+	uint8_t event_level                         = 0;
+	int result                                  = 0;
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfdatetime_filetime_initialize(
+	     &filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create filetime.",
+		 function );
+
+		goto on_error;
+	}
+	if( libevtx_record_get_identifier(
+	     record,
+	     &value_64bit,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve identifier.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "Event number\t\t\t: %" PRIu64 "\n",
+	 value_64bit );
+
+	if( libevtx_record_get_written_time(
+	     record,
+	     &value_64bit,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve written time.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfdatetime_filetime_copy_from_64bit(
+	     filetime,
+	     value_64bit,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy filetime from 64-bit.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libfdatetime_filetime_copy_to_utf16_string(
+		  filetime,
+		  (uint16_t *) filetime_string,
+		  32,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		  error );
+#else
+	result = libfdatetime_filetime_copy_to_utf8_string(
+		  filetime,
+		  (uint8_t *) filetime_string,
+		  32,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		  error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy filetime to string.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "Written time\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+	 filetime_string );
+
+	if( libfdatetime_filetime_free(
+	     &filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free filetime.",
+		 function );
+
+		goto on_error;
+	}
+	if( libevtx_record_get_event_level(
+	     record,
+	     &event_level,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event level.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "Event level\t\t\t: %s\n",
+	 export_handle_get_event_level(
+	  event_level ) );
+
+/* TODO user SID ? */
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_record_get_utf16_computer_name_size(
+	          record,
+	          &value_string_size,
+	          error );
+#else
+	result = libevtx_record_get_utf8_computer_name_size(
+	          record,
+	          &value_string_size,
+	          error );
+#endif
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve computer name size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( result != 0 )
+	 && ( value_string_size > 0 ) )
+	{
+		value_string = libcstring_system_string_allocate(
+		                value_string_size );
+
+		if( value_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create value string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libevtx_record_get_utf16_computer_name(
+		          record,
+		          (uint16_t *) value_string,
+		          value_string_size,
+		          error );
+#else
+		result = libevtx_record_get_utf8_computer_name(
+		          record,
+		          (uint8_t *) value_string,
+		          value_string_size,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve computer name.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Computer name\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 value_string );
+
+		memory_free(
+		 value_string );
+
+		value_string = NULL;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_record_get_utf16_source_name_size(
+	          record,
+	          &event_source_size,
+	          error );
+#else
+	result = libevtx_record_get_utf8_source_name_size(
+	          record,
+	          &event_source_size,
+	          error );
+#endif
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve source name size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( result != 0 )
+	 && ( event_source_size > 0 ) )
+	{
+		event_source = libcstring_system_string_allocate(
+		                event_source_size );
+
+		if( event_source == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create event source.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libevtx_record_get_utf16_source_name(
+		          record,
+		          (uint16_t *) event_source,
+		          event_source_size,
+		          error );
+#else
+		result = libevtx_record_get_utf8_source_name(
+		          record,
+		          (uint8_t *) event_source,
+		          event_source_size,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve source name.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Source name\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 event_source );
+	}
+/* TODO category ? */
+
+	if( libevtx_record_get_event_identifier(
+	     record,
+	     &event_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event identifier.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "Event identifier\t\t: 0x%08" PRIx32 "\n",
+	 event_identifier );
+
+	if( export_handle_export_record_event_message(
+	     export_handle,
+	     record,
+	     event_source,
+	     event_source_size - 1,
+	     event_identifier,
+	     log_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GENERIC,
+		 "%s: unable to export event message.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "\n" );
+
+	if( event_source != NULL )
+	{
+		memory_free(
+		 event_source );
+	}
+	return( 1 );
+
+on_error:
 	if( event_source != NULL )
 	{
 		memory_free(
@@ -1969,7 +2066,6 @@ int export_handle_export_record_xml(
 	libcstring_system_character_t *event_xml = NULL;
 	static char *function                    = "export_handle_export_record_xml";
 	size_t event_xml_size                    = 0;
-	int result                               = 0;
 
 	if( export_handle == NULL )
 	{

@@ -1,4 +1,4 @@
-/* 
+/*
  * Export handle
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -174,6 +174,15 @@ int export_handle_message_string_fprint(
      const libcstring_system_character_t *message_string,
      size_t message_string_length,
      libevtx_record_t *record,
+     libcerror_error_t **error );
+
+int export_handle_export_record_event_message(
+     export_handle_t *export_handle,
+     libevtx_record_t *record,
+     const libcstring_system_character_t *event_source,
+     size_t event_source_length,
+     uint32_t event_identifier,
+     log_handle_t *log_handle,
      libcerror_error_t **error );
 
 int export_handle_export_record(

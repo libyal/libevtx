@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -721,9 +721,12 @@ int libevtx_record_values_get_event_identifier(
      uint32_t *event_identifier,
      libcerror_error_t **error )
 {
-	libfwevt_xml_tag_t *eventid_xml_tag = NULL;
-	libfwevt_xml_tag_t *system_xml_tag  = NULL;
-	static char *function               = "libevtx_record_values_get_event_identifier";
+	libfwevt_xml_tag_t *eventid_xml_tag    = NULL;
+	libfwevt_xml_tag_t *qualifiers_xml_tag = NULL;
+	libfwevt_xml_tag_t *system_xml_tag     = NULL;
+	static char *function                  = "libevtx_record_values_get_event_identifier";
+	uint32_t qualifiers                    = 0;
+	int result                             = 0;
 
 	if( record_values == NULL )
 	{
@@ -808,6 +811,56 @@ int libevtx_record_values_get_event_identifier(
 		 function );
 
 		return( -1 );
+	}
+	result = libfwevt_xml_tag_get_attribute_by_utf8_name(
+	          eventid_xml_tag,
+	          (uint8_t *) "Qualifiers",
+	          10,
+	          &qualifiers_xml_tag,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve Qualifiers XML attribute.",
+		 function );
+
+		return( -1 );
+	}
+	else if( result != 0 )
+	{
+		if( qualifiers_xml_tag == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing Qualifiers XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		if( libfvalue_value_copy_to_32bit(
+		     qualifiers_xml_tag->value,
+		     0,
+		     &qualifiers,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy value to qualifiers.",
+			 function );
+
+			return( -1 );
+		}
+		qualifiers <<= 16;
+
+		*event_identifier |= qualifiers;
 	}
 	return( 1 );
 }
@@ -2188,7 +2241,6 @@ int libevtx_record_values_get_utf8_string_size(
 	libfwevt_xml_tag_t *element_xml_tag    = NULL;
 	libfwevt_xml_tag_t *event_data_xml_tag = NULL;
 	static char *function                  = "libevtx_record_values_get_utf8_string_size";
-	int result                             = 0;
 
 	if( record_values == NULL )
 	{
@@ -2276,7 +2328,6 @@ int libevtx_record_values_get_utf8_string(
 	libfwevt_xml_tag_t *element_xml_tag    = NULL;
 	libfwevt_xml_tag_t *event_data_xml_tag = NULL;
 	static char *function                  = "libevtx_record_values_get_utf8_string";
-	int result                             = 0;
 
 	if( record_values == NULL )
 	{
@@ -2364,7 +2415,6 @@ int libevtx_record_values_get_utf16_string_size(
 	libfwevt_xml_tag_t *element_xml_tag    = NULL;
 	libfwevt_xml_tag_t *event_data_xml_tag = NULL;
 	static char *function                  = "libevtx_record_values_get_utf16_string_size";
-	int result                             = 0;
 
 	if( record_values == NULL )
 	{
@@ -2452,7 +2502,6 @@ int libevtx_record_values_get_utf16_string(
 	libfwevt_xml_tag_t *element_xml_tag    = NULL;
 	libfwevt_xml_tag_t *event_data_xml_tag = NULL;
 	static char *function                  = "libevtx_record_values_get_utf16_string";
-	int result                             = 0;
 
 	if( record_values == NULL )
 	{
@@ -2535,6 +2584,8 @@ int libevtx_record_values_get_data_size(
      size_t *data_size,
      libcerror_error_t **error )
 {
+/* TODO */
+	return( -1 );
 }
 
 /* Retrieves the data
@@ -2546,6 +2597,8 @@ int libevtx_record_values_get_data(
      size_t data_size,
      libcerror_error_t **error )
 {
+/* TODO */
+	return( -1 );
 }
 
 /* Retrieves the size of the UTF-8 encoded XML string

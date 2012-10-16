@@ -1,4 +1,4 @@
-/* 
+/*
  * Message file
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
@@ -61,7 +61,7 @@ int message_file_initialize(
 		return( -1 );
 	}
 	*message_file = memory_allocate_structure(
-	                message_file_t );
+	                 message_file_t );
 
 	if( *message_file == NULL )
 	{
@@ -183,22 +183,6 @@ int message_file_free(
 				result = -1;
 			}
 		}
-		if( ( *message_file )->message_table_resource != NULL )
-		{
-			if( libwrc_resource_free(
-			     &( ( *message_file )->message_table_resource ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free message table resource.",
-				 function );
-
-				result = -1;
-			}
-		}
 		if( libwrc_stream_free(
 		     &( ( *message_file )->resource_stream ),
 		     error ) != 1 )
@@ -211,22 +195,6 @@ int message_file_free(
 			 function );
 
 			result = -1;
-		}
-		if( ( *message_file )->resource_section != NULL )
-		{
-			if( libexe_section_free(
-			     &( ( *message_file )->resource_section ),
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free resource section.",
-				 function );
-
-				result = -1;
-			}
 		}
 		if( libexe_file_free(
 		     &( ( *message_file )->exe_file ),
@@ -430,6 +398,54 @@ int message_file_close(
 	}
 	if( message_file->is_open != 0 )
 	{
+		if( message_file->message_table_resource != NULL )
+		{
+			if( libwrc_resource_free(
+			     &( message_file->message_table_resource ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free message table resource.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( message_file->mui_resource != NULL )
+		{
+			if( libwrc_resource_free(
+			     &( message_file->mui_resource ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free MUI resource.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( message_file->wevt_template_resource != NULL )
+		{
+			if( libwrc_resource_free(
+			     &( message_file->wevt_template_resource ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free WEVT_TEMPLATE resource.",
+				 function );
+
+				result = -1;
+			}
+		}
 		if( libwrc_stream_close(
 		     message_file->resource_stream,
 		     error ) != 0 )
@@ -493,6 +509,104 @@ int message_file_close(
 	return( result );
 }
 
+/* Retrieves an available language identifier from the resource
+ * This function will look for the preferred languague identifier otherwise default to the first
+ * Returns 1 if successful or -1 on error
+ */
+int message_file_get_resource_available_languague_identifier(
+     message_file_t *message_file,
+     libwrc_resource_t *resource,
+     uint32_t preferred_language_identifier,
+     uint32_t *language_identifier,
+     libcerror_error_t **error )
+{
+	static char *function                 = "message_file_get_resource_available_languague_identifier";
+	uint32_t resource_language_identifier = 0;
+	int language_index                    = 0;
+	int number_of_languages               = 0;
+
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	if( language_identifier == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid language identifier.",
+		 function );
+
+		return( -1 );
+	}
+	if( libwrc_resource_get_number_of_languages(
+	     resource,
+	     &number_of_languages,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of languages.",
+		 function );
+
+		return( -1 );
+	}
+	if( libwrc_resource_get_language_identifier(
+	     resource,
+	     language_index,
+	     language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve language identifier: %d.",
+		 function,
+		 language_index );
+
+		return( -1 );
+	}
+	for( language_index = 1;
+	     language_index < number_of_languages;
+	     language_index++ )
+	{
+		if( libwrc_resource_get_language_identifier(
+		     resource,
+		     language_index,
+		     &resource_language_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve language identifier: %d.",
+			 function,
+			 language_index );
+
+			return( -1 );
+		}
+		if( ( preferred_language_identifier & 0x000003ffUL ) == ( resource_language_identifier & 0x000003ffUL ) )
+		{
+			*language_identifier = resource_language_identifier;
+
+			break;
+		}
+	}
+	return( 1 );
+}
+
 /* Retrieves a specific message string
  * Returns 1 if successful, 0 if no such message string or -1 error
  */
@@ -506,9 +620,7 @@ int message_file_get_string(
 {
 	static char *function        = "message_file_get_string";
 	uint32_t language_identifier = 0;
-	int language_index           = 0;
 	int message_index            = 0;
-	int number_of_languages      = 0;
 	int result                   = 0;
 
 	if( message_file == NULL )
@@ -579,45 +691,22 @@ int message_file_get_string(
 			return( 0 );
 		}
 	}
-/* TODO cache message strings */
-	if( libwrc_message_table_get_number_of_languages(
+/* TODO cache message strings ? */
+	if( message_file_get_resource_available_languague_identifier(
+	     message_file,
 	     message_file->message_table_resource,
-	     &number_of_languages,
+	     preferred_language_identifier,
+	     &language_identifier,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of languages.",
+		 "%s: unable to retrieve an available language identifier.",
 		 function );
 
 		goto on_error;
-	}
-	for( language_index = 0;
-	     language_index < number_of_languages;
-	     language_index++ )
-	{
-		if( libwrc_message_table_get_language_identifier(
-		     message_file->message_table_resource,
-		     0,
-		     &language_identifier,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number language identifier: %d.",
-			 function,
-			 language_index );
-
-			goto on_error;
-		}
-		if( ( preferred_language_identifier & 0x000003ffUL ) == ( language_identifier & 0x000003ffUL ) )
-		{
-			break;
-		}
 	}
 	result = libwrc_message_table_get_index_by_identifier(
 	          message_file->message_table_resource,
@@ -723,6 +812,89 @@ on_error:
 	*message_string_size = 0;
 
 	return( -1 );
+}
+
+/* Retrieves the MUI file type
+ * Returns 1 if successful, 0 if no MUI file type or -1 error
+ */
+int message_file_get_mui_file_type(
+     message_file_t *message_file,
+     uint32_t preferred_language_identifier,
+     uint32_t *file_type,
+     libcerror_error_t **error )
+{
+	static char *function        = "message_file_get_mui_file_type";
+	uint32_t language_identifier = 0;
+	int result                   = 0;
+
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file->mui_resource == NULL )
+	{
+		result = libwrc_stream_get_resource_by_utf8_name(
+		          message_file->resource_stream,
+		          (uint8_t *) "MUI",
+		          3,
+		          &( message_file->mui_resource ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve MUI resource.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+	}
+	if( message_file_get_resource_available_languague_identifier(
+	     message_file,
+	     message_file->mui_resource,
+	     preferred_language_identifier,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve an available language identifier.",
+		 function );
+
+		return( -1 );
+	}
+	if( libwrc_mui_get_file_type(
+	     message_file->mui_resource,
+	     language_identifier,
+	     file_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file type.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Sets the name
