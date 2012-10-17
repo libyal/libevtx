@@ -66,6 +66,9 @@ void pyevtx_record_free(
 PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record );
 
+PyObject *pyevtx_record_get_written_time_as_integer(
+           pyevtx_record_t *pyevtx_record );
+
 PyObject *pyevtx_record_get_event_identifier(
            pyevtx_record_t *pyevtx_record );
 

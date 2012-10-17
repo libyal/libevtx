@@ -1,7 +1,6 @@
 TODO
 * format string
-  - add support for %b
-  - add support for %10, ...
+  - improve support for %b (what is %b supposed to represent ?)
 
 * wevt
   - xml tag make internal version
@@ -53,6 +52,13 @@ libfwevt optimization:
 
 Recovery:
 * scan for records in chunk free space
+
+20121018
+* worked on formatted message strings
+* bug fix in libcerror
+* bug fix in libcpath
+* bug fix handling %WinDir%
+* worked on pyevtx
 
 20121017
 * code clean up

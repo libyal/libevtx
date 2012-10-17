@@ -46,6 +46,13 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Returns the written date and time" },
 
+	{ "get_written_time_as_integer",
+	  (PyCFunction) pyevtx_record_get_written_time_as_integer,
+	  METH_NOARGS,
+	  "get_written_time_as_integer() -> Integer\n"
+	  "\n"
+	  "Returns the written date and time as a 64-bit integer containing a FILETIME value" },
+
 	{ "get_event_identifier",
 	  (PyCFunction) pyevtx_record_get_event_identifier,
 	  METH_NOARGS,
@@ -448,6 +455,75 @@ PyObject *pyevtx_record_get_written_time(
 	                    filetime );
 
 	return( date_time_object );
+}
+
+/* Retrieves the written date and time as an integer
+ * Returns a Python object holding the offset if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_written_time_as_integer(
+           pyevtx_record_t *pyevtx_record )
+{
+	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
+
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_written_time_as_integer";
+	uint64_t filetime        = 0;
+	int result               = 0;
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_written_time(
+	          pyevtx_record->record,
+	          &filetime,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		if( libcerror_error_backtrace_sprint(
+		     error,
+		     error_string,
+		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve written time.",
+			 function );
+		}
+		else
+		{
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: unable to retrieve written time.\n%s",
+			 function,
+			 error_string );
+		}
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( filetime > (uint64_t) LONG_MAX )
+	{
+		PyErr_Format(
+		 PyExc_OverflowError,
+		 "%s: filetime value exceeds maximum.",
+		 function );
+
+		return( NULL );
+	}
+	return( PyInt_FromLong(
+	         (long) filetime ) );
 }
 
 /* Retrieves the event identifier

@@ -1494,7 +1494,7 @@ int export_handle_export_record_event_message(
 			fprintf(
 			 export_handle->notify_stream,
 			 "String: %d\t\t\t: ",
-			 value_string_index );
+			 value_string_index + 1 );
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libevtx_record_get_utf16_string_size(

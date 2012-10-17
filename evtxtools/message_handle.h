@@ -78,6 +78,14 @@ struct message_handle
 	 */
 	size_t system_root_path_size;
 
+	/* The %WinDir% path
+	 */
+	libcstring_system_character_t *windows_directory_path;
+
+	/* The %WinDir% path size
+	 */
+	size_t windows_directory_path_size;
+
 	/* The SYSTEM registry file
 	 */
 	registry_file_t *system_registry_file;

@@ -228,6 +228,11 @@ int message_handle_free(
 			memory_free(
 			 ( *message_handle )->system_root_path );
 		}
+		if( ( *message_handle )->windows_directory_path != NULL )
+		{
+			memory_free(
+			 ( *message_handle )->windows_directory_path );
+		}
 		if( ( *message_handle )->system_registry_file != NULL )
 		{
 			if( registry_file_free(
@@ -282,6 +287,39 @@ int message_handle_free(
 			 function );
 
 			result = -1;
+		}
+/* TODO refactor */
+		if( ( *message_handle )->control_set1_key != NULL )
+		{
+			if( libregf_key_free(
+			     &( ( *message_handle )->control_set1_key ),
+			     NULL ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free control set 1 key.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *message_handle )->control_set2_key != NULL )
+		{
+			if( libregf_key_free(
+			     &( ( *message_handle )->control_set2_key ),
+			     NULL ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free control set 2 key.",
+				 function );
+
+				result = -1;
+			}
 		}
 		memory_free(
 		 *message_handle );
@@ -1125,6 +1163,47 @@ int message_handle_open_software_registry_file(
 		}
 		( message_handle->system_root_path )[ 10 ] = 0;
 	}
+/* TODO for now %WinDir% is a copy of %SystemRoot% */
+	if( message_handle->windows_directory_path == NULL )
+	{
+		message_handle->windows_directory_path_size = message_handle->system_root_path_size;
+
+		message_handle->windows_directory_path = libcstring_system_string_allocate(
+		                                           message_handle->windows_directory_path_size );
+
+		if( message_handle->windows_directory_path == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create windows directory path string.",
+			 function );
+
+			goto on_error;
+		}
+		if( libcstring_system_string_copy(
+		     message_handle->windows_directory_path,
+		     message_handle->system_root_path,
+		     message_handle->windows_directory_path_size - 1 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy default value to windows directory path string.",
+			 function );
+
+			memory_free(
+			 message_handle->windows_directory_path );
+
+			message_handle->windows_directory_path      = NULL;
+			message_handle->windows_directory_path_size = 0;
+
+			goto on_error;
+		}
+		( message_handle->windows_directory_path )[ message_handle->windows_directory_path_size - 1 ] = 0;
+	}
 	return( 1 );
 
 on_error:
@@ -1949,7 +2028,7 @@ int message_handle_get_message_file_path(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid message filenmae length is zero.",
+		 "%s: invalid message filename length is zero.",
 		 function );
 
 		return( -1 );
@@ -2163,7 +2242,7 @@ int message_handle_get_message_file_path(
 				{
 					message_filename_string_segment_size = 8;
 #if defined( WINAPI )
-					volume_letter = _LIBCSTRING_SYSTEM_STRING( "C" );
+					volume_letter = message_handle->windows_directory_path;
 #endif
 				}
 			}
@@ -2314,15 +2393,15 @@ int message_handle_get_message_file_path(
 		{
 			if( ( message_filename_string_segment_size - 1 ) == 8 )
 			{
-				/* Expand %WinDir% to WINDOWS
+				/* Expand %WinDir%
 				 */
 				if( libcstring_system_string_compare_no_case(
 				     message_filename_string_segment,
 				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
 				     8 ) == 0 )
 				{
-					message_filename_string_segment      = _LIBCSTRING_SYSTEM_STRING( "Windows" );
-					message_filename_string_segment_size = 8;
+					message_filename_string_segment      = &( ( message_handle->windows_directory_path )[ 3 ] );
+					message_filename_string_segment_size = message_handle->windows_directory_path_size - 3;
 				}
 			}
 			else if( ( message_filename_string_segment_size - 1 ) == 12 )
@@ -2639,7 +2718,7 @@ int message_handle_get_message_file_from_cache(
 		}
 		if( *message_file != NULL )
 		{
-			if( message_filename_length != ( ( *message_file )->name_size - 1 ) )
+			if( ( message_filename_length + 1 ) != ( *message_file )->name_size )
 			{
 				*message_file = NULL;
 			}
@@ -2705,7 +2784,7 @@ int message_handle_get_mui_message_file_path(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid message filenmae length is zero.",
+		 "%s: invalid message filename length is zero.",
 		 function );
 
 		return( -1 );
@@ -2754,6 +2833,12 @@ int message_handle_get_mui_message_file_path(
 
 		return( -1 );
 	}
+/* TODO fix this */
+	/* Make sure the string is the correct length
+	 */
+	message_filename_length = libcstring_system_string_length(
+	                           message_filename );
+
 /* TODO determine language string based on language identifier */
 	language_string = _LIBCSTRING_SYSTEM_STRING( "en-US" );
 
@@ -2800,16 +2885,18 @@ int message_handle_get_mui_message_file_path(
 	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'm';
 	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) '.';
 
-	while( message_file_path_index > message_filename_length )
+	while( message_file_path_index > 0 )
 	{
 		( *message_file_path )[ message_file_path_index ] = ( *message_file_path )[ message_file_path_index - ( language_string_length + 1 ) ];
 
-		if( ( *message_file_path )[ message_file_path_index - ( language_string_length + 1 ) ] == (libcstring_system_character_t) '\\' )
+		if( ( *message_file_path )[ message_file_path_index ] == (libcstring_system_character_t) LIBCPATH_SEPARATOR )
 		{
 			break;
 		}
 		message_file_path_index--;
 	}
+	message_file_path_index--;
+
 	while( language_string_length > 0 )
 	{
 		language_string_length--;
@@ -3024,7 +3111,7 @@ int message_handle_get_mui_message_file_from_cache(
 		}
 		if( *message_file != NULL )
 		{
-			if( message_filename_length != ( ( *message_file )->name_size - 1 ) )
+			if( ( message_filename_length + 1 ) != ( *message_file )->name_size )
 			{
 				*message_file = NULL;
 			}
@@ -3058,12 +3145,14 @@ int message_handle_get_message_string_from_message_file(
      size_t *message_string_size,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *message_file_path = NULL;
-	message_file_t *message_file                     = NULL;
-	static char *function                            = "message_handle_get_message_string_from_message_file";
-	size_t message_file_path_size                    = 0;
-	uint32_t mui_file_type                           = 0;
-	int result                                       = 0;
+	libcstring_system_character_t *message_file_path     = NULL;
+	libcstring_system_character_t *mui_message_file_path = NULL;
+	message_file_t *message_file                         = NULL;
+	static char *function                                = "message_handle_get_message_string_from_message_file";
+	size_t message_file_path_size                        = 0;
+	size_t mui_message_file_path_size                    = 0;
+	uint32_t mui_file_type                               = 0;
+	int result                                           = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3180,122 +3269,10 @@ int message_handle_get_message_string_from_message_file(
 
 				goto on_error;
 			}
-			memory_free(
-			 message_file_path );
-
-			message_file_path = NULL;
 		}
 	}
 	if( message_file != NULL )
 	{
-		result = message_file_get_mui_file_type(
-			  message_file,
-			  message_handle->preferred_language_identifier,
-			  &mui_file_type,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve MUI file type.",
-			 function );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			switch( mui_file_type )
-			{
-				case 0x00000011:
-/* TODO check for WEVT_TEMPLATE */
-					message_identifier |= 0x40000000UL;
-
-					result = message_handle_get_mui_message_file_path(
-						  message_handle,
-						  message_filename,
-						  message_filename_length,
-						  &message_file_path,
-						  &message_file_path_size,
-						  error );
-
-					if( result == -1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve message file path.",
-						 function );
-
-						goto on_error;
-					}
-					else if( result != 0 )
-					{
-						result = message_handle_get_mui_message_file_from_cache(
-							  message_handle,
-							  message_filename,
-							  message_filename_length,
-							  &message_file,
-							  error );
-
-						if( result == -1 )
-						{
-							libcerror_error_set(
-							 error,
-							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-							 "%s: unable to retrieve MUI message file from cache.",
-							 function );
-
-							goto on_error;
-						}
-						else if( result == 0 )
-						{
-							if( message_handle_get_mui_message_file(
-							     message_handle,
-							     message_filename,
-							     message_filename_length,
-							     message_file_path,
-							     &message_file,
-							     error ) != 1 )
-							{
-								libcerror_error_set(
-								 error,
-								 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-								 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-								 "%s: unable to retrieve MUI message file: %" PRIs_LIBCSTRING_SYSTEM ".",
-								 function,
-								 message_file_path );
-
-								goto on_error;
-							}
-						}
-						memory_free(
-						 message_file_path );
-
-						message_file_path = NULL;
-					}
-					break;
-
-				case 0x00000012:
-					/* This should already be a .mui file and contain the message table resource */
-					break;
-
-				default:
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported MUI file type: 0x%08" PRIx32 ".",
-					 function,
-					 mui_file_type );
-
-					goto on_error;
-			}
-		}
 		result = message_file_get_string(
 			  message_file,
 			  message_handle->preferred_language_identifier,
@@ -3310,19 +3287,169 @@ int message_handle_get_message_string_from_message_file(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message string: 0x%" PRIx32 ".",
+			 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
 			 function );
 
 			goto on_error;
 		}
-	}
-	return( result );
+		else if( result == 0 )
+		{
+			result = message_file_get_mui_file_type(
+				  message_file,
+				  message_handle->preferred_language_identifier,
+				  &mui_file_type,
+				  error );
 
-on_error:
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve MUI file type.",
+				 function );
+
+				goto on_error;
+			}
+			else if( result != 0 )
+			{
+				if( mui_file_type != 0x00000011UL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+					 "%s: unsupported MUI file type: 0x%08" PRIx32 ".",
+					 function,
+					 mui_file_type );
+				}
+				message_file = NULL;
+
+				result = message_handle_get_mui_message_file_from_cache(
+					  message_handle,
+					  message_filename,
+					  message_filename_length,
+					  &message_file,
+					  error );
+
+				if( result == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve MUI message file from cache.",
+					 function );
+
+					goto on_error;
+				}
+				else if( result == 0 )
+				{
+					if( message_file_path == NULL )
+					{
+/* TODO refactor into mui and normal into 1 function ? */
+						if( message_handle_get_message_file_path(
+						     message_handle,
+						     message_filename,
+						     message_filename_length,
+						     &message_file_path,
+						     &message_file_path_size,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+							 "%s: unable to retrieve message file path.",
+							 function );
+
+							goto on_error;
+						}
+					}
+					result = message_handle_get_mui_message_file_path(
+						  message_handle,
+						  message_file_path,
+						  message_file_path_size - 1,
+						  &mui_message_file_path,
+						  &mui_message_file_path_size,
+						  error );
+
+					if( result == -1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve MUI message file path.",
+						 function );
+
+						goto on_error;
+					}
+					else if( result != 0 )
+					{
+						if( message_handle_get_mui_message_file(
+						     message_handle,
+						     message_filename,
+						     message_filename_length,
+						     mui_message_file_path,
+						     &message_file,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+							 "%s: unable to retrieve MUI message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+							 function,
+							 mui_message_file_path );
+
+							goto on_error;
+						}
+						memory_free(
+						 mui_message_file_path );
+
+						mui_message_file_path = NULL;
+					}
+				}
+				if( message_file != NULL )
+				{
+					result = message_file_get_string(
+						  message_file,
+						  message_handle->preferred_language_identifier,
+						  message_identifier,
+						  message_string,
+						  message_string_size,
+						  error );
+
+					if( result == -1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
+						 function );
+
+						goto on_error;
+					}
+				}
+			}
+		}
+	}
 	if( message_file_path != NULL )
 	{
 		memory_free(
 		 message_file_path );
+
+		message_file_path = NULL;
+	}
+	return( result );
+
+on_error:
+	if( mui_message_file_path != NULL )
+	{
+		memory_free(
+		 mui_message_file_path );
 	}
 	if( *message_string != NULL )
 	{
@@ -3333,6 +3460,11 @@ on_error:
 	}
 	*message_string_size = 0;
 
+	if( message_file_path != NULL )
+	{
+		memory_free(
+		 message_file_path );
+	}
 	return( -1 );
 }
 
