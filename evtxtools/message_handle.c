@@ -1953,16 +1953,20 @@ int message_handle_get_message_file_path(
      message_handle_t *message_handle,
      const libcstring_system_character_t *message_filename,
      size_t message_filename_length,
+     const libcstring_system_character_t *language_string,
+     size_t language_string_length,
      libcstring_system_character_t **message_file_path,
      size_t *message_file_path_size,
      libcerror_error_t **error )
 {
 	libcstring_system_character_t *message_filename_string_segment = NULL;
+	libcstring_system_character_t *mui_string                      = NULL;
 	static char *function                                          = "message_handle_get_message_file_path";
 	size_t message_file_path_index                                 = 0;
 	size_t message_files_path_length                               = 0;
 	size_t message_filename_directory_name_index                   = 0;
 	size_t message_filename_string_segment_size                    = 0;
+	size_t mui_string_size                                         = 0;
 	uint8_t directory_entry_type                                   = 0;
 	int message_filename_number_of_segments                        = 0;
 	int message_filename_segment_index                             = 0;
@@ -2043,6 +2047,20 @@ int message_handle_get_message_file_path(
 		 function );
 
 		return( -1 );
+	}
+	if( language_string != NULL )
+	{
+		if( language_string_length > (size_t) SSIZE_MAX )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid language string length value exceeds maximum.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( message_file_path == NULL )
 	{
@@ -2231,7 +2249,7 @@ int message_handle_get_message_file_path(
 		else if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
 		      && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
 		{
-			if( ( message_filename_string_segment_size - 1 ) == 8 )
+			if( message_filename_string_segment_size == 9 )
 			{
 				/* Expand %WinDir% to WINDOWS
 				 */
@@ -2246,7 +2264,7 @@ int message_handle_get_message_file_path(
 #endif
 				}
 			}
-			else if( ( message_filename_string_segment_size - 1 ) == 12 )
+			else if( message_filename_string_segment_size == 13 )
 			{
 				/* Expand %SystemRoot%
 				 */
@@ -2263,6 +2281,12 @@ int message_handle_get_message_file_path(
 			}
 		}
 		*message_file_path_size += message_filename_string_segment_size;
+	}
+	if( language_string != NULL )
+	{
+		/* Add: <LANGUAGE>/<FILENAME>.mui
+		 */
+		*message_file_path_size += language_string_length + 5;
 	}
 	if( message_handle->message_files_path != NULL )
 	{
@@ -2328,9 +2352,7 @@ int message_handle_get_message_file_path(
 
 		if( message_handle->message_files_path[ message_files_path_length - 1 ] != (libcstring_system_character_t) LIBCPATH_SEPARATOR )
 		{
-			( *message_file_path )[ message_file_path_index ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
-
-			message_file_path_index += 1;
+			( *message_file_path )[ message_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
 		}
 	}
 #if defined( WINAPI )
@@ -2350,6 +2372,96 @@ int message_handle_get_message_file_path(
 	     message_filename_segment_index < message_filename_number_of_segments;
 	     message_filename_segment_index++ )
 	{
+		if( ( language_string != NULL )
+		 && ( message_filename_segment_index == ( message_filename_number_of_segments - 1 ) ) )
+		{
+			/* Make a copy of the language string so it can be written to
+			 */
+			mui_string_size = language_string_length + 1;
+
+			mui_string = libcstring_system_string_allocate(
+			              mui_string_size );
+
+			if( mui_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create MUI language string.",
+				 function );
+
+				goto on_error;
+			}
+			if( libcstring_system_string_copy(
+			     mui_string,
+			     language_string,
+			     language_string_length ) == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+				 "%s: unable to copy MUI language string.",
+				 function );
+
+				goto on_error;
+			}
+			mui_string[ language_string_length ] = 0;
+
+			( *message_file_path )[ message_file_path_index ] = 0;
+
+			result = path_handle_get_directory_entry_name_by_name_no_case(
+				  message_handle->path_handle,
+				  *message_file_path,
+				  message_file_path_index + 1,
+				  mui_string,
+				  mui_string_size,
+				  LIBCDIRECTORY_ENTRY_TYPE_DIRECTORY,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_GENERIC,
+				 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 mui_string );
+
+				goto on_error;
+			}
+			else if( result != 0 )
+			{
+				if( libcstring_system_string_copy(
+				     &( ( *message_file_path )[ message_file_path_index ] ),
+				     mui_string,
+				     language_string_length ) == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+					 "%s: unable to set MUI language string in message file path.",
+					 function );
+
+					goto on_error;
+				}
+				message_file_path_index += language_string_length;
+
+				( *message_file_path )[ message_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+			}
+			memory_free(
+			 mui_string );
+
+			mui_string = NULL;
+
+			if( result == 0 )
+			{
+				break;
+			}
+		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		if( libcsplit_wide_split_string_get_segment_by_index(
 		     message_filename_split_string,
@@ -2391,7 +2503,7 @@ int message_handle_get_message_file_path(
 		if( ( message_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
 		 && ( message_filename_string_segment[ message_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
 		{
-			if( ( message_filename_string_segment_size - 1 ) == 8 )
+			if( message_filename_string_segment_size == 9 )
 			{
 				/* Expand %WinDir%
 				 */
@@ -2404,7 +2516,7 @@ int message_handle_get_message_file_path(
 					message_filename_string_segment_size = message_handle->windows_directory_path_size - 3;
 				}
 			}
-			else if( ( message_filename_string_segment_size - 1 ) == 12 )
+			else if( message_filename_string_segment_size == 13 )
 			{
 				/* Expand %SystemRoot%
 				 */
@@ -2424,6 +2536,48 @@ int message_handle_get_message_file_path(
 		}
 		else
 		{
+			if( language_string != NULL )
+			{
+				/* Add .mui to the filename
+			 	 */
+				mui_string = libcstring_system_string_allocate(
+					      message_filename_string_segment_size + 4 );
+
+				if( mui_string == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create MUI message filename string.",
+					 function );
+
+					goto on_error;
+				}
+				message_filename_string_segment_size--;
+
+				if( libcstring_system_string_copy(
+				     mui_string,
+				     message_filename_string_segment,
+				     message_filename_string_segment_size ) == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+					 "%s: unable to copy MUI message filename string.",
+					 function );
+
+					goto on_error;
+				}
+				mui_string[ message_filename_string_segment_size++ ] = (libcstring_system_character_t) '.';
+				mui_string[ message_filename_string_segment_size++ ] = (libcstring_system_character_t) 'm';
+				mui_string[ message_filename_string_segment_size++ ] = (libcstring_system_character_t) 'u';
+				mui_string[ message_filename_string_segment_size++ ] = (libcstring_system_character_t) 'i';
+				mui_string[ message_filename_string_segment_size++ ] = 0;
+
+				message_filename_string_segment = mui_string;
+			}
 			directory_entry_type = LIBCDIRECTORY_ENTRY_TYPE_FILE;
 		}
 		( *message_file_path )[ message_file_path_index ] = 0;
@@ -2468,9 +2622,14 @@ int message_handle_get_message_file_path(
 			}
 			message_file_path_index += message_filename_string_segment_size - 1;
 
-			( *message_file_path )[ message_file_path_index ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+			( *message_file_path )[ message_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+		}
+		if( mui_string != NULL )
+		{
+			memory_free(
+			 mui_string );
 
-			message_file_path_index += 1;
+			mui_string = NULL;
 		}
 		if( result == 0 )
 		{
@@ -2501,6 +2660,11 @@ int message_handle_get_message_file_path(
 	return( result );
 
 on_error:
+	if( mui_string != NULL )
+	{
+		memory_free(
+		 mui_string );
+	}
 	if( message_filename_split_string != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
@@ -2738,184 +2902,6 @@ int message_handle_get_message_file_from_cache(
 		}
 	}
 	return( result );
-}
-
-/* Retrieves the path of the MUI message file based on the message filename
- * Returns 1 if successful, 0 if no path can be found or -1 error
- */
-int message_handle_get_mui_message_file_path(
-     message_handle_t *message_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     libcstring_system_character_t **message_file_path,
-     size_t *message_file_path_size,
-     libcerror_error_t **error )
-{
-	const libcstring_system_character_t *language_string = NULL;
-	static char *function                                = "message_handle_get_mui_message_file_path";
-	size_t language_string_length                        = 0;
-	int message_file_path_index                          = 0;
-
-	if( message_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename_length == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid message filename length is zero.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid message filename length value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_file_path == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file path.",
-		 function );
-
-		return( -1 );
-	}
-	if( *message_file_path != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message file path value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_file_path_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file path size.",
-		 function );
-
-		return( -1 );
-	}
-/* TODO fix this */
-	/* Make sure the string is the correct length
-	 */
-	message_filename_length = libcstring_system_string_length(
-	                           message_filename );
-
-/* TODO determine language string based on language identifier */
-	language_string = _LIBCSTRING_SYSTEM_STRING( "en-US" );
-
-	language_string_length = libcstring_system_string_length(
-	                          language_string );
-
-	/* The MUI message file path is: %PATH%/%LANGUAGE%/%FILENAME%.mui
-	 */
-	*message_file_path_size = message_filename_length + language_string_length + 6;
-
-	*message_file_path = libcstring_system_string_allocate(
-	                      *message_file_path_size );
-
-	if( *message_file_path == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create message file path.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcstring_system_string_copy(
-	     *message_file_path,
-	     message_filename,
-	     message_filename_length ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy message filename to message file path.",
-		 function );
-
-		goto on_error;
-	}
-	message_file_path_index = *message_file_path_size - 1;
-
-	( *message_file_path )[ message_file_path_index-- ] = 0;
-	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'i';
-	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'u';
-	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) 'm';
-	( *message_file_path )[ message_file_path_index-- ] = (libcstring_system_character_t) '.';
-
-	while( message_file_path_index > 0 )
-	{
-		( *message_file_path )[ message_file_path_index ] = ( *message_file_path )[ message_file_path_index - ( language_string_length + 1 ) ];
-
-		if( ( *message_file_path )[ message_file_path_index ] == (libcstring_system_character_t) LIBCPATH_SEPARATOR )
-		{
-			break;
-		}
-		message_file_path_index--;
-	}
-	message_file_path_index--;
-
-	while( language_string_length > 0 )
-	{
-		language_string_length--;
-
-		( *message_file_path )[ message_file_path_index-- ] = language_string[ language_string_length ];
-	}
-	return( 1 );
-
-on_error:
-	if( *message_file_path != NULL )
-	{
-		memory_free(
-		 *message_file_path );
-
-		*message_file_path = NULL;
-	}
-	*message_file_path_size = 0;
-
-	return( -1 );
 }
 
 /* Retrieves a specific MUI message file and adds it to the cache
@@ -3234,6 +3220,8 @@ int message_handle_get_message_string_from_message_file(
 		          message_handle,
 		          message_filename,
 		          message_filename_length,
+		          NULL,
+		          0,
 		          &message_file_path,
 		          &message_file_path_size,
 		          error );
@@ -3345,31 +3333,15 @@ int message_handle_get_message_string_from_message_file(
 				}
 				else if( result == 0 )
 				{
-					if( message_file_path == NULL )
-					{
-/* TODO refactor into mui and normal into 1 function ? */
-						if( message_handle_get_message_file_path(
-						     message_handle,
-						     message_filename,
-						     message_filename_length,
-						     &message_file_path,
-						     &message_file_path_size,
-						     error ) != 1 )
-						{
-							libcerror_error_set(
-							 error,
-							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-							 "%s: unable to retrieve message file path.",
-							 function );
-
-							goto on_error;
-						}
-					}
-					result = message_handle_get_mui_message_file_path(
+/* TODO add support to determine language string */
+					/* The MUI message file path is: %PATH%/%LANGUAGE%/%FILENAME%.mui
+					 */
+					result = message_handle_get_message_file_path(
 						  message_handle,
-						  message_file_path,
-						  message_file_path_size - 1,
+					          message_filename,
+					          message_filename_length,
+					          _LIBCSTRING_SYSTEM_STRING( "en-US" ),
+					          5,
 						  &mui_message_file_path,
 						  &mui_message_file_path_size,
 						  error );

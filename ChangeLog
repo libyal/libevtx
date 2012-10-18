@@ -1,8 +1,9 @@
 TODO
 * format string
   - improve support for %b (what is %b supposed to represent ?)
+  - use provider GUID
 
-* wevt
+* fwevt
   - xml tag make internal version
 
 * updated msvscpp files
@@ -52,6 +53,10 @@ libfwevt optimization:
 
 Recovery:
 * scan for records in chunk free space
+
+20121019
+* worked on formatted message strings
+  - added support for case change in mui filename expansion
 
 20121018
 * worked on formatted message strings

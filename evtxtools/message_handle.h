@@ -28,7 +28,6 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libfcache.h"
-/* TODO refactor ? */
 #include "evtxtools_libregf.h"
 #include "message_file.h"
 #include "path_handle.h"
@@ -214,6 +213,8 @@ int message_handle_get_message_file_path(
      message_handle_t *message_handle,
      const libcstring_system_character_t *message_filename,
      size_t message_filename_length,
+     const libcstring_system_character_t *language_string,
+     size_t language_string_length,
      libcstring_system_character_t **message_file_path,
      size_t *message_file_path_size,
      libcerror_error_t **error );
