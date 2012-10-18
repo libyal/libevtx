@@ -36,6 +36,17 @@ extern "C" {
 
 extern const uint8_t evtx_event_record_signature[ 4 ];
 
+enum LIBEVTX_RECORD_VALUES_EVENT_DATA_TYPES
+{
+	/* Event data stored as: EventData
+	 */
+	LIBEVTX_RECORD_VALUES_EVENT_DATA_TYPE_EVENT_DATA	= 1,
+
+	/* Event data stored as: UserData
+	 */
+	LIBEVTX_RECORD_VALUES_EVENT_DATA_TYPE_USER_DATA		= 2,
+};
+
 typedef struct libevtx_record_values libevtx_record_values_t;
 
 struct libevtx_record_values
@@ -95,6 +106,18 @@ struct libevtx_record_values
 	/* Reference to the user security identifier (SID) value
 	 */
 	libfvalue_value_t *user_sid_value;
+
+	/* Reference to the event data XML tag
+	 */
+	libfwevt_xml_tag_t *event_data_xml_tag;
+
+	/* Value to indicate the event data type
+	 */
+	uint8_t event_data_type;
+
+	/* Reference to the BinaryData value
+	 */
+	libfvalue_value_t *binary_data_value;
 };
 
 int libevtx_record_values_initialize(
@@ -177,6 +200,12 @@ int libevtx_record_values_get_utf16_computer_name(
      libevtx_record_values_t *record_values,
      uint16_t *utf16_string,
      size_t utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_event_data_xml_tag(
+     libevtx_record_values_t *record_values,
+     libfwevt_xml_tag_t **event_data_xml_tag,
+     uint8_t *event_data_type,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_number_of_strings(

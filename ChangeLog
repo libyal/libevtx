@@ -2,6 +2,7 @@ TODO
 * format string
   - improve support for %b (what is %b supposed to represent ?)
   - use provider GUID
+  - add Z to filetime (fvalue)
 
 * fwevt
   - xml tag make internal version
@@ -57,6 +58,9 @@ Recovery:
 20121019
 * worked on formatted message strings
   - added support for case change in mui filename expansion
+* worked on libevtx
+  - added support for Binary
+  - added support for UserData
 
 20121018
 * worked on formatted message strings
