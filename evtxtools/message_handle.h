@@ -97,13 +97,17 @@ struct message_handle
 	 */
 	uint32_t current_control_set;
 
-	/* The control set 1 key
+	/* The SOFTWARE WinEvt publishers key
 	 */
-	libregf_key_t *control_set1_key;
+	libregf_key_t *winevt_publishers_key;
 
-	/* The control set 2 key
+	/* The SYSTEM (control set 1) eventlog services key
 	 */
-	libregf_key_t *control_set2_key;
+	libregf_key_t *control_set_1_eventlog_services_key;
+
+	/* The SYSTEM (control set 2) eventlog services key
+	 */
+	libregf_key_t *control_set_2_eventlog_services_key;
 
 	/* The messages files path
 	 */
@@ -199,10 +203,20 @@ int message_handle_close_input(
      message_handle_t *message_handle,
      libcerror_error_t **error );
 
-int message_handle_get_message_filename(
+int message_handle_get_message_filename_by_event_source(
      message_handle_t *message_handle,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
+     const libcstring_system_character_t *value_name,
+     size_t value_name_length,
+     libcstring_system_character_t **message_filename,
+     size_t *message_filename_size,
+     libcerror_error_t **error );
+
+int message_handle_get_message_filename_by_provider_identifier(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *provider_identifier,
+     size_t provider_identifier_length,
      const libcstring_system_character_t *value_name,
      size_t value_name_length,
      libcstring_system_character_t **message_filename,

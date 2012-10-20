@@ -288,27 +288,42 @@ int message_handle_free(
 
 			result = -1;
 		}
-/* TODO refactor */
-		if( ( *message_handle )->control_set1_key != NULL )
+		if( ( *message_handle )->winevt_publishers_key != NULL )
 		{
 			if( libregf_key_free(
-			     &( ( *message_handle )->control_set1_key ),
+			     &( ( *message_handle )->winevt_publishers_key ),
 			     NULL ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free control set 1 key.",
+				 "%s: unable to free winevt publishers key.",
 				 function );
 
 				result = -1;
 			}
 		}
-		if( ( *message_handle )->control_set2_key != NULL )
+		if( ( *message_handle )->control_set_1_eventlog_services_key != NULL )
 		{
 			if( libregf_key_free(
-			     &( ( *message_handle )->control_set2_key ),
+			     &( ( *message_handle )->control_set_1_eventlog_services_key ),
+			     NULL ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free control set 1 eventlog services key.",
+				 function );
+
+				result = -1;
+			}
+		}
+		if( ( *message_handle )->control_set_2_eventlog_services_key != NULL )
+		{
+			if( libregf_key_free(
+			     &( ( *message_handle )->control_set_2_eventlog_services_key ),
 			     NULL ) != 1 )
 			{
 				libcerror_error_set(
@@ -1402,8 +1417,34 @@ int message_handle_open_system_registry_file(
 
 		return( -1 );
 	}
-/* TODO refactor */
-	/* Get the control set 1 event log key:
+	/* Get the winevt providers key
+	 * SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Publishers
+	 */
+	key_path = _LIBCSTRING_SYSTEM_STRING( "Microsoft\\Windows\\CurrentVersion\\WINEVT\\Publishers" );
+
+	key_path_length = libcstring_system_string_length(
+	                   key_path );
+
+	result = registry_file_get_key_by_path(
+		  message_handle->software_registry_file,
+		  key_path,
+		  key_path_length,
+	          &( message_handle->winevt_publishers_key ),
+		  error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 key_path );
+
+		goto on_error;
+	}
+	/* Get the control set 1 eventlog services key:
 	 * SYSTEM\ControlSet001\Services\Eventlog
 	 */
 	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet001\\Services\\Eventlog" );
@@ -1436,7 +1477,7 @@ int message_handle_open_system_registry_file(
 			  sub_key,
 			  (uint8_t *) eventlog_key_name,
 			  eventlog_key_name_length,
-			  &( message_handle->control_set1_key ),
+			  &( message_handle->control_set_1_eventlog_services_key ),
 			  error );
 
 		if( result == -1 )
@@ -1465,7 +1506,7 @@ int message_handle_open_system_registry_file(
 
 		goto on_error;
 	}
-	/* Get the control set 2 event log key:
+	/* Get the control set 2 eventlog services key:
 	 * SYSTEM\ControlSet002\Services\Eventlog
 	 */
 	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet002\\Services\\Eventlog" );
@@ -1498,7 +1539,7 @@ int message_handle_open_system_registry_file(
 			  sub_key,
 			  (uint8_t *) eventlog_key_name,
 			  eventlog_key_name_length,
-			  &( message_handle->control_set2_key ),
+			  &( message_handle->control_set_2_eventlog_services_key ),
 			  error );
 
 		if( result == -1 )
@@ -1686,7 +1727,7 @@ int message_handle_close_input(
  * The message filename is retrieved from the SYSTEM Windows Registry File if available
  * Returns 1 if successful, 0 if such event source or -1 error
  */
-int message_handle_get_message_filename(
+int message_handle_get_message_filename_by_event_source(
      message_handle_t *message_handle,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
@@ -1698,7 +1739,7 @@ int message_handle_get_message_filename(
 {
 	libregf_key_t *key     = NULL;
 	libregf_value_t *value = NULL;
-	static char *function  = "message_handle_get_message_filename";
+	static char *function  = "message_handle_get_message_filename_by_event_source";
 	int result             = 0;
 
 	if( message_handle == NULL )
@@ -1745,18 +1786,18 @@ int message_handle_get_message_filename(
 
 		return( -1 );
 	}
-	if( message_handle->control_set1_key != NULL )
+	if( message_handle->control_set_1_eventlog_services_key != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libregf_key_get_sub_key_by_utf16_name(
-			  message_handle->control_set1_key,
+			  message_handle->control_set_1_eventlog_services_key,
 			  (uint16_t *) event_source,
 			  event_source_length,
 			  &key,
 			  error );
 #else
 		result = libregf_key_get_sub_key_by_utf8_name(
-			  message_handle->control_set1_key,
+			  message_handle->control_set_1_eventlog_services_key,
 			  (uint8_t *) event_source,
 			  event_source_length,
 			  &key,
@@ -1777,18 +1818,18 @@ int message_handle_get_message_filename(
 	}
 	if( result == 0 )
 	{
-		if( message_handle->control_set2_key != NULL )
+		if( message_handle->control_set_2_eventlog_services_key != NULL )
 		{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_key_get_sub_key_by_utf16_name(
-				  message_handle->control_set2_key,
+				  message_handle->control_set_2_eventlog_services_key,
 				  (uint16_t *) event_source,
 				  event_source_length,
 				  &key,
 				  error );
 #else
 			result = libregf_key_get_sub_key_by_utf8_name(
-				  message_handle->control_set2_key,
+				  message_handle->control_set_2_eventlog_services_key,
 				  (uint8_t *) event_source,
 				  event_source_length,
 				  &key,
@@ -1806,6 +1847,239 @@ int message_handle_get_message_filename(
 
 				goto on_error;
 			}
+		}
+	}
+	if( result != 0 )
+	{
+		result = libregf_key_get_value_by_utf8_name(
+			  key,
+			  (uint8_t *) value_name,
+			  value_name_length,
+			  &value,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value: %s.",
+			 function,
+			 value_name );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libregf_value_get_value_utf16_string_size(
+			          value,
+			          message_filename_size,
+			          error );
+#else
+			result = libregf_value_get_value_utf8_string_size(
+			          value,
+			          message_filename_size,
+			          error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve value string size.",
+				 function );
+
+				goto on_error;
+			}
+			*message_filename = libcstring_system_string_allocate(
+					     *message_filename_size );
+
+			if( message_filename == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libregf_value_get_value_utf16_string(
+				  value,
+				  (uint16_t *) *message_filename,
+				  *message_filename_size,
+				  error );
+#else
+			result = libregf_value_get_value_utf8_string(
+				  value,
+				  (uint8_t *) *message_filename,
+				  *message_filename_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve value string.",
+				 function );
+
+				goto on_error;
+			}
+			if( libregf_value_free(
+			     &value,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free value.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		if( libregf_key_free(
+		     &key,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free key.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( result );
+
+on_error:
+	if( value != NULL )
+	{
+		libregf_value_free(
+		 &value,
+		 NULL );
+	}
+	if( key != NULL )
+	{
+		libregf_key_free(
+		 &key,
+		 NULL );
+	}
+	if( *message_filename != NULL )
+	{
+		memory_free(
+		 *message_filename );
+
+		*message_filename = NULL;
+	}
+	*message_filename_size = 0;
+
+	return( -1 );
+}
+
+/* Retrieves the message filename for a specific event source
+ * The message filename is retrieved from the SYSTEM Windows Registry File if available
+ * Returns 1 if successful, 0 if such event source or -1 error
+ */
+int message_handle_get_message_filename_by_provider_identifier(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *provider_identifier,
+     size_t provider_identifier_length,
+     const libcstring_system_character_t *value_name,
+     size_t value_name_length,
+     libcstring_system_character_t **message_filename,
+     size_t *message_filename_size,
+     libcerror_error_t **error )
+{
+	libregf_key_t *key     = NULL;
+	libregf_value_t *value = NULL;
+	static char *function  = "message_handle_get_message_filename_by_provider_identifier";
+	int result             = 0;
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( *message_filename != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid message filename value already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message filename size.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO add WinEvt provider support: string must contain {%GUID%}
+ */
+	if( messaged_handle->winevt_publishers_key != NULL )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libregf_key_get_sub_key_by_utf16_name(
+			  message_handle->control_set_1_eventlog_services_key,
+			  (uint16_t *) event_source_identifier,
+			  event_source_identifier_length,
+			  &key,
+			  error );
+#else
+		result = libregf_key_get_sub_key_by_utf8_name(
+			  message_handle->control_set_1_eventlog_services_key,
+			  (uint16_t *) event_source_identifier,
+			  event_source_identifier_length,
+			  &key,
+			  error );
+#endif
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 event_source_identifier );
+
+			goto on_error;
 		}
 	}
 	if( result != 0 )
