@@ -13,6 +13,7 @@ TODO
 
 * XML output change
   - Keywords add 0x no leading 0's
+    <Keywords>8080000000000000</Keywords>
 
 strings:
 - support non-contiguous data elements ?
@@ -52,8 +53,18 @@ libfwevt optimization:
 * codepage support
 * flag internally if the file is corrupted (CRC mismatch)
 
+Debug:
+* libfwevt: character reference print trailing data
+
 Recovery:
 * scan for records in chunk free space
+
+20121021
+* worked on provider identifier support
+* worked on libfwevt
+
+20121020
+* worked on provider identifier support
 
 20121019
 * worked on formatted message strings

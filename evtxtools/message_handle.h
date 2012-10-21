@@ -203,24 +203,24 @@ int message_handle_close_input(
      message_handle_t *message_handle,
      libcerror_error_t **error );
 
-int message_handle_get_message_filename_by_event_source(
+int message_handle_get_value_by_event_source(
      message_handle_t *message_handle,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
      const libcstring_system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
+     libcstring_system_character_t **value_string,
+     size_t *value_string_size,
      libcerror_error_t **error );
 
-int message_handle_get_message_filename_by_provider_identifier(
+int message_handle_get_value_by_provider_identifier(
      message_handle_t *message_handle,
      const libcstring_system_character_t *provider_identifier,
      size_t provider_identifier_length,
      const libcstring_system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
+     libcstring_system_character_t **value_string,
+     size_t *value_string_size,
      libcerror_error_t **error );
 
 int message_handle_get_message_file_path(

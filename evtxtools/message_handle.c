@@ -1723,23 +1723,23 @@ int message_handle_close_input(
 	return( result );
 }
 
-/* Retrieves the message filename for a specific event source
- * The message filename is retrieved from the SYSTEM Windows Registry File if available
+/* Retrieves a value for a specific event source
+ * The value is retrieved from the event source key in the SYSTEM Windows Registry File if available
  * Returns 1 if successful, 0 if such event source or -1 error
  */
-int message_handle_get_message_filename_by_event_source(
+int message_handle_get_value_by_event_source(
      message_handle_t *message_handle,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
      const libcstring_system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
+     libcstring_system_character_t **value_string,
+     size_t *value_string_size,
      libcerror_error_t **error )
 {
 	libregf_key_t *key     = NULL;
 	libregf_value_t *value = NULL;
-	static char *function  = "message_handle_get_message_filename_by_event_source";
+	static char *function  = "message_handle_get_value_by_event_source";
 	int result             = 0;
 
 	if( message_handle == NULL )
@@ -1753,35 +1753,35 @@ int message_handle_get_message_filename_by_event_source(
 
 		return( -1 );
 	}
-	if( message_filename == NULL )
+	if( value_string == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
+		 "%s: invalid value string.",
 		 function );
 
 		return( -1 );
 	}
-	if( *message_filename != NULL )
+	if( *value_string != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message filename value already set.",
+		 "%s: invalid value string value already set.",
 		 function );
 
 		return( -1 );
 	}
-	if( message_filename_size == NULL )
+	if( value_string_size == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename size.",
+		 "%s: invalid value string size.",
 		 function );
 
 		return( -1 );
@@ -1864,7 +1864,7 @@ int message_handle_get_message_filename_by_event_source(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: %s.",
+			 "%s: unable to retrieve value: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 value_name );
 
@@ -1875,12 +1875,12 @@ int message_handle_get_message_filename_by_event_source(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string_size(
 			          value,
-			          message_filename_size,
+			          value_string_size,
 			          error );
 #else
 			result = libregf_value_get_value_utf8_string_size(
 			          value,
-			          message_filename_size,
+			          value_string_size,
 			          error );
 #endif
 			if( result != 1 )
@@ -1894,10 +1894,10 @@ int message_handle_get_message_filename_by_event_source(
 
 				goto on_error;
 			}
-			*message_filename = libcstring_system_string_allocate(
-					     *message_filename_size );
+			*value_string = libcstring_system_string_allocate(
+					 *value_string_size );
 
-			if( message_filename == NULL )
+			if( value_string == NULL )
 			{
 				libcerror_error_set(
 				 error,
@@ -1911,14 +1911,14 @@ int message_handle_get_message_filename_by_event_source(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string(
 				  value,
-				  (uint16_t *) *message_filename,
-				  *message_filename_size,
+				  (uint16_t *) *value_string,
+				  *value_string_size,
 				  error );
 #else
 			result = libregf_value_get_value_utf8_string(
 				  value,
-				  (uint8_t *) *message_filename,
-				  *message_filename_size,
+				  (uint8_t *) *value_string,
+				  *value_string_size,
 				  error );
 #endif
 			if( result != 1 )
@@ -1975,35 +1975,35 @@ on_error:
 		 &key,
 		 NULL );
 	}
-	if( *message_filename != NULL )
+	if( *value_string != NULL )
 	{
 		memory_free(
-		 *message_filename );
+		 *value_string );
 
-		*message_filename = NULL;
+		*value_string = NULL;
 	}
-	*message_filename_size = 0;
+	*value_string_size = 0;
 
 	return( -1 );
 }
 
-/* Retrieves the message filename for a specific event source
- * The message filename is retrieved from the SYSTEM Windows Registry File if available
+/* Retrieves a value for a specific provider identifier
+ * The value is retrieved from the WINEVT provider key in the SOFTWARE Windows Registry File if available
  * Returns 1 if successful, 0 if such event source or -1 error
  */
-int message_handle_get_message_filename_by_provider_identifier(
+int message_handle_get_value_by_provider_identifier(
      message_handle_t *message_handle,
      const libcstring_system_character_t *provider_identifier,
      size_t provider_identifier_length,
      const libcstring_system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **message_filename,
-     size_t *message_filename_size,
+     libcstring_system_character_t **value_string,
+     size_t *value_string_size,
      libcerror_error_t **error )
 {
 	libregf_key_t *key     = NULL;
 	libregf_value_t *value = NULL;
-	static char *function  = "message_handle_get_message_filename_by_provider_identifier";
+	static char *function  = "message_handle_get_value_by_provider_identifier";
 	int result             = 0;
 
 	if( message_handle == NULL )
@@ -2017,55 +2017,53 @@ int message_handle_get_message_filename_by_provider_identifier(
 
 		return( -1 );
 	}
-	if( message_filename == NULL )
+	if( value_string == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
+		 "%s: invalid value string.",
 		 function );
 
 		return( -1 );
 	}
-	if( *message_filename != NULL )
+	if( *value_string != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message filename value already set.",
+		 "%s: invalid value string value already set.",
 		 function );
 
 		return( -1 );
 	}
-	if( message_filename_size == NULL )
+	if( value_string_size == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename size.",
+		 "%s: invalid value string size.",
 		 function );
 
 		return( -1 );
 	}
-/* TODO add WinEvt provider support: string must contain {%GUID%}
- */
-	if( messaged_handle->winevt_publishers_key != NULL )
+	if( message_handle->winevt_publishers_key != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libregf_key_get_sub_key_by_utf16_name(
-			  message_handle->control_set_1_eventlog_services_key,
-			  (uint16_t *) event_source_identifier,
-			  event_source_identifier_length,
+			  message_handle->winevt_publishers_key,
+			  (uint16_t *) provider_identifier,
+			  provider_identifier_length,
 			  &key,
 			  error );
 #else
 		result = libregf_key_get_sub_key_by_utf8_name(
-			  message_handle->control_set_1_eventlog_services_key,
-			  (uint16_t *) event_source_identifier,
-			  event_source_identifier_length,
+			  message_handle->winevt_publishers_key,
+			  (uint8_t *) provider_identifier,
+			  provider_identifier_length,
 			  &key,
 			  error );
 #endif
@@ -2077,7 +2075,7 @@ int message_handle_get_message_filename_by_provider_identifier(
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
-			 event_source_identifier );
+			 provider_identifier );
 
 			goto on_error;
 		}
@@ -2097,7 +2095,7 @@ int message_handle_get_message_filename_by_provider_identifier(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: %s.",
+			 "%s: unable to retrieve value: %" PRIs_LIBCSTRING_SYSTEM ".",
 			 function,
 			 value_name );
 
@@ -2108,12 +2106,12 @@ int message_handle_get_message_filename_by_provider_identifier(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string_size(
 			          value,
-			          message_filename_size,
+			          value_string_size,
 			          error );
 #else
 			result = libregf_value_get_value_utf8_string_size(
 			          value,
-			          message_filename_size,
+			          value_string_size,
 			          error );
 #endif
 			if( result != 1 )
@@ -2127,10 +2125,10 @@ int message_handle_get_message_filename_by_provider_identifier(
 
 				goto on_error;
 			}
-			*message_filename = libcstring_system_string_allocate(
-					     *message_filename_size );
+			*value_string = libcstring_system_string_allocate(
+			                 *value_string_size );
 
-			if( message_filename == NULL )
+			if( value_string == NULL )
 			{
 				libcerror_error_set(
 				 error,
@@ -2144,14 +2142,14 @@ int message_handle_get_message_filename_by_provider_identifier(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string(
 				  value,
-				  (uint16_t *) *message_filename,
-				  *message_filename_size,
+				  (uint16_t *) *value_string,
+				  *value_string_size,
 				  error );
 #else
 			result = libregf_value_get_value_utf8_string(
 				  value,
-				  (uint8_t *) *message_filename,
-				  *message_filename_size,
+				  (uint8_t *) *value_string,
+				  *value_string_size,
 				  error );
 #endif
 			if( result != 1 )
@@ -2208,14 +2206,14 @@ on_error:
 		 &key,
 		 NULL );
 	}
-	if( *message_filename != NULL )
+	if( *value_string != NULL )
 	{
 		memory_free(
-		 *message_filename );
+		 *value_string );
 
-		*message_filename = NULL;
+		*value_string = NULL;
 	}
-	*message_filename_size = 0;
+	*value_string_size = 0;
 
 	return( -1 );
 }

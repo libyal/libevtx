@@ -30,6 +30,8 @@
 
 #include <libfvalue_codepage.h>
 #include <libfvalue_definitions.h>
+#include <libfvalue_floating_point.h>
+#include <libfvalue_integer.h>
 #include <libfvalue_split_string.h>
 #include <libfvalue_string.h>
 #include <libfvalue_table.h>
