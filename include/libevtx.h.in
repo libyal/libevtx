@@ -367,6 +367,15 @@ int libevtx_record_get_event_level(
      uint8_t *event_level,
      libevtx_error_t **error );
 
+/* Retrieves the provider identifier
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_get_provider_identifier(
+     libevtx_record_t *record,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libevtx_error_t **error );
+
 /* Retrieves the size of the UTF-8 encoded source name
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if not available or -1 on error

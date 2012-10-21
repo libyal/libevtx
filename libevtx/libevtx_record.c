@@ -432,6 +432,52 @@ int libevtx_record_get_event_level(
 	return( 1 );
 }
 
+/* Retrieves the provider identifier
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_get_provider_identifier(
+     libevtx_record_t *record,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_provider_identifier";
+	int result                                 = 0;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	result = libevtx_record_values_get_provider_identifier(
+	          internal_record->record_values,
+	          provider_identifier,
+	          provider_identifier_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider identifier from record values.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Retrieves the size of the UTF-8 encoded source name
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if not available or -1 on error

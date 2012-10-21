@@ -71,6 +71,14 @@ struct libevtx_record_values
 	 */
 	libfwevt_xml_document_t *xml_document;
 
+	/* Reference to the provider XML tag
+	 */
+	libfwevt_xml_tag_t *provider_xml_tag;
+
+	/* Reference to the provider identifier value
+	 */
+	libfvalue_value_t *provider_identifier_value;
+
 	/* Reference to the provider name value
 	 */
 	libfvalue_value_t *provider_name_value;
@@ -156,6 +164,12 @@ int libevtx_record_values_get_event_identifier(
 int libevtx_record_values_get_event_level(
      libevtx_record_values_t *record_values,
      uint8_t *event_level,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_provider_identifier(
+     libevtx_record_values_t *record_values,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_utf8_source_name_size(

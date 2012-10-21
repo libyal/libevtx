@@ -95,6 +95,13 @@ int libevtx_record_get_event_level(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_record_get_provider_identifier(
+     libevtx_record_t *record,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_record_get_utf8_source_name_size(
      libevtx_record_t *record,
      size_t *utf8_string_size,

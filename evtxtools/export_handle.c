@@ -25,6 +25,7 @@
 
 #include "evtxinput.h"
 #include "evtxtools_libcerror.h"
+#include "evtxtools_libfguid.h"
 #include "evtxtools_libcnotify.h"
 #include "evtxtools_libclocale.h"
 #include "evtxtools_libcsplit.h"
@@ -1084,8 +1085,9 @@ int export_handle_message_string_fprint(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported conversion specifier.",
-				 function );
+				 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 &( message_string[ message_string_index ] ) );
 
 				goto on_error;
 			}
@@ -1105,15 +1107,16 @@ int export_handle_message_string_fprint(
 		 	if( ( ( message_string_index + conversion_specifier_length + 3 ) < message_string_length )
 			 && ( message_string[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
 			{
-				if( ( message_string[ message_string_index + conversion_specifier_length ] != (libcstring_system_character_t) 's' )
-				 || ( message_string[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) '!' ) )
+				if( ( message_string[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) 's' )
+				 || ( message_string[ message_string_index + conversion_specifier_length + 2 ] != (libcstring_system_character_t) '!' ) )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported conversion specifier.",
-					 function );
+					 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 &( message_string[ message_string_index ] ) );
 
 					goto on_error;
 				}
@@ -1713,10 +1716,13 @@ int export_handle_export_record_text(
      libcerror_error_t **error )
 {
 	libcstring_system_character_t filetime_string[ 32 ];
+	libcstring_system_character_t guid_string[ 48 ];
+	uint8_t provider_identifier[ 16 ];
 
 	libcstring_system_character_t *event_source = NULL;
 	libcstring_system_character_t *value_string = NULL;
 	libfdatetime_filetime_t *filetime           = NULL;
+	libfguid_identifier_t *guid                 = NULL;
 	static char *function                       = "export_handle_export_record_text";
 	size_t event_source_size                    = 0;
 	size_t value_string_size                    = 0;
@@ -1946,6 +1952,100 @@ int export_handle_export_record_text(
 
 		value_string = NULL;
 	}
+	result = libevtx_record_get_provider_identifier(
+	          record,
+	          provider_identifier,
+	          16,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider identifier.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libfguid_identifier_initialize(
+		     &guid,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create GUID.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfguid_identifier_copy_from_byte_stream(
+		     guid,
+		     provider_identifier,
+		     16,
+		     LIBFGUID_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy GUID from byte stream.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfguid_identifier_copy_to_utf16_string(
+			  guid,
+			  (uint16_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+			  error );
+#else
+		result = libfguid_identifier_copy_to_utf8_string(
+			  guid,
+			  (uint8_t *) guid_string,
+			  48,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy GUID to string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		fprintf(
+		 export_handle->notify_stream,
+		 "Provider identifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 guid_string );
+#endif
+		if( libfguid_identifier_free(
+		     &guid,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free GUID.",
+			 function );
+
+			goto on_error;
+		}
+	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libevtx_record_get_utf16_source_name_size(
 	          record,
@@ -2065,6 +2165,12 @@ int export_handle_export_record_text(
 	return( 1 );
 
 on_error:
+	if( guid != NULL )
+	{
+		libfguid_identifier_free(
+		 &guid,
+		 NULL );
+	}
 	if( event_source != NULL )
 	{
 		memory_free(
