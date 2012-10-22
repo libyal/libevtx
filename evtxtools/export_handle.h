@@ -179,6 +179,8 @@ int export_handle_message_string_fprint(
 int export_handle_export_record_event_message(
      export_handle_t *export_handle,
      libevtx_record_t *record,
+     const libcstring_system_character_t *event_provider_identifier,
+     size_t event_provider_identifier_length,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
      uint32_t event_identifier,

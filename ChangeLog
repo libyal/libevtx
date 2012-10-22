@@ -1,9 +1,8 @@
 TODO
 * format string
-  - use provider GUID
-  - improve support for %b (what is %b supposed to represent ?)
+  - improve UserData support
 
-* updated msvscpp files
+* update msvscpp files
 * get %WinDir% from registry
 
 * XML output change
@@ -54,6 +53,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20121022
+* worked on provider identifier support
 
 20121021
 * worked on provider identifier support

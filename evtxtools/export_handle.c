@@ -25,7 +25,6 @@
 
 #include "evtxinput.h"
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libfguid.h"
 #include "evtxtools_libcnotify.h"
 #include "evtxtools_libclocale.h"
 #include "evtxtools_libcsplit.h"
@@ -1049,9 +1048,19 @@ int export_handle_message_string_fprint(
 /* TODO add support for more conversion specifiers */
 			/* Ignore %0 = end of string, %r = cariage return */
 			if( ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) '0' )
-			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
 			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'r' ) )
 			{
+				message_string_index += 2;
+
+				continue;
+			}
+			/* Replace %b = space */
+			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
+			{
+				fprintf(
+				 export_handle->notify_stream,
+				 " " );
+
 				message_string_index += 2;
 
 				continue;
@@ -1122,30 +1131,34 @@ int export_handle_message_string_fprint(
 				}
 				conversion_specifier_length += 3;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libevtx_record_get_utf16_string_size(
-				  record,
-				  value_string_index,
-				  &value_string_size,
-				  error );
-#else
-			result = libevtx_record_get_utf8_string_size(
-				  record,
-				  value_string_index,
-				  &value_string_size,
-				  error );
-#endif
-			if( result != 1 )
+/* TODO remove index check after user data support */
+			if( value_string_index < number_of_strings )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve string: %d size.",
-				 function,
-				 value_string_index );
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+				result = libevtx_record_get_utf16_string_size(
+					  record,
+					  value_string_index,
+					  &value_string_size,
+					  error );
+#else
+				result = libevtx_record_get_utf8_string_size(
+					  record,
+					  value_string_index,
+					  &value_string_size,
+					  error );
+#endif
+				if( result != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve string: %d size.",
+					 function,
+					 value_string_index );
 
-				goto on_error;
+					goto on_error;
+				}
 			}
 			if( value_string_size > 0 )
 			{
@@ -1235,6 +1248,8 @@ on_error:
 int export_handle_export_record_event_message(
      export_handle_t *export_handle,
      libevtx_record_t *record,
+     const libcstring_system_character_t *event_provider_identifier,
+     size_t event_provider_identifier_length,
      const libcstring_system_character_t *event_source,
      size_t event_source_length,
      uint32_t event_identifier,
@@ -1273,10 +1288,6 @@ int export_handle_export_record_event_message(
 
 		return( -1 );
 	}
-#ifdef TODO
-/* TODO add WinEvt provider support: string must contain {%GUID%}
- *  */
-
 	if( event_provider_identifier != NULL )
 	{
 		result = message_handle_get_value_by_provider_identifier(
@@ -1301,7 +1312,6 @@ int export_handle_export_record_event_message(
 			goto on_error;
 		}
 	}
-#endif
 	if( event_source != NULL )
 	{
 		result = message_handle_get_value_by_event_source(
@@ -1716,20 +1726,19 @@ int export_handle_export_record_text(
      libcerror_error_t **error )
 {
 	libcstring_system_character_t filetime_string[ 32 ];
-	libcstring_system_character_t guid_string[ 48 ];
-	uint8_t provider_identifier[ 16 ];
 
-	libcstring_system_character_t *event_source = NULL;
-	libcstring_system_character_t *value_string = NULL;
-	libfdatetime_filetime_t *filetime           = NULL;
-	libfguid_identifier_t *guid                 = NULL;
-	static char *function                       = "export_handle_export_record_text";
-	size_t event_source_size                    = 0;
-	size_t value_string_size                    = 0;
-	uint64_t value_64bit                        = 0;
-	uint32_t event_identifier                   = 0;
-	uint8_t event_level                         = 0;
-	int result                                  = 0;
+	libcstring_system_character_t *source_name         = NULL;
+	libcstring_system_character_t *provider_identifier = NULL;
+	libcstring_system_character_t *value_string        = NULL;
+	libfdatetime_filetime_t *filetime                  = NULL;
+	static char *function                              = "export_handle_export_record_text";
+	size_t source_name_size                            = 0;
+	size_t provider_identifier_size                    = 0;
+	size_t value_string_size                           = 0;
+	uint64_t value_64bit                               = 0;
+	uint32_t event_identifier                          = 0;
+	uint8_t event_level                                = 0;
+	int result                                         = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1952,76 +1961,65 @@ int export_handle_export_record_text(
 
 		value_string = NULL;
 	}
-	result = libevtx_record_get_provider_identifier(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_record_get_utf16_provider_identifier_size(
 	          record,
-	          provider_identifier,
-	          16,
+	          &provider_identifier_size,
 	          error );
-
+#else
+	result = libevtx_record_get_utf8_provider_identifier_size(
+	          record,
+	          &provider_identifier_size,
+	          error );
+#endif
 	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve provider identifier.",
+		 "%s: unable to retrieve provider identifier size.",
 		 function );
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	if( ( result != 0 )
+	 && ( provider_identifier_size > 0 ) )
 	{
-		if( libfguid_identifier_initialize(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create GUID.",
-			 function );
+		provider_identifier = libcstring_system_string_allocate(
+		                       provider_identifier_size );
 
-			goto on_error;
-		}
-		if( libfguid_identifier_copy_from_byte_stream(
-		     guid,
-		     provider_identifier,
-		     16,
-		     LIBFGUID_ENDIAN_LITTLE,
-		     error ) != 1 )
+		if( provider_identifier == NULL )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy GUID from byte stream.",
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create event source.",
 			 function );
 
 			goto on_error;
 		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_to_utf16_string(
-			  guid,
-			  (uint16_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
-			  error );
+		result = libevtx_record_get_utf16_provider_identifier(
+		          record,
+		          (uint16_t *) provider_identifier,
+		          provider_identifier_size,
+		          error );
 #else
-		result = libfguid_identifier_copy_to_utf8_string(
-			  guid,
-			  (uint8_t *) guid_string,
-			  48,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_LOWER_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
-			  error );
+		result = libevtx_record_get_utf8_provider_identifier(
+		          record,
+		          (uint8_t *) provider_identifier,
+		          provider_identifier_size,
+		          error );
 #endif
 		if( result != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy GUID to string.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve provider identifier.",
 			 function );
 
 			goto on_error;
@@ -2030,31 +2028,18 @@ int export_handle_export_record_text(
 		fprintf(
 		 export_handle->notify_stream,
 		 "Provider identifier\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-		 guid_string );
+		 provider_identifier );
 #endif
-		if( libfguid_identifier_free(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free GUID.",
-			 function );
-
-			goto on_error;
-		}
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libevtx_record_get_utf16_source_name_size(
 	          record,
-	          &event_source_size,
+	          &source_name_size,
 	          error );
 #else
 	result = libevtx_record_get_utf8_source_name_size(
 	          record,
-	          &event_source_size,
+	          &source_name_size,
 	          error );
 #endif
 	if( result == -1 )
@@ -2069,12 +2054,12 @@ int export_handle_export_record_text(
 		goto on_error;
 	}
 	if( ( result != 0 )
-	 && ( event_source_size > 0 ) )
+	 && ( source_name_size > 0 ) )
 	{
-		event_source = libcstring_system_string_allocate(
-		                event_source_size );
+		source_name = libcstring_system_string_allocate(
+		               source_name_size );
 
-		if( event_source == NULL )
+		if( source_name == NULL )
 		{
 			libcerror_error_set(
 			 error,
@@ -2088,14 +2073,14 @@ int export_handle_export_record_text(
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libevtx_record_get_utf16_source_name(
 		          record,
-		          (uint16_t *) event_source,
-		          event_source_size,
+		          (uint16_t *) source_name,
+		          source_name_size,
 		          error );
 #else
 		result = libevtx_record_get_utf8_source_name(
 		          record,
-		          (uint8_t *) event_source,
-		          event_source_size,
+		          (uint8_t *) source_name,
+		          source_name_size,
 		          error );
 #endif
 		if( result != 1 )
@@ -2112,7 +2097,7 @@ int export_handle_export_record_text(
 		fprintf(
 		 export_handle->notify_stream,
 		 "Source name\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-		 event_source );
+		 source_name );
 	}
 /* TODO category ? */
 
@@ -2138,8 +2123,10 @@ int export_handle_export_record_text(
 	if( export_handle_export_record_event_message(
 	     export_handle,
 	     record,
-	     event_source,
-	     event_source_size - 1,
+	     provider_identifier,
+	     provider_identifier_size - 1,
+	     source_name,
+	     source_name_size - 1,
 	     event_identifier,
 	     log_handle,
 	     error ) != 1 )
@@ -2157,24 +2144,32 @@ int export_handle_export_record_text(
 	 export_handle->notify_stream,
 	 "\n" );
 
-	if( event_source != NULL )
+	if( provider_identifier != NULL )
 	{
 		memory_free(
-		 event_source );
+		 provider_identifier );
+
+		provider_identifier = NULL;
+	}
+	if( source_name != NULL )
+	{
+		memory_free(
+		 source_name );
+
+		source_name = NULL;
 	}
 	return( 1 );
 
 on_error:
-	if( guid != NULL )
-	{
-		libfguid_identifier_free(
-		 &guid,
-		 NULL );
-	}
-	if( event_source != NULL )
+	if( provider_identifier != NULL )
 	{
 		memory_free(
-		 event_source );
+		 provider_identifier );
+	}
+	if( source_name != NULL )
+	{
+		memory_free(
+		 source_name );
 	}
 	if( value_string != NULL )
 	{
