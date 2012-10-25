@@ -1294,8 +1294,8 @@ int export_handle_export_record_event_message(
 		          export_handle->message_handle,
 		          event_provider_identifier,
 		          event_provider_identifier_length,
-		          _LIBCSTRING_SYSTEM_STRING( "MessageFile" ),
-		          11,
+		          _LIBCSTRING_SYSTEM_STRING( "MessageFileName" ),
+		          15,
 		          &message_filename,
 		          &message_filename_size,
 		          error );
@@ -1312,7 +1312,8 @@ int export_handle_export_record_event_message(
 			goto on_error;
 		}
 	}
-	if( event_source != NULL )
+	if( ( result == 0 )
+	 && ( event_source != NULL ) )
 	{
 		result = message_handle_get_value_by_event_source(
 		          export_handle->message_handle,

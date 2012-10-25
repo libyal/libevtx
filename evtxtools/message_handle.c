@@ -1894,6 +1894,17 @@ int message_handle_get_value_by_event_source(
 
 				goto on_error;
 			}
+			if( *value_string_size == 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing value string.",
+				 function );
+
+				goto on_error;
+			}
 			*value_string = libcstring_system_string_allocate(
 					 *value_string_size );
 
@@ -2121,6 +2132,17 @@ int message_handle_get_value_by_provider_identifier(
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve value string size.",
+				 function );
+
+				goto on_error;
+			}
+			if( *value_string_size == 0 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+				 "%s: missing value string.",
 				 function );
 
 				goto on_error;
