@@ -30,6 +30,8 @@ SUBDIRS = \
 	pyevtx \
 	po \
 	manuals \
+	tests \
+	examples \
 	msvscpp
 
 DPKG_FILES = \

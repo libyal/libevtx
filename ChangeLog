@@ -54,6 +54,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20121025
+* added examples and tests directories
+
 20121022
 * worked on provider identifier support
 

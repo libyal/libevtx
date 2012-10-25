@@ -667,6 +667,7 @@ int libevtx_record_values_read_xml_document(
 	     chunk_data_offset,
 	     io_handle->ascii_codepage,
 	     LIBFWEVT_XML_DOCUMENT_READ_FLAG_HAS_DATA_OFFSETS,
+	     NULL,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
