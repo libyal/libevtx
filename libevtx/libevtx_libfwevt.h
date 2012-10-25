@@ -31,6 +31,8 @@
 #include <libfwevt_definitions.h>
 #include <libfwevt_types.h>
 #include <libfwevt_xml_document.h>
+#include <libfwevt_xml_tag.h>
+#include <libfwevt_xml_template_value.h>
 
 #else
 
