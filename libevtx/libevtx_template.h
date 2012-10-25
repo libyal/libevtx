@@ -1,5 +1,5 @@
 /*
- * The internal type definitions
+ * Template functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,32 +19,43 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_INTERNAL_TYPES_H )
-#define _LIBEVTX_INTERNAL_TYPES_H
+#if !defined( _LIBEVTX_INTERNAL_TEMPLATE_H )
+#define _LIBEVTX_INTERNAL_TEMPLATE_H
 
 #include <common.h>
 #include <types.h>
 
-/* Define HAVE_LOCAL_LIBEVTX for local use of libevtx
- * The definitions in <libevtx/types.h> are copied here
- * for local use of libevtx
- */
-#if defined( HAVE_LOCAL_LIBEVTX )
+#include "libevtx_extern.h"
+#include "libevtx_io_handle.h"
+#include "libevtx_libbfio.h"
+#include "libevtx_libcerror.h"
+#include "libevtx_types.h"
 
-/* The following type definitions hide internal data structures
- */
-#if defined( HAVE_DEBUG_OUTPUT )
-typedef struct libevtx_file {}		libevtx_file_t;
-typedef struct libevtx_record {}	libevtx_record_t;
-typedef struct libevtx_template {}	libevtx_template_t;
-
-#else
-typedef intptr_t libevtx_file_t;
-typedef intptr_t libevtx_record_t;
-typedef intptr_t libevtx_template_t;
-
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
+typedef struct libevtx_internal_template libevtx_internal_template_t;
+
+struct libevtx_internal_template
+{
+	/* The flags
+	 */
+	uint8_t flags;
+};
+
+LIBEVTX_EXTERN \
+int libevtx_template_initialize(
+     libevtx_template_t **template,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_template_free(
+     libevtx_template_t **template,
+     libcerror_error_t **error );
+
+#if defined( __cplusplus )
+}
 #endif
 
 #endif

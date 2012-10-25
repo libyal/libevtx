@@ -1738,6 +1738,7 @@ int export_handle_export_record_text(
 	size_t value_string_size                           = 0;
 	uint64_t value_64bit                               = 0;
 	uint32_t event_identifier                          = 0;
+	uint32_t event_identifier_qualifiers               = 0;
 	uint8_t event_level                                = 0;
 	int result                                         = 0;
 
@@ -1887,8 +1888,79 @@ int export_handle_export_record_text(
 	 export_handle_get_event_level(
 	  event_level ) );
 
-/* TODO user SID ? */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_record_get_utf16_user_security_identifier_size(
+	          record,
+	          &value_string_size,
+	          error );
+#else
+	result = libevtx_record_get_utf8_user_security_identifier_size(
+	          record,
+	          &value_string_size,
+	          error );
+#endif
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve user security identifier size.",
+		 function );
 
+		goto on_error;
+	}
+	if( ( result != 0 )
+	 && ( value_string_size > 0 ) )
+	{
+		value_string = libcstring_system_string_allocate(
+		                value_string_size );
+
+		if( value_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create value string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libevtx_record_get_utf16_user_security_identifier(
+		          record,
+		          (uint16_t *) value_string,
+		          value_string_size,
+		          error );
+#else
+		result = libevtx_record_get_utf8_user_security_identifier(
+		          record,
+		          (uint8_t *) value_string,
+		          value_string_size,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve user security identifier.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "User security identifier\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 value_string );
+
+		memory_free(
+		 value_string );
+
+		value_string = NULL;
+	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libevtx_record_get_utf16_computer_name_size(
 	          record,
@@ -2116,10 +2188,37 @@ int export_handle_export_record_text(
 
 		goto on_error;
 	}
+	result = libevtx_record_get_event_identifier_qualifiers(
+	          record,
+	          &event_identifier_qualifiers,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event identifier qualifiers.",
+		 function );
+
+		goto on_error;
+	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Event identifier\t\t: 0x%08" PRIx32 "\n",
+	 "Event identifier\t\t: 0x%08" PRIx32 "",
 	 event_identifier );
+
+	if( result != 0 )
+	{
+		fprintf(
+		 export_handle->notify_stream,
+		 " (0x%08" PRIx32 ")",
+		 event_identifier_qualifiers );
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "\n" );
 
 	if( export_handle_export_record_event_message(
 	     export_handle,

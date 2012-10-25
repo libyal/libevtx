@@ -55,6 +55,7 @@ libevtx_la_SOURCES = \
 	libevtx_record.c libevtx_record.h \
 	libevtx_record_values.c libevtx_record_values.h \
 	libevtx_support.c libevtx_support.h \
+	libevtx_template.c libevtx_template.h \
 	libevtx_types.h \
 	libevtx_unused.h
 

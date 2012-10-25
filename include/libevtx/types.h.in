@@ -199,6 +199,7 @@ typedef int64_t off64_t;
  */
 typedef intptr_t libevtx_file_t;
 typedef intptr_t libevtx_record_t;
+typedef intptr_t libevtx_template_t;
 
 #ifdef __cplusplus
 }

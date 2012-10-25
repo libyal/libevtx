@@ -358,6 +358,15 @@ int libevtx_record_get_event_identifier(
      uint32_t *event_identifier,
      libevtx_error_t **error );
 
+/* Retrieves the event identifier qualifiers
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_event_identifier_qualifiers(
+     libevtx_record_t *record,
+     uint32_t *event_identifier_qualifiers,
+     libevtx_error_t **error );
+
 /* Retrieves the event level
  * Returns 1 if successful or -1 on error
  */
@@ -488,6 +497,48 @@ int libevtx_record_get_utf16_computer_name_size(
  */
 LIBEVTX_EXTERN \
 int libevtx_record_get_utf16_computer_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the size of the UTF-8 encoded user security identifier (SID)
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_user_security_identifier_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the UTF-8 encoded user security identifier (SID)
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_user_security_identifier(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the size of the UTF-16 encoded user security identifier (SID)
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_user_security_identifier_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libevtx_error_t **error );
+
+/* Retrieves the UTF-16 encoded user security identifier (SID)
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_user_security_identifier(
      libevtx_record_t *record,
      uint16_t *utf16_string,
      size_t utf16_string_size,

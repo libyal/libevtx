@@ -19,7 +19,6 @@ libfwevt optimization:
 - reference binary (data) while parsing
 
 * API
-  - add functions for user security identifier function: system/security#userid
   - get op code (0 => Info)
   - task category (none if not set)
   - keywords
@@ -56,6 +55,7 @@ Recovery:
 
 20121025
 * added examples and tests directories
+* worked on user security identifier function
 
 20121022
 * worked on provider identifier support
