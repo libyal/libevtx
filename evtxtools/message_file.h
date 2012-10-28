@@ -117,6 +117,15 @@ int message_file_get_mui_file_type(
      uint32_t *file_type,
      libcerror_error_t **error );
 
+int message_file_get_wevt_template_event_message_identifier(
+     message_file_t *message_file,
+     uint32_t preferred_language_identifier,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error );
+
 int message_file_set_name(
      message_file_t *message_file,
      const libcstring_system_character_t *name,

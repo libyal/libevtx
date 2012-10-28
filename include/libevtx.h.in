@@ -544,6 +544,15 @@ int libevtx_record_get_utf16_user_security_identifier(
      size_t utf16_string_size,
      libevtx_error_t **error );
 
+/* Parses the record data
+ * Returns 1 if successful, 0 if data could not be parsed or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_parse_data(
+     libevtx_record_t *record,
+     libevtx_template_definition_t *template_definition,
+     libevtx_error_t **error );
+
 /* Retrieves the number of strings
  * Returns 1 if successful or -1 on error
  */

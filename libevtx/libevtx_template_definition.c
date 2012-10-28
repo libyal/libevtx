@@ -1,5 +1,5 @@
 /*
- * Template functions
+ * Template definition functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -24,80 +24,77 @@
 #include <types.h>
 
 #include "libevtx_libcerror.h"
-#include "libevtx_template.h"
+#include "libevtx_template_definition.h"
 
-/* Initializes the template and its values
+/* Initializes the template definition and its values
  * Returns 1 if successful or -1 on error
  */
-int libevtx_template_initialize(
-     libevtx_template_t **template,
+int libevtx_template_definition_initialize(
+     libevtx_template_definition_t **template_definition,
      libcerror_error_t **error )
 {
-	libevtx_internal_template_t *internal_template = NULL;
-	static char *function                          = "libevtx_template_initialize";
+	libevtx_internal_template_definition_t *internal_template_definition = NULL;
+	static char *function                                                = "libevtx_template_definition_initialize";
 
-	if( template == NULL )
+	if( template_definition == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid template.",
+		 "%s: invalid template definition.",
 		 function );
 
 		return( -1 );
 	}
-	if( *template != NULL )
+	if( *template_definition != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid template value already set.",
+		 "%s: invalid template definition value already set.",
 		 function );
 
 		return( -1 );
 	}
-	internal_template = memory_allocate_structure(
-	                     libevtx_internal_template_t );
+	internal_template_definition = memory_allocate_structure(
+	                                libevtx_internal_template_definition_t );
 
-	if( internal_template == NULL )
+	if( internal_template_definition == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create internal template.",
+		 "%s: unable to create template definition.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     internal_template,
+	     internal_template_definition,
 	     0,
-	     sizeof( libevtx_internal_template_t ) ) == NULL )
+	     sizeof( libevtx_internal_template_definition_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear internal template.",
+		 "%s: unable to clear template definition.",
 		 function );
 
-		memory_free(
-		 internal_template );
-
-		return( -1 );
+		goto on_error;
 	}
-	*template = (libevtx_template_t *) internal_template;
+	*template_definition = (libevtx_template_definition_t *) internal_template_definition;
 
 	return( 1 );
 
 on_error:
-	if( internal_template != NULL )
+	if( internal_template_definition != NULL )
 	{
 		memory_free(
-		 internal_template );
+		 internal_template_definition );
 	}
 	return( -1 );
 }
@@ -105,14 +102,14 @@ on_error:
 /* Frees a template
  * Returns 1 if successful or -1 on error
  */
-int libevtx_template_free(
-     libevtx_template_t **template,
+int libevtx_template_definition_free(
+     libevtx_template_definition_t **template_definition,
      libcerror_error_t **error )
 {
-	libevtx_internal_template_t *internal_template = NULL;
-	static char *function                          = "libevtx_template_free";
+	libevtx_internal_template_definition_t *internal_template_definition = NULL;
+	static char *function                                                = "libevtx_template_definition_free";
 
-	if( template == NULL )
+	if( template_definition == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -123,13 +120,13 @@ int libevtx_template_free(
 
 		return( -1 );
 	}
-	if( *template != NULL )
+	if( *template_definition != NULL )
 	{
-		internal_template = (libevtx_internal_template_t *) *template;
-		*template         = NULL;
+		internal_template_definition = (libevtx_internal_template_definition_t *) *template_definition;
+		*template_definition         = NULL;
 
 		memory_free(
-		 internal_template );
+		 internal_template_definition );
 	}
 	return( 1 );
 }

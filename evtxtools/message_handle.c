@@ -792,7 +792,7 @@ int message_handle_set_message_files_path(
 }
 
 /* Opens the software registry file
- * Returns 1 if successful, 0 if no file was specified or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int message_handle_open_software_registry_file(
      message_handle_t *message_handle,
@@ -1243,7 +1243,7 @@ on_error:
 }
 
 /* Opens the system registry file
- * Returns 1 if successful, 0 if no file was specified or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int message_handle_open_system_registry_file(
      message_handle_t *message_handle,
@@ -2241,7 +2241,7 @@ on_error:
 }
 
 /* Retrieves the path of the message file based on the message filename
- * Returns 1 if successful, 0 if no path can be found or -1 error
+ * Returns 1 if successful, 0 if not available or -1 error
  */
 int message_handle_get_message_file_path(
      message_handle_t *message_handle,
@@ -3413,8 +3413,384 @@ int message_handle_get_mui_message_file_from_cache(
 	return( result );
 }
 
+/* Retrieves the message identifier from a specific message file
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int message_handle_get_message_identifier_from_message_file(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error )
+{
+	libcstring_system_character_t *message_file_path = NULL;
+	message_file_t *message_file                     = NULL;
+	static char *function                            = "message_handle_get_message_identifier_from_message_file";
+	size_t message_file_path_size                    = 0;
+	int result                                       = 0;
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_filename == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message filename.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( message_filename_length == 0 )
+	 || ( message_filename_length > (size_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid message filename length value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_identifier == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message identifier.",
+		 function );
+
+		return( -1 );
+	}
+	result = message_handle_get_message_file_from_cache(
+		  message_handle,
+		  message_filename,
+		  message_filename_length,
+		  &message_file,
+		  error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve message file from cache.",
+		 function );
+
+		goto on_error;
+	}
+	if( result == 0 )
+	{
+		result = message_handle_get_message_file_path(
+		          message_handle,
+		          message_filename,
+		          message_filename_length,
+		          NULL,
+		          0,
+		          &message_file_path,
+		          &message_file_path_size,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message file path.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			if( message_handle_get_message_file(
+			     message_handle,
+			     message_filename,
+			     message_filename_length,
+			     message_file_path,
+			     &message_file,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 message_file_path );
+
+				goto on_error;
+			}
+		}
+	}
+	if( message_file != NULL )
+	{
+		result = message_file_get_wevt_template_event_message_identifier(
+			  message_file,
+			  message_handle->preferred_language_identifier,
+			  provider_identifier,
+			  provider_identifier_size,
+			  event_identifier,
+			  message_identifier,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message identifier.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( message_file_path != NULL )
+	{
+		memory_free(
+		 message_file_path );
+
+		message_file_path = NULL;
+	}
+	return( result );
+
+on_error:
+	if( message_file_path != NULL )
+	{
+		memory_free(
+		 message_file_path );
+	}
+	*message_identifier = 0;
+
+	return( -1 );
+}
+
+/* Retrieves the message identifier from a specific message file
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int message_handle_get_message_identifier(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *message_filename,
+     size_t message_filename_length,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error )
+{
+	libcstring_system_character_t *message_filename_string_segment = NULL;
+	static char *function                                          = "message_handle_get_message_identifier";
+	size_t message_filename_string_segment_size                    = 0;
+	int message_filename_number_of_segments                        = 0;
+	int message_filename_segment_index                             = 0;
+	int result                                                     = 0;
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
+#else
+	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
+#endif
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_identifier == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message identifier.",
+		 function );
+
+		return( -1 );
+	}
+	/* The message filename can contain multiple file names
+	 * separated by ;
+	 */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_string_split(
+	     message_filename,
+	     message_filename_length + 1,
+	     (libcstring_system_character_t) ';',
+	     &message_filename_split_string,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_string_split(
+	     message_filename,
+	     message_filename_length + 1,
+	     (libcstring_system_character_t) ';',
+	     &message_filename_split_string,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to split message filename.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_split_string_get_number_of_segments(
+	     message_filename_split_string,
+	     &message_filename_number_of_segments,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_split_string_get_number_of_segments(
+	     message_filename_split_string,
+	     &message_filename_number_of_segments,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of message filename string segments.",
+		 function );
+
+		goto on_error;
+	}
+	for( message_filename_segment_index = 0;
+	     message_filename_segment_index < message_filename_number_of_segments;
+	     message_filename_segment_index++ )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libcsplit_wide_split_string_get_segment_by_index(
+		     message_filename_split_string,
+		     message_filename_segment_index,
+		     &message_filename_string_segment,
+		     &message_filename_string_segment_size,
+		     error ) != 1 )
+#else
+		if( libcsplit_narrow_split_string_get_segment_by_index(
+		     message_filename_split_string,
+		     message_filename_segment_index,
+		     &message_filename_string_segment,
+		     &message_filename_string_segment_size,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message filename string segment: %d.",
+			 function,
+			 message_filename_segment_index );
+
+			goto on_error;
+		}
+		if( message_filename_string_segment == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: missing message filename string segment: %d.",
+			 function,
+			 message_filename_segment_index );
+
+			goto on_error;
+		}
+		result = message_handle_get_message_identifier_from_message_file(
+			  message_handle,
+			  message_filename_string_segment,
+			  message_filename_string_segment_size - 1,
+			  provider_identifier,
+			  provider_identifier_size,
+			  event_identifier,
+			  message_identifier,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message identifier from: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 function,
+			 message_identifier,
+			 message_filename_string_segment );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			break;
+		}
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_split_string_free(
+	     &message_filename_split_string,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_split_string_free(
+	     &message_filename_split_string,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free message filename split string.",
+		 function );
+
+		goto on_error;
+	}
+	return( result );
+
+on_error:
+	if( message_filename_split_string != NULL )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		libcsplit_wide_split_string_free(
+		 &message_filename_split_string,
+		 NULL );
+#else
+		libcsplit_narrow_split_string_free(
+		 &message_filename_split_string,
+		 NULL );
+#endif
+	}
+	*message_identifier = 0;
+
+	return( -1 );
+}
+
 /* Retrieves the message string from a specific message file
- * Returns 1 if successful, 0 if no such message or -1 error
+ * Returns 1 if successful, 0 if not available or -1 error
  */
 int message_handle_get_message_string_from_message_file(
      message_handle_t *message_handle,
@@ -3570,7 +3946,8 @@ int message_handle_get_message_string_from_message_file(
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
-			 function );
+			 function,
+			 message_identifier );
 
 			goto on_error;
 		}
@@ -3694,7 +4071,8 @@ int message_handle_get_message_string_from_message_file(
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 						 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
-						 function );
+						 function,
+						 message_identifier );
 
 						goto on_error;
 					}
@@ -3717,6 +4095,11 @@ on_error:
 		memory_free(
 		 mui_message_file_path );
 	}
+	if( message_file_path != NULL )
+	{
+		memory_free(
+		 message_file_path );
+	}
 	if( *message_string != NULL )
 	{
 		memory_free(
@@ -3726,16 +4109,11 @@ on_error:
 	}
 	*message_string_size = 0;
 
-	if( message_file_path != NULL )
-	{
-		memory_free(
-		 message_file_path );
-	}
 	return( -1 );
 }
 
 /* Retrieves the message string from one or specified message files
- * Returns 1 if successful, 0 if no such message or -1 error
+ * Returns 1 if successful, 0 if not available or -1 error
  */
 int message_handle_get_message_string(
      message_handle_t *message_handle,
@@ -3932,15 +4310,6 @@ int message_handle_get_message_string(
 	return( result );
 
 on_error:
-	if( *message_string != NULL )
-	{
-		memory_free(
-		 *message_string );
-
-		*message_string = NULL;
-	}
-	*message_string_size = 0;
-
 	if( message_filename_split_string != NULL )
 	{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
@@ -3953,6 +4322,15 @@ on_error:
 		 NULL );
 #endif
 	}
+	if( *message_string != NULL )
+	{
+		memory_free(
+		 *message_string );
+
+		*message_string = NULL;
+	}
+	*message_string_size = 0;
+
 	return( -1 );
 }
 

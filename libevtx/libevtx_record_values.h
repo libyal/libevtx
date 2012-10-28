@@ -246,9 +246,9 @@ int libevtx_record_values_get_utf16_user_security_identifier(
      size_t utf16_string_size,
      libcerror_error_t **error );
 
-int libevtx_record_values_parse(
+int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
-     libevtx_template_t *template,
+     libevtx_template_definition_t *template_definition,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_number_of_strings(

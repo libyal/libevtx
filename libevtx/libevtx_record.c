@@ -401,6 +401,7 @@ int libevtx_record_get_event_identifier_qualifiers(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_event_identifier_qualifiers";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -415,10 +416,12 @@ int libevtx_record_get_event_identifier_qualifiers(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_event_identifier_qualifiers(
-	     internal_record->record_values,
-	     event_identifier_qualifiers,
-	     error ) != 1 )
+	result = libevtx_record_values_get_event_identifier_qualifiers(
+	          internal_record->record_values,
+	          event_identifier_qualifiers,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -429,7 +432,7 @@ int libevtx_record_get_event_identifier_qualifiers(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the event level
@@ -1202,6 +1205,50 @@ int libevtx_record_get_utf16_user_security_identifier(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 		 "%s: unable to copy user security identifier to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Parses the record data
+ * Returns 1 if successful, 0 if data could not be parsed or -1 on error
+ */
+int libevtx_record_parse_data(
+     libevtx_record_t *record,
+     libevtx_template_definition_t *template_definition,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_parse_data";
+	int result                                 = 0;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	result = libevtx_record_values_parse_data(
+	          internal_record->record_values,
+	          template_definition,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GENERIC,
+		 "%s: unable to parse data.",
 		 function );
 
 		return( -1 );

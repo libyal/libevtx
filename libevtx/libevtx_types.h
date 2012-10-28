@@ -34,14 +34,14 @@
 /* The following type definitions hide internal data structures
  */
 #if defined( HAVE_DEBUG_OUTPUT )
-typedef struct libevtx_file {}		libevtx_file_t;
-typedef struct libevtx_record {}	libevtx_record_t;
-typedef struct libevtx_template {}	libevtx_template_t;
+typedef struct libevtx_file {}			libevtx_file_t;
+typedef struct libevtx_record {}		libevtx_record_t;
+typedef struct libevtx_template_definition {}	libevtx_template_definition_t;
 
 #else
 typedef intptr_t libevtx_file_t;
 typedef intptr_t libevtx_record_t;
-typedef intptr_t libevtx_template_t;
+typedef intptr_t libevtx_template_definition_t;
 
 #endif
 

@@ -37,6 +37,15 @@
 #include <libwrc_string.h>
 #include <libwrc_version.h>
 #include <libwrc_types.h>
+#include <libwrc_wevt_channel.h>
+#include <libwrc_wevt_event.h>
+#include <libwrc_wevt_keyword.h>
+#include <libwrc_wevt_level.h>
+#include <libwrc_wevt_map.h>
+#include <libwrc_wevt_opcode.h>
+#include <libwrc_wevt_provider.h>
+#include <libwrc_wevt_task.h>
+#include <libwrc_wevt_template_definition.h>
 
 #else
 

@@ -205,6 +205,12 @@ int libevtx_record_get_utf16_user_security_identifier(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_record_parse_data(
+     libevtx_record_t *record,
+     libevtx_template_definition_t *template_definition,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_record_get_number_of_strings(
      libevtx_record_t *record,
      int *number_of_strings,

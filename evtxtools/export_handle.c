@@ -31,6 +31,7 @@
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"
+#include "evtxtools_libfguid.h"
 #include "export_handle.h"
 #include "log_handle.h"
 #include "message_file.h"
@@ -1256,15 +1257,20 @@ int export_handle_export_record_event_message(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
+	uint8_t provider_identifier[ 16 ];
+
 	libcstring_system_character_t *message_filename                = NULL;
 	libcstring_system_character_t *message_filename_string_segment = NULL;
 	libcstring_system_character_t *message_string                  = NULL;
 	libcstring_system_character_t *value_string                    = NULL;
+	libfguid_identifier_t *guid                                    = NULL;
 	static char *function                                          = "export_handle_export_record_event_message";
 	size_t message_filename_size                                   = 0;
 	size_t message_filename_string_segment_size                    = 0;
 	size_t message_string_size                                     = 0;
 	size_t value_string_size                                       = 0;
+	uint32_t event_identifier_qualifiers                           = 0;
+	uint32_t message_identifier                                    = 0;
 	int message_filename_number_of_segments                        = 0;
 	int message_filename_segment_index                             = 0;
 	int number_of_strings                                          = 0;
@@ -1288,8 +1294,88 @@ int export_handle_export_record_event_message(
 
 		return( -1 );
 	}
+	result = libevtx_record_get_event_identifier_qualifiers(
+	          record,
+	          &event_identifier_qualifiers,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event identifier qualifiers.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		fprintf(
+		 export_handle->notify_stream,
+		 "Event identifier qualifiers\t: 0x%08" PRIx32 "\n",
+		 event_identifier_qualifiers );
+#endif
+	}
 	if( event_provider_identifier != NULL )
 	{
+		if( libfguid_identifier_initialize(
+		     &guid,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create GUID.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfguid_identifier_copy_from_utf16_string(
+			  guid,
+			  (uint16_t *) event_provider_identifier,
+			  event_provider_identifier_length,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+			  error );
+#else
+		result = libfguid_identifier_copy_from_utf8_string(
+			  guid,
+			  (uint8_t *) event_provider_identifier,
+			  event_provider_identifier_length,
+			  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy GUID from string.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfguid_identifier_copy_to_byte_stream(
+		     guid,
+		     provider_identifier,
+		     16,
+		     LIBFGUID_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy GUID to byte stream.",
+			 function );
+
+			goto on_error;
+		}
 		result = message_handle_get_value_by_provider_identifier(
 		          export_handle->message_handle,
 		          event_provider_identifier,
@@ -1436,11 +1522,43 @@ int export_handle_export_record_event_message(
 
 				goto on_error;
 			}
+			result = message_handle_get_message_identifier(
+			          export_handle->message_handle,
+				  message_filename_string_segment,
+				  message_filename_string_segment_size - 1,
+				  provider_identifier,
+				  16,
+				  event_identifier,
+				  &message_identifier,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message identifier from: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 function,
+				 message_filename_string_segment );
+
+				goto on_error;
+			}
+			else if( result == 0 )
+			{
+				message_identifier = ( event_identifier_qualifiers << 16 ) | event_identifier;
+			}
+#if defined( HAVE_DEBUG_OUTPUT )
+			fprintf(
+			 export_handle->notify_stream,
+			 "Message identifier\t\t: 0x%08" PRIx32 "\n",
+			 message_identifier );
+#endif
 			result = message_handle_get_message_string(
 				  export_handle->message_handle,
 				  message_filename_string_segment,
 				  message_filename_string_segment_size - 1,
-				  event_identifier,
+				  message_identifier,
 				  &message_string,
 				  &message_string_size,
 				  error );
@@ -1453,7 +1571,7 @@ int export_handle_export_record_event_message(
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve message string: 0x%08" PRIx32 " from: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
-				 event_identifier,
+				 message_identifier,
 				 message_filename_string_segment );
 
 				goto on_error;
@@ -1486,6 +1604,23 @@ int export_handle_export_record_event_message(
 		 message_filename );
 
 		message_filename = NULL;
+	}
+/* TODO template */
+	result = libevtx_record_parse_data(
+	          record,
+	          NULL,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GENERIC,
+		 "%s: unable to parse record data.",
+		 function );
+
+		goto on_error;
 	}
 	if( message_string != NULL )
 	{
@@ -1623,6 +1758,22 @@ int export_handle_export_record_event_message(
 			 "\n" );
 		}
 	}
+	if( event_provider_identifier != NULL )
+	{
+		if( libfguid_identifier_free(
+		     &guid,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free GUID.",
+			 function );
+
+			goto on_error;
+		}
+	}
 	return( 1 );
 
 on_error:
@@ -1647,6 +1798,12 @@ on_error:
 		 &message_filename_split_string,
 		 NULL );
 #endif
+	}
+	if( guid != NULL )
+	{
+		libfguid_identifier_free(
+		 &guid,
+		 NULL );
 	}
 	if( message_filename != NULL )
 	{
@@ -1738,7 +1895,6 @@ int export_handle_export_record_text(
 	size_t value_string_size                           = 0;
 	uint64_t value_64bit                               = 0;
 	uint32_t event_identifier                          = 0;
-	uint32_t event_identifier_qualifiers               = 0;
 	uint8_t event_level                                = 0;
 	int result                                         = 0;
 
@@ -2188,37 +2344,10 @@ int export_handle_export_record_text(
 
 		goto on_error;
 	}
-	result = libevtx_record_get_event_identifier_qualifiers(
-	          record,
-	          &event_identifier_qualifiers,
-	          error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve event identifier qualifiers.",
-		 function );
-
-		goto on_error;
-	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Event identifier\t\t: 0x%08" PRIx32 "",
+	 "Event identifier\t\t: 0x%08" PRIx32 "\n",
 	 event_identifier );
-
-	if( result != 0 )
-	{
-		fprintf(
-		 export_handle->notify_stream,
-		 " (0x%08" PRIx32 ")",
-		 event_identifier_qualifiers );
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "\n" );
 
 	if( export_handle_export_record_event_message(
 	     export_handle,

@@ -815,7 +815,7 @@ on_error:
 }
 
 /* Retrieves the MUI file type
- * Returns 1 if successful, 0 if no MUI file type or -1 error
+ * Returns 1 if successful, 0 if not available or -1 error
  */
 int message_file_get_mui_file_type(
      message_file_t *message_file,
@@ -895,6 +895,178 @@ int message_file_get_mui_file_type(
 		return( -1 );
 	}
 	return( 1 );
+}
+
+/* Retrieves the message identifier from a specific event in the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int message_file_get_wevt_template_event_message_identifier(
+     message_file_t *message_file,
+     uint32_t preferred_language_identifier,
+     uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error )
+{
+	libwrc_wevt_event_t *event       = NULL;
+	libwrc_wevt_provider_t *provider = NULL;
+	static char *function            = "message_file_get_wevt_template_event_message_identifier";
+	uint32_t language_identifier     = 0;
+	int result                       = 0;
+
+	if( message_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_file->wevt_template_resource == NULL )
+	{
+		result = libwrc_stream_get_resource_by_utf8_name(
+		          message_file->resource_stream,
+		          (uint8_t *) "WEVT_TEMPLATE",
+		          13,
+		          &( message_file->wevt_template_resource ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+	}
+	if( message_file_get_resource_available_languague_identifier(
+	     message_file,
+	     message_file->wevt_template_resource,
+	     preferred_language_identifier,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve an available language identifier.",
+		 function );
+
+		goto on_error;
+	}
+	result = libwrc_wevt_template_get_provider_by_identifier(
+	          message_file->wevt_template_resource,
+	          language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          &provider,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		return( 0 );
+	}
+	result = libwrc_wevt_provider_get_event_by_identifier(
+	          provider,
+	          event_identifier,
+	          &event,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		return( 0 );
+	}
+	if( libwrc_wevt_event_get_message_identifier(
+	     event,
+	     message_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve message identifier.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_wevt_event_free(
+	     &event,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free event.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_wevt_provider_free(
+	     &provider,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free provider.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 &event,
+		 NULL );
+	}
+	if( provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 &provider,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Sets the name

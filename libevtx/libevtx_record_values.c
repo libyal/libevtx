@@ -847,7 +847,7 @@ int libevtx_record_values_get_event_identifier(
 }
 
 /* Retrieves the event identifier qualifiers
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_values_get_event_identifier_qualifiers(
      libevtx_record_values_t *record_values,
@@ -983,7 +983,7 @@ int libevtx_record_values_get_event_identifier_qualifiers(
 			return( -1 );
 		}
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the event level
@@ -3574,12 +3574,12 @@ int libevtx_record_values_get_utf16_user_security_identifier(
 	return( 1 );
 }
 
-/* Parses the XML document for strings and data
- * Returns 1 if successful, 0 if document could not be parsed or -1 on error
+/* Parses the record values data
+ * Returns 1 if successful, 0 if data could not be parsed or -1 on error
  */
-int libevtx_record_values_parse(
+int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
-     libevtx_template_t *template,
+     libevtx_template_definition_t *template_definition,
      libcerror_error_t **error )
 {
 	uint8_t element_name[ 5 ];
@@ -3588,7 +3588,8 @@ int libevtx_record_values_parse(
 	libfwevt_xml_tag_t *event_data_xml_tag = NULL;
 	libfwevt_xml_tag_t *root_xml_tag       = NULL;
 	libfwevt_xml_tag_t *user_data_xml_tag  = NULL;
-	static char *function                  = "libevtx_record_values_parse";
+	static char *function                  = "libevtx_record_values_parse_data";
+	size_t element_name_size               = 0;
 	int element_index                      = 0;
 	int entry_index                        = 0;
 	int number_of_attributes               = 0;
@@ -3607,13 +3608,13 @@ int libevtx_record_values_parse(
 
 		return( -1 );
 	}
-	if( event_data_xml_tag == NULL )
+	if( record_values->strings_array != NULL )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid event data XML tag.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid record values - strings array value already set.",
 		 function );
 
 		return( -1 );
@@ -3668,7 +3669,7 @@ int libevtx_record_values_parse(
 	{
 /* TODO what about template ? */
 		if( libfwevt_xml_tag_get_number_of_elements(
-		     record_values->event_data_xml_tag,
+		     event_data_xml_tag,
 		     &number_of_elements,
 		     error ) != 1 )
 		{
@@ -3686,7 +3687,7 @@ int libevtx_record_values_parse(
 		     element_index++ )
 		{
 			if( libfwevt_xml_tag_get_element_by_index(
-			     record_values->event_data_xml_tag,
+			     event_data_xml_tag,
 			     element_index,
 			     &element_xml_tag,
 			     error ) != 1 )
@@ -3696,18 +3697,6 @@ int libevtx_record_values_parse(
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 				 "%s: unable to retrieve element: %d.",
-				 function,
-				 element_index );
-
-				goto on_error;
-			}
-			if( element_xml_tag == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing element: %d.",
 				 function,
 				 element_index );
 
@@ -3807,13 +3796,14 @@ int libevtx_record_values_parse(
 		}
 		else if( result != 0 )
 		{
-			if( template == NULL )
+			if( template_definition == NULL )
 			{
 				return( 0 );
 			}
 /* TODO what about template ? */
-			return( 0 );
 		}
+/* TODO */
+		return( 0 );
 	}
 	return( 1 );
 

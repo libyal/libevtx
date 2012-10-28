@@ -1,5 +1,5 @@
 /*
- * Template functions
+ * Template definition functions
  *
  * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,15 +19,13 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_INTERNAL_TEMPLATE_H )
-#define _LIBEVTX_INTERNAL_TEMPLATE_H
+#if !defined( _LIBEVTX_INTERNAL_TEMPLATE_DEFINITION_H )
+#define _LIBEVTX_INTERNAL_TEMPLATE_DEFINITION_H
 
 #include <common.h>
 #include <types.h>
 
 #include "libevtx_extern.h"
-#include "libevtx_io_handle.h"
-#include "libevtx_libbfio.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_types.h"
 
@@ -35,9 +33,9 @@
 extern "C" {
 #endif
 
-typedef struct libevtx_internal_template libevtx_internal_template_t;
+typedef struct libevtx_internal_template_definition libevtx_internal_template_definition_t;
 
-struct libevtx_internal_template
+struct libevtx_internal_template_definition
 {
 	/* The flags
 	 */
@@ -45,13 +43,13 @@ struct libevtx_internal_template
 };
 
 LIBEVTX_EXTERN \
-int libevtx_template_initialize(
-     libevtx_template_t **template,
+int libevtx_template_definition_initialize(
+     libevtx_template_definition_t **template_definition,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_template_free(
-     libevtx_template_t **template,
+int libevtx_template_definition_free(
+     libevtx_template_definition_t **template_definition,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
