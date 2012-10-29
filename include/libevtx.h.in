@@ -669,6 +669,27 @@ int libevtx_record_get_utf16_xml_string(
      size_t utf16_string_size,
      libevtx_error_t **error );
 
+/* -------------------------------------------------------------------------
+ * Template definition functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes a template definition
+ * Make sure the value template_definition is pointing to is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_template_definition_initialize(
+     libevtx_template_definition_t **template_definition,
+     libevtx_error_t **error );
+
+/* Frees a template definition
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_template_definition_free(
+     libevtx_template_definition_t **template_definition,
+     libevtx_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

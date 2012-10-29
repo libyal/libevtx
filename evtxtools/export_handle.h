@@ -169,6 +169,24 @@ int export_handle_close_input(
 
 /* Record specific export functions
  */
+int export_handle_guid_string_copy_to_byte_stream(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *string,
+     size_t string_length,
+     uint8_t *byte_stream,
+     size_t byte_stream_size,
+     libcerror_error_t **error );
+
+int export_handle_template_file_get_template_definition(
+     export_handle_t *export_handle,
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libevtx_template_definition_t **template_definition,
+     libcerror_error_t **error );
+
 int export_handle_message_string_fprint(
      export_handle_t *export_handle,
      const libcstring_system_character_t *message_string,

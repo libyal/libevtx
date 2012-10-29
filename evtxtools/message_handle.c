@@ -31,6 +31,7 @@
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
+#include "evtxtools_libwrc.h"
 #include "message_file.h"
 #include "message_handle.h"
 #include "path_handle.h"
@@ -3413,382 +3414,6 @@ int message_handle_get_mui_message_file_from_cache(
 	return( result );
 }
 
-/* Retrieves the message identifier from a specific message file
- * Returns 1 if successful, 0 if not available or -1 error
- */
-int message_handle_get_message_identifier_from_message_file(
-     message_handle_t *message_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint32_t *message_identifier,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *message_file_path = NULL;
-	message_file_t *message_file                     = NULL;
-	static char *function                            = "message_handle_get_message_identifier_from_message_file";
-	size_t message_file_path_size                    = 0;
-	int result                                       = 0;
-
-	if( message_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_filename == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( message_filename_length == 0 )
-	 || ( message_filename_length > (size_t) SSIZE_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid message filename length value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_identifier == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message identifier.",
-		 function );
-
-		return( -1 );
-	}
-	result = message_handle_get_message_file_from_cache(
-		  message_handle,
-		  message_filename,
-		  message_filename_length,
-		  &message_file,
-		  error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message file from cache.",
-		 function );
-
-		goto on_error;
-	}
-	if( result == 0 )
-	{
-		result = message_handle_get_message_file_path(
-		          message_handle,
-		          message_filename,
-		          message_filename_length,
-		          NULL,
-		          0,
-		          &message_file_path,
-		          &message_file_path_size,
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message file path.",
-			 function );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			if( message_handle_get_message_file(
-			     message_handle,
-			     message_filename,
-			     message_filename_length,
-			     message_file_path,
-			     &message_file,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message file: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 message_file_path );
-
-				goto on_error;
-			}
-		}
-	}
-	if( message_file != NULL )
-	{
-		result = message_file_get_wevt_template_event_message_identifier(
-			  message_file,
-			  message_handle->preferred_language_identifier,
-			  provider_identifier,
-			  provider_identifier_size,
-			  event_identifier,
-			  message_identifier,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message identifier.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	if( message_file_path != NULL )
-	{
-		memory_free(
-		 message_file_path );
-
-		message_file_path = NULL;
-	}
-	return( result );
-
-on_error:
-	if( message_file_path != NULL )
-	{
-		memory_free(
-		 message_file_path );
-	}
-	*message_identifier = 0;
-
-	return( -1 );
-}
-
-/* Retrieves the message identifier from a specific message file
- * Returns 1 if successful, 0 if not available or -1 error
- */
-int message_handle_get_message_identifier(
-     message_handle_t *message_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint32_t *message_identifier,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *message_filename_string_segment = NULL;
-	static char *function                                          = "message_handle_get_message_identifier";
-	size_t message_filename_string_segment_size                    = 0;
-	int message_filename_number_of_segments                        = 0;
-	int message_filename_segment_index                             = 0;
-	int result                                                     = 0;
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
-#endif
-
-	if( message_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_identifier == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message identifier.",
-		 function );
-
-		return( -1 );
-	}
-	/* The message filename can contain multiple file names
-	 * separated by ;
-	 */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
-	     message_filename,
-	     message_filename_length + 1,
-	     (libcstring_system_character_t) ';',
-	     &message_filename_split_string,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     message_filename,
-	     message_filename_length + 1,
-	     (libcstring_system_character_t) ';',
-	     &message_filename_split_string,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to split message filename.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
-	     message_filename_split_string,
-	     &message_filename_number_of_segments,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     message_filename_split_string,
-	     &message_filename_number_of_segments,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of message filename string segments.",
-		 function );
-
-		goto on_error;
-	}
-	for( message_filename_segment_index = 0;
-	     message_filename_segment_index < message_filename_number_of_segments;
-	     message_filename_segment_index++ )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     message_filename_split_string,
-		     message_filename_segment_index,
-		     &message_filename_string_segment,
-		     &message_filename_string_segment_size,
-		     error ) != 1 )
-#endif
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		if( message_filename_string_segment == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing message filename string segment: %d.",
-			 function,
-			 message_filename_segment_index );
-
-			goto on_error;
-		}
-		result = message_handle_get_message_identifier_from_message_file(
-			  message_handle,
-			  message_filename_string_segment,
-			  message_filename_string_segment_size - 1,
-			  provider_identifier,
-			  provider_identifier_size,
-			  event_identifier,
-			  message_identifier,
-			  error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message identifier from: %" PRIs_LIBCSTRING_SYSTEM ".",
-			 function,
-			 message_identifier,
-			 message_filename_string_segment );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			break;
-		}
-	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
-	     &message_filename_split_string,
-	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &message_filename_split_string,
-	     error ) != 1 )
-#endif
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free message filename split string.",
-		 function );
-
-		goto on_error;
-	}
-	return( result );
-
-on_error:
-	if( message_filename_split_string != NULL )
-	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#endif
-	}
-	*message_identifier = 0;
-
-	return( -1 );
-}
-
 /* Retrieves the message string from a specific message file
  * Returns 1 if successful, 0 if not available or -1 error
  */
@@ -4170,8 +3795,7 @@ int message_handle_get_message_string(
 
 		return( -1 );
 	}
-	/* The message filename can contain multiple file names
-	 * separated by ;
+	/* The message filename can contain multiple file names separated by ;
 	 */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_string_split(
@@ -4331,6 +3955,286 @@ on_error:
 	}
 	*message_string_size = 0;
 
+	return( -1 );
+}
+
+/* TODO refactor */
+
+/* Retrieves a specific template file by provider identifier
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int message_handle_get_template_file_by_provider_identifier(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *template_filename,
+     size_t template_filename_length,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     template_file_t **template_file,
+     libcerror_error_t **error )
+{
+	libcstring_system_character_t *template_filename_string_segment = NULL;
+	libcstring_system_character_t *template_file_path               = NULL;
+	libwrc_wevt_provider_t *provider                                = NULL;
+	static char *function                                           = "message_handle_get_template_file_by_provider_identifier";
+	size_t template_filename_string_segment_size                    = 0;
+	size_t template_file_path_size                                  = 0;
+	int template_filename_number_of_segments                        = 0;
+	int template_filename_segment_index                             = 0;
+	int result                                                      = 0;
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	libcsplit_wide_split_string_t *template_filename_split_string   = NULL;
+#else
+	libcsplit_narrow_split_string_t *template_filename_split_string = NULL;
+#endif
+
+	if( message_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	/* The template filename can contain multiple file names separated by ;
+	 */
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_string_split(
+	     template_filename,
+	     template_filename_length + 1,
+	     (libcstring_system_character_t) ';',
+	     &template_filename_split_string,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_string_split(
+	     template_filename,
+	     template_filename_length + 1,
+	     (libcstring_system_character_t) ';',
+	     &template_filename_split_string,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to split template filename.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_split_string_get_number_of_segments(
+	     template_filename_split_string,
+	     &template_filename_number_of_segments,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_split_string_get_number_of_segments(
+	     template_filename_split_string,
+	     &template_filename_number_of_segments,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of template filename string segments.",
+		 function );
+
+		goto on_error;
+	}
+	for( template_filename_segment_index = 0;
+	     template_filename_segment_index < template_filename_number_of_segments;
+	     template_filename_segment_index++ )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		if( libcsplit_wide_split_string_get_segment_by_index(
+		     template_filename_split_string,
+		     template_filename_segment_index,
+		     &template_filename_string_segment,
+		     &template_filename_string_segment_size,
+		     error ) != 1 )
+#else
+		if( libcsplit_narrow_split_string_get_segment_by_index(
+		     template_filename_split_string,
+		     template_filename_segment_index,
+		     &template_filename_string_segment,
+		     &template_filename_string_segment_size,
+		     error ) != 1 )
+#endif
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template filename string segment: %d.",
+			 function,
+			 template_filename_segment_index );
+
+			goto on_error;
+		}
+		result = message_handle_get_message_file_from_cache(
+			  message_handle,
+			  template_filename_string_segment,
+			  template_filename_string_segment_size - 1,
+			  template_file,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template file: %d from cache.",
+			 function,
+			 template_filename_segment_index );
+
+			goto on_error;
+		}
+		if( result == 0 )
+		{
+			result = message_handle_get_message_file_path(
+				  message_handle,
+				  template_filename_string_segment,
+				  template_filename_string_segment_size - 1,
+				  NULL,
+				  0,
+				  &template_file_path,
+				  &template_file_path_size,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve template file path.",
+				 function );
+
+				goto on_error;
+			}
+			else if( result != 0 )
+			{
+				if( message_handle_get_message_file(
+				     message_handle,
+				     template_filename,
+				     template_filename_length,
+				     template_file_path,
+				     template_file,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve template file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 function,
+					 template_file_path );
+
+					goto on_error;
+				}
+				memory_free(
+				 template_file_path );
+
+				template_file_path = NULL;
+			}
+		}
+		if( template_file != NULL )
+		{
+			result = template_file_get_provider(
+			          *template_file,
+				  message_handle->preferred_language_identifier,
+				  provider_identifier,
+				  provider_identifier_size,
+				  &provider,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve provider.",
+				 function );
+
+				goto on_error;
+			}
+			else if( result != 0 )
+			{
+				if( libwrc_wevt_provider_free(
+				     &provider,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free provider.",
+					 function );
+
+					goto on_error;
+				}
+				break;
+			}
+		}
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcsplit_wide_split_string_free(
+	     &template_filename_split_string,
+	     error ) != 1 )
+#else
+	if( libcsplit_narrow_split_string_free(
+	     &template_filename_split_string,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free template filename split string.",
+		 function );
+
+		goto on_error;
+	}
+	return( result );
+
+on_error:
+	if( template_file_path != NULL )
+	{
+		memory_free(
+		 template_file_path );
+	}
+	if( template_filename_split_string != NULL )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		libcsplit_wide_split_string_free(
+		 &template_filename_split_string,
+		 NULL );
+#else
+		libcsplit_narrow_split_string_free(
+		 &template_filename_split_string,
+		 NULL );
+#endif
+	}
 	return( -1 );
 }
 

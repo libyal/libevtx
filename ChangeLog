@@ -1,5 +1,10 @@
 TODO
 * move WEVT to resource file and use corresponding registry key
+* refactor message file/handle
+  - use: resource file
+  - create: template file
+  - create: message string
+  - move preferred_language_identifier to resource file ?
 * format string
   - improve UserData support
 
@@ -56,6 +61,7 @@ Recovery:
 
 20121028
 * worked on formatted message strings
+* code clean up
 
 20121025
 * added examples and tests directories

@@ -513,25 +513,25 @@ int message_file_close(
  * This function will look for the preferred languague identifier otherwise default to the first
  * Returns 1 if successful or -1 on error
  */
-int message_file_get_resource_available_languague_identifier(
-     message_file_t *message_file,
+int resource_file_get_resource_available_languague_identifier(
+     message_file_t *resource_file,
      libwrc_resource_t *resource,
      uint32_t preferred_language_identifier,
      uint32_t *language_identifier,
      libcerror_error_t **error )
 {
-	static char *function                 = "message_file_get_resource_available_languague_identifier";
+	static char *function                 = "resource_file_get_resource_available_languague_identifier";
 	uint32_t resource_language_identifier = 0;
 	int language_index                    = 0;
 	int number_of_languages               = 0;
 
-	if( message_file == NULL )
+	if( resource_file == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file.",
+		 "%s: invalid resource file.",
 		 function );
 
 		return( -1 );
@@ -692,7 +692,7 @@ int message_file_get_string(
 		}
 	}
 /* TODO cache message strings ? */
-	if( message_file_get_resource_available_languague_identifier(
+	if( resource_file_get_resource_available_languague_identifier(
 	     message_file,
 	     message_file->message_table_resource,
 	     preferred_language_identifier,
@@ -863,7 +863,7 @@ int message_file_get_mui_file_type(
 			return( 0 );
 		}
 	}
-	if( message_file_get_resource_available_languague_identifier(
+	if( resource_file_get_resource_available_languague_identifier(
 	     message_file,
 	     message_file->mui_resource,
 	     preferred_language_identifier,
@@ -895,178 +895,6 @@ int message_file_get_mui_file_type(
 		return( -1 );
 	}
 	return( 1 );
-}
-
-/* Retrieves the message identifier from a specific event in the WEVT_TEMPLATE resource
- * Returns 1 if successful, 0 if not available or -1 error
- */
-int message_file_get_wevt_template_event_message_identifier(
-     message_file_t *message_file,
-     uint32_t preferred_language_identifier,
-     uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint32_t *message_identifier,
-     libcerror_error_t **error )
-{
-	libwrc_wevt_event_t *event       = NULL;
-	libwrc_wevt_provider_t *provider = NULL;
-	static char *function            = "message_file_get_wevt_template_event_message_identifier";
-	uint32_t language_identifier     = 0;
-	int result                       = 0;
-
-	if( message_file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message file.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_file->wevt_template_resource == NULL )
-	{
-		result = libwrc_stream_get_resource_by_utf8_name(
-		          message_file->resource_stream,
-		          (uint8_t *) "WEVT_TEMPLATE",
-		          13,
-		          &( message_file->wevt_template_resource ),
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve WEVT_TEMPLATE resource.",
-			 function );
-
-			goto on_error;
-		}
-		else if( result == 0 )
-		{
-			return( 0 );
-		}
-	}
-	if( message_file_get_resource_available_languague_identifier(
-	     message_file,
-	     message_file->wevt_template_resource,
-	     preferred_language_identifier,
-	     &language_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve an available language identifier.",
-		 function );
-
-		goto on_error;
-	}
-	result = libwrc_wevt_template_get_provider_by_identifier(
-	          message_file->wevt_template_resource,
-	          language_identifier,
-	          provider_identifier,
-	          provider_identifier_size,
-	          &provider,
-	          error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve provider.",
-		 function );
-
-		goto on_error;
-	}
-	else if( result == 0 )
-	{
-		return( 0 );
-	}
-	result = libwrc_wevt_provider_get_event_by_identifier(
-	          provider,
-	          event_identifier,
-	          &event,
-	          error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve event.",
-		 function );
-
-		goto on_error;
-	}
-	else if( result == 0 )
-	{
-		return( 0 );
-	}
-	if( libwrc_wevt_event_get_message_identifier(
-	     event,
-	     message_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message identifier.",
-		 function );
-
-		goto on_error;
-	}
-	if( libwrc_wevt_event_free(
-	     &event,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free event.",
-		 function );
-
-		goto on_error;
-	}
-	if( libwrc_wevt_provider_free(
-	     &provider,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free provider.",
-		 function );
-
-		goto on_error;
-	}
-	return( 1 );
-
-on_error:
-	if( event != NULL )
-	{
-		libwrc_wevt_event_free(
-		 &event,
-		 NULL );
-	}
-	if( provider != NULL )
-	{
-		libwrc_wevt_provider_free(
-		 &provider,
-		 NULL );
-	}
-	return( -1 );
 }
 
 /* Sets the name
@@ -1174,6 +1002,802 @@ on_error:
 		message_file->name = NULL;
 	}
 	message_file->name_size = 0;
+
+	return( -1 );
+}
+
+/* TODO refactor */
+
+/* Retrieves a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_provider(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libwrc_wevt_provider_t **provider,
+     libcerror_error_t **error )
+{
+	static char *function        = "template_file_get_provider";
+	uint32_t language_identifier = 0;
+	int result                   = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	if( template_file->wevt_template_resource == NULL )
+	{
+		result = libwrc_stream_get_resource_by_utf8_name(
+		          template_file->resource_stream,
+		          (uint8_t *) "WEVT_TEMPLATE",
+		          13,
+		          &( template_file->wevt_template_resource ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+	}
+	if( resource_file_get_resource_available_languague_identifier(
+	     template_file,
+	     template_file->wevt_template_resource,
+	     preferred_language_identifier,
+	     &language_identifier,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve an available language identifier.",
+		 function );
+
+		return( -1 );
+	}
+	result = libwrc_wevt_template_get_provider_by_identifier(
+	          template_file->wevt_template_resource,
+	          language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          provider,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Retrieves a specific event from a a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_event(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libcerror_error_t **error )
+{
+	static char *function = "template_file_get_event_message_identifier";
+	int result            = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	if( provider == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid provider.",
+		 function );
+
+		return( -1 );
+	}
+	result = template_file_get_provider(
+	          template_file,
+	          preferred_language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          provider,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		result = libwrc_wevt_provider_get_event_by_identifier(
+			  *provider,
+			  event_identifier,
+			  event,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve event.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( result );
+
+on_error:
+	if( *provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 provider,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves the template definition from a specific event from a a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_template_definition(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libwrc_wevt_template_definition_t **template_definition,
+     libcerror_error_t **error )
+{
+	static char *function = "template_file_get_template_definition";
+	int result            = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	if( provider == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid provider.",
+		 function );
+
+		return( -1 );
+	}
+	if( event == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid event.",
+		 function );
+
+		return( -1 );
+	}
+	result = template_file_get_event(
+	          template_file,
+	          preferred_language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          event_identifier,
+	          provider,
+	          event,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		result = libwrc_wevt_event_get_template_definition(
+			  *event,
+			  template_definition,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template definition.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( *event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 event,
+		 NULL );
+	}
+	if( *provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 provider,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves the message identifier from a specific event from a a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_event_message_identifier(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error )
+{
+	libwrc_wevt_event_t *event       = NULL;
+	libwrc_wevt_provider_t *provider = NULL;
+	static char *function            = "template_file_get_event_message_identifier";
+	int result                       = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	result = template_file_get_event(
+	          template_file,
+	          preferred_language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          event_identifier,
+	          &provider,
+	          &event,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libwrc_wevt_event_get_message_identifier(
+		     event,
+		     message_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message identifier.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_event_free(
+		     &event,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_provider_free(
+		     &provider,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( result );
+
+on_error:
+	if( event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 &event,
+		 NULL );
+	}
+	if( provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 &provider,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves the binary XML data from the template definition from a specific event from a a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_template_definition_binary_xml(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **binary_xml_data,
+     size_t *binary_xml_data_size,
+     libcerror_error_t **error )
+{
+	libwrc_wevt_event_t *event                             = NULL;
+	libwrc_wevt_provider_t *provider                       = NULL;
+	libwrc_wevt_template_definition_t *template_definition = NULL;
+	static char *function                                  = "template_file_get_template_definition_binary_xml";
+	int result                                             = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	if( binary_xml_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid binary XML data.",
+		 function );
+
+		return( -1 );
+	}
+	if( binary_xml_data_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid binary XML data size.",
+		 function );
+
+		return( -1 );
+	}
+	result = template_file_get_template_definition(
+	          template_file,
+	          preferred_language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          event_identifier,
+	          &provider,
+	          &event,
+	          &template_definition,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve template definition.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libwrc_wevt_template_definition_get_binary_xml_data_size(
+		     template_definition,
+		     binary_xml_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve binary XML data size.",
+			 function );
+
+			goto on_error;
+		}
+		if( *binary_xml_data_size == 0 )
+		{
+			result = 0;
+		}
+		else
+		{
+			*binary_xml_data = (uint8_t *) memory_allocate(
+			                                sizeof( uint8_t ) * *binary_xml_data_size );
+
+			if( *binary_xml_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create binary XML data.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_wevt_template_definition_get_binary_xml_data(
+			     template_definition,
+			     *binary_xml_data,
+			     *binary_xml_data_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve binary XML data.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		if( libwrc_wevt_template_definition_free(
+		     &template_definition,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free template definition.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_event_free(
+		     &event,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_provider_free(
+		     &provider,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( template_definition != NULL )
+	{
+		libwrc_wevt_template_definition_free(
+		 &template_definition,
+		 NULL );
+	}
+	if( event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 &event,
+		 NULL );
+	}
+	if( provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 &provider,
+		 NULL );
+	}
+	if( *binary_xml_data != NULL )
+	{
+		memory_free(
+		 *binary_xml_data );
+
+		*binary_xml_data = NULL;
+	}
+	*binary_xml_data_size = 0;
+
+	return( -1 );
+}
+
+/* Retrieves the instance values data from the template definition from a specific event from a a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int template_file_get_template_definition_instance_values(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **instance_values_data,
+     size_t *instance_values_data_size,
+     libcerror_error_t **error )
+{
+	libwrc_wevt_event_t *event                             = NULL;
+	libwrc_wevt_provider_t *provider                       = NULL;
+	libwrc_wevt_template_definition_t *template_definition = NULL;
+	static char *function                                  = "template_file_get_template_definition_instance_values";
+	int result                                             = 0;
+
+	if( template_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template file.",
+		 function );
+
+		return( -1 );
+	}
+	if( instance_values_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid instance values data.",
+		 function );
+
+		return( -1 );
+	}
+	if( instance_values_data_size == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid instance values data size.",
+		 function );
+
+		return( -1 );
+	}
+	result = template_file_get_template_definition(
+	          template_file,
+	          preferred_language_identifier,
+	          provider_identifier,
+	          provider_identifier_size,
+	          event_identifier,
+	          &provider,
+	          &event,
+	          &template_definition,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve template definition.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libwrc_wevt_template_definition_get_instance_values_data_size(
+		     template_definition,
+		     instance_values_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve instance values data size.",
+			 function );
+
+			goto on_error;
+		}
+		if( *instance_values_data_size == 0 )
+		{
+			result = 0;
+		}
+		else
+		{
+			*instance_values_data = (uint8_t *) memory_allocate(
+			                                     sizeof( uint8_t ) * *instance_values_data_size );
+
+			if( *instance_values_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create instance values data.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_wevt_template_definition_get_instance_values_data(
+			     template_definition,
+			     *instance_values_data,
+			     *instance_values_data_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve instance values data.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		if( libwrc_wevt_template_definition_free(
+		     &template_definition,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free template definition.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_event_free(
+		     &event,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_provider_free(
+		     &provider,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( template_definition != NULL )
+	{
+		libwrc_wevt_template_definition_free(
+		 &template_definition,
+		 NULL );
+	}
+	if( event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 &event,
+		 NULL );
+	}
+	if( provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 &provider,
+		 NULL );
+	}
+	if( *instance_values_data != NULL )
+	{
+		memory_free(
+		 *instance_values_data );
+
+		*instance_values_data = NULL;
+	}
+	*instance_values_data_size = 0;
 
 	return( -1 );
 }

@@ -1243,6 +1243,248 @@ on_error:
 	return( -1 );
 }
 
+/* Copies the GUID string to a byte stream
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_guid_string_copy_to_byte_stream(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *string,
+     size_t string_length,
+     uint8_t *byte_stream,
+     size_t byte_stream_size,
+     libcerror_error_t **error )
+{
+	libfguid_identifier_t *guid = NULL;
+	static char *function       = "export_handle_guid_string_copy_to_byte_stream";
+	int result                  = 0;
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfguid_identifier_initialize(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create GUID.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libfguid_identifier_copy_from_utf16_string(
+		  guid,
+		  (uint16_t *) string,
+		  string_length,
+		  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+		  error );
+#else
+	result = libfguid_identifier_copy_from_utf8_string(
+		  guid,
+		  (uint8_t *) string,
+		  string_length,
+		  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
+		  error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy GUID from string.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfguid_identifier_copy_to_byte_stream(
+	     guid,
+	     byte_stream,
+	     byte_stream_size,
+	     LIBFGUID_ENDIAN_LITTLE,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy GUID to byte stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfguid_identifier_free(
+	     &guid,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free GUID.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( guid != NULL )
+	{
+		libfguid_identifier_free(
+		 &guid,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves the template definition from the template file
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int export_handle_template_file_get_template_definition(
+     export_handle_t *export_handle,
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libevtx_template_definition_t **template_definition,
+     libcerror_error_t **error )
+{
+	uint8_t *binary_xml_data         = NULL;
+	uint8_t *instance_values_data    = NULL;
+	static char *function            = "export_handle_template_file_get_template_definition";
+	size_t binary_xml_data_size      = 0;
+	size_t instance_values_data_size = 0;
+	int result                       = 0;
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( template_definition == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template definition.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO what about preferred_language_identifier */
+	result = template_file_get_template_definition_binary_xml(
+		  template_file,
+		  preferred_language_identifier,
+		  provider_identifier,
+		  16,
+		  event_identifier,
+		  &binary_xml_data,
+		  &binary_xml_data_size,
+		  error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve binary XML.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+/* TODO what about preferred_language_identifier */
+		result = template_file_get_template_definition_instance_values(
+			  template_file,
+			  preferred_language_identifier,
+			  provider_identifier,
+			  16,
+			  event_identifier,
+			  &instance_values_data,
+			  &instance_values_data_size,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve instance values.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			if( libevtx_template_definition_initialize(
+			     template_definition,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create template definition.",
+				 function );
+
+				goto on_error;
+			}
+/* TODO implement */
+			memory_free(
+			 instance_values_data );
+
+			instance_values_data = NULL;
+		}
+		memory_free(
+		 binary_xml_data );
+
+		binary_xml_data = NULL;
+	}
+	return( result );
+
+on_error:
+	if( *template_definition != NULL )
+	{
+		libevtx_template_definition_free(
+		 template_definition,
+		 NULL );
+	}
+	if( instance_values_data != NULL )
+	{
+		memory_free(
+		 instance_values_data );
+	}
+	if( binary_xml_data != NULL )
+	{
+		memory_free(
+		 binary_xml_data );
+	}
+	return( -1 );
+}
+
 /* Exports the record event message
  * Returns 1 if successful or -1 on error
  */
@@ -1259,29 +1501,22 @@ int export_handle_export_record_event_message(
 {
 	uint8_t provider_identifier[ 16 ];
 
-	libcstring_system_character_t *message_filename                = NULL;
-	libcstring_system_character_t *message_filename_string_segment = NULL;
-	libcstring_system_character_t *message_string                  = NULL;
-	libcstring_system_character_t *value_string                    = NULL;
-	libfguid_identifier_t *guid                                    = NULL;
-	static char *function                                          = "export_handle_export_record_event_message";
-	size_t message_filename_size                                   = 0;
-	size_t message_filename_string_segment_size                    = 0;
-	size_t message_string_size                                     = 0;
-	size_t value_string_size                                       = 0;
-	uint32_t event_identifier_qualifiers                           = 0;
-	uint32_t message_identifier                                    = 0;
-	int message_filename_number_of_segments                        = 0;
-	int message_filename_segment_index                             = 0;
-	int number_of_strings                                          = 0;
-	int result                                                     = 0;
-	int value_string_index                                         = 0;
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *message_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *message_filename_split_string = NULL;
-#endif
+	libcstring_system_character_t *message_filename    = NULL;
+	libcstring_system_character_t *message_string      = NULL;
+	libcstring_system_character_t *resource_filename   = NULL;
+	libcstring_system_character_t *value_string        = NULL;
+	libevtx_template_definition_t *template_definition = NULL;
+	template_file_t *template_file                     = NULL;
+	static char *function                              = "export_handle_export_record_event_message";
+	size_t message_filename_size                       = 0;
+	size_t message_string_size                         = 0;
+	size_t resource_filename_size                      = 0;
+	size_t value_string_size                           = 0;
+	uint32_t event_identifier_qualifiers               = 0;
+	uint32_t message_identifier                        = 0;
+	int number_of_strings                              = 0;
+	int result                                         = 0;
+	int value_string_index                             = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1294,84 +1529,25 @@ int export_handle_export_record_event_message(
 
 		return( -1 );
 	}
-	result = libevtx_record_get_event_identifier_qualifiers(
-	          record,
-	          &event_identifier_qualifiers,
-	          error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve event identifier qualifiers.",
-		 function );
-
-		goto on_error;
-	}
-	else if( result != 0 )
-	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		fprintf(
-		 export_handle->notify_stream,
-		 "Event identifier qualifiers\t: 0x%08" PRIx32 "\n",
-		 event_identifier_qualifiers );
-#endif
-	}
 	if( event_provider_identifier != NULL )
 	{
-		if( libfguid_identifier_initialize(
-		     &guid,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create GUID.",
-			 function );
+		result = message_handle_get_value_by_provider_identifier(
+		          export_handle->message_handle,
+		          event_provider_identifier,
+		          event_provider_identifier_length,
+		          _LIBCSTRING_SYSTEM_STRING( "ResourceFileName" ),
+		          16,
+		          &resource_filename,
+		          &resource_filename_size,
+		          error );
 
-			goto on_error;
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libfguid_identifier_copy_from_utf16_string(
-			  guid,
-			  (uint16_t *) event_provider_identifier,
-			  event_provider_identifier_length,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
-			  error );
-#else
-		result = libfguid_identifier_copy_from_utf8_string(
-			  guid,
-			  (uint8_t *) event_provider_identifier,
-			  event_provider_identifier_length,
-			  LIBFGUID_STRING_FORMAT_FLAG_USE_MIXED_CASE | LIBFGUID_STRING_FORMAT_FLAG_USE_SURROUNDING_BRACES,
-			  error );
-#endif
-		if( result != 1 )
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy GUID from string.",
-			 function );
-
-			goto on_error;
-		}
-		if( libfguid_identifier_copy_to_byte_stream(
-		     guid,
-		     provider_identifier,
-		     16,
-		     LIBFGUID_ENDIAN_LITTLE,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to copy GUID to byte stream.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource filename by provider identifier.",
 			 function );
 
 			goto on_error;
@@ -1398,7 +1574,7 @@ int export_handle_export_record_event_message(
 			goto on_error;
 		}
 	}
-	if( ( result == 0 )
+	if( ( message_filename == NULL )
 	 && ( event_source != NULL ) )
 	{
 		result = message_handle_get_value_by_event_source(
@@ -1423,109 +1599,56 @@ int export_handle_export_record_event_message(
 			goto on_error;
 		}
 	}
-	if( ( result != 0 )
-	 && ( message_filename != NULL ) )
+	if( resource_filename != NULL )
 	{
 		fprintf(
 		 export_handle->notify_stream,
-		 "Message filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-		 message_filename );
+		 "Resource filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 resource_filename );
 
-		/* The message filename can contain multiple file names
-		 * separated by ;
-		 */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_string_split(
-		     message_filename,
-		     message_filename_size,
-		     (libcstring_system_character_t) ';',
-		     &message_filename_split_string,
+		if( export_handle_guid_string_copy_to_byte_stream(
+		     export_handle,
+		     event_provider_identifier,
+		     event_provider_identifier_length,
+		     provider_identifier,
+		     16,
 		     error ) != 1 )
-#else
-		if( libcsplit_narrow_string_split(
-		     message_filename,
-		     message_filename_size,
-		     (libcstring_system_character_t) ';',
-		     &message_filename_split_string,
-		     error ) != 1 )
-#endif
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to split message filename.",
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy GUID from string.",
 			 function );
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_number_of_segments(
-		     message_filename_split_string,
-		     &message_filename_number_of_segments,
-		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_number_of_segments(
-		     message_filename_split_string,
-		     &message_filename_number_of_segments,
-		     error ) != 1 )
-#endif
+		result = message_handle_get_template_file_by_provider_identifier(
+			  export_handle->message_handle,
+			  resource_filename,
+			  resource_filename_size - 1,
+			  provider_identifier,
+			  16,
+			  &template_file,
+			  error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of message filename string segments.",
+			 "%s: unable to retrieve template file.",
 			 function );
 
 			goto on_error;
 		}
-		for( message_filename_segment_index = 0;
-		     message_filename_segment_index < message_filename_number_of_segments;
-		     message_filename_segment_index++ )
+		else if( result != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			if( libcsplit_wide_split_string_get_segment_by_index(
-			     message_filename_split_string,
-			     message_filename_segment_index,
-			     &message_filename_string_segment,
-			     &message_filename_string_segment_size,
-			     error ) != 1 )
-#else
-			if( libcsplit_narrow_split_string_get_segment_by_index(
-			     message_filename_split_string,
-			     message_filename_segment_index,
-			     &message_filename_string_segment,
-			     &message_filename_string_segment_size,
-			     error ) != 1 )
-#endif
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message filename string segment: %d.",
-				 function,
-				 message_filename_segment_index );
-
-				goto on_error;
-			}
-			if( message_filename_string_segment == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing message filename string segment: %d.",
-				 function,
-				 message_filename_segment_index );
-
-				goto on_error;
-			}
-			result = message_handle_get_message_identifier(
-			          export_handle->message_handle,
-				  message_filename_string_segment,
-				  message_filename_string_segment_size - 1,
+/* TODO what about preferred_language_identifier */
+			result = template_file_get_event_message_identifier(
+				  template_file,
+				  export_handle->message_handle->preferred_language_identifier,
 				  provider_identifier,
 				  16,
 				  event_identifier,
@@ -1538,29 +1661,24 @@ int export_handle_export_record_event_message(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message identifier from: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 message_filename_string_segment );
+				 "%s: unable to retrieve message identifier.",
+				 function );
 
 				goto on_error;
 			}
 			else if( result == 0 )
 			{
-				message_identifier = ( event_identifier_qualifiers << 16 ) | event_identifier;
+				message_identifier = 0;
 			}
-#if defined( HAVE_DEBUG_OUTPUT )
-			fprintf(
-			 export_handle->notify_stream,
-			 "Message identifier\t\t: 0x%08" PRIx32 "\n",
-			 message_identifier );
-#endif
-			result = message_handle_get_message_string(
-				  export_handle->message_handle,
-				  message_filename_string_segment,
-				  message_filename_string_segment_size - 1,
-				  message_identifier,
-				  &message_string,
-				  &message_string_size,
+/* TODO what about preferred_language_identifier */
+			result = export_handle_template_file_get_template_definition(
+				  export_handle,
+				  template_file,
+				  export_handle->message_handle->preferred_language_identifier,
+				  provider_identifier,
+				  16,
+				  event_identifier,
+				  &template_definition,
 				  error );
 
 			if( result == -1 )
@@ -1569,33 +1687,76 @@ int export_handle_export_record_event_message(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message string: 0x%08" PRIx32 " from: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 message_identifier,
-				 message_filename_string_segment );
+				 "%s: unable to retrieve tempate definition.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		memory_free(
+		 resource_filename );
+
+		resource_filename = NULL;
+	}
+	if( message_filename != NULL )
+	{
+		fprintf(
+		 export_handle->notify_stream,
+		 "Message filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 message_filename );
+
+		if( message_identifier == 0 )
+		{
+			result = libevtx_record_get_event_identifier_qualifiers(
+				  record,
+				  &event_identifier_qualifiers,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve event identifier qualifiers.",
+				 function );
 
 				goto on_error;
 			}
 			else if( result != 0 )
 			{
-				break;
-			}
-		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_free(
-		     &message_filename_split_string,
-		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_free(
-		     &message_filename_split_string,
-		     error ) != 1 )
+#if defined( HAVE_DEBUG_OUTPUT )
+				fprintf(
+				 export_handle->notify_stream,
+				 "Event identifier qualifiers\t: 0x%08" PRIx32 "\n",
+				 event_identifier_qualifiers );
 #endif
+				message_identifier = event_identifier_qualifiers << 16;
+			}
+			message_identifier |= event_identifier;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		fprintf(
+		 export_handle->notify_stream,
+		 "Message identifier\t\t: 0x%08" PRIx32 "\n",
+		 message_identifier );
+#endif
+		result = message_handle_get_message_string(
+			  export_handle->message_handle,
+			  message_filename,
+			  message_filename_size - 1,
+			  message_identifier,
+			  &message_string,
+			  &message_string_size,
+			  error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free message filename split string.",
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message string.",
 			 function );
 
 			goto on_error;
@@ -1605,10 +1766,9 @@ int export_handle_export_record_event_message(
 
 		message_filename = NULL;
 	}
-/* TODO template */
 	result = libevtx_record_parse_data(
 	          record,
-	          NULL,
+	          template_definition,
 	          error );
 
 	if( result == -1 )
@@ -1758,17 +1918,17 @@ int export_handle_export_record_event_message(
 			 "\n" );
 		}
 	}
-	if( event_provider_identifier != NULL )
+	if( template_definition != NULL )
 	{
-		if( libfguid_identifier_free(
-		     &guid,
+		if( libevtx_template_definition_free(
+		     &template_definition,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free GUID.",
+			 "%s: unable to free template definition.",
 			 function );
 
 			goto on_error;
@@ -1787,28 +1947,21 @@ on_error:
 		memory_free(
 		 message_string );
 	}
-	if( message_filename_split_string != NULL )
+	if( template_definition != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &message_filename_split_string,
-		 NULL );
-#endif
-	}
-	if( guid != NULL )
-	{
-		libfguid_identifier_free(
-		 &guid,
+		libevtx_template_definition_free(
+		 &template_definition,
 		 NULL );
 	}
 	if( message_filename != NULL )
 	{
 		memory_free(
 		 message_filename );
+	}
+	if( resource_filename != NULL )
+	{
+		memory_free(
+		 resource_filename );
 	}
 	return( -1 );
 }

@@ -96,8 +96,8 @@ int message_file_close(
      message_file_t *message_file,
      libcerror_error_t **error );
 
-int message_file_get_resource_available_languague_identifier(
-     message_file_t *message_file,
+int resource_file_get_resource_available_languague_identifier(
+     message_file_t *resource_file,
      libwrc_resource_t *resource,
      uint32_t preferred_language_identifier,
      uint32_t *language_identifier,
@@ -117,19 +117,72 @@ int message_file_get_mui_file_type(
      uint32_t *file_type,
      libcerror_error_t **error );
 
-int message_file_get_wevt_template_event_message_identifier(
+int message_file_set_name(
      message_file_t *message_file,
+     const libcstring_system_character_t *name,
+     size_t name_length,
+     libcerror_error_t **error );
+
+/* TODO refactor */
+
+#define template_file_t message_file_t
+
+int template_file_get_provider(
+     template_file_t *template_file,
      uint32_t preferred_language_identifier,
-     uint8_t *provider_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libwrc_wevt_provider_t **provider,
+     libcerror_error_t **error );
+
+int template_file_get_event(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libcerror_error_t **error );
+
+int template_file_get_template_definition(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libwrc_wevt_template_definition_t **template_definition,
+     libcerror_error_t **error );
+
+int template_file_get_event_message_identifier(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
      uint32_t *message_identifier,
      libcerror_error_t **error );
 
-int message_file_set_name(
-     message_file_t *message_file,
-     const libcstring_system_character_t *name,
-     size_t name_length,
+int template_file_get_template_definition_binary_xml(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **binary_xml_data,
+     size_t *binary_xml_data_size,
+     libcerror_error_t **error );
+
+int template_file_get_template_definition_instance_values(
+     template_file_t *template_file,
+     uint32_t preferred_language_identifier,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **instance_values_data,
+     size_t *instance_values_data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

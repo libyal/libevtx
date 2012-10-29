@@ -45,6 +45,7 @@
 #include <libwrc_wevt_opcode.h>
 #include <libwrc_wevt_provider.h>
 #include <libwrc_wevt_task.h>
+#include <libwrc_wevt_template.h>
 #include <libwrc_wevt_template_definition.h>
 
 #else

@@ -271,26 +271,6 @@ int message_handle_get_mui_message_file_from_cache(
      message_file_t **message_file,
      libcerror_error_t **error );
 
-int message_handle_get_message_identifier_from_message_file(
-     message_handle_t *message_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint32_t *message_identifier,
-     libcerror_error_t **error );
-
-int message_handle_get_message_identifier(
-     message_handle_t *message_handle,
-     const libcstring_system_character_t *message_filename,
-     size_t message_filename_length,
-     uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint32_t *message_identifier,
-     libcerror_error_t **error );
-
 int message_handle_get_message_string_from_message_file(
      message_handle_t *message_handle,
      const libcstring_system_character_t *message_filename,
@@ -307,6 +287,17 @@ int message_handle_get_message_string(
      uint32_t message_identifier,
      libcstring_system_character_t **message_string,
      size_t *message_string_size,
+     libcerror_error_t **error );
+
+/* TODO refactor */
+
+int message_handle_get_template_file_by_provider_identifier(
+     message_handle_t *message_handle,
+     const libcstring_system_character_t *template_filename,
+     size_t template_filename_length,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     template_file_t **template_file,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
