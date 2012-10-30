@@ -53,6 +53,7 @@ evtxexport_SOURCES = \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
 	message_handle.c message_handle.h \
+	message_string.c message_string.h \
 	path_handle.c path_handle.h \
 	registry_file.c registry_file.h \
 	resource_file.c resource_file.h

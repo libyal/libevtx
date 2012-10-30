@@ -26,7 +26,9 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"
+#include "evtxtools_libfcache.h"
 #include "evtxtools_libwrc.h"
+#include "message_string.h"
 #include "resource_file.h"
 
 /* Initializes the resource file
@@ -102,7 +104,7 @@ int resource_file_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize EXE file.",
+		 "%s: unable to create EXE file.",
 		 function );
 
 		goto on_error;
@@ -115,7 +117,21 @@ int resource_file_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize resource stream.",
+		 "%s: unable to create resource stream.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfcache_cache_initialize(
+	     &( ( *resource_file )->message_string_cache ),
+	     16,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create message string cache.",
 		 function );
 
 		goto on_error;
@@ -185,6 +201,19 @@ int resource_file_free(
 
 				result = -1;
 			}
+		}
+		if( libfcache_cache_free(
+		     &( ( *resource_file )->message_string_cache ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free message string cache.",
+			 function );
+
+			result = -1;
 		}
 		if( libwrc_stream_free(
 		     &( ( *resource_file )->resource_stream ),
@@ -401,6 +430,19 @@ int resource_file_close(
 	}
 	if( resource_file->is_open != 0 )
 	{
+		if( libfcache_cache_clear(
+		     resource_file->message_string_cache,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to clear message string cache.",
+			 function );
+
+			result = -1;
+		}
 		if( resource_file->message_table_resource != NULL )
 		{
 			if( libwrc_resource_free(
@@ -718,14 +760,98 @@ on_error:
 	return( -1 );
 }
 
+/* Retrieves a message string from the cache
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int resource_file_get_message_string_from_cache(
+     resource_file_t *resource_file,
+     uint32_t message_string_identifier,
+     message_string_t **message_string,
+     libcerror_error_t **error )
+{
+	libfcache_cache_value_t *cache_value = NULL;
+	static char *function                = "resource_file_get_message_string_from_cache";
+	int cache_index                      = 0;
+	int result                           = 0;
+
+	if( resource_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message string.",
+		 function );
+
+		return( -1 );
+	}
+	for( cache_index = 0;
+	     cache_index < 16;
+	     cache_index++ )
+	{
+		if( libfcache_cache_get_value_by_index(
+		     resource_file->message_string_cache,
+		     cache_index,
+		     &cache_value,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve cache value: %d.",
+			 function,
+			 cache_index );
+
+			return( -1 );
+		}
+		if( cache_value != NULL )
+		{
+			if( libfcache_cache_value_get_value(
+			     cache_value,
+			     (intptr_t **) message_string,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message string from cache value: %d.",
+				 function,
+				 cache_index );
+
+				return( -1 );
+			}
+		}
+		if( ( *message_string != NULL )
+		 && ( message_string_identifier == ( *message_string )->identifier ) )
+		{
+			result = 1;
+
+			break;
+		}
+	}
+	return( result );
+}
+
 /* Retrieves a specific message string
  * Returns 1 if successful, 0 if no such message string or -1 error
  */
 int resource_file_get_message_string(
      resource_file_t *resource_file,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error )
 {
 	static char *function        = "resource_file_get_message_string";
@@ -755,28 +881,6 @@ int resource_file_get_message_string(
 
 		return( -1 );
 	}
-	if( *message_string != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid message string value already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string size.",
-		 function );
-
-		return( -1 );
-	}
 	if( resource_file->message_table_resource == NULL )
 	{
 		result = libwrc_stream_get_resource_by_type(
@@ -801,27 +905,10 @@ int resource_file_get_message_string(
 			return( 0 );
 		}
 	}
-/* TODO cache message strings ? */
-	if( resource_file_get_resource_available_languague_identifier(
-	     resource_file,
-	     resource_file->message_table_resource,
-	     &language_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve an available language identifier.",
-		 function );
-
-		goto on_error;
-	}
-	result = libwrc_message_table_get_index_by_identifier(
-	          resource_file->message_table_resource,
-	          language_identifier,
-	          message_identifier,
-	          &message_index,
+	result = resource_file_get_message_string_from_cache(
+	          resource_file,
+	          message_string_identifier,
+	          message_string,
 	          error );
 
 	if( result == -1 )
@@ -830,82 +917,176 @@ int resource_file_get_message_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve message index for message identifier: 0x%08" PRIx32 ".",
-		 function,
-		 message_identifier );
+		 "%s: unable to retrieve message string from cache.",
+		 function );
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	else if( result == 0 )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_message_table_get_utf16_string_size(
-		          resource_file->message_table_resource,
-			  language_identifier,
-			  message_index,
-			  message_string_size,
-			  error );
-#else
-		result = libwrc_message_table_get_utf8_string_size(
-		          resource_file->message_table_resource,
-			  language_identifier,
-			  message_index,
-			  message_string_size,
-			  error );
-#endif
-		if( result != 1 )
+		if( resource_file_get_resource_available_languague_identifier(
+		     resource_file,
+		     resource_file->message_table_resource,
+		     &language_identifier,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message: %d size.",
+			 "%s: unable to retrieve an available language identifier.",
+			 function );
+
+			goto on_error;
+		}
+		result = libwrc_message_table_get_index_by_identifier(
+			  resource_file->message_table_resource,
+			  language_identifier,
+			  message_identifier,
+			  &message_index,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message index for message identifier: 0x%08" PRIx32 ".",
 			 function,
-			 message_index );
+			 message_identifier );
 
 			goto on_error;
 		}
-		*message_string = libcstring_system_string_allocate(
-				   *message_string_size );
-
-		if( message_string == NULL )
+		else if( result != 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create message string.",
-			 function );
+			*message_string = NULL;
 
-			goto on_error;
-		}
+			if( message_string_initialize(
+			     message_string,
+			     message_string_identifier,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create message string.",
+				 function );
+
+				goto on_error;
+			}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_message_table_get_utf16_string(
-		          resource_file->message_table_resource,
-			  language_identifier,
-			  message_index,
-			  (uint16_t *) *message_string,
-			  *message_string_size,
-			  error );
+			result = libwrc_message_table_get_utf16_string_size(
+				  resource_file->message_table_resource,
+				  language_identifier,
+				  message_index,
+				  &( ( *message_string )->string_size ),
+				  error );
 #else
-		result = libwrc_message_table_get_utf8_string(
-		          resource_file->message_table_resource,
-			  language_identifier,
-			  message_index,
-			  (uint8_t *) *message_string,
-			  *message_string_size,
-			  error );
+			result = libwrc_message_table_get_utf8_string_size(
+				  resource_file->message_table_resource,
+				  language_identifier,
+				  message_index,
+				  &( ( *message_string )->string_size ),
+				  error );
 #endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message string.",
-			 function );
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message: %d size.",
+				 function,
+				 message_index );
 
-			goto on_error;
+				message_string_free(
+				 message_string,
+				 NULL );
+
+				goto on_error;
+			}
+			( *message_string )->string = libcstring_system_string_allocate(
+						       ( *message_string )->string_size );
+
+			if( ( *message_string )->string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create message string.",
+				 function );
+
+				message_string_free(
+				 message_string,
+				 NULL );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libwrc_message_table_get_utf16_string(
+				  resource_file->message_table_resource,
+				  language_identifier,
+				  message_index,
+				  (uint16_t *) ( *message_string )->string,
+				  ( *message_string )->string_size,
+				  error );
+#else
+			result = libwrc_message_table_get_utf8_string(
+				  resource_file->message_table_resource,
+				  language_identifier,
+				  message_index,
+				  (uint8_t *) ( *message_string )->string,
+				  ( *message_string )->string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve message string.",
+				 function );
+
+				message_string_free(
+				 message_string,
+				 NULL );
+
+				goto on_error;
+			}
+			if( libfcache_cache_set_value_by_index(
+			     resource_file->message_string_cache,
+			     resource_file->next_message_string_cache_index,
+			     resource_file->next_message_string_cache_index,
+			     libfcache_date_time_get_timestamp(),
+			     (intptr_t *) *message_string,
+			     (int (*)(intptr_t **, libcerror_error_t **)) &message_string_free,
+			     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set message string in cache entry: %d.",
+				 function,
+				 resource_file->next_message_string_cache_index );
+
+				message_string_free(
+				 message_string,
+				 NULL );
+
+				goto on_error;
+			}
+			resource_file->next_message_string_cache_index++;
+
+			if( resource_file->next_message_string_cache_index == 16 )
+			{
+				resource_file->next_message_string_cache_index = 0;
+			}
 		}
 	}
 	return( result );

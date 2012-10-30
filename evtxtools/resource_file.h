@@ -28,7 +28,9 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"
+#include "evtxtools_libfcache.h"
 #include "evtxtools_libwrc.h"
+#include "message_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -78,6 +80,14 @@ struct resource_file
 	 */
 	libwrc_resource_t *wevt_template_resource;
 
+	/* The message string cache
+	 */
+	libfcache_cache_t *message_string_cache;
+
+	/* The next available message string cache index
+	 */
+	int next_message_string_cache_index;
+
 	/* Value to indicate if the message file is open
 	 */
 	int is_open;
@@ -116,8 +126,7 @@ int resource_file_set_name(
 int resource_file_get_message_string(
      resource_file_t *resource_file,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error );
 
 int resource_file_get_mui_file_type(

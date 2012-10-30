@@ -35,6 +35,7 @@
 #include "export_handle.h"
 #include "log_handle.h"
 #include "message_handle.h"
+#include "message_string.h"
 #include "resource_file.h"
 
 #define EXPORT_HANDLE_NOTIFY_STREAM		stdout
@@ -1497,14 +1498,13 @@ int export_handle_export_record_event_message(
 	uint8_t provider_identifier[ 16 ];
 
 	libcstring_system_character_t *message_filename    = NULL;
-	libcstring_system_character_t *message_string      = NULL;
 	libcstring_system_character_t *resource_filename   = NULL;
 	libcstring_system_character_t *value_string        = NULL;
 	libevtx_template_definition_t *template_definition = NULL;
+	message_string_t *message_string                   = NULL;
 	resource_file_t *resource_file                     = NULL;
 	static char *function                              = "export_handle_export_record_event_message";
 	size_t message_filename_size                       = 0;
-	size_t message_string_size                         = 0;
 	size_t resource_filename_size                      = 0;
 	size_t value_string_size                           = 0;
 	uint32_t event_identifier_qualifiers               = 0;
@@ -1738,7 +1738,6 @@ int export_handle_export_record_event_message(
 			  message_filename_size - 1,
 			  message_identifier,
 			  &message_string,
-			  &message_string_size,
 			  error );
 
 		if( result == -1 )

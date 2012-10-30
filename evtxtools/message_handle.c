@@ -33,6 +33,7 @@
 #include "evtxtools_libregf.h"
 #include "evtxtools_libwrc.h"
 #include "message_handle.h"
+#include "message_string.h"
 #include "path_handle.h"
 #include "registry_file.h"
 #include "resource_file.h"
@@ -3102,7 +3103,7 @@ on_error:
 }
 
 /* Retrieves a specific resource file from the cache
- * Returns 1 if successful, 0 if resource file was not found or -1 error
+ * Returns 1 if successful, 0 if not available or -1 error
  */
 int message_handle_get_resource_file_from_cache(
      message_handle_t *message_handle,
@@ -3424,8 +3425,7 @@ int message_handle_get_message_string_from_resource_file(
      const libcstring_system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error )
 {
 	libcstring_system_character_t *resource_file_path     = NULL;
@@ -3478,17 +3478,6 @@ int message_handle_get_message_string_from_resource_file(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid message string.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string size.",
 		 function );
 
 		return( -1 );
@@ -3562,7 +3551,6 @@ int message_handle_get_message_string_from_resource_file(
 			  resource_file,
 			  message_identifier,
 			  message_string,
-			  message_string_size,
 			  error );
 
 		if( result == -1 )
@@ -3685,7 +3673,6 @@ int message_handle_get_message_string_from_resource_file(
 						  resource_file,
 						  message_identifier,
 						  message_string,
-						  message_string_size,
 						  error );
 
 					if( result == -1 )
@@ -3726,13 +3713,10 @@ on_error:
 	}
 	if( *message_string != NULL )
 	{
-		memory_free(
-		 *message_string );
-
-		*message_string = NULL;
+		message_string_free(
+		 message_string,
+		 NULL );
 	}
-	*message_string_size = 0;
-
 	return( -1 );
 }
 
@@ -3744,8 +3728,7 @@ int message_handle_get_message_string(
      const libcstring_system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error )
 {
 	libcstring_system_character_t *resource_filename_string_segment = NULL;
@@ -3779,17 +3762,6 @@ int message_handle_get_message_string(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid message string.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string_size == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string size.",
 		 function );
 
 		return( -1 );
@@ -3890,7 +3862,6 @@ int message_handle_get_message_string(
 			  resource_filename_string_segment_size - 1,
 			  message_identifier,
 			  message_string,
-			  message_string_size,
 			  error );
 
 		if( result == -1 )
@@ -3947,13 +3918,10 @@ on_error:
 	}
 	if( *message_string != NULL )
 	{
-		memory_free(
-		 *message_string );
-
-		*message_string = NULL;
+		message_string_free(
+		 message_string,
+		 NULL );
 	}
-	*message_string_size = 0;
-
 	return( -1 );
 }
 

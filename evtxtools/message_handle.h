@@ -29,6 +29,7 @@
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
+#include "message_string.h"
 #include "path_handle.h"
 #include "registry_file.h"
 #include "resource_file.h"
@@ -276,8 +277,7 @@ int message_handle_get_message_string_from_resource_file(
      const libcstring_system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error );
 
 int message_handle_get_message_string(
@@ -285,8 +285,7 @@ int message_handle_get_message_string(
      const libcstring_system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
-     libcstring_system_character_t **message_string,
-     size_t *message_string_size,
+     message_string_t **message_string,
      libcerror_error_t **error );
 
 int message_handle_get_resource_file_by_provider_identifier(
