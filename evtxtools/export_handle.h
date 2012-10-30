@@ -29,8 +29,9 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
-#include "message_handle.h"
 #include "log_handle.h"
+#include "message_handle.h"
+#include "resource_file.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -153,7 +154,7 @@ int export_handle_set_registry_directory_name(
      const libcstring_system_character_t *name,
      libcerror_error_t **error );
 
-int export_handle_set_message_files_path(
+int export_handle_set_resource_files_path(
      export_handle_t *export_handle,
      const libcstring_system_character_t *path,
      libcerror_error_t **error );
@@ -177,10 +178,9 @@ int export_handle_guid_string_copy_to_byte_stream(
      size_t byte_stream_size,
      libcerror_error_t **error );
 
-int export_handle_template_file_get_template_definition(
+int export_handle_resource_file_get_template_definition(
      export_handle_t *export_handle,
-     template_file_t *template_file,
-     uint32_t preferred_language_identifier,
+     resource_file_t *resource_file,
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,

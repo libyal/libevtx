@@ -34,8 +34,8 @@
 #include "evtxtools_libfguid.h"
 #include "export_handle.h"
 #include "log_handle.h"
-#include "message_file.h"
 #include "message_handle.h"
+#include "resource_file.h"
 
 #define EXPORT_HANDLE_NOTIFY_STREAM		stdout
 
@@ -777,15 +777,15 @@ int export_handle_set_registry_directory_name(
 	return( 1 );
 }
 
-/* Sets the path of the message files
+/* Sets the path of the resource files
  * Returns 1 if successful or -1 error
  */
-int export_handle_set_message_files_path(
+int export_handle_set_resource_files_path(
      export_handle_t *export_handle,
      const libcstring_system_character_t *path,
      libcerror_error_t **error )
 {
-	static char *function = "export_handle_set_message_files_path";
+	static char *function = "export_handle_set_resource_files_path";
 
 	if( export_handle == NULL )
 	{
@@ -798,7 +798,7 @@ int export_handle_set_message_files_path(
 
 		return( -1 );
 	}
-	if( message_handle_set_message_files_path(
+	if( message_handle_set_resource_files_path(
 	     export_handle->message_handle,
 	     path,
 	     error ) != 1 )
@@ -807,7 +807,7 @@ int export_handle_set_message_files_path(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set message files path in message handle.",
+		 "%s: unable to set resource files path in message handle.",
 		 function );
 
 		return( -1 );
@@ -1349,13 +1349,12 @@ on_error:
 	return( -1 );
 }
 
-/* Retrieves the template definition from the template file
+/* Retrieves the template definition from the resource file
  * Returns 1 if successful, 0 if not available or -1 on error
  */
-int export_handle_template_file_get_template_definition(
+int export_handle_resource_file_get_template_definition(
      export_handle_t *export_handle,
-     template_file_t *template_file,
-     uint32_t preferred_language_identifier,
+     resource_file_t *resource_file,
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
@@ -1364,7 +1363,7 @@ int export_handle_template_file_get_template_definition(
 {
 	uint8_t *binary_xml_data         = NULL;
 	uint8_t *instance_values_data    = NULL;
-	static char *function            = "export_handle_template_file_get_template_definition";
+	static char *function            = "export_handle_resource_file_get_template_definition";
 	size_t binary_xml_data_size      = 0;
 	size_t instance_values_data_size = 0;
 	int result                       = 0;
@@ -1391,10 +1390,8 @@ int export_handle_template_file_get_template_definition(
 
 		return( -1 );
 	}
-/* TODO what about preferred_language_identifier */
-	result = template_file_get_template_definition_binary_xml(
-		  template_file,
-		  preferred_language_identifier,
+	result = resource_file_get_template_definition_binary_xml(
+		  resource_file,
 		  provider_identifier,
 		  16,
 		  event_identifier,
@@ -1415,10 +1412,8 @@ int export_handle_template_file_get_template_definition(
 	}
 	else if( result != 0 )
 	{
-/* TODO what about preferred_language_identifier */
-		result = template_file_get_template_definition_instance_values(
-			  template_file,
-			  preferred_language_identifier,
+		result = resource_file_get_template_definition_instance_values(
+			  resource_file,
 			  provider_identifier,
 			  16,
 			  event_identifier,
@@ -1506,7 +1501,7 @@ int export_handle_export_record_event_message(
 	libcstring_system_character_t *resource_filename   = NULL;
 	libcstring_system_character_t *value_string        = NULL;
 	libevtx_template_definition_t *template_definition = NULL;
-	template_file_t *template_file                     = NULL;
+	resource_file_t *resource_file                     = NULL;
 	static char *function                              = "export_handle_export_record_event_message";
 	size_t message_filename_size                       = 0;
 	size_t message_string_size                         = 0;
@@ -1623,13 +1618,13 @@ int export_handle_export_record_event_message(
 
 			goto on_error;
 		}
-		result = message_handle_get_template_file_by_provider_identifier(
+		result = message_handle_get_resource_file_by_provider_identifier(
 			  export_handle->message_handle,
 			  resource_filename,
 			  resource_filename_size - 1,
 			  provider_identifier,
 			  16,
-			  &template_file,
+			  &resource_file,
 			  error );
 
 		if( result == -1 )
@@ -1638,17 +1633,15 @@ int export_handle_export_record_event_message(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template file.",
+			 "%s: unable to retrieve resource file.",
 			 function );
 
 			goto on_error;
 		}
 		else if( result != 0 )
 		{
-/* TODO what about preferred_language_identifier */
-			result = template_file_get_event_message_identifier(
-				  template_file,
-				  export_handle->message_handle->preferred_language_identifier,
+			result = resource_file_get_event_message_identifier(
+				  resource_file,
 				  provider_identifier,
 				  16,
 				  event_identifier,
@@ -1670,11 +1663,9 @@ int export_handle_export_record_event_message(
 			{
 				message_identifier = 0;
 			}
-/* TODO what about preferred_language_identifier */
-			result = export_handle_template_file_get_template_definition(
+			result = export_handle_resource_file_get_template_definition(
 				  export_handle,
-				  template_file,
-				  export_handle->message_handle->preferred_language_identifier,
+				  resource_file,
 				  provider_identifier,
 				  16,
 				  event_identifier,

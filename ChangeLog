@@ -1,15 +1,17 @@
 TODO
-* move WEVT to resource file and use corresponding registry key
-* refactor message file/handle
-  - use: resource file
-  - create: template file
-  - create: message string
-  - move preferred_language_identifier to resource file ?
 * format string
   - improve UserData support
+  - implement evtx template definition
+* message handle:
+  - create: message string object
+  - get %WinDir% from registry
+* resource file
+  - cache message strings
+  - cache template providers
+  - cache template events
+  - cache template definitions
 
 * update msvscpp files
-* get %WinDir% from registry
 
 * XML output change
   - Keywords add 0x no leading 0's
@@ -29,14 +31,12 @@ libfwevt optimization:
   - task category (none if not set)
   - keywords
 
-* export_handle_get_message_file_path
-  return 0 if no corresponding file has been found
 * recovery:
   - pass what type of chunk is being read
   - pass flag to binary xml parsing to ignore parsing errors ?
     or make this the default behavior
   - move read xml out of init record function ?
-* fix message filename retrieval, registry bering read wrong ?
+* fix message filename retrieval, registry being read wrong ?
 * implement libevtx_xml_tag_get_attribute_by_utf8_path (and utf16 equivalent) ?
 * implement libevtx_xml_tag_get_element_by_utf8_path (and utf16 equivalent) ?
 * store name hash in value identifier
@@ -59,9 +59,18 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
-20121028
+20121030
+* code clean up
+
+20121029
 * worked on formatted message strings
 * code clean up
+
+20121028
+* worked on formatted message strings
+
+20121027
+* worked on formatted message strings
 
 20121025
 * added examples and tests directories

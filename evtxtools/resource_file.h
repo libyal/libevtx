@@ -62,13 +62,30 @@ struct resource_file
 	 */
 	libwrc_stream_t *resource_stream;
 
-	/* Value to indicate if the resource file is open
+	/* The preferred language identifier
+	 */
+	uint32_t preferred_language_identifier;
+
+	/* The libwrc message table resource
+	 */
+	libwrc_resource_t *message_table_resource;
+
+	/* The libwrc MUI resource
+	 */
+	libwrc_resource_t *mui_resource;
+
+	/* The libwrc WEVT_TEMPLATE resource
+	 */
+	libwrc_resource_t *wevt_template_resource;
+
+	/* Value to indicate if the message file is open
 	 */
 	int is_open;
 };
 
 int resource_file_initialize(
      resource_file_t **resource_file,
+     uint32_t preferred_language_identifier,
      libcerror_error_t **error );
 
 int resource_file_free(
@@ -84,10 +101,80 @@ int resource_file_close(
      resource_file_t *resource_file,
      libcerror_error_t **error );
 
+int resource_file_get_resource_available_languague_identifier(
+     resource_file_t *resource_file,
+     libwrc_resource_t *resource,
+     uint32_t *language_identifier,
+     libcerror_error_t **error );
+
 int resource_file_set_name(
      resource_file_t *resource_file,
      const libcstring_system_character_t *name,
      size_t name_length,
+     libcerror_error_t **error );
+
+int resource_file_get_message_string(
+     resource_file_t *resource_file,
+     uint32_t message_identifier,
+     libcstring_system_character_t **message_string,
+     size_t *message_string_size,
+     libcerror_error_t **error );
+
+int resource_file_get_mui_file_type(
+     resource_file_t *resource_file,
+     uint32_t *file_type,
+     libcerror_error_t **error );
+
+int resource_file_get_provider(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libwrc_wevt_provider_t **provider,
+     libcerror_error_t **error );
+
+int resource_file_get_event(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libcerror_error_t **error );
+
+int resource_file_get_template_definition(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     libwrc_wevt_provider_t **provider,
+     libwrc_wevt_event_t **event,
+     libwrc_wevt_template_definition_t **template_definition,
+     libcerror_error_t **error );
+
+int resource_file_get_event_message_identifier(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint32_t *message_identifier,
+     libcerror_error_t **error );
+
+int resource_file_get_template_definition_binary_xml(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **binary_xml_data,
+     size_t *binary_xml_data_size,
+     libcerror_error_t **error );
+
+int resource_file_get_template_definition_instance_values(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     uint32_t event_identifier,
+     uint8_t **instance_values_data,
+     size_t *instance_values_data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
