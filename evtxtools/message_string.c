@@ -25,6 +25,7 @@
 
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
+#include "evtxtools_libwrc.h"
 #include "message_string.h"
 
 /* Initializes the message string
@@ -141,6 +142,148 @@ int message_string_free(
 		*message_string = NULL;
 	}
 	return( result );
+}
+
+/* Retrieve the message string from the message table resource
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int message_string_get_from_message_table_resource(
+     message_string_t *message_string,
+     libwrc_resource_t *message_table_resource,
+     uint32_t language_identifier,
+     libcerror_error_t **error )
+{
+	static char *function = "message_string_get_from_message_table_resource";
+	int message_index     = 0;
+	int result            = 0;
+
+	if( message_string == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message string.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_string->string != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid message string - string value already set.",
+		 function );
+
+		return( -1 );
+	}
+	result = libwrc_message_table_get_index_by_identifier(
+		  message_table_resource,
+		  language_identifier,
+		  message_string->identifier,
+		  &message_index,
+		  error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve message index for identifier: 0x%08" PRIx32 ".",
+		 function,
+		 message_string->identifier );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libwrc_message_table_get_utf16_string_size(
+			  message_table_resource,
+			  language_identifier,
+			  message_index,
+			  &( message_string->string_size ),
+			  error );
+#else
+		result = libwrc_message_table_get_utf8_string_size(
+			  message_table_resource,
+			  language_identifier,
+			  message_index,
+			  &( message_string->string_size ),
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message: %d size.",
+			 function,
+			 message_index );
+
+			goto on_error;
+		}
+		message_string->string = libcstring_system_string_allocate(
+		                          message_string->string_size );
+
+		if( message_string->string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create message string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libwrc_message_table_get_utf16_string(
+			  message_table_resource,
+			  language_identifier,
+			  message_index,
+			  (uint16_t *) message_string->string,
+			  message_string->string_size,
+			  error );
+#else
+		result = libwrc_message_table_get_utf8_string(
+			  message_table_resource,
+			  language_identifier,
+			  message_index,
+			  (uint8_t *) message_string->string,
+			  message_string->string_size,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve message string: %d.",
+			 function,
+			 message_index );
+
+			goto on_error;
+		}
+	}
+	return( result );
+
+on_error:
+	if( message_string->string != NULL )
+	{
+		memory_free(
+		 message_string->string );
+
+		message_string->string = NULL;
+	}
+	message_string->string_size = 0;
+
+	return( -1 );
 }
 
 #ifdef TODO

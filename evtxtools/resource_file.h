@@ -123,9 +123,15 @@ int resource_file_set_name(
      size_t name_length,
      libcerror_error_t **error );
 
+int resource_file_get_message_string_from_cache(
+     resource_file_t *resource_file,
+     uint32_t message_string_identifier,
+     message_string_t **message_string,
+     libcerror_error_t **error );
+
 int resource_file_get_message_string(
      resource_file_t *resource_file,
-     uint32_t message_identifier,
+     uint32_t message_string_identifier,
      message_string_t **message_string,
      libcerror_error_t **error );
 

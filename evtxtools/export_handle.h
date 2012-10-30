@@ -31,6 +31,7 @@
 #include "evtxtools_libevtx.h"
 #include "log_handle.h"
 #include "message_handle.h"
+#include "message_string.h"
 #include "resource_file.h"
 
 #if defined( __cplusplus )
@@ -189,8 +190,7 @@ int export_handle_resource_file_get_template_definition(
 
 int export_handle_message_string_fprint(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *message_string,
-     size_t message_string_length,
+     message_string_t *message_string,
      libevtx_record_t *record,
      libcerror_error_t **error );
 

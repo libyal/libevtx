@@ -27,6 +27,7 @@
 
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
+#include "evtxtools_libwrc.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,6 +57,12 @@ int message_string_initialize(
 
 int message_string_free(
      message_string_t **message_string,
+     libcerror_error_t **error );
+
+int message_string_get_from_message_table_resource(
+     message_string_t *message_string,
+     libwrc_resource_t *message_table_resource,
+     uint32_t language_identifier,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

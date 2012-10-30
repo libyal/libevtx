@@ -964,14 +964,14 @@ int export_handle_close_input(
  */
 int export_handle_message_string_fprint(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *message_string,
-     size_t message_string_length,
+     message_string_t *message_string,
      libevtx_record_t *record,
      libcerror_error_t **error )
 {
 	libcstring_system_character_t *value_string = NULL;
 	static char *function                       = "export_handle_message_string_fprint";
 	size_t conversion_specifier_length          = 0;
+	size_t message_string_length                = 0;
 	size_t message_string_index                 = 0;
 	size_t value_string_size                    = 0;
 	int number_of_strings                       = 0;
@@ -1000,17 +1000,6 @@ int export_handle_message_string_fprint(
 
 		return( -1 );
 	}
-	if( message_string_length > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid message string length value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
 	if( libevtx_record_get_number_of_strings(
 	     record,
 	     &number_of_strings,
@@ -1029,7 +1018,7 @@ int export_handle_message_string_fprint(
 	fprintf(
 	 export_handle->notify_stream,
 	 "Message format string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-	 message_string );
+	 message_string->string );
 
 	fprintf(
 	 export_handle->notify_stream,
@@ -1040,24 +1029,25 @@ int export_handle_message_string_fprint(
 	 export_handle->notify_stream,
 	 "Message string\t\t\t: " );
 
-	message_string_index = 0;
+	message_string_length = message_string->string_size - 1;
+	message_string_index  = 0;
 
 	while( message_string_index < message_string_length )
 	{
-		if( ( message_string[ message_string_index ] == (libcstring_system_character_t) '%' )
+		if( ( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '%' )
 		 && ( ( message_string_index + 1 ) < message_string_length ) )
 		{
 /* TODO add support for more conversion specifiers */
 			/* Ignore %0 = end of string, %r = cariage return */
-			if( ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) '0' )
-			 || ( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'r' ) )
+			if( ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '0' )
+			 || ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'r' ) )
 			{
 				message_string_index += 2;
 
 				continue;
 			}
 			/* Replace %b = space */
-			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
+			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
 			{
 				fprintf(
 				 export_handle->notify_stream,
@@ -1068,7 +1058,7 @@ int export_handle_message_string_fprint(
 				continue;
 			}
 			/* Replace %n = new line */
-			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
+			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
 			{
 				fprintf(
 				 export_handle->notify_stream,
@@ -1079,7 +1069,7 @@ int export_handle_message_string_fprint(
 				continue;
 			}
 			/* Replace %t = tab */
-			if( message_string[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
+			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
 			{
 				fprintf(
 				 export_handle->notify_stream,
@@ -1089,8 +1079,8 @@ int export_handle_message_string_fprint(
 
 				continue;
 			}
-			if( ( message_string[ message_string_index + 1 ] < (libcstring_system_character_t) '1' )
-			 || ( message_string[ message_string_index + 1 ] > (libcstring_system_character_t) '9' ) )
+			if( ( ( message_string->string )[ message_string_index + 1 ] < (libcstring_system_character_t) '1' )
+			 || ( ( message_string->string )[ message_string_index + 1 ] > (libcstring_system_character_t) '9' ) )
 			{
 				libcerror_error_set(
 				 error,
@@ -1098,28 +1088,28 @@ int export_handle_message_string_fprint(
 				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 				 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
 				 function,
-				 &( message_string[ message_string_index ] ) );
+				 &( ( message_string->string )[ message_string_index ] ) );
 
 				goto on_error;
 			}
-			value_string_index = (int) message_string[ message_string_index + 1 ] - (int) '0' - 1;
+			value_string_index = (int) ( message_string->string )[ message_string_index + 1 ] - (int) '0' - 1;
 
 			conversion_specifier_length = 2;
 
 		 	if( ( ( message_string_index + 3 ) < message_string_length )
-			 && ( message_string[ message_string_index + 2 ] >= (libcstring_system_character_t) '0' )
-			 && ( message_string[ message_string_index + 2 ] <= (libcstring_system_character_t) '9' ) )
+			 && ( ( message_string->string )[ message_string_index + 2 ] >= (libcstring_system_character_t) '0' )
+			 && ( ( message_string->string )[ message_string_index + 2 ] <= (libcstring_system_character_t) '9' ) )
 			{
 				value_string_index *= 10;
-				value_string_index += (int) message_string[ message_string_index + 2 ] - (int) '0';
+				value_string_index += (int) ( message_string->string )[ message_string_index + 2 ] - (int) '0';
 
 				conversion_specifier_length += 1;
 			}
 		 	if( ( ( message_string_index + conversion_specifier_length + 3 ) < message_string_length )
-			 && ( message_string[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
+			 && ( ( message_string->string )[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
 			{
-				if( ( message_string[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) 's' )
-				 || ( message_string[ message_string_index + conversion_specifier_length + 2 ] != (libcstring_system_character_t) '!' ) )
+				if( ( ( message_string->string )[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) 's' )
+				 || ( ( message_string->string )[ message_string_index + conversion_specifier_length + 2 ] != (libcstring_system_character_t) '!' ) )
 				{
 					libcerror_error_set(
 					 error,
@@ -1127,7 +1117,7 @@ int export_handle_message_string_fprint(
 					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 					 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
 					 function,
-					 &( message_string[ message_string_index ] ) );
+					 &( ( message_string->string )[ message_string_index ] ) );
 
 					goto on_error;
 				}
@@ -1219,12 +1209,12 @@ int export_handle_message_string_fprint(
 		}
 		else
 		{
-			if( message_string[ message_string_index ] != 0 )
+			if( ( message_string->string )[ message_string_index ] != 0 )
 			{
 				fprintf(
 				 export_handle->notify_stream,
 				 "%" PRIc_LIBCSTRING_SYSTEM "",
-				 message_string[ message_string_index ] );
+				 ( message_string->string )[ message_string_index ] );
 			}
 			message_string_index += 1;
 		}
@@ -1777,7 +1767,6 @@ int export_handle_export_record_event_message(
 		if( export_handle_message_string_fprint(
 		     export_handle,
 		     message_string,
-		     message_string_size - 1,
 		     record,
 		     error ) != 1 )
 		{
@@ -1790,9 +1779,6 @@ int export_handle_export_record_event_message(
 
 			goto on_error;
 		}
-		memory_free(
-		 message_string );
-
 		message_string = NULL;
 	}
 	else
@@ -1931,11 +1917,6 @@ on_error:
 	{
 		memory_free(
 		 value_string );
-	}
-	if( message_string != NULL )
-	{
-		memory_free(
-		 message_string );
 	}
 	if( template_definition != NULL )
 	{

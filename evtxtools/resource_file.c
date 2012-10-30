@@ -842,6 +842,10 @@ int resource_file_get_message_string_from_cache(
 			break;
 		}
 	}
+	if( result == 0 )
+	{
+		*message_string = NULL;
+	}
 	return( result );
 }
 
@@ -850,13 +854,12 @@ int resource_file_get_message_string_from_cache(
  */
 int resource_file_get_message_string(
      resource_file_t *resource_file,
-     uint32_t message_identifier,
+     uint32_t message_string_identifier,
      message_string_t **message_string,
      libcerror_error_t **error )
 {
 	static char *function        = "resource_file_get_message_string";
 	uint32_t language_identifier = 0;
-	int message_index            = 0;
 	int result                   = 0;
 
 	if( resource_file == NULL )
@@ -920,7 +923,7 @@ int resource_file_get_message_string(
 		 "%s: unable to retrieve message string from cache.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	else if( result == 0 )
 	{
@@ -937,14 +940,29 @@ int resource_file_get_message_string(
 			 "%s: unable to retrieve an available language identifier.",
 			 function );
 
-			goto on_error;
+			return( -1 );
 		}
-		result = libwrc_message_table_get_index_by_identifier(
-			  resource_file->message_table_resource,
-			  language_identifier,
-			  message_identifier,
-			  &message_index,
-			  error );
+		*message_string = NULL;
+
+		if( message_string_initialize(
+		     message_string,
+		     message_string_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create message string.",
+			 function );
+
+			return( -1 );
+		}
+		result = message_string_get_from_message_table_resource(
+		          *message_string,
+		          resource_file->message_table_resource,
+		          language_identifier,
+		          error );
 
 		if( result == -1 )
 		{
@@ -952,111 +970,18 @@ int resource_file_get_message_string(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message index for message identifier: 0x%08" PRIx32 ".",
+			 "%s: unable to retrieve message string: 0x%08" PRIx32 ".",
 			 function,
-			 message_identifier );
+			 message_string_identifier );
 
-			goto on_error;
+			message_string_free(
+			 message_string,
+			 NULL );
+
+			return( -1 );
 		}
 		else if( result != 0 )
 		{
-			*message_string = NULL;
-
-			if( message_string_initialize(
-			     message_string,
-			     message_string_identifier,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create message string.",
-				 function );
-
-				goto on_error;
-			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libwrc_message_table_get_utf16_string_size(
-				  resource_file->message_table_resource,
-				  language_identifier,
-				  message_index,
-				  &( ( *message_string )->string_size ),
-				  error );
-#else
-			result = libwrc_message_table_get_utf8_string_size(
-				  resource_file->message_table_resource,
-				  language_identifier,
-				  message_index,
-				  &( ( *message_string )->string_size ),
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message: %d size.",
-				 function,
-				 message_index );
-
-				message_string_free(
-				 message_string,
-				 NULL );
-
-				goto on_error;
-			}
-			( *message_string )->string = libcstring_system_string_allocate(
-						       ( *message_string )->string_size );
-
-			if( ( *message_string )->string == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create message string.",
-				 function );
-
-				message_string_free(
-				 message_string,
-				 NULL );
-
-				goto on_error;
-			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libwrc_message_table_get_utf16_string(
-				  resource_file->message_table_resource,
-				  language_identifier,
-				  message_index,
-				  (uint16_t *) ( *message_string )->string,
-				  ( *message_string )->string_size,
-				  error );
-#else
-			result = libwrc_message_table_get_utf8_string(
-				  resource_file->message_table_resource,
-				  language_identifier,
-				  message_index,
-				  (uint8_t *) ( *message_string )->string,
-				  ( *message_string )->string_size,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve message string.",
-				 function );
-
-				message_string_free(
-				 message_string,
-				 NULL );
-
-				goto on_error;
-			}
 			if( libfcache_cache_set_value_by_index(
 			     resource_file->message_string_cache,
 			     resource_file->next_message_string_cache_index,
@@ -1079,7 +1004,7 @@ int resource_file_get_message_string(
 				 message_string,
 				 NULL );
 
-				goto on_error;
+				return( -1 );
 			}
 			resource_file->next_message_string_cache_index++;
 
@@ -1087,21 +1012,26 @@ int resource_file_get_message_string(
 			{
 				resource_file->next_message_string_cache_index = 0;
 			}
+			message_string = NULL;
+		}
+		if( message_string != NULL )
+		{
+			if( message_string_free(
+			     message_string,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free message string.",
+				 function );
+
+				return( -1 );
+			}
 		}
 	}
 	return( result );
-
-on_error:
-	if( *message_string != NULL )
-	{
-		memory_free(
-		 *message_string );
-
-		*message_string = NULL;
-	}
-	*message_string_size = 0;
-
-	return( -1 );
 }
 
 /* Retrieves the MUI file type

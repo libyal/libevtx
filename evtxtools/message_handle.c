@@ -3198,6 +3198,10 @@ int message_handle_get_resource_file_from_cache(
 			break;
 		}
 	}
+	if( result == 0 )
+	{
+		*resource_file = NULL;
+	}
 	return( result );
 }
 
