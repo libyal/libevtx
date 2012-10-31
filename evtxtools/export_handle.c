@@ -1352,12 +1352,15 @@ int export_handle_resource_file_get_template_definition(
      libevtx_template_definition_t **template_definition,
      libcerror_error_t **error )
 {
-	uint8_t *binary_xml_data         = NULL;
-	uint8_t *instance_values_data    = NULL;
-	static char *function            = "export_handle_resource_file_get_template_definition";
-	size_t binary_xml_data_size      = 0;
-	size_t instance_values_data_size = 0;
-	int result                       = 0;
+	libwrc_wevt_event_t *wevt_event                             = NULL;
+	libwrc_wevt_provider_t *wevt_provider                       = NULL;
+	libwrc_wevt_template_definition_t *wevt_template_definition = NULL;
+	uint8_t *binary_xml_data                                    = NULL;
+	uint8_t *instance_values_data                               = NULL;
+	static char *function                                       = "export_handle_resource_file_get_template_definition";
+	size_t binary_xml_data_size                                 = 0;
+	size_t instance_values_data_size                            = 0;
+	int result                                                  = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1381,13 +1384,14 @@ int export_handle_resource_file_get_template_definition(
 
 		return( -1 );
 	}
-	result = resource_file_get_template_definition_binary_xml(
+	result = resource_file_get_template_definition(
 		  resource_file,
 		  provider_identifier,
-		  16,
+		  provider_identifier_size,
 		  event_identifier,
-		  &binary_xml_data,
-		  &binary_xml_data_size,
+		  &wevt_provider,
+		  &wevt_event,
+		  &wevt_template_definition,
 		  error );
 
 	if( result == -1 )
@@ -1396,44 +1400,105 @@ int export_handle_resource_file_get_template_definition(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve binary XML.",
+		 "%s: unable to retrieve WEVT template definition.",
 		 function );
 
 		goto on_error;
 	}
 	else if( result != 0 )
 	{
-		result = resource_file_get_template_definition_instance_values(
-			  resource_file,
-			  provider_identifier,
-			  16,
-			  event_identifier,
-			  &instance_values_data,
-			  &instance_values_data_size,
-			  error );
-
-		if( result == -1 )
+		if( libwrc_wevt_template_definition_get_binary_xml_data_size(
+		     wevt_template_definition,
+		     &binary_xml_data_size,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve instance values.",
+			 "%s: unable to retrieve binary XML data size.",
 			 function );
 
 			goto on_error;
 		}
-		else if( result != 0 )
+		if( binary_xml_data_size > 0 )
 		{
-			if( libevtx_template_definition_initialize(
-			     template_definition,
+			binary_xml_data = (uint8_t *) memory_allocate(
+			                               sizeof( uint8_t ) * binary_xml_data_size );
+
+			if( binary_xml_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create binary XML data.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_wevt_template_definition_get_binary_xml_data(
+			     wevt_template_definition,
+			     binary_xml_data,
+			     binary_xml_data_size,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create template definition.",
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve binary XML data.",
+				 function );
+
+				goto on_error;
+			}
+/* TODO implement */
+			memory_free(
+			 binary_xml_data );
+
+			binary_xml_data = NULL;
+		}
+		if( libwrc_wevt_template_definition_get_instance_values_data_size(
+		     wevt_template_definition,
+		     &instance_values_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve instance values data size.",
+			 function );
+
+			goto on_error;
+		}
+		if( instance_values_data_size > 0 )
+		{
+			instance_values_data = (uint8_t *) memory_allocate(
+			                                    sizeof( uint8_t ) * instance_values_data_size );
+
+			if( instance_values_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create instance values data.",
+				 function );
+
+				goto on_error;
+			}
+			if( libwrc_wevt_template_definition_get_instance_values_data(
+			     wevt_template_definition,
+			     instance_values_data,
+			     instance_values_data_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve instance values data.",
 				 function );
 
 				goto on_error;
@@ -1444,20 +1509,49 @@ int export_handle_resource_file_get_template_definition(
 
 			instance_values_data = NULL;
 		}
-		memory_free(
-		 binary_xml_data );
+		if( libwrc_wevt_template_definition_free(
+		     &wevt_template_definition,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free template definition.",
+			 function );
 
-		binary_xml_data = NULL;
+			goto on_error;
+		}
+		if( libwrc_wevt_event_free(
+		     &wevt_event,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event.",
+			 function );
+
+			goto on_error;
+		}
+		if( libwrc_wevt_provider_free(
+		     &wevt_provider,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	return( result );
 
 on_error:
-	if( *template_definition != NULL )
-	{
-		libevtx_template_definition_free(
-		 template_definition,
-		 NULL );
-	}
 	if( instance_values_data != NULL )
 	{
 		memory_free(
@@ -1467,6 +1561,30 @@ on_error:
 	{
 		memory_free(
 		 binary_xml_data );
+	}
+	if( wevt_template_definition != NULL )
+	{
+		libwrc_wevt_template_definition_free(
+		 &wevt_template_definition,
+		 NULL );
+	}
+	if( wevt_event != NULL )
+	{
+		libwrc_wevt_event_free(
+		 &wevt_event,
+		 NULL );
+	}
+	if( wevt_provider != NULL )
+	{
+		libwrc_wevt_provider_free(
+		 &wevt_provider,
+		 NULL );
+	}
+	if( *template_definition != NULL )
+	{
+		libevtx_template_definition_free(
+		 template_definition,
+		 NULL );
 	}
 	return( -1 );
 }

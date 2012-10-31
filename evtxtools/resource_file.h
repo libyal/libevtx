@@ -174,24 +174,6 @@ int resource_file_get_event_message_identifier(
      uint32_t *message_identifier,
      libcerror_error_t **error );
 
-int resource_file_get_template_definition_binary_xml(
-     resource_file_t *resource_file,
-     const uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint8_t **binary_xml_data,
-     size_t *binary_xml_data_size,
-     libcerror_error_t **error );
-
-int resource_file_get_template_definition_instance_values(
-     resource_file_t *resource_file,
-     const uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     uint32_t event_identifier,
-     uint8_t **instance_values_data,
-     size_t *instance_values_data_size,
-     libcerror_error_t **error );
-
 #if defined( __cplusplus )
 }
 #endif
