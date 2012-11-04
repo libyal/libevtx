@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libevtx record
  *
- * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -49,7 +49,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_written_time_as_integer",
 	  (PyCFunction) pyevtx_record_get_written_time_as_integer,
 	  METH_NOARGS,
-	  "get_written_time_as_integer() -> Integer\n"
+	  "get_written_time_as_integer() -> Long\n"
 	  "\n"
 	  "Returns the written date and time as a 64-bit integer containing a FILETIME value" },
 
@@ -395,7 +395,7 @@ void pyevtx_record_free(
 }
 
 /* Retrieves the written date and time
- * Returns a Python object holding the offset if successful or NULL on error
+ * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record )
@@ -458,7 +458,7 @@ PyObject *pyevtx_record_get_written_time(
 }
 
 /* Retrieves the written date and time as an integer
- * Returns a Python object holding the offset if successful or NULL on error
+ * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time_as_integer(
            pyevtx_record_t *pyevtx_record )
@@ -513,6 +513,19 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 
 		return( NULL );
 	}
+#if defined( HAVE_LONG_LONG )
+	if( filetime > (uint64_t) LLONG_MAX )
+	{
+		PyErr_Format(
+		 PyExc_OverflowError,
+		 "%s: filetime value exceeds maximum.",
+		 function );
+
+		return( NULL );
+	}
+	return( PyLong_FromLongLong(
+	         (long long) filetime ) );
+#else
 	if( filetime > (uint64_t) LONG_MAX )
 	{
 		PyErr_Format(
@@ -522,8 +535,9 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
+	return( PyLong_FromLong(
 	         (long) filetime ) );
+#endif
 }
 
 /* Retrieves the event identifier

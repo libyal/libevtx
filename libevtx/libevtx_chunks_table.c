@@ -80,7 +80,7 @@ int libevtx_chunks_table_initialize(
 		return( -1 );
 	}
 	*chunks_table = memory_allocate_structure(
-	            libevtx_chunks_table_t );
+	                 libevtx_chunks_table_t );
 
 	if( *chunks_table == NULL )
 	{

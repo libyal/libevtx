@@ -58,7 +58,7 @@ evtxexport_SOURCES = \
 	registry_file.c registry_file.h \
 	resource_file.c resource_file.h
 
-evtxexport_LDADD  = \
+evtxexport_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	@LIBREGF_LIBADD@ \
 	@LIBWRC_LIBADD@ \
@@ -92,7 +92,7 @@ evtxinfo_SOURCES = \
 	evtxtools_libuna.h \
 	info_handle.c info_handle.h
 
-evtxinfo_LDADD  = \
+evtxinfo_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libevtx/libevtx.la \
 	@LIBCNOTIFY_LIBADD@ \
@@ -108,8 +108,8 @@ distclean: clean
 	/bin/rm -f Makefile
 
 splint:
-	@echo "Running splint on evtxexport ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(evtxexport_SOURCES) 
-	@echo "Running splint on evtxinfo ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(evtxinfo_SOURCES) 
+	@echo "Running splint on evtxexport ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(evtxexport_SOURCES)
+	@echo "Running splint on evtxinfo ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(evtxinfo_SOURCES)
 

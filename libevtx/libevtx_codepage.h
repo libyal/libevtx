@@ -41,7 +41,7 @@ extern "C" {
 
 /* The codepage definitions
  */
-enum LIBEVTX_CODEPAGE
+enum LIBEVTX_CODEPAGES
 {
 	LIBEVTX_CODEPAGE_ASCII				= 20127,
 

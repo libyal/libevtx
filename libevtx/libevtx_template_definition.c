@@ -66,8 +66,8 @@ int libevtx_template_definition_initialize(
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create template definition.",
 		 function );
 
@@ -126,9 +126,221 @@ int libevtx_template_definition_free(
 		internal_template_definition = (libevtx_internal_template_definition_t *) *template_definition;
 		*template_definition         = NULL;
 
+		if( internal_template_definition->binary_xml_data != NULL )
+		{
+			memory_free(
+			 internal_template_definition->binary_xml_data );
+		}
+		if( internal_template_definition->instance_values_data != NULL )
+		{
+			memory_free(
+			 internal_template_definition->instance_values_data );
+		}
 		memory_free(
 		 internal_template_definition );
 	}
 	return( 1 );
+}
+
+/* Sets the binary XML data
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_template_definition_set_binary_xml_data(
+     libevtx_template_definition_t *template_definition,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_template_definition_t *internal_template_definition = NULL;
+	static char *function                                                = "libevtx_template_definition_set_binary_xml_data";
+
+	if( template_definition == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template definition.",
+		 function );
+
+		return( -1 );
+	}
+	internal_template_definition = (libevtx_internal_template_definition_t *) template_definition;
+
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO check if already initialized */
+	if( internal_template_definition->binary_xml_data != NULL )
+	{
+		memory_free(
+		 internal_template_definition->binary_xml_data );
+
+		internal_template_definition->binary_xml_data      = NULL;
+		internal_template_definition->binary_xml_data_size = 0;
+	}
+	internal_template_definition->binary_xml_data = (uint8_t *) memory_allocate(
+	                                                             sizeof( uint8_t ) * data_size );
+
+	if( internal_template_definition->binary_xml_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create binary XML data.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     internal_template_definition->binary_xml_data,
+	     data,
+	     data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy binary XML data.",
+		 function );
+
+		goto on_error;
+	}
+	internal_template_definition->binary_xml_data_size = data_size;
+
+	return( 1 );
+
+on_error:
+	if( internal_template_definition->binary_xml_data != NULL )
+	{
+		memory_free(
+		 internal_template_definition->binary_xml_data );
+
+		internal_template_definition->binary_xml_data = NULL;
+	}
+	internal_template_definition->binary_xml_data_size = 0;
+
+	return( -1 );
+}
+
+/* Sets the instance values data
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_template_definition_set_instance_values_data(
+     libevtx_template_definition_t *template_definition,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error )
+{
+	libevtx_internal_template_definition_t *internal_template_definition = NULL;
+	static char *function                                                = "libevtx_template_definition_set_instance_values_data";
+
+	if( template_definition == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template definition.",
+		 function );
+
+		return( -1 );
+	}
+	internal_template_definition = (libevtx_internal_template_definition_t *) template_definition;
+
+	if( data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO check if already initialized */
+	if( internal_template_definition->instance_values_data != NULL )
+	{
+		memory_free(
+		 internal_template_definition->instance_values_data );
+
+		internal_template_definition->instance_values_data      = NULL;
+		internal_template_definition->instance_values_data_size = 0;
+	}
+	internal_template_definition->instance_values_data = (uint8_t *) memory_allocate(
+	                                                                  sizeof( uint8_t ) * data_size );
+
+	if( internal_template_definition->instance_values_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create instance values data.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     internal_template_definition->instance_values_data,
+	     data,
+	     data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy instance values data.",
+		 function );
+
+		goto on_error;
+	}
+	internal_template_definition->instance_values_data_size = data_size;
+
+	return( 1 );
+
+on_error:
+	if( internal_template_definition->instance_values_data != NULL )
+	{
+		memory_free(
+		 internal_template_definition->instance_values_data );
+
+		internal_template_definition->instance_values_data = NULL;
+	}
+	internal_template_definition->instance_values_data_size = 0;
+
+	return( -1 );
 }
 

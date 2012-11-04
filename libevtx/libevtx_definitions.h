@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20121031
+#define LIBEVTX_VERSION						20121104
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20121031"
+#define LIBEVTX_VERSION_STRING					"20121104"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access

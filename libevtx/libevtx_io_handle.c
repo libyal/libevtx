@@ -62,39 +62,48 @@ int libevtx_io_handle_initialize(
 
 		return( -1 );
 	}
+	if( *io_handle != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid IO handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*io_handle = memory_allocate_structure(
+	              libevtx_io_handle_t );
+
 	if( *io_handle == NULL )
 	{
-		*io_handle = memory_allocate_structure(
-		              libevtx_io_handle_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create IO handle.",
+		 function );
 
-		if( *io_handle == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create IO handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     *io_handle,
-		     0,
-		     sizeof( libevtx_io_handle_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear IO handle.",
-			 function );
-
-			goto on_error;
-		}
-		( *io_handle )->chunk_size     = 0x00010000UL;
-		( *io_handle )->ascii_codepage = LIBEVTX_CODEPAGE_WINDOWS_1252;
+		goto on_error;
 	}
+	if( memory_set(
+	     *io_handle,
+	     0,
+	     sizeof( libevtx_io_handle_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	( *io_handle )->chunk_size     = 0x00010000UL;
+	( *io_handle )->ascii_codepage = LIBEVTX_CODEPAGE_WINDOWS_1252;
+
 	return( 1 );
 
 on_error:

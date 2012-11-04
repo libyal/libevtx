@@ -35,35 +35,35 @@ PyObject *pyevtx_datetime_new_from_filetime(
 {
 	static char *function      = "pyevtx_datetime_new_from_filetime";
 	PyObject *date_time_object = NULL;
+	uint32_t micro_seconds     = 0;
 	uint32_t days_in_century   = 0;
 	uint16_t days_in_year      = 0;
 	uint16_t year              = 0;
 	uint8_t day                = 0;
 	uint8_t days_in_month      = 0;
 	uint8_t hours              = 0;
-	uint8_t micro_seconds      = 0;
 	uint8_t minutes            = 0;
 	uint8_t month              = 0;
 	uint8_t seconds            = 0;
 
 	/* The timestamp is in units of 100 nano seconds correct the value to seconds
 	 */
-	micro_seconds = ( filetime % 10000000 ) / 10;
+	micro_seconds = (uint32_t) ( filetime % 10000000 ) / 10;
 	filetime      /= 10000000;
 
 	/* There are 60 seconds in a minute correct the value to minutes
 	 */
-	seconds   = filetime % 60;
+	seconds   = (uint8_t) ( filetime % 60 );
 	filetime /= 60;
 
 	/* There are 60 minutes in an hour correct the value to hours
 	 */
-	minutes   = filetime % 60;
+	minutes   = (uint8_t) ( filetime % 60 );
 	filetime /= 60;
 
 	/* There are 24 hours in a day correct the value to days
 	 */
-	hours     = filetime % 24;
+	hours     = (uint8_t) ( filetime % 24 );
 	filetime /= 24;
 
 	/* Add 1 day to compensate that Jan 1 1601 is represented as 0
@@ -191,13 +191,13 @@ PyObject *pyevtx_datetime_new_from_filetime(
 	PyDateTime_IMPORT;
 
 	date_time_object = (PyObject *) PyDateTime_FromDateAndTime(
-	                                 year,
-	                                 month,
-	                                 day,
-	                                 hours,
-	                                 minutes,
-	                                 seconds,
-	                                 micro_seconds );
+	                                 (int) year,
+	                                 (int) month,
+	                                 (int) day,
+	                                 (int) hours,
+	                                 (int) minutes,
+	                                 (int) seconds,
+	                                 (int) micro_seconds );
 
 	return( date_time_object );
 }

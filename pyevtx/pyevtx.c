@@ -51,7 +51,7 @@ PyMethodDef pyevtx_module_methods[] = {
 	{ "check_file_signature",
 	  (PyCFunction) pyevtx_check_file_signature,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "Checks if a file has a Windows Shortcut File (LNK) signature" },
+	  "Checks if a file has a Windows XML Event Log (EVTX) file signature" },
 
 	{ "open",
 	  (PyCFunction) pyevtx_file_new_open,
@@ -97,7 +97,7 @@ PyObject *pyevtx_get_access_flags_read(
 	         (long) libevtx_get_access_flags_read() ) );
 }
 
-/* Checks if the file has a Windows NT Registy File signature
+/* Checks if the file has a Windows XML Event Log (EVTX) file signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_check_file_signature(
@@ -175,16 +175,18 @@ PyMODINIT_FUNC initpyevtx(
 	PyTypeObject *records_type_object = NULL;
 	PyGILState_STATE gil_state        = 0;
 
-	PyEval_InitThreads();
-
-	gil_state = PyGILState_Ensure();
-
 	/* Create the module
+	 * This function must be called before grabbing the GIL
+	 * otherwise the module will segfault on a version mismatch
 	 */
 	module = Py_InitModule3(
 	          "pyevtx",
-	           pyevtx_module_methods,
-	           "Python libevtx module (pyevtx)." );
+	          pyevtx_module_methods,
+	          "Python libevtx module (pyevtx)." );
+
+	PyEval_InitThreads();
+
+	gil_state = PyGILState_Ensure();
 
 	/* Setup the file type object
 	 */
@@ -193,7 +195,7 @@ PyMODINIT_FUNC initpyevtx(
 	if( PyType_Ready(
 	     &pyevtx_file_type_object ) < 0 )
 	{
-		return;
+		goto on_error;
 	}
 	Py_IncRef(
 	 (PyObject *) &pyevtx_file_type_object );
@@ -212,7 +214,7 @@ PyMODINIT_FUNC initpyevtx(
 	if( PyType_Ready(
 	     &pyevtx_records_type_object ) < 0 )
 	{
-		return;
+		goto on_error;
 	}
 	Py_IncRef(
 	 (PyObject *) &pyevtx_records_type_object );
@@ -231,7 +233,7 @@ PyMODINIT_FUNC initpyevtx(
 	if( PyType_Ready(
 	     &pyevtx_record_type_object ) < 0 )
 	{
-		return;
+		goto on_error;
 	}
 	Py_IncRef(
 	 (PyObject *) &pyevtx_record_type_object );
@@ -243,6 +245,7 @@ PyMODINIT_FUNC initpyevtx(
 	 "record",
 	 (PyObject *) record_type_object );
 
+on_error:
 	PyGILState_Release(
 	 gil_state );
 }
