@@ -41,9 +41,9 @@ CFLAGS=-DWINVER=0x0501 ./configure --host=i386-mingw32 --enable-winapi=yes
 You should end up with the following DLL:
 libevtx-<version>/libevtx/.libs/libevtx-1.dll
 
-And the following evtxcutables:
-libevtx-<version>/evtxtools/.libs/evtxinfo.evtx
-libevtx-<version>/evtxtools/.libs/evtxexport.evtx
+And the following executables:
+libevtx-<version>/evtxtools/.libs/evtxinfo.exe
+libevtx-<version>/evtxtools/.libs/evtxexport.exe
 
 To install the libevtx DLL in the MinGW build tree use:
 sudo make install
