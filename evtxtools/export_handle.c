@@ -27,7 +27,6 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcnotify.h"
 #include "evtxtools_libclocale.h"
-#include "evtxtools_libcsplit.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"

@@ -59,6 +59,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20121119
+* worked on formatted message strings
+* updated libfwevt
+
 20121104
 * pyevtx: bug fixes
 * updated dependencies

@@ -26,7 +26,10 @@
 #include <types.h>
 
 #include "libevtx_extern.h"
+#include "libevtx_io_handle.h"
+#include "libevtx_libcdata.h"
 #include "libevtx_libcerror.h"
+#include "libevtx_libfwevt.h"
 #include "libevtx_types.h"
 
 #if defined( __cplusplus )
@@ -45,6 +48,14 @@ struct libevtx_internal_template_definition
 	 */
 	size_t binary_xml_data_size;
 
+	/* The number of instance values
+	 */
+	int number_of_instance_values;
+
+	/* The instance values data base offset
+	 */
+	size_t instance_values_data_base_offset;
+
 	/* The instance values data
 	 */
 	uint8_t *instance_values_data;
@@ -52,6 +63,14 @@ struct libevtx_internal_template_definition
 	/* The instance values data size
 	 */
 	size_t instance_values_data_size;
+
+	/* The XML document
+	 */
+	libfwevt_xml_document_t *xml_document;
+
+	/* The template values array
+	 */
+	libcdata_array_t *template_values_array;
 };
 
 LIBEVTX_EXTERN \
@@ -74,8 +93,19 @@ int libevtx_template_definition_set_binary_xml_data(
 LIBEVTX_EXTERN \
 int libevtx_template_definition_set_instance_values_data(
      libevtx_template_definition_t *template_definition,
+     int number_of_values,
+     size_t base_offset,
      const uint8_t *data,
      size_t data_size,
+     libcerror_error_t **error );
+
+int libevtx_template_definition_read(
+     libevtx_internal_template_definition_t *internal_template_definition,
+     libevtx_io_handle_t *io_handle,
+     libcerror_error_t **error );
+
+int libevtx_template_definition_read_instance_values(
+     libevtx_internal_template_definition_t *internal_template_descriptor,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

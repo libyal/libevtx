@@ -229,9 +229,7 @@ int libevtx_chunk_read(
 	static char *function                  = "libevtx_chunk_read";
 	size_t chunk_data_offset               = 0;
 	size_t chunk_data_size                 = 0;
-	ssize_t free_space_size                = 0;
 	ssize_t read_count                     = 0;
-	uint64_t calculated_chunk_number       = 0;
 	uint32_t calculated_checksum           = 0;
 	uint32_t event_records_checksum        = 0;
 	uint32_t first_event_record_number     = 0;
@@ -243,6 +241,8 @@ int libevtx_chunk_read(
 	int entry_index                        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	ssize_t free_space_size                = 0;
+	uint64_t calculated_chunk_number       = 0;
 	uint64_t value_64bit                   = 0;
 	uint32_t value_32bit                   = 0;
 #endif
@@ -280,9 +280,9 @@ int libevtx_chunk_read(
 
 		return( -1 );
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	calculated_chunk_number = (uint64_t) ( ( file_offset - io_handle->chunk_size ) / io_handle->chunk_size );
 
-#if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
@@ -649,9 +649,9 @@ int libevtx_chunk_read(
 	}
 	if( chunk_data_offset < chunk_data_size )
 	{
+#if defined( HAVE_DEBUG_OUTPUT )
 		free_space_size = chunk_data_size - chunk_data_offset;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(

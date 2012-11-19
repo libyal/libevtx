@@ -1377,7 +1377,7 @@ int resource_file_get_template_definition(
 			goto on_error;
 		}
 	}
-	return( 1 );
+	return( result );
 
 on_error:
 	if( *event != NULL )

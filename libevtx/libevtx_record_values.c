@@ -552,10 +552,9 @@ int libevtx_record_values_read_xml_document(
      size_t chunk_data_size,
      libcerror_error_t **error )
 {
-	const uint8_t *event_record_data  = NULL;
-	static char *function             = "libevtx_record_values_read_xml_document";
-	size_t chunk_data_offset          = 0;
-	size_t event_record_data_size     = 0;
+	static char *function         = "libevtx_record_values_read_xml_document";
+	size_t chunk_data_offset      = 0;
+	size_t event_record_data_size = 0;
 
 	if( record_values == NULL )
 	{
@@ -650,8 +649,6 @@ int libevtx_record_values_read_xml_document(
 
 		goto on_error;
 	}
-	event_record_data = &( chunk_data[ chunk_data_offset ] );
-
 	if( libfwevt_xml_document_initialize(
 	     &( record_values->xml_document ),
 	     error ) != 1 )
@@ -672,7 +669,7 @@ int libevtx_record_values_read_xml_document(
 		 "%s: event record data:\n",
 		 function );
 		libcnotify_print_data(
-		 event_record_data,
+		 &( chunk_data[ chunk_data_offset ] ),
 		 event_record_data_size,
 		 0 );
 	}
@@ -855,7 +852,6 @@ int libevtx_record_values_get_event_identifier_qualifiers(
      libcerror_error_t **error )
 {
 	libfvalue_value_t *qualifiers_value    = NULL;
-	libfwevt_xml_tag_t *eventid_xml_tag    = NULL;
 	libfwevt_xml_tag_t *qualifiers_xml_tag = NULL;
 	libfwevt_xml_tag_t *root_xml_tag       = NULL;
 	libfwevt_xml_tag_t *system_xml_tag     = NULL;
