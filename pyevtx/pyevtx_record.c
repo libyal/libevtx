@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -727,7 +726,7 @@ PyObject *pyevtx_record_get_source_name(
 
 		return( Py_None );
 	}
-	source_name = (uint8_t *) memory_allocate(
+	source_name = (uint8_t *) PyMem_Malloc(
 	                           sizeof( uint8_t ) * source_name_size );
 
 	if( source_name == NULL )
@@ -783,7 +782,7 @@ PyObject *pyevtx_record_get_source_name(
 			 (Py_ssize_t) source_name_size - 1,
 			 errors );
 
-	memory_free(
+	PyMem_Free(
 	 source_name );
 
 	return( string_object );
@@ -791,7 +790,7 @@ PyObject *pyevtx_record_get_source_name(
 on_error:
 	if( source_name != NULL )
 	{
-		memory_free(
+		PyMem_Free(
 		 source_name );
 	}
 	return( NULL );
@@ -864,7 +863,7 @@ PyObject *pyevtx_record_get_computer_name(
 
 		return( Py_None );
 	}
-	computer_name = (uint8_t *) memory_allocate(
+	computer_name = (uint8_t *) PyMem_Malloc(
 	                             sizeof( uint8_t ) * computer_name_size );
 
 	if( computer_name == NULL )
@@ -920,7 +919,7 @@ PyObject *pyevtx_record_get_computer_name(
 			 (Py_ssize_t) computer_name_size - 1,
 			 errors );
 
-	memory_free(
+	PyMem_Free(
 	 computer_name );
 
 	return( string_object );
@@ -928,7 +927,7 @@ PyObject *pyevtx_record_get_computer_name(
 on_error:
 	if( computer_name != NULL )
 	{
-		memory_free(
+		PyMem_Free(
 		 computer_name );
 	}
 	return( NULL );
@@ -1001,7 +1000,7 @@ PyObject *pyevtx_record_get_xml_string(
 
 		return( Py_None );
 	}
-	xml_string = (uint8_t *) memory_allocate(
+	xml_string = (uint8_t *) PyMem_Malloc(
 	                          sizeof( uint8_t ) * xml_string_size );
 
 	if( xml_string == NULL )
@@ -1057,7 +1056,7 @@ PyObject *pyevtx_record_get_xml_string(
 			 (Py_ssize_t) xml_string_size - 1,
 			 errors );
 
-	memory_free(
+	PyMem_Free(
 	 xml_string );
 
 	return( string_object );
@@ -1065,7 +1064,7 @@ PyObject *pyevtx_record_get_xml_string(
 on_error:
 	if( xml_string != NULL )
 	{
-		memory_free(
+		PyMem_Free(
 		 xml_string );
 	}
 	return( NULL );
