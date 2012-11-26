@@ -967,15 +967,16 @@ int export_handle_message_string_fprint(
      libevtx_record_t *record,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	static char *function                       = "export_handle_message_string_fprint";
-	size_t conversion_specifier_length          = 0;
-	size_t message_string_length                = 0;
-	size_t message_string_index                 = 0;
-	size_t value_string_size                    = 0;
-	int number_of_strings                       = 0;
-	int result                                  = 0;
-	int value_string_index                      = 0;
+	libcstring_system_character_t *value_string  = NULL;
+	static char *function                        = "export_handle_message_string_fprint";
+	size_t conversion_specifier_length           = 0;
+	size_t message_string_length                 = 0;
+	size_t message_string_index                  = 0;
+	size_t value_string_size                     = 0;
+	libcstring_system_character_t last_character = 0;
+	int number_of_strings                        = 0;
+	int result                                   = 0;
+	int value_string_index                       = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1052,6 +1053,8 @@ int export_handle_message_string_fprint(
 				 export_handle->notify_stream,
 				 " " );
 
+				last_character = (libcstring_system_character_t) ' ';
+
 				message_string_index += 2;
 
 				continue;
@@ -1059,10 +1062,14 @@ int export_handle_message_string_fprint(
 			/* Replace %n = new line */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
 			{
-				fprintf(
-				 export_handle->notify_stream,
-				 "\n" );
+				if( last_character != (libcstring_system_character_t) '\n' )
+				{
+					fprintf(
+					 export_handle->notify_stream,
+					 "\n" );
 
+					last_character = (libcstring_system_character_t) '\n';
+				}
 				message_string_index += 2;
 
 				continue;
@@ -1073,6 +1080,8 @@ int export_handle_message_string_fprint(
 				fprintf(
 				 export_handle->notify_stream,
 				 "\t" );
+
+				last_character = (libcstring_system_character_t) '\t';
 
 				message_string_index += 2;
 
@@ -1210,10 +1219,16 @@ int export_handle_message_string_fprint(
 		{
 			if( ( message_string->string )[ message_string_index ] != 0 )
 			{
-				fprintf(
-				 export_handle->notify_stream,
-				 "%" PRIc_LIBCSTRING_SYSTEM "",
-				 ( message_string->string )[ message_string_index ] );
+				if( ( ( message_string->string )[ message_string_index ] != (libcstring_system_character_t) '\n' )
+				 && ( last_character != (libcstring_system_character_t) '\n' ) )
+				{
+					fprintf(
+					 export_handle->notify_stream,
+					 "%" PRIc_LIBCSTRING_SYSTEM "",
+					 ( message_string->string )[ message_string_index ] );
+
+					last_character = ( message_string->string )[ message_string_index ];
+				}
 			}
 			message_string_index += 1;
 		}
@@ -1354,11 +1369,10 @@ int export_handle_resource_file_get_template_definition(
 	libwrc_wevt_event_t *wevt_event                             = NULL;
 	libwrc_wevt_provider_t *wevt_provider                       = NULL;
 	libwrc_wevt_template_definition_t *wevt_template_definition = NULL;
-	uint8_t *binary_xml_data                                    = NULL;
-	uint8_t *instance_values_data                               = NULL;
+	uint8_t *template_data                                      = NULL;
 	static char *function                                       = "export_handle_resource_file_get_template_definition";
-	size_t binary_xml_data_size                                 = 0;
-	size_t instance_values_data_size                            = 0;
+	size_t template_data_offset                                 = 0;
+	size_t template_data_size                                   = 0;
 	int result                                                  = 0;
 
 	if( export_handle == NULL )
@@ -1406,107 +1420,70 @@ int export_handle_resource_file_get_template_definition(
 	}
 	else if( result != 0 )
 	{
-		if( libwrc_wevt_template_definition_get_binary_xml_data_size(
+		if( libwrc_wevt_template_definition_get_data_offset(
 		     wevt_template_definition,
-		     &binary_xml_data_size,
+		     &template_data_offset,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve binary XML data size.",
+			 "%s: unable to retrieve template data offset.",
 			 function );
 
 			goto on_error;
 		}
-		if( binary_xml_data_size > 0 )
-		{
-			binary_xml_data = (uint8_t *) memory_allocate(
-			                               sizeof( uint8_t ) * binary_xml_data_size );
-
-			if( binary_xml_data == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create binary XML data.",
-				 function );
-
-				goto on_error;
-			}
-			if( libwrc_wevt_template_definition_get_binary_xml_data(
-			     wevt_template_definition,
-			     binary_xml_data,
-			     binary_xml_data_size,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve binary XML data.",
-				 function );
-
-				goto on_error;
-			}
-/* TODO implement */
-			memory_free(
-			 binary_xml_data );
-
-			binary_xml_data = NULL;
-		}
-		if( libwrc_wevt_template_definition_get_instance_values_data_size(
+		if( libwrc_wevt_template_definition_get_data_size(
 		     wevt_template_definition,
-		     &instance_values_data_size,
+		     &template_data_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve instance values data size.",
+			 "%s: unable to retrieve template data size.",
 			 function );
 
 			goto on_error;
 		}
-		if( instance_values_data_size > 0 )
+		if( template_data_size > 0 )
 		{
-			instance_values_data = (uint8_t *) memory_allocate(
-			                                    sizeof( uint8_t ) * instance_values_data_size );
+			template_data = (uint8_t *) memory_allocate(
+			                             sizeof( uint8_t ) * template_data_size );
 
-			if( instance_values_data == NULL )
+			if( template_data == NULL )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_MEMORY,
 				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create instance values data.",
+				 "%s: unable to create template data.",
 				 function );
 
 				goto on_error;
 			}
-			if( libwrc_wevt_template_definition_get_instance_values_data(
+			if( libwrc_wevt_template_definition_get_data(
 			     wevt_template_definition,
-			     instance_values_data,
-			     instance_values_data_size,
+			     template_data,
+			     template_data_size,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve instance values data.",
+				 "%s: unable to retrieve template data.",
 				 function );
 
 				goto on_error;
 			}
 /* TODO implement */
 			memory_free(
-			 instance_values_data );
+			 template_data );
 
-			instance_values_data = NULL;
+			template_data = NULL;
 		}
 		if( libwrc_wevt_template_definition_free(
 		     &wevt_template_definition,
@@ -1551,15 +1528,10 @@ int export_handle_resource_file_get_template_definition(
 	return( result );
 
 on_error:
-	if( instance_values_data != NULL )
+	if( template_data != NULL )
 	{
 		memory_free(
-		 instance_values_data );
-	}
-	if( binary_xml_data != NULL )
-	{
-		memory_free(
-		 binary_xml_data );
+		 template_data );
 	}
 	if( wevt_template_definition != NULL )
 	{

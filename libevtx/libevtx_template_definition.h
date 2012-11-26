@@ -88,24 +88,12 @@ int libevtx_template_definition_set_binary_xml_data(
      libevtx_template_definition_t *template_definition,
      const uint8_t *data,
      size_t data_size,
-     libcerror_error_t **error );
-
-LIBEVTX_EXTERN \
-int libevtx_template_definition_set_instance_values_data(
-     libevtx_template_definition_t *template_definition,
-     int number_of_values,
-     size_t base_offset,
-     const uint8_t *data,
-     size_t data_size,
+     size_t data_offset,
      libcerror_error_t **error );
 
 int libevtx_template_definition_read(
      libevtx_internal_template_definition_t *internal_template_definition,
      libevtx_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libevtx_template_definition_read_instance_values(
-     libevtx_internal_template_definition_t *internal_template_descriptor,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
