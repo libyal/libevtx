@@ -40,29 +40,13 @@ typedef struct libevtx_internal_template_definition libevtx_internal_template_de
 
 struct libevtx_internal_template_definition
 {
-	/* The binary XML data
+	/* The data
 	 */
-	uint8_t *binary_xml_data;
+	uint8_t *data;
 
-	/* The binary XML data size
+	/* The data size
 	 */
-	size_t binary_xml_data_size;
-
-	/* The number of instance values
-	 */
-	int number_of_instance_values;
-
-	/* The instance values data base offset
-	 */
-	size_t instance_values_data_base_offset;
-
-	/* The instance values data
-	 */
-	uint8_t *instance_values_data;
-
-	/* The instance values data size
-	 */
-	size_t instance_values_data_size;
+	size_t data_size;
 
 	/* The XML document
 	 */
@@ -84,7 +68,7 @@ int libevtx_template_definition_free(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_template_definition_set_binary_xml_data(
+int libevtx_template_definition_set_data(
      libevtx_template_definition_t *template_definition,
      const uint8_t *data,
      size_t data_size,

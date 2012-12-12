@@ -282,7 +282,9 @@ int libevtx_template_definition_read(
      libevtx_io_handle_t *io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_template_definition_read";
+	uint8_t *instance_values_data    = NULL;
+	static char *function            = "libevtx_template_definition_read";
+	size_t instance_values_data_size = 0;
 
 	if( internal_template_definition == NULL )
 	{
@@ -335,13 +337,14 @@ int libevtx_template_definition_read(
 		 "%s: template instance values data:\n",
 		 function );
 		libcnotify_print_data(
-		 internal_template_definition->instance_values_data,
-		 internal_template_definition->instance_values_data_size,
+		 instance_values_data,
+		 instance_values_data_size,
 		 0 );
 	}
 #endif
-	if( internal_template_definition->instance_values_data_size > 0 )
+	if( instance_values_data_size > 0 )
 	{
+/* TODO
 		if( libevtx_template_definition_read_instance_values(
 		     internal_template_definition,
 		     error ) != 1 )
@@ -355,6 +358,7 @@ int libevtx_template_definition_read(
 
 			goto on_error;
 		}
+*/
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -408,7 +412,7 @@ int libevtx_template_definition_read(
 		 function );
 
 		if( libfwevt_xml_document_debug_print(
-		     xml_document,
+		     internal_template_definition->xml_document,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

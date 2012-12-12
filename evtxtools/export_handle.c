@@ -1420,6 +1420,7 @@ int export_handle_resource_file_get_template_definition(
 	}
 	else if( result != 0 )
 	{
+/* TODO
 		if( libwrc_wevt_template_definition_get_data_offset(
 		     wevt_template_definition,
 		     &template_data_offset,
@@ -1434,6 +1435,7 @@ int export_handle_resource_file_get_template_definition(
 
 			goto on_error;
 		}
+*/
 		if( libwrc_wevt_template_definition_get_data_size(
 		     wevt_template_definition,
 		     &template_data_size,
