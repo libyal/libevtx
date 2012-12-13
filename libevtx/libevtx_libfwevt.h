@@ -28,7 +28,17 @@
  */
 #if defined( HAVE_LOCAL_LIBFWEVT )
 
+#include <libfwevt_channel.h>
 #include <libfwevt_definitions.h>
+#include <libfwevt_event.h>
+#include <libfwevt_keyword.h>
+#include <libfwevt_level.h>
+#include <libfwevt_manifest.h>
+#include <libfwevt_map.h>
+#include <libfwevt_opcode.h>
+#include <libfwevt_provider.h>
+#include <libfwevt_task.h>
+#include <libfwevt_template.h>
 #include <libfwevt_types.h>
 #include <libfwevt_xml_document.h>
 #include <libfwevt_xml_tag.h>

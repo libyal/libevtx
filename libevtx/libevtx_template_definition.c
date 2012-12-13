@@ -136,35 +136,21 @@ int libevtx_template_definition_free(
 			memory_free(
 			 internal_template_definition->data );
 		}
-		if( internal_template_definition->xml_document != NULL )
+		if( internal_template_definition->template != NULL )
 		{
-			if( libfwevt_xml_document_free(
-			     &( internal_template_definition->xml_document ),
+			if( libfwevt_template_free(
+			     &( internal_template_definition->template ),
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free XML document.",
+				 "%s: unable to free template.",
 				 function );
 
 				result = -1;
 			}
-		}
-		if( libcdata_array_free(
-		     &( internal_template_definition->template_values_array ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libfwevt_xml_template_value_free,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to free template values array.",
-			 function );
-
-			result = -1;
 		}
 		memory_free(
 		 internal_template_definition );
@@ -179,7 +165,7 @@ int libevtx_template_definition_set_data(
      libevtx_template_definition_t *template_definition,
      const uint8_t *data,
      size_t data_size,
-     size_t data_offset,
+     uint32_t data_offset,
      libcerror_error_t **error )
 {
 	libevtx_internal_template_definition_t *internal_template_definition = NULL;
@@ -257,7 +243,8 @@ int libevtx_template_definition_set_data(
 
 		goto on_error;
 	}
-	internal_template_definition->data_size = data_size;
+	internal_template_definition->data_size   = data_size;
+	internal_template_definition->data_offset = data_offset;
 
 	return( 1 );
 
@@ -269,7 +256,8 @@ on_error:
 
 		internal_template_definition->data = NULL;
 	}
-	internal_template_definition->data_size = 0;
+	internal_template_definition->data_size   = 0;
+	internal_template_definition->data_offset = 0;
 
 	return( -1 );
 }
@@ -282,9 +270,7 @@ int libevtx_template_definition_read(
      libevtx_io_handle_t *io_handle,
      libcerror_error_t **error )
 {
-	uint8_t *instance_values_data    = NULL;
-	static char *function            = "libevtx_template_definition_read";
-	size_t instance_values_data_size = 0;
+	static char *function = "libevtx_template_definition_read";
 
 	if( internal_template_definition == NULL )
 	{
@@ -308,13 +294,13 @@ int libevtx_template_definition_read(
 
 		return( -1 );
 	}
-	if( internal_template_definition->xml_document != NULL )
+	if( internal_template_definition->template != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid template definition - XML document already set.",
+		 "%s: invalid template definition - template already set.",
 		 function );
 
 		return( -1 );
@@ -330,118 +316,43 @@ int libevtx_template_definition_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: template instance values data:\n",
-		 function );
-		libcnotify_print_data(
-		 instance_values_data,
-		 instance_values_data_size,
-		 0 );
-	}
-#endif
-	if( instance_values_data_size > 0 )
-	{
-/* TODO
-		if( libevtx_template_definition_read_instance_values(
-		     internal_template_definition,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read template instance values.",
-			 function );
-
-			goto on_error;
-		}
-*/
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: template data:\n",
-		 function );
-		libcnotify_print_data(
-		 internal_template_definition->data,
-		 internal_template_definition->data_size,
-		 0 );
-	}
-#endif
-	if( libfwevt_xml_document_initialize(
-	     &( internal_template_definition->xml_document ),
+	if( libfwevt_template_initialize(
+	     &( internal_template_definition->template ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create XML document.",
+		 "%s: unable to create template.",
 		 function );
 
 		goto on_error;
 	}
-	if( libfwevt_xml_document_read(
-	     internal_template_definition->xml_document,
+	if( libfwevt_template_read(
+	     internal_template_definition->template,
 	     internal_template_definition->data,
 	     internal_template_definition->data_size,
-	     0,
+	     (size_t) internal_template_definition->data_offset,
 	     io_handle->ascii_codepage,
-	     0,
-	     internal_template_definition->template_values_array,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read binary XML document.",
+		 "%s: unable to read template.",
 		 function );
 
 		goto on_error;
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: XML document:\n",
-		 function );
-
-		if( libfwevt_xml_document_debug_print(
-		     internal_template_definition->xml_document,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print XML document.",
-			 function );
-
-			goto on_error;
-		}
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	return( 1 );
+	return( -1 );
 
 on_error:
-	if( internal_template_definition->xml_document != NULL )
+	if( internal_template_definition->template != NULL )
 	{
-		libfwevt_xml_document_free(
-		 &( internal_template_definition->xml_document ),
-		 NULL );
-	}
-	if( internal_template_definition->template_values_array != NULL )
-	{
-		libcdata_array_free(
-		 &( internal_template_definition->template_values_array ),
-		 (int (*)(intptr_t **, libcerror_error_t **)) &libfwevt_xml_template_value_free,
+		libfwevt_template_free(
+		 &( internal_template_definition->template ),
 		 NULL );
 	}
 	return( -1 );

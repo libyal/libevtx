@@ -48,13 +48,13 @@ struct libevtx_internal_template_definition
 	 */
 	size_t data_size;
 
-	/* The XML document
+	/* The data offset
 	 */
-	libfwevt_xml_document_t *xml_document;
+	uint32_t data_offset;
 
-	/* The template values array
+	/* The template
 	 */
-	libcdata_array_t *template_values_array;
+	libfwevt_template_t *template;
 };
 
 LIBEVTX_EXTERN \
@@ -72,7 +72,7 @@ int libevtx_template_definition_set_data(
      libevtx_template_definition_t *template_definition,
      const uint8_t *data,
      size_t data_size,
-     size_t data_offset,
+     uint32_t data_offset,
      libcerror_error_t **error );
 
 int libevtx_template_definition_read(

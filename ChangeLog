@@ -65,6 +65,12 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20121213
+* worked on formatted message strings
+
+20121212
+* worked on formatted message strings
+
 20121125
 * worked on formatted message strings
 * evtxexport: detect double newlines and remove

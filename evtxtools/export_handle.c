@@ -1371,8 +1371,8 @@ int export_handle_resource_file_get_template_definition(
 	libwrc_wevt_template_definition_t *wevt_template_definition = NULL;
 	uint8_t *template_data                                      = NULL;
 	static char *function                                       = "export_handle_resource_file_get_template_definition";
-	size_t template_data_offset                                 = 0;
 	size_t template_data_size                                   = 0;
+	uint32_t template_data_offset                               = 0;
 	int result                                                  = 0;
 
 	if( export_handle == NULL )
@@ -1420,8 +1420,7 @@ int export_handle_resource_file_get_template_definition(
 	}
 	else if( result != 0 )
 	{
-/* TODO
-		if( libwrc_wevt_template_definition_get_data_offset(
+		if( libwrc_wevt_template_definition_get_offset(
 		     wevt_template_definition,
 		     &template_data_offset,
 		     error ) != 1 )
@@ -1430,13 +1429,12 @@ int export_handle_resource_file_get_template_definition(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template data offset.",
+			 "%s: unable to retrieve template offset.",
 			 function );
 
 			goto on_error;
 		}
-*/
-		if( libwrc_wevt_template_definition_get_data_size(
+		if( libwrc_wevt_template_definition_get_size(
 		     wevt_template_definition,
 		     &template_data_size,
 		     error ) != 1 )
@@ -1445,7 +1443,7 @@ int export_handle_resource_file_get_template_definition(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template data size.",
+			 "%s: unable to retrieve template size.",
 			 function );
 
 			goto on_error;
@@ -1481,7 +1479,22 @@ int export_handle_resource_file_get_template_definition(
 
 				goto on_error;
 			}
-/* TODO implement */
+			if( libevtx_template_definition_set_data(
+			     *template_definition,
+			     template_data,
+			     template_data_size,
+			     template_data_offset,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set template data.",
+				 function );
+
+				goto on_error;
+			}
 			memory_free(
 			 template_data );
 

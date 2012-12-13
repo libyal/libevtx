@@ -690,6 +690,17 @@ int libevtx_template_definition_free(
      libevtx_template_definition_t **template_definition,
      libevtx_error_t **error );
 
+/* Sets the data
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_template_definition_set_data(
+     libevtx_template_definition_t *template_definition,
+     const uint8_t *data,
+     size_t data_size,
+     uint32_t data_offset,
+     libevtx_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif
