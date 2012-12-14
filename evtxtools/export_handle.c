@@ -2574,7 +2574,8 @@ int export_handle_export_record_text(
 	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Event identifier\t\t: 0x%08" PRIx32 "\n",
+	 "Event identifier\t\t: 0x%08" PRIx32 " (%" PRIu32 ")\n",
+	 event_identifier,
 	 event_identifier );
 
 	if( export_handle_export_record_event_message(
