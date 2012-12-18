@@ -31,6 +31,7 @@
 #include "libevtx_libfvalue.h"
 #include "libevtx_libfwevt.h"
 #include "libevtx_record_values.h"
+#include "libevtx_template_definition.h"
 
 #include "evtx_event_record.h"
 
