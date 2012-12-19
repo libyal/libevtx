@@ -30,6 +30,7 @@
 #include "libevtx_libcerror.h"
 #include "libevtx_libfvalue.h"
 #include "libevtx_libfwevt.h"
+#include "libevtx_template_definition.h"
 #include "libevtx_types.h"
 
 #if defined( __cplusplus )
@@ -105,6 +106,10 @@ struct libevtx_record_values
 	/* Reference to the user security identifier (SID) value
 	 */
 	libfvalue_value_t *user_security_identifier_value;
+
+	/* The string identifiers array
+	 */
+	libcdata_array_t *string_identifiers_array;
 
 	/* The strings array
 	 */
@@ -248,7 +253,7 @@ int libevtx_record_values_get_utf16_user_security_identifier(
 
 int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
-     libevtx_template_definition_t *template_definition,
+     libevtx_internal_template_definition_t *internal_template_definition,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_number_of_strings(

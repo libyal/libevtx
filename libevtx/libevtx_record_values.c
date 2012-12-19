@@ -133,6 +133,23 @@ int libevtx_record_values_free(
 	}
 	if( *record_values != NULL )
 	{
+		if( ( *record_values )->string_identifiers_array != NULL )
+		{
+			if( libcdata_array_free(
+			     &( ( *record_values )->string_identifiers_array ),
+			     NULL,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free the string identifiers array.",
+				 function );
+
+				result = -1;
+			}
+		}
 		if( ( *record_values )->strings_array != NULL )
 		{
 			if( libcdata_array_free(
@@ -3587,7 +3604,9 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 	static char *function                    = "libevtx_record_values_parse_data_xml_tag_by_template";
 	size_t data_name_size                    = 0;
 	size_t template_name_size                = 0;
+	uint8_t template_xml_tag_flags           = 0;
 	int attribute_index                      = 0;
+	int entry_index                          = 0;
 	int sub_element_index                    = 0;
 	int number_of_data_attributes            = 0;
 	int number_of_data_elements              = 0;
@@ -3783,11 +3802,110 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 	     attribute_index < number_of_template_attributes;
 	     attribute_index++ )
 	{
-/* TODO handle attributes */
+		if( libfwevt_xml_tag_get_attribute_by_index(
+		     data_xml_tag,
+		     attribute_index,
+		     &sub_data_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve data attribute: %d.",
+			 function,
+			 attribute_index );
+
+			goto on_error;
+		}
+		if( libfwevt_xml_tag_get_attribute_by_index(
+		     template_xml_tag,
+		     attribute_index,
+		     &sub_template_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template attribute: %d.",
+			 function,
+			 attribute_index );
+
+			goto on_error;
+		}
+		result = libevtx_record_values_parse_data_xml_tag_by_template(
+		          record_values,
+		          sub_data_xml_tag,
+		          sub_template_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to parse event data attribute: %d XML tag.",
+			 function,
+			 attribute_index );
+
+			goto on_error;
+		}
 	}
-	for( sub_element_index = 0;
-	     sub_element_index < number_of_template_elements;
-	     sub_element_index++ )
+	if( number_of_template_elements == 0 )
+	{
+		if( libfwevt_xml_tag_get_flags(
+		     template_xml_tag,
+		     &template_xml_tag_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template XML tag flags.",
+			 function );
+
+			goto on_error;
+		}
+		if( template_xml_tag_flags == LIBFWEVT_XML_TAG_FLAG_IS_TEMPLATE_VALUE )
+		{
+			if( libcdata_array_append_entry(
+			     record_values->string_identifiers_array,
+			     &entry_index,
+			     (intptr_t *) template_xml_tag,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append template XML tag to string identifiers array.",
+				 function );
+
+				goto on_error;
+			}
+			if( libcdata_array_append_entry(
+			     record_values->strings_array,
+			     &entry_index,
+			     (intptr_t *) data_xml_tag,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append data XML tag to strings array.",
+				 function );
+
+				goto on_error;
+			}
+		}
+	}
+	else for( sub_element_index = 0;
+	          sub_element_index < number_of_template_elements;
+	          sub_element_index++ )
 	{
 		if( libfwevt_xml_tag_get_element_by_index(
 		     data_xml_tag,
@@ -3840,7 +3958,6 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 			goto on_error;
 		}
 	}
-/* TODO what to do on a match ? */
 	return( 1 );
 
 on_error:
@@ -3862,25 +3979,23 @@ on_error:
  */
 int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
-     libevtx_template_definition_t *template_definition,
+     libevtx_internal_template_definition_t *internal_template_definition,
      libcerror_error_t **error )
 {
 	uint8_t element_name[ 5 ];
 
-	libevtx_internal_template_definition_t *internal_template_definition = NULL;
-	libfwevt_xml_tag_t *element_xml_tag                                  = NULL;
-	libfwevt_xml_tag_t *event_data_xml_tag                               = NULL;
-	libfwevt_xml_tag_t *root_xml_tag                                     = NULL;
-	libfwevt_xml_tag_t *template_root_xml_tag                            = NULL;
-	libfwevt_xml_tag_t *user_data_xml_tag                                = NULL;
-	static char *function                                                = "libevtx_record_values_parse_data";
-	size_t element_name_size                                             = 0;
-	int element_index                                                    = 0;
-	int entry_index                                                      = 0;
-	int number_of_attributes                                             = 0;
-	int number_of_elements                                               = 0;
-	int number_of_strings                                                = 0;
-	int result                                                           = 0;
+	libfwevt_xml_tag_t *element_xml_tag       = NULL;
+	libfwevt_xml_tag_t *event_data_xml_tag    = NULL;
+	libfwevt_xml_tag_t *root_xml_tag          = NULL;
+	libfwevt_xml_tag_t *template_root_xml_tag = NULL;
+	libfwevt_xml_tag_t *user_data_xml_tag     = NULL;
+	static char *function                     = "libevtx_record_values_parse_data";
+	size_t element_name_size                  = 0;
+	int element_index                         = 0;
+	int entry_index                           = 0;
+	int number_of_elements                    = 0;
+	int number_of_strings                     = 0;
+	int result                                = 0;
 
 	if( record_values == NULL )
 	{
@@ -3893,8 +4008,17 @@ int libevtx_record_values_parse_data(
 
 		return( -1 );
 	}
-	internal_template_definition = (libevtx_internal_template_definition_t *) template_definition;
+	if( record_values->string_identifiers_array != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid record values - string identifiers array value already set.",
+		 function );
 
+		return( -1 );
+	}
 	if( record_values->strings_array != NULL )
 	{
 		libcerror_error_set(
@@ -3905,6 +4029,20 @@ int libevtx_record_values_parse_data(
 		 function );
 
 		return( -1 );
+	}
+	if( libcdata_array_initialize(
+	     &( record_values->string_identifiers_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create string identifiers array.",
+		 function );
+
+		goto on_error;
 	}
 	if( libcdata_array_initialize(
 	     &( record_values->strings_array ),
@@ -4156,6 +4294,13 @@ on_error:
 	{
 		libcdata_array_free(
 		 &( record_values->strings_array ),
+		 NULL,
+		 NULL );
+	}
+	if( record_values->string_identifiers_array != NULL )
+	{
+		libcdata_array_free(
+		 &( record_values->string_identifiers_array ),
 		 NULL,
 		 NULL );
 	}

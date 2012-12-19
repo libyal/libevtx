@@ -1,4 +1,5 @@
 TODO
+* resource_file_get_template_definition failing ?
 * wevt
   - improve (template) codepage handling
   - mark XML tags as template values

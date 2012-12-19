@@ -1239,7 +1239,7 @@ int libevtx_record_parse_data(
 
 	result = libevtx_record_values_parse_data(
 	          internal_record->record_values,
-	          template_definition,
+	          (libevtx_internal_template_definition_t *) template_definition,
 	          error );
 
 	if( result == -1 )
