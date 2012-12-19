@@ -3593,6 +3593,7 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 	int number_of_data_elements              = 0;
 	int number_of_template_attributes        = 0;
 	int number_of_template_elements          = 0;
+	int result                               = 0;
 
 	if( record_values == NULL )
 	{
@@ -3715,8 +3716,8 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 		goto on_error;
 	}
-	tempate_name = (uint8_t *) memory_allocate(
-	                            sizeof( uint8_t ) * template_name_size );
+	template_name = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * template_name_size );
 
 	if( template_name == NULL )
 	{
@@ -3784,12 +3785,12 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 	{
 /* TODO handle attributes */
 	}
-	for( element_index = 0;
-	     element_index < number_of_template_elements;
-	     element_index++ )
+	for( sub_element_index = 0;
+	     sub_element_index < number_of_template_elements;
+	     sub_element_index++ )
 	{
 		if( libfwevt_xml_tag_get_element_by_index(
-		     event_data_xml_tag,
+		     data_xml_tag,
 		     sub_element_index,
 		     &sub_data_xml_tag,
 		     error ) != 1 )
@@ -3805,7 +3806,7 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 			goto on_error;
 		}
 		if( libfwevt_xml_tag_get_element_by_index(
-		     event_template_xml_tag,
+		     template_xml_tag,
 		     sub_element_index,
 		     &sub_template_xml_tag,
 		     error ) != 1 )
@@ -4072,31 +4073,31 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append Data element to strings array.",
+					 "%s: unable to append data element to strings array.",
 					 function );
 
 					goto on_error;
 				}
 			}
-			else
+		}
+		else
+		{
+			result = libevtx_record_values_parse_data_xml_tag_by_template(
+				  record_values,
+				  event_data_xml_tag,
+				  template_root_xml_tag,
+				  error );
+
+			if( result == -1 )
 			{
-				result = libevtx_record_values_parse_data_xml_tag_by_template(
-				          record_values,
-				          event_data_xml_tag,
-				          template_root_xml_tag,
-				          error )
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to parse event data root element XML tag.",
+				 function );
 
-				if( result == -1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to parse event data root element XML tag.",
-					 function );
-
-					goto on_error;
-				}
+				goto on_error;
 			}
 		}
 	}
@@ -4132,7 +4133,7 @@ int libevtx_record_values_parse_data(
 				          record_values,
 				          user_data_xml_tag,
 				          template_root_xml_tag,
-				          error )
+				          error );
 
 				if( result == -1 )
 				{

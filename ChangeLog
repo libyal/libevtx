@@ -1,4 +1,7 @@
 TODO
+* wevt
+  - improve (template) codepage handling
+  - mark XML tags as template values
 * format string
   - merge with libevt
   - improve UserData support
@@ -64,6 +67,15 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20121219
+* worked on formatted message strings
+
+20121218
+* worked on formatted message strings
+
+20121217
+* worked on formatted message strings
 
 20121214
 * worked on formatted message strings

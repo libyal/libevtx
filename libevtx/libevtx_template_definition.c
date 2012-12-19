@@ -136,17 +136,17 @@ int libevtx_template_definition_free(
 			memory_free(
 			 internal_template_definition->data );
 		}
-		if( internal_template_definition->template != NULL )
+		if( internal_template_definition->xml_document != NULL )
 		{
-			if( libfwevt_template_free(
-			     &( internal_template_definition->template ),
+			if( libfwevt_xml_document_free(
+			     &( internal_template_definition->xml_document ),
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free template.",
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to free XML document.",
 				 function );
 
 				result = -1;
@@ -270,7 +270,8 @@ int libevtx_template_definition_read(
      libevtx_io_handle_t *io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libevtx_template_definition_read";
+	libfwevt_template_t *wevt_template = NULL;
+	static char *function              = "libevtx_template_definition_read";
 
 	if( internal_template_definition == NULL )
 	{
@@ -294,13 +295,13 @@ int libevtx_template_definition_read(
 
 		return( -1 );
 	}
-	if( internal_template_definition->template != NULL )
+	if( internal_template_definition->xml_document != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid template definition - template already set.",
+		 "%s: invalid template definition - XML document already set.",
 		 function );
 
 		return( -1 );
@@ -316,8 +317,21 @@ int libevtx_template_definition_read(
 
 		return( -1 );
 	}
+	if( libfwevt_xml_document_initialize(
+	     &( internal_template_definition->xml_document ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create XML document.",
+		 function );
+
+		goto on_error;
+	}
 	if( libfwevt_template_initialize(
-	     &( internal_template_definition->template ),
+	     &wevt_template,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -329,12 +343,25 @@ int libevtx_template_definition_read(
 
 		goto on_error;
 	}
+	if( libfwevt_template_set_ascii_codepage(
+	     wevt_template,
+	     io_handle->ascii_codepage,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set ASCII codepage in template.",
+		 function );
+
+		goto on_error;
+	}
 	if( libfwevt_template_read(
-	     internal_template_definition->template,
+	     wevt_template,
 	     internal_template_definition->data,
 	     internal_template_definition->data_size,
 	     (size_t) internal_template_definition->data_offset,
-	     io_handle->ascii_codepage,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -346,13 +373,46 @@ int libevtx_template_definition_read(
 
 		goto on_error;
 	}
+	if( libfwevt_template_read_xml_document(
+	     wevt_template,
+	     internal_template_definition->xml_document,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read XML document from template.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfwevt_template_free(
+	     &wevt_template,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free template.",
+		 function );
+
+		goto on_error;
+	}
 	return( -1 );
 
-on_error:
-	if( internal_template_definition->template != NULL )
+on_error:	
+	if( wevt_template != NULL )
 	{
 		libfwevt_template_free(
-		 &( internal_template_definition->template ),
+		 &wevt_template,
+		 NULL );
+	}
+	if( internal_template_definition->xml_document != NULL )
+	{
+		libfwevt_xml_document_free(
+		 &( internal_template_definition->xml_document ),
 		 NULL );
 	}
 	return( -1 );

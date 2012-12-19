@@ -52,9 +52,9 @@ struct libevtx_internal_template_definition
 	 */
 	uint32_t data_offset;
 
-	/* The template
+	/* The XML document
 	 */
-	libfwevt_template_t *template;
+	libfwevt_xml_document_t *xml_document;
 };
 
 LIBEVTX_EXTERN \
