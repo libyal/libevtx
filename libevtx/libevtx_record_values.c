@@ -3869,7 +3869,7 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 			goto on_error;
 		}
-		if( template_xml_tag_flags == LIBFWEVT_XML_TAG_FLAG_IS_TEMPLATE_VALUE )
+		if( template_xml_tag_flags == LIBFWEVT_XML_TAG_FLAG_IS_TEMPLATE_DEFINITION )
 		{
 			if( libcdata_array_append_entry(
 			     record_values->string_identifiers_array,
@@ -3979,6 +3979,7 @@ on_error:
  */
 int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      libevtx_internal_template_definition_t *internal_template_definition,
      libcerror_error_t **error )
 {
@@ -4060,6 +4061,23 @@ int libevtx_record_values_parse_data(
 	}
 	if( internal_template_definition != NULL )
 	{
+		if( internal_template_definition->xml_document == NULL )
+		{
+			if( libevtx_template_definition_read(
+			     internal_template_definition,
+			     io_handle,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read template definition.",
+				 function );
+
+				goto on_error;
+			}
+		}
 		if( libfwevt_xml_document_get_root_xml_tag(
 		     internal_template_definition->xml_document,
 		     &template_root_xml_tag,
@@ -4121,7 +4139,7 @@ int libevtx_record_values_parse_data(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve number of elements.",
+				 "%s: unable to retrieve number of event data elements.",
 				 function );
 
 				goto on_error;
@@ -4140,7 +4158,7 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve element: %d.",
+					 "%s: unable to retrieve event data element: %d.",
 					 function,
 					 element_index );
 
@@ -4155,7 +4173,7 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve element: %d name size.",
+					 "%s: unable to retrieve event data element: %d name size.",
 					 function,
 					 element_index );
 
@@ -4175,7 +4193,7 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve element: %d name.",
+					 "%s: unable to retrieve event data element: %d name.",
 					 function,
 					 element_index );
 
@@ -4194,7 +4212,7 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported non-contiguous Data elements.",
+					 "%s: unsupported non-contiguous event data elements.",
 					 function );
 
 					goto on_error;
@@ -4211,7 +4229,7 @@ int libevtx_record_values_parse_data(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append data element to strings array.",
+					 "%s: unable to append event data element to strings array.",
 					 function );
 
 					goto on_error;
@@ -4220,6 +4238,8 @@ int libevtx_record_values_parse_data(
 		}
 		else
 		{
+			/* The EventData templates start with the EventData tag
+			 */
 			result = libevtx_record_values_parse_data_xml_tag_by_template(
 				  record_values,
 				  event_data_xml_tag,
@@ -4232,7 +4252,7 @@ int libevtx_record_values_parse_data(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to parse event data root element XML tag.",
+				 "%s: unable to parse event data root element.",
 				 function );
 
 				goto on_error;
@@ -4261,28 +4281,60 @@ int libevtx_record_values_parse_data(
 		}
 		else if( result != 0 )
 		{
-			if( internal_template_definition == NULL )
-			{
-				result = 0;
-			}
-			else
-			{
-				result = libevtx_record_values_parse_data_xml_tag_by_template(
-				          record_values,
-				          user_data_xml_tag,
-				          template_root_xml_tag,
-				          error );
+			result = 0;
 
-				if( result == -1 )
+			if( internal_template_definition != NULL )
+			{
+				/* The UserData templates start with the EventXML tag
+				 */
+				if( libfwevt_xml_tag_get_number_of_elements(
+				     user_data_xml_tag,
+				     &number_of_elements,
+				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to parse user data root element XML tag.",
+					 "%s: unable to retrieve number of user data elements.",
 					 function );
 
 					goto on_error;
+				}
+				if( number_of_elements == 1 )
+				{
+					if( libfwevt_xml_tag_get_element_by_index(
+					     user_data_xml_tag,
+					     0,
+					     &element_xml_tag,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve user data element: 0.",
+						 function );
+
+						goto on_error;
+					}
+					result = libevtx_record_values_parse_data_xml_tag_by_template(
+						  record_values,
+						  element_xml_tag,
+						  template_root_xml_tag,
+						  error );
+
+					if( result == -1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to parse user data element: 0.",
+						 function );
+
+						goto on_error;
+					}
 				}
 			}
 		}

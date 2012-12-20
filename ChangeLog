@@ -1,8 +1,7 @@
 TODO
-* resource_file_get_template_definition failing ?
 * wevt
   - improve (template) codepage handling
-  - mark XML tags as template values
+  - mark XML tags as template values (mark the first values)
 * format string
   - merge with libevt
   - improve UserData support
@@ -68,6 +67,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20121220
+* worked on formatted message strings
 
 20121219
 * worked on formatted message strings

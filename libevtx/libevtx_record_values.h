@@ -253,6 +253,7 @@ int libevtx_record_values_get_utf16_user_security_identifier(
 
 int libevtx_record_values_parse_data(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      libevtx_internal_template_definition_t *internal_template_definition,
      libcerror_error_t **error );
 

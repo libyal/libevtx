@@ -1239,6 +1239,7 @@ int libevtx_record_parse_data(
 
 	result = libevtx_record_values_parse_data(
 	          internal_record->record_values,
+	          internal_record->io_handle,
 	          (libevtx_internal_template_definition_t *) template_definition,
 	          error );
 

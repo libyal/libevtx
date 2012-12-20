@@ -1479,6 +1479,20 @@ int export_handle_resource_file_get_template_definition(
 
 				goto on_error;
 			}
+/* TODO cache the EVTX template definitions ? */
+			if( libevtx_template_definition_initialize(
+			     template_definition,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create template definitions.",
+				 function );
+
+				goto on_error;
+			}
 			if( libevtx_template_definition_set_data(
 			     *template_definition,
 			     template_data,

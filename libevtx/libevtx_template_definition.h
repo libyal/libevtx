@@ -40,17 +40,9 @@ typedef struct libevtx_internal_template_definition libevtx_internal_template_de
 
 struct libevtx_internal_template_definition
 {
-	/* The data
+	/* The WEVT template
 	 */
-	uint8_t *data;
-
-	/* The data size
-	 */
-	size_t data_size;
-
-	/* The data offset
-	 */
-	uint32_t data_offset;
+	libfwevt_template_t *wevt_template;
 
 	/* The XML document
 	 */
