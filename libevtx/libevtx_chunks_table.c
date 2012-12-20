@@ -252,7 +252,7 @@ int libevtx_chunks_table_read_record(
 
 		goto on_error;
 	}
-	chunk_data_offset = element_data_offset - chunk->file_offset;
+	chunk_data_offset = (size_t) ( element_data_offset - chunk->file_offset );
 
 	if( libevtx_chunk_get_number_of_records(
 	     chunk,
