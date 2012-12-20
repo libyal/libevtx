@@ -240,9 +240,11 @@ int libevtx_chunk_read(
 	uint32_t stored_checksum               = 0;
 	int entry_index                        = 0;
 
+#if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
+	uint64_t calculated_chunk_number       = 0;
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	ssize_t free_space_size                = 0;
-	uint64_t calculated_chunk_number       = 0;
 	uint64_t value_64bit                   = 0;
 	uint32_t value_32bit                   = 0;
 #endif
@@ -280,9 +282,10 @@ int libevtx_chunk_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 	calculated_chunk_number = (uint64_t) ( ( file_offset - io_handle->chunk_size ) / io_handle->chunk_size );
-
+#endif
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(

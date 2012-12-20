@@ -101,27 +101,27 @@ int libevtx_record_get_event_level(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_record_values_get_utf8_provider_identifier_size(
-     libevtx_record_values_t *record_values,
+int libevtx_record_get_utf8_provider_identifier_size(
+     libevtx_record_t *record,
      size_t *utf8_string_size,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_record_values_get_utf8_provider_identifier(
-     libevtx_record_values_t *record_values,
+int libevtx_record_get_utf8_provider_identifier(
+     libevtx_record_t *record,
      uint8_t *utf8_string,
      size_t utf8_string_size,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_record_values_get_utf16_provider_identifier_size(
-     libevtx_record_values_t *record_values,
+int libevtx_record_get_utf16_provider_identifier_size(
+     libevtx_record_t *record,
      size_t *utf16_string_size,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
-int libevtx_record_values_get_utf16_provider_identifier(
-     libevtx_record_values_t *record_values,
+int libevtx_record_get_utf16_provider_identifier(
+     libevtx_record_t *record,
      uint16_t *utf16_string,
      size_t utf16_string_size,
      libcerror_error_t **error );

@@ -1,7 +1,9 @@
 TODO
+* formatted output
+  - check with test data if output is now correct
 * wevt
   - improve (template) codepage handling
-  - mark XML tags as template values (mark the first values)
+  - improve template definition XML template value handling
 * format string
   - merge with libevt
   - improve UserData support
@@ -70,6 +72,7 @@ Recovery:
 
 20121220
 * worked on formatted message strings
+* fixed for multi platform builds
 
 20121219
 * worked on formatted message strings
