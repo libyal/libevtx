@@ -1046,14 +1046,29 @@ int export_handle_message_string_fprint(
 
 				continue;
 			}
+			/* Replace %% = % */
+			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '%' )
+			{
+				last_character = (libcstring_system_character_t) '%';
+
+				fprintf(
+				 export_handle->notify_stream,
+				 "%c",
+				 last_character );
+
+				message_string_index += 2;
+
+				continue;
+			}
 			/* Replace %b = space */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
 			{
+				last_character = (libcstring_system_character_t) ' ';
+
 				fprintf(
 				 export_handle->notify_stream,
-				 " " );
-
-				last_character = (libcstring_system_character_t) ' ';
+				 "%c",
+				 last_character );
 
 				message_string_index += 2;
 
@@ -1064,11 +1079,12 @@ int export_handle_message_string_fprint(
 			{
 				if( last_character != (libcstring_system_character_t) '\n' )
 				{
+					last_character = (libcstring_system_character_t) '\n';
+
 					fprintf(
 					 export_handle->notify_stream,
-					 "\n" );
-
-					last_character = (libcstring_system_character_t) '\n';
+					 "%c",
+					 last_character );
 				}
 				message_string_index += 2;
 
@@ -1077,11 +1093,12 @@ int export_handle_message_string_fprint(
 			/* Replace %t = tab */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
 			{
+				last_character = (libcstring_system_character_t) '\t';
+
 				fprintf(
 				 export_handle->notify_stream,
-				 "\t" );
-
-				last_character = (libcstring_system_character_t) '\t';
+				 "%c",
+				 last_character );
 
 				message_string_index += 2;
 
@@ -1100,7 +1117,7 @@ int export_handle_message_string_fprint(
 
 				goto on_error;
 			}
-			value_string_index = (int) ( message_string->string )[ message_string_index + 1 ] - (int) '0' - 1;
+			value_string_index = (int) ( message_string->string )[ message_string_index + 1 ] - (int) '0';
 
 			conversion_specifier_length = 2;
 
@@ -1113,6 +1130,8 @@ int export_handle_message_string_fprint(
 
 				conversion_specifier_length += 1;
 			}
+			value_string_index -= 1;
+
 		 	if( ( ( message_string_index + conversion_specifier_length + 3 ) < message_string_length )
 			 && ( ( message_string->string )[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
 			{
@@ -1219,8 +1238,16 @@ int export_handle_message_string_fprint(
 		{
 			if( ( message_string->string )[ message_string_index ] != 0 )
 			{
-				if( ( ( message_string->string )[ message_string_index ] != (libcstring_system_character_t) '\n' )
-				 && ( last_character != (libcstring_system_character_t) '\n' ) )
+				if( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '\r' )
+				{
+					/* Ignore \r characters */
+				}
+				else if( ( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '\n' )
+				      && ( last_character == (libcstring_system_character_t) '\n' ) )
+				{
+					/* Ignore multiple \n characters */
+				}
+				else
 				{
 					fprintf(
 					 export_handle->notify_stream,
