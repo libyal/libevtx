@@ -70,6 +70,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20130107
+* 2013 update
+* updated dependencies
+
 20121220
 * worked on formatted message strings
 * fixed for multi platform builds
