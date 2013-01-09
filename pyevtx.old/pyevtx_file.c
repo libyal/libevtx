@@ -62,14 +62,14 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	{ "open",
 	  (PyCFunction) pyevtx_file_open,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "open(filename, mode='r') -> None\n"
+	  "open(filename, access_flags) -> None\n"
 	  "\n"
 	  "Opens a file" },
 
 	{ "open_file_object",
 	  (PyCFunction) pyevtx_file_open_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "open(file_object, mode='r') -> None\n"
+	  "open(file_object, access_flags) -> None\n"
 	  "\n"
 	  "Opens a file using a file-like object" },
 
@@ -107,7 +107,7 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	{ "get_record",
 	  (PyCFunction) pyevtx_file_get_record,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_record(record_index) -> Object or None\n"
+	  "get_record(index) -> Object or None\n"
 	  "\n"
 	  "Retrieves a specific record" },
 
@@ -121,7 +121,7 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	{ "get_recovered_record",
 	  (PyCFunction) pyevtx_file_get_recovered_record,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_recovered_record(record_index) -> Object or None\n"
+	  "get_recovered_record(index) -> Object or None\n"
 	  "\n"
 	  "Retrieves a specific recovered record" },
 
@@ -155,7 +155,7 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 	  "The number of records",
 	  NULL },
 
-	{ "recovered_records",
+	{ "recoverd_records",
 	  (getter) pyevtx_file_get_recovered_records,
 	  (setter) 0,
 	  "The recovered records",
@@ -282,7 +282,7 @@ PyObject *pyevtx_file_new(
 		 "%s: unable to initialize file.",
 		 function );
 
-		goto on_error;
+		return( NULL );
 	}
 	if( pyevtx_file_init(
 	     pyevtx_file ) != 0 )
@@ -318,26 +318,6 @@ PyObject *pyevtx_file_new_open(
 	pyevtx_file = pyevtx_file_new();
 
 	pyevtx_file_open(
-	 (pyevtx_file_t *) pyevtx_file,
-	 arguments,
-	 keywords );
-
-	return( pyevtx_file );
-}
-
-/* Creates a new file object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyevtx_file_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyevtx_file = NULL;
-
-	pyevtx_file = pyevtx_file_new();
-
-	pyevtx_file_open_file_object(
 	 (pyevtx_file_t *) pyevtx_file,
 	 arguments,
 	 keywords );
@@ -553,9 +533,9 @@ PyObject *pyevtx_file_open(
 
 	libcerror_error_t *error    = NULL;
 	char *filename              = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "filename", "mode", NULL };
+	static char *keyword_list[] = { "filename", "access_flags", NULL };
 	static char *function       = "pyevtx_file_open";
+	int access_flags            = 0;
 	int result                  = 0;
 
 	if( pyevtx_file == NULL )
@@ -570,30 +550,25 @@ PyObject *pyevtx_file_open(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "s|s",
+	     "s|i",
 	     keyword_list,
 	     &filename,
-	     &mode ) == 0 )
+	     &access_flags ) == 0 )
         {
                 return( NULL );
         }
-        if( ( mode != NULL )
-	 && ( mode[ 0 ] != 'r' ) )
+	/* Default to read-only if no access flags were provided
+	 */
+	if( access_flags == 0 )
 	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: mode: %s.",
-		 function,
-		 mode );
-
-		return( NULL );
+		access_flags = libevtx_get_access_flags_read();
 	}
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_file_open(
 	          pyevtx_file->file,
                   filename,
-                  LIBEVTX_OPEN_READ,
+                  access_flags,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -642,9 +617,9 @@ PyObject *pyevtx_file_open_file_object(
 	PyObject *file_object            = NULL;
 	libbfio_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error         = NULL;
-        char *mode                       = NULL;
-	static char *keyword_list[]      = { "file_object", "mode", NULL };
+	static char *keyword_list[]      = { "file_object", "access_flags", NULL };
 	static char *function            = "pyevtx_file_open_file_object";
+	int access_flags                 = 0;
 	int result                       = 0;
 
 	if( pyevtx_file == NULL )
@@ -659,23 +634,18 @@ PyObject *pyevtx_file_open_file_object(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "O|s",
+	     "O|i",
 	     keyword_list,
 	     &file_object,
-	     &mode ) == 0 )
+	     &access_flags ) == 0 )
         {
                 return( NULL );
         }
-        if( ( mode != NULL )
-	 && ( mode[ 0 ] != 'r' ) )
+	/* Default to read-only if no access flags were provided
+	 */
+	if( access_flags == 0 )
 	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: mode: %s.",
-		 function,
-		 mode );
-
-		return( NULL );
+		access_flags = libevtx_get_access_flags_read();
 	}
 	if( pyevtx_file_object_initialize(
 	     &file_io_handle,
@@ -710,7 +680,7 @@ PyObject *pyevtx_file_open_file_object(
 	result = libevtx_file_open_file_io_handle(
 	          pyevtx_file->file,
                   file_io_handle,
-                  LIBEVTX_OPEN_READ,
+                  access_flags,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -1165,6 +1135,7 @@ PyObject *pyevtx_file_get_record(
 {
 	PyObject *record_object     = NULL;
 	static char *keyword_list[] = { "record_index", NULL };
+	static char *function       = "pyevtx_file_get_record";
 	int record_index            = 0;
 
 	if( PyArg_ParseTupleAndKeywords(
@@ -1413,6 +1384,7 @@ PyObject *pyevtx_file_get_recovered_record(
 {
 	PyObject *record_object     = NULL;
 	static char *keyword_list[] = { "record_index", NULL };
+	static char *function       = "pyevtx_file_get_recovered_record";
 	int record_index            = 0;
 
 	if( PyArg_ParseTupleAndKeywords(

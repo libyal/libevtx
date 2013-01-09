@@ -1,4 +1,5 @@
 TODO
+* implement libevtx_record_get_offset
 * formatted output
   - check with test data if output is now correct
 * wevt
@@ -69,6 +70,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130109
+* worked on pyevtx
 
 20130107
 * 2013 update

@@ -127,7 +127,7 @@ int pyevtx_file_object_initialize(
      libcerror_error_t **error )
 {
 	pyevtx_file_object_io_handle_t *file_object_io_handle = NULL;
-	static char *function                                 = "pyevtx_file_object_initialize";
+	static char *function                                = "pyevtx_file_object_initialize";
 
 	if( handle == NULL )
 	{

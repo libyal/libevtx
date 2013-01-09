@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * The internal libevtx header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,44 +19,19 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_LIBEVTX_H )
+#define _PYEVTX_LIBEVTX_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyevtx_python.h"
-
-#if defined( __cplusplus )
-extern "C" {
+/* If Cygwin libtool DLL support is enabled set LIBEVTX_DLL_IMPORT
+ * before including libevtx.h
+ */
+#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#define LIBEVTX_DLL_IMPORT
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
-
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
-
-#if defined( __cplusplus )
-}
-#endif
+#include <libevtx.h>
 
 #endif
 

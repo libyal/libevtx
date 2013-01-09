@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * The internal libclocale header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,43 +19,33 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_LIBCLOCALE_H )
+#define _PYEVTX_LIBCLOCALE_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyevtx_python.h"
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
+ */
+#if defined( HAVE_LOCAL_LIBCLOCALE )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
+
+#elif defined( HAVE_LIBCLOCALE_H )
+
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
+#include <libclocale.h>
 
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libclocale.h
 #endif
 
 #endif

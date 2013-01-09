@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * The internal libcstring header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,43 +19,34 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_LIBCSTRING_H )
+#define _PYEVTX_LIBCSTRING_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyevtx_python.h"
+/* Define HAVE_LOCAL_LIBCSTRING for local use of libcstring
+ */
+#if defined( HAVE_LOCAL_LIBCSTRING )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcstring_definitions.h>
+#include <libcstring_narrow_string.h>
+#include <libcstring_system_string.h>
+#include <libcstring_types.h>
+#include <libcstring_wide_string.h>
+
+#elif defined( HAVE_LIBCSTRING_H )
+
+/* If libtool DLL support is enabled set LIBCSTRING_DLL_IMPORT
+ * before including libcstring.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCSTRING_DLL_IMPORT
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
+#include <libcstring.h>
 
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libcstring.h
 #endif
 
 #endif

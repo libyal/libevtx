@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * The libfwnt header wrapper
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,43 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_LIBFWNT_H )
+#define _PYEVTX_LIBFWNT_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyevtx_python.h"
+/* Define HAVE_LOCAL_LIBFWNT for local use of libfwnt
+ */
+#if defined( HAVE_LOCAL_LIBFWNT )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libfwnt_definitions.h>
+#include <libfwnt_security_identifier.h>
+#include <libfwnt_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBFWNT_DLL_IMPORT
+ * before including libfwnt.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFWNT_DLL_IMPORT
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
+#include <libfwnt.h>
 
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
-
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

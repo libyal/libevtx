@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * The libbfio header wrapper
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,43 +19,37 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_LIBBFIO_H )
+#define _PYEVTX_LIBBFIO_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pyevtx_python.h"
+/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
+ */
+#if defined( HAVE_LOCAL_LIBBFIO )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libbfio_definitions.h>
+#include <libbfio_file.h>
+#include <libbfio_file_pool.h>
+#include <libbfio_file_range.h>
+#include <libbfio_handle.h>
+#include <libbfio_memory_range.h>
+#include <libbfio_pool.h>
+#include <libbfio_types.h>
+
+#elif defined( HAVE_LIBBFIO_H )
+
+/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
+ * before including libbfio.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBBFIO_DLL_IMPORT
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
+#include <libbfio.h>
 
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libbfio.h
 #endif
 
 #endif

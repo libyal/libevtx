@@ -36,12 +36,10 @@ extern "C" {
 PyObject *pyevtx_get_version(
            PyObject *self );
 
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
+PyObject *pyevtx_get_access_flags_read(
+           PyObject *self );
 
-PyObject *pyevtx_check_file_signature_file_object(
+PyObject *pyevtx_check_file_signature(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

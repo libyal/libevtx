@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * Codepage functions
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,40 +19,20 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_CODEPAGE_H )
+#define _PYEVTX_CODEPAGE_H
 
 #include <common.h>
 #include <types.h>
-
-#include "pyevtx_python.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#define PYEVTX_ERROR_STRING_SIZE		512
+const char *pyevtx_codepage_to_string(
+             int codepage );
 
-PyObject *pyevtx_get_version(
-           PyObject *self );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
+/* TODO add list function */
 
 #if defined( __cplusplus )
 }
