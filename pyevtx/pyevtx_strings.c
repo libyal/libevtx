@@ -198,7 +198,7 @@ PyObject *pyevtx_strings_new(
 		 "%s: unable to initialize strings.",
 		 function );
 
-		return( NULL );
+		goto on_error;
 	}
 	if( pyevtx_strings_init(
 	     pyevtx_strings ) != 0 )

@@ -46,11 +46,6 @@ PyObject *pyevtx_check_file_signature_file_object(
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pyevtx_set_notify_values(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 PyMODINIT_FUNC initpyevtx(
                 void );
 

@@ -43,6 +43,10 @@ typedef struct libevtx_record_values libevtx_record_values_t;
 
 struct libevtx_record_values
 {
+	/* The offset
+	 */
+	off64_t offset;
+
 	/* The data size
 	 */
 	uint32_t data_size;

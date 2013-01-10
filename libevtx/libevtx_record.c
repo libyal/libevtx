@@ -247,6 +247,57 @@ int libevtx_record_free(
 	return( 1 );
 }
 
+/* Retrieves the offset
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_offset(
+     libevtx_record_t *record,
+     off64_t *offset,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_offset";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( internal_record->record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal record - missing record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( offset == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid offset.",
+		 function );
+
+		return( -1 );
+	}
+	*offset = internal_record->record_values->offset;
+
+	return( 1 );
+}
+
 /* Retrieves the identifier (record number)
  * Returns 1 if successful or -1 on error
  */

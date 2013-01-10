@@ -198,7 +198,7 @@ PyObject *pyevtx_records_new(
 		 "%s: unable to initialize records.",
 		 function );
 
-		return( NULL );
+		goto on_error;
 	}
 	if( pyevtx_records_init(
 	     pyevtx_records ) != 0 )
