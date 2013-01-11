@@ -210,7 +210,7 @@ PyTypeObject pyevtx_record_type_object = {
 	"pyevtx.record",
 	/* tp_basicsize */
 	sizeof( pyevtx_record_t ),
-	/* tp_recordsize */
+	/* tp_itemsize */
 	0,
 	/* tp_dealloc */
 	(destructor) pyevtx_record_free,

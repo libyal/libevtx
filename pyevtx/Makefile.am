@@ -10,8 +10,7 @@ AM_CFLAGS = \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
-	@LIBBFIO_CPPFLAGS@ \
-	@LIBFWNT_CPPFLAGS@
+	@LIBBFIO_CPPFLAGS@
 
 pyexec_LTLIBRARIES = pyevtx.la
 
@@ -26,7 +25,6 @@ pyevtx_la_SOURCES = \
 	pyevtx_libclocale.h \
 	pyevtx_libcstring.h \
 	pyevtx_libevtx.h \
-	pyevtx_libfwnt.h \
 	pyevtx_python.h \
 	pyevtx_record.c pyevtx_record.h \
 	pyevtx_records.c pyevtx_records.h \
@@ -42,8 +40,7 @@ pyevtx_la_LIBADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
-	@LIBBFIO_LIBADD@ \
-	@LIBFWNT_LIBADD@
+	@LIBBFIO_LIBADD@
 
 pyevtx_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
 pyevtx_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)
