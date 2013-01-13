@@ -212,6 +212,10 @@
 				RelativePath="..\..\pyevtx\pyevtx_records.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\pyevtx\pyevtx_strings.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -268,6 +272,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pyevtx\pyevtx_records.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyevtx\pyevtx_strings.h"
 				>
 			</File>
 		</Filter>

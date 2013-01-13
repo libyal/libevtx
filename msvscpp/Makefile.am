@@ -1,4 +1,4 @@
-EXTRA_DIST = \
+MSVSCPP_FILES = \
 	evtxexport/evtxexport.vcproj \
 	evtxinfo/evtxinfo.vcproj \
 	libbfio/libbfio.vcproj \
@@ -24,7 +24,20 @@ EXTRA_DIST = \
 	libregf/libregf.vcproj \
 	libuna/libuna.vcproj \
 	libwrc/libwrc.vcproj \
+	pyevtx/pyevtx.vcproj \
 	libevtx.sln
+
+SCRIPT_FILES = \
+	scripts/vs2008_x64.sh \
+	scripts/vs2008_x64_sln.sed \
+	scripts/vs2008_x64_vcproj.sed \
+	scripts/vs2010_x64.sh \
+	scripts/vs2010_x64_sln.sed \
+	scripts/vs2010_x64_vcxproj.sed
+
+EXTRA_DIST = \
+	$(MSVSCPP_FILES) \
+	$(SCRIPT_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

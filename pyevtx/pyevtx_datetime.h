@@ -31,6 +31,9 @@
 extern "C" {
 #endif
 
+PyObject *pyevtx_datetime_new_from_fat_date_time(
+           uint32_t fat_date_time );
+
 PyObject *pyevtx_datetime_new_from_filetime(
            uint64_t filetime );
 

@@ -582,7 +582,7 @@ PyObject *pyevtx_file_open(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: mode: %s.",
+		 "%s: unsupported mode: %s.",
 		 function,
 		 mode );
 
@@ -671,7 +671,7 @@ PyObject *pyevtx_file_open_file_object(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: mode: %s.",
+		 "%s: unsupported mode: %s.",
 		 function,
 		 mode );
 

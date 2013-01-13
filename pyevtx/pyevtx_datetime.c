@@ -27,7 +27,124 @@
 
 #include <datetime.h>
 
-/* Creates a new datetime object from a filetime
+/* Creates a new datetime object from a FAT date time
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_datetime_new_from_fat_date_time(
+           uint32_t fat_date_time )
+{
+	static char *function      = "pyevtx_datetime_new_from_fat_date_time";
+	PyObject *date_time_object = NULL;
+	uint16_t year              = 0;
+	uint8_t days_in_month      = 0;
+	uint8_t day_of_month       = 0;
+	uint8_t hours              = 0;
+	uint8_t minutes            = 0;
+	uint8_t month              = 0;
+	uint8_t seconds            = 0;
+
+	/* The number of seconds are stored in the lower 5 bits
+	 * in intervals of 2 seconds
+	 */
+	seconds         = ( fat_date_time & 0x1f ) * 2;
+	fat_date_time >>= 5;
+
+	/* The number of minutes are stored in the next 6 bits
+	 */
+	minutes         = fat_date_time & 0x3f;
+	fat_date_time >>= 6;
+
+	/* The number of hours are stored in the next 5 bits
+	 */
+	hours           = fat_date_time & 0x1f;
+	fat_date_time >>= 5;
+
+	/* The day of month is stored in the next 5 bits
+	 */
+	day_of_month    = fat_date_time & 0x1f;
+	fat_date_time >>= 5;
+
+	/* The month is stored in the next 4 bits
+	 */
+	month           = fat_date_time & 0x0f;
+	fat_date_time >>= 4;
+
+	/* The year is stored in the next 7 bits starting at 1980
+	 */
+	year = 1980 + ( fat_date_time & 0x7f );
+
+	/* February (2)
+	 */
+	if( month == 2 )
+	{
+		if( ( ( ( year % 4 ) == 0 )
+		  &&  ( ( year % 100 ) != 0 ) )
+		 || ( ( year % 400 ) == 0 ) )
+		{
+			days_in_month = 29;
+		}
+		else
+		{
+			days_in_month = 28;
+		}
+	}
+	/* April (4), June (6), September (9), November (11)
+	 */
+	else if( ( month == 4 )
+	      || ( month == 6 )
+	      || ( month == 9 )
+	      || ( month == 11 ) )
+	{
+		days_in_month = 30;
+	}
+	/* Januari (1), March (3), May (5), July (7), August (8), October (10), December (12)
+	 */
+	else if( ( month == 1 )
+	      || ( month == 3 )
+	      || ( month == 5 )
+	      || ( month == 7 )
+	      || ( month == 8 )
+	      || ( month == 10 )
+	      || ( month == 12 ) )
+	{
+		days_in_month = 31;
+	}
+	else
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unsupported month: %" PRIu8 ".",
+		 function,
+		 month );
+
+		return( NULL );
+	}
+	if( ( day_of_month == 0 )
+	 || ( day_of_month > days_in_month ) )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unsupported day of month: %" PRIu8 ".",
+		 function,
+		 day_of_month );
+
+		return( NULL );
+	}
+	PyDateTime_IMPORT;
+
+	date_time_object = (PyObject *) PyDateTime_FromDateAndTime(
+	                                 (int) year,
+	                                 (int) month,
+	                                 (int) day_of_month,
+	                                 (int) hours,
+	                                 (int) minutes,
+	                                 (int) seconds,
+	                                 0 );
+
+	return( date_time_object );
+}
+
+/* Creates a new datetime object from a FILETIME
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_datetime_new_from_filetime(
@@ -39,7 +156,7 @@ PyObject *pyevtx_datetime_new_from_filetime(
 	uint32_t days_in_century   = 0;
 	uint16_t days_in_year      = 0;
 	uint16_t year              = 0;
-	uint8_t day                = 0;
+	uint8_t day_of_month       = 0;
 	uint8_t days_in_month      = 0;
 	uint8_t hours              = 0;
 	uint8_t minutes            = 0;
@@ -170,7 +287,7 @@ PyObject *pyevtx_datetime_new_from_filetime(
 		{
 			PyErr_Format(
 			 PyExc_IOError,
-			 "%s: unsupported month: %d.",
+			 "%s: unsupported month: %" PRIu8 ".",
 			 function,
 			 month );
 
@@ -186,14 +303,14 @@ PyObject *pyevtx_datetime_new_from_filetime(
 	}
 	/* Determine the day
 	 */
-	day = (uint8_t) filetime;
+	day_of_month = (uint8_t) filetime;
 
 	PyDateTime_IMPORT;
 
 	date_time_object = (PyObject *) PyDateTime_FromDateAndTime(
 	                                 (int) year,
 	                                 (int) month,
-	                                 (int) day,
+	                                 (int) day_of_month,
 	                                 (int) hours,
 	                                 (int) minutes,
 	                                 (int) seconds,
@@ -212,7 +329,7 @@ PyObject *pyevtx_datetime_new_from_posix_time(
 	PyObject *date_time_object = NULL;
 	uint16_t days_in_year      = 0;
 	uint16_t year              = 0;
-	uint8_t day                = 0;
+	uint8_t day_of_month       = 0;
 	uint8_t days_in_month      = 0;
 	uint8_t hours              = 0;
 	uint8_t minutes            = 0;
@@ -320,7 +437,7 @@ PyObject *pyevtx_datetime_new_from_posix_time(
 		{
 			PyErr_Format(
 			 PyExc_IOError,
-			 "%s: unsupported month: %d.",
+			 "%s: unsupported month: %" PRIu8 ".",
 			 function,
 			 month );
 
@@ -336,17 +453,17 @@ PyObject *pyevtx_datetime_new_from_posix_time(
 	}
 	/* Determine the day
 	 */
-	day = (uint8_t) posix_time;
+	day_of_month = (uint8_t) posix_time;
 
 	PyDateTime_IMPORT;
 
 	date_time_object = (PyObject *) PyDateTime_FromDateAndTime(
-	                                 year,
-	                                 month,
-	                                 day,
-	                                 hours,
-	                                 minutes,
-	                                 seconds,
+	                                 (int) year,
+	                                 (int) month,
+	                                 (int) day_of_month,
+	                                 (int) hours,
+	                                 (int) minutes,
+	                                 (int) seconds,
 	                                 0 );
 
 	return( date_time_object );
