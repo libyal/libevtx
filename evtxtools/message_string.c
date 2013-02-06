@@ -497,65 +497,61 @@ int message_string_fprint(
 
 					goto on_error;
 				}
-			}
-			else
-			{
-				value_string_size = 0;
-			}
-			if( value_string_size > 1 )
-			{
-				value_string = libcstring_system_string_allocate(
-						value_string_size );
-
-				if( value_string == NULL )
+				if( value_string_size > 0 )
 				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value string.",
-					 function );
+					value_string = libcstring_system_string_allocate(
+							value_string_size );
 
-					goto on_error;
-				}
+					if( value_string == NULL )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_MEMORY,
+						 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+						 "%s: unable to create value string.",
+						 function );
+
+						goto on_error;
+					}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libevtx_record_get_utf16_string(
-					  record,
-					  value_string_index,
-					  (uint16_t *) value_string,
-					  value_string_size,
-					  error );
+					result = libevtx_record_get_utf16_string(
+						  record,
+						  value_string_index,
+						  (uint16_t *) value_string,
+						  value_string_size,
+						  error );
 #else
-				result = libevtx_record_get_utf8_string(
-					  record,
-					  value_string_index,
-					  (uint8_t *) value_string,
-					  value_string_size,
-					  error );
+					result = libevtx_record_get_utf8_string(
+						  record,
+						  value_string_index,
+						  (uint8_t *) value_string,
+						  value_string_size,
+						  error );
 #endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve string: %d.",
-					 function,
-					 value_string_index );
+					if( result != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve string: %d.",
+						 function,
+						 value_string_index );
 
-					goto on_error;
+						goto on_error;
+					}
+					fprintf(
+					 stream,
+					 "%" PRIs_LIBCSTRING_SYSTEM "",
+					 value_string );
+
+					memory_free(
+					 value_string );
+
+					value_string = NULL;
+
+					message_string_index += conversion_specifier_length;
 				}
-				fprintf(
-				 stream,
-				 "%" PRIs_LIBCSTRING_SYSTEM "",
-				 value_string );
-
-				memory_free(
-				 value_string );
-
-				value_string = NULL;
-
-				message_string_index += conversion_specifier_length;
 			}
 			else
 			{

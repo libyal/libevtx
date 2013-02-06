@@ -24,7 +24,6 @@ TODO
   - Keywords add 0x no leading 0's
     <Keywords>8080000000000000</Keywords>
     <Keywords>0x8080000000000000</Keywords>
-  - merge <Data Name="ExtraInfo">\n</Data> into <Data Name="ExtraInfo"/>
   - remove \n (\r) from <Data> value strings ?
 
 strings:
@@ -70,6 +69,8 @@ Recovery:
 
 20130206
 * worked on record parsing
+* merged <Data Name="ExtraInfo">\n</Data> into <Data Name="ExtraInfo"/>
+  value consists of a single linefeed 0x0a
 
 20130205
 * library now parses records without template by default
