@@ -3639,23 +3639,26 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 		goto on_error;
 	}
-	if( libfwevt_xml_tag_get_number_of_attributes(
-	     template_xml_tag,
-	     &number_of_template_attributes,
-	     error ) != 1 )
+	if( template_xml_tag != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of template attributes.",
-		 function );
+		if( libfwevt_xml_tag_get_number_of_attributes(
+		     template_xml_tag,
+		     &number_of_template_attributes,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of template attributes.",
+			 function );
 
-		goto on_error;
-	}
-	if( number_of_data_attributes != number_of_template_attributes )
-	{
-		return( 0 );
+			goto on_error;
+		}
+		if( number_of_data_attributes != number_of_template_attributes )
+		{
+			return( 0 );
+		}
 	}
 	if( libfwevt_xml_tag_get_number_of_elements(
 	     data_xml_tag,
@@ -3671,132 +3674,138 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 		goto on_error;
 	}
-	if( libfwevt_xml_tag_get_number_of_elements(
-	     template_xml_tag,
-	     &number_of_template_elements,
-	     error ) != 1 )
+	if( template_xml_tag != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of template elements.",
-		 function );
+		if( libfwevt_xml_tag_get_number_of_elements(
+		     template_xml_tag,
+		     &number_of_template_elements,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of template elements.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		if( number_of_data_elements != number_of_template_elements )
+		{
+			return( 0 );
+		}
 	}
-	if( number_of_data_elements != number_of_template_elements )
+	if( template_xml_tag != NULL )
 	{
-		return( 0 );
-	}
-	if( libfwevt_xml_tag_get_utf8_name_size(
-	     data_xml_tag,
-	     &data_name_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve data element name size.",
-		 function );
+		if( libfwevt_xml_tag_get_utf8_name_size(
+		     data_xml_tag,
+		     &data_name_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve data element name size.",
+			 function );
 
-		goto on_error;
-	}
-	if( libfwevt_xml_tag_get_utf8_name_size(
-	     template_xml_tag,
-	     &template_name_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve template element name size.",
-		 function );
+			goto on_error;
+		}
+		if( libfwevt_xml_tag_get_utf8_name_size(
+		     template_xml_tag,
+		     &template_name_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template element name size.",
+			 function );
 
-		goto on_error;
-	}
-	if( data_name_size != template_name_size )
-	{
-		return( 0 );
-	}
-	data_name = (uint8_t *) memory_allocate(
-	                         sizeof( uint8_t ) * data_name_size );
+			goto on_error;
+		}
+		if( data_name_size != template_name_size )
+		{
+			return( 0 );
+		}
+		data_name = (uint8_t *) memory_allocate(
+		                         sizeof( uint8_t ) * data_name_size );
 
-	if( data_name == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create data name.",
-		 function );
+		if( data_name == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create data name.",
+			 function );
 
-		goto on_error;
-	}
-	template_name = (uint8_t *) memory_allocate(
-	                             sizeof( uint8_t ) * template_name_size );
+			goto on_error;
+		}
+		template_name = (uint8_t *) memory_allocate(
+		                             sizeof( uint8_t ) * template_name_size );
 
-	if( template_name == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create template name.",
-		 function );
+		if( template_name == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create template name.",
+			 function );
 
-		goto on_error;
-	}
-	if( libfwevt_xml_tag_get_utf8_name(
-	     data_xml_tag,
-	     data_name,
-	     data_name_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve data element name.",
-		 function );
+			goto on_error;
+		}
+		if( libfwevt_xml_tag_get_utf8_name(
+		     data_xml_tag,
+		     data_name,
+		     data_name_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve data element name.",
+			 function );
 
-		goto on_error;
-	}
-	if( libfwevt_xml_tag_get_utf8_name(
-	     template_xml_tag,
-	     template_name,
-	     template_name_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve template element name.",
-		 function );
+			goto on_error;
+		}
+		if( libfwevt_xml_tag_get_utf8_name(
+		     template_xml_tag,
+		     template_name,
+		     template_name_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve template element name.",
+			 function );
 
-		goto on_error;
-	}
-	result = memory_compare(
-	          data_name,
-	          template_name,
-	          sizeof( uint8_t ) * template_name_size );
+			goto on_error;
+		}
+		result = memory_compare(
+			  data_name,
+			  template_name,
+			  sizeof( uint8_t ) * template_name_size );
 
-	memory_free(
-	 template_name );
+		memory_free(
+		 template_name );
 
-	template_name = NULL;
+		template_name = NULL;
 
-	memory_free(
-	 data_name );
+		memory_free(
+		 data_name );
 
-	data_name = NULL;
+		data_name = NULL;
 
-	if( result != 0 )
-	{
-		return( 0 );
+		if( result != 0 )
+		{
+			return( 0 );
+		}
 	}
 	for( attribute_index = 0;
 	     attribute_index < number_of_template_attributes;
@@ -3818,21 +3827,24 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 			goto on_error;
 		}
-		if( libfwevt_xml_tag_get_attribute_by_index(
-		     template_xml_tag,
-		     attribute_index,
-		     &sub_template_xml_tag,
-		     error ) != 1 )
+		if( template_xml_tag != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template attribute: %d.",
-			 function,
-			 attribute_index );
+			if( libfwevt_xml_tag_get_attribute_by_index(
+			     template_xml_tag,
+			     attribute_index,
+			     &sub_template_xml_tag,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve template attribute: %d.",
+				 function,
+				 attribute_index );
 
-			goto on_error;
+				goto on_error;
+			}
 		}
 		result = libevtx_record_values_parse_data_xml_tag_by_template(
 		          record_values,
@@ -3853,21 +3865,41 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 			goto on_error;
 		}
 	}
-	if( number_of_template_elements == 0 )
+	if( number_of_data_elements == 0 )
 	{
-		if( libfwevt_xml_tag_get_flags(
-		     template_xml_tag,
-		     &template_xml_tag_flags,
-		     error ) != 1 )
+		if( template_xml_tag != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template XML tag flags.",
-			 function );
+			if( libfwevt_xml_tag_get_flags(
+			     template_xml_tag,
+			     &template_xml_tag_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve template XML tag flags.",
+				 function );
 
-			goto on_error;
+				goto on_error;
+			}
+		}
+		else
+		{
+			if( libfwevt_xml_tag_get_flags(
+			     data_xml_tag,
+			     &template_xml_tag_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve element XML tag flags.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		if( template_xml_tag_flags == LIBFWEVT_XML_TAG_FLAG_IS_TEMPLATE_DEFINITION )
 		{
@@ -3904,7 +3936,7 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 		}
 	}
 	else for( sub_element_index = 0;
-	          sub_element_index < number_of_template_elements;
+	          sub_element_index < number_of_data_elements;
 	          sub_element_index++ )
 	{
 		if( libfwevt_xml_tag_get_element_by_index(
@@ -3923,21 +3955,24 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 
 			goto on_error;
 		}
-		if( libfwevt_xml_tag_get_element_by_index(
-		     template_xml_tag,
-		     sub_element_index,
-		     &sub_template_xml_tag,
-		     error ) != 1 )
+		if( template_xml_tag != NULL )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template sub element: %d.",
-			 function,
-			 sub_element_index );
+			if( libfwevt_xml_tag_get_element_by_index(
+			     template_xml_tag,
+			     sub_element_index,
+			     &sub_template_xml_tag,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve template sub element: %d.",
+				 function,
+				 sub_element_index );
 
-			goto on_error;
+				goto on_error;
+			}
 		}
 		result = libevtx_record_values_parse_data_xml_tag_by_template(
 		          record_values,
@@ -4005,6 +4040,17 @@ int libevtx_record_values_parse_data(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->data_parsed != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid record values - data already parsed.",
 		 function );
 
 		return( -1 );
@@ -4127,136 +4173,24 @@ int libevtx_record_values_parse_data(
 	}
 	else if( result != 0 )
 	{
-		if( internal_template_definition == NULL )
+		/* The EventData templates start with the EventData tag
+		 */
+		result = libevtx_record_values_parse_data_xml_tag_by_template(
+			  record_values,
+			  event_data_xml_tag,
+			  template_root_xml_tag,
+			  error );
+
+		if( result == -1 )
 		{
-/* TODO refactor this to separate function */
-			if( libfwevt_xml_tag_get_number_of_elements(
-			     event_data_xml_tag,
-			     &number_of_elements,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve number of event data elements.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to parse event data root element.",
+			 function );
 
-				goto on_error;
-			}
-			for( element_index = 0;
-			     element_index < number_of_elements;
-			     element_index++ )
-			{
-				if( libfwevt_xml_tag_get_element_by_index(
-				     event_data_xml_tag,
-				     element_index,
-				     &element_xml_tag,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve event data element: %d.",
-					 function,
-					 element_index );
-
-					goto on_error;
-				}
-				if( libfwevt_xml_tag_get_utf8_name_size(
-				     element_xml_tag,
-				     &element_name_size,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve event data element: %d name size.",
-					 function,
-					 element_index );
-
-					goto on_error;
-				}
-				if( element_name_size != 5 )
-				{
-					continue;
-				}
-				if( libfwevt_xml_tag_get_utf8_name(
-				     element_xml_tag,
-				     element_name,
-				     5,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve event data element: %d name.",
-					 function,
-					 element_index );
-
-					goto on_error;
-				}
-				if( libcstring_narrow_string_compare(
-				     (char *) element_name,
-				     "Data",
-				     4 ) != 0 )
-				{
-					continue;
-				}
-				if( element_index != number_of_strings )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported non-contiguous event data elements.",
-					 function );
-
-					goto on_error;
-				}
-				number_of_strings++;
-
-				if( libcdata_array_append_entry(
-				     record_values->strings_array,
-				     &entry_index,
-				     (intptr_t *) element_xml_tag,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append event data element to strings array.",
-					 function );
-
-					goto on_error;
-				}
-			}
-		}
-		else
-		{
-			/* The EventData templates start with the EventData tag
-			 */
-			result = libevtx_record_values_parse_data_xml_tag_by_template(
-				  record_values,
-				  event_data_xml_tag,
-				  template_root_xml_tag,
-				  error );
-
-			if( result == -1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to parse event data root element.",
-				 function );
-
-				goto on_error;
-			}
+			goto on_error;
 		}
 	}
 	else
@@ -4283,62 +4217,61 @@ int libevtx_record_values_parse_data(
 		{
 			result = 0;
 
-			if( internal_template_definition != NULL )
+			/* The UserData templates start with the EventXML tag
+			 */
+			if( libfwevt_xml_tag_get_number_of_elements(
+			     user_data_xml_tag,
+			     &number_of_elements,
+			     error ) != 1 )
 			{
-				/* The UserData templates start with the EventXML tag
-				 */
-				if( libfwevt_xml_tag_get_number_of_elements(
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of user data elements.",
+				 function );
+
+				goto on_error;
+			}
+			if( number_of_elements == 1 )
+			{
+				if( libfwevt_xml_tag_get_element_by_index(
 				     user_data_xml_tag,
-				     &number_of_elements,
+				     0,
+				     &element_xml_tag,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve number of user data elements.",
+					 "%s: unable to retrieve user data element: 0.",
 					 function );
 
 					goto on_error;
 				}
-				if( number_of_elements == 1 )
+				result = libevtx_record_values_parse_data_xml_tag_by_template(
+					  record_values,
+					  element_xml_tag,
+					  template_root_xml_tag,
+					  error );
+
+				if( result == -1 )
 				{
-					if( libfwevt_xml_tag_get_element_by_index(
-					     user_data_xml_tag,
-					     0,
-					     &element_xml_tag,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve user data element: 0.",
-						 function );
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to parse user data element: 0.",
+					 function );
 
-						goto on_error;
-					}
-					result = libevtx_record_values_parse_data_xml_tag_by_template(
-						  record_values,
-						  element_xml_tag,
-						  template_root_xml_tag,
-						  error );
-
-					if( result == -1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to parse user data element: 0.",
-						 function );
-
-						goto on_error;
-					}
+					goto on_error;
 				}
 			}
 		}
 	}
+	record_values->data_parsed = 1;
+
 	return( result );
 
 on_error:
@@ -4364,6 +4297,7 @@ on_error:
  */
 int libevtx_record_values_get_number_of_strings(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int *number_of_strings,
      libcerror_error_t **error )
 {
@@ -4391,6 +4325,24 @@ int libevtx_record_values_get_number_of_strings(
 
 		return( -1 );
 	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
+	}
 	if( libcdata_array_get_number_of_entries(
 	     record_values->strings_array,
 	     number_of_strings,
@@ -4414,6 +4366,7 @@ int libevtx_record_values_get_number_of_strings(
  */
 int libevtx_record_values_get_utf8_string_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      size_t *utf8_string_size,
      libcerror_error_t **error )
@@ -4442,6 +4395,24 @@ int libevtx_record_values_get_utf8_string_size(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( libcdata_array_get_entry_by_index(
 	     record_values->strings_array,
@@ -4483,6 +4454,7 @@ int libevtx_record_values_get_utf8_string_size(
  */
 int libevtx_record_values_get_utf8_string(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      uint8_t *utf8_string,
      size_t utf8_string_size,
@@ -4512,6 +4484,24 @@ int libevtx_record_values_get_utf8_string(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( libcdata_array_get_entry_by_index(
 	     record_values->strings_array,
@@ -4554,6 +4544,7 @@ int libevtx_record_values_get_utf8_string(
  */
 int libevtx_record_values_get_utf16_string_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      size_t *utf16_string_size,
      libcerror_error_t **error )
@@ -4582,6 +4573,24 @@ int libevtx_record_values_get_utf16_string_size(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( libcdata_array_get_entry_by_index(
 	     record_values->strings_array,
@@ -4623,6 +4632,7 @@ int libevtx_record_values_get_utf16_string_size(
  */
 int libevtx_record_values_get_utf16_string(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      uint16_t *utf16_string,
      size_t utf16_string_size,
@@ -4652,6 +4662,24 @@ int libevtx_record_values_get_utf16_string(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( libcdata_array_get_entry_by_index(
 	     record_values->strings_array,
@@ -4693,6 +4721,7 @@ int libevtx_record_values_get_utf16_string(
  */
 int libevtx_record_values_get_data_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      size_t *data_size,
      libcerror_error_t **error )
 {
@@ -4723,6 +4752,24 @@ int libevtx_record_values_get_data_size(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( record_values->binary_data_value == NULL )
 	{
@@ -4821,6 +4868,7 @@ int libevtx_record_values_get_data_size(
  */
 int libevtx_record_values_get_data(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      uint8_t *data,
      size_t data_size,
      libcerror_error_t **error )
@@ -4852,6 +4900,24 @@ int libevtx_record_values_get_data(
 		 function );
 
 		return( -1 );
+	}
+	if( record_values->data_parsed == 0 )
+	{
+		if( libevtx_record_values_parse_data(
+		     record_values,
+		     io_handle,
+		     NULL,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse data.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( record_values->binary_data_value == NULL )
 	{

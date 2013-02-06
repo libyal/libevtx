@@ -553,11 +553,13 @@ int libevtx_record_get_utf16_user_security_identifier(
      size_t utf16_string_size,
      libevtx_error_t **error );
 
-/* Parses the record data
+/* Parses the record data with a template definition
+ * This function needs to be called before accessing the strings otherwise
+ * the record data will be parsed without a template definition by default
  * Returns 1 if successful, 0 if data could not be parsed or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_record_parse_data(
+int libevtx_record_parse_data_with_template_definition(
      libevtx_record_t *record,
      libevtx_template_definition_t *template_definition,
      libevtx_error_t **error );
@@ -676,6 +678,24 @@ int libevtx_record_get_utf16_xml_string(
      libevtx_record_t *record,
      uint16_t *utf16_string,
      size_t utf16_string_size,
+     libevtx_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Record functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Parses the record data
+ * Returns 1 if successful, 0 if data could not be parsed or -1 on error
+ *
+ * This function deprecated use there is no need to call this function anymore.
+ * If you want to parse the record data with a template definition use:
+ * libevtx_record_parse_data_with_template_definition
+ */
+LIBEVTX_DEPRECATED \
+LIBEVTX_EXTERN \
+int libevtx_record_parse_data(
+     libevtx_record_t *record,
+     libevtx_template_definition_t *template_definition,
      libevtx_error_t **error );
 
 /* -------------------------------------------------------------------------

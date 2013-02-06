@@ -1,19 +1,12 @@
 TODO
-* implement libevtx_record_get_offset
+* format string
+  - merge with libevt (check)
+  - print unsupported conversion specifiers ?
 * formatted output
   - check with test data if output is now correct
 * wevt
   - improve (template) codepage handling
   - improve template definition XML template value handling
-* format string
-  - merge with libevt
-  - improve UserData support
-  - implement evtx template definition
-  - strip \r
-  - check remove successive \n
-  - conversion specifier "%%"
-  - print unused conversion specifiers
-  - print unsupported conversion specifiers ?
 * message handle:
   - create: message string object
   - get %WinDir% from registry
@@ -70,6 +63,11 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130205
+* library now parses records without template by default
+* worked on message string
+* message string now prints unused conversion specifiers
 
 20130113
 * updated msvscpp files

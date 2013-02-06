@@ -122,6 +122,10 @@ struct libevtx_record_values
 	/* Reference to the BinaryData value
 	 */
 	libfvalue_value_t *binary_data_value;
+
+	/* Value to indicate the data was parsed
+	 */
+	uint8_t data_parsed;
 };
 
 int libevtx_record_values_initialize(
@@ -263,17 +267,20 @@ int libevtx_record_values_parse_data(
 
 int libevtx_record_values_get_number_of_strings(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int *number_of_strings,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_utf8_string_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      size_t *utf8_string_size,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_utf8_string(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      uint8_t *utf8_string,
      size_t utf8_string_size,
@@ -281,12 +288,14 @@ int libevtx_record_values_get_utf8_string(
 
 int libevtx_record_values_get_utf16_string_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      size_t *utf16_string_size,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_utf16_string(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      int string_index,
      uint16_t *utf16_string,
      size_t utf16_string_size,
@@ -294,11 +303,13 @@ int libevtx_record_values_get_utf16_string(
 
 int libevtx_record_values_get_data_size(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      size_t *data_size,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_data(
      libevtx_record_values_t *record_values,
+     libevtx_io_handle_t *io_handle,
      uint8_t *data,
      size_t data_size,
      libcerror_error_t **error );

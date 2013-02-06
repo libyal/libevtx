@@ -958,323 +958,6 @@ int export_handle_close_input(
 	return( result );
 }
 
-/* Prints the message string
- * Returns 1 if successful or -1 on error
- */
-int export_handle_message_string_fprint(
-     export_handle_t *export_handle,
-     message_string_t *message_string,
-     libevtx_record_t *record,
-     libcerror_error_t **error )
-{
-	libcstring_system_character_t *value_string  = NULL;
-	static char *function                        = "export_handle_message_string_fprint";
-	size_t conversion_specifier_length           = 0;
-	size_t message_string_length                 = 0;
-	size_t message_string_index                  = 0;
-	size_t value_string_size                     = 0;
-	libcstring_system_character_t last_character = 0;
-	int number_of_strings                        = 0;
-	int result                                   = 0;
-	int value_string_index                       = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( message_string == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid message string.",
-		 function );
-
-		return( -1 );
-	}
-	if( libevtx_record_get_number_of_strings(
-	     record,
-	     &number_of_strings,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of strings in record.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	fprintf(
-	 export_handle->notify_stream,
-	 "Message format string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
-	 message_string->string );
-
-	fprintf(
-	 export_handle->notify_stream,
-	 "Number of strings\t\t: %d\n",
-	 number_of_strings );
-#endif
-	fprintf(
-	 export_handle->notify_stream,
-	 "Message string\t\t\t: " );
-
-	message_string_length = message_string->string_size - 1;
-	message_string_index  = 0;
-
-	while( message_string_index < message_string_length )
-	{
-		if( ( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '%' )
-		 && ( ( message_string_index + 1 ) < message_string_length ) )
-		{
-/* TODO add support for more conversion specifiers */
-			/* Ignore %0 = end of string, %r = cariage return */
-			if( ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '0' )
-			 || ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'r' ) )
-			{
-				message_string_index += 2;
-
-				continue;
-			}
-			/* Replace %% = % */
-			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '%' )
-			{
-				last_character = (libcstring_system_character_t) '%';
-
-				fprintf(
-				 export_handle->notify_stream,
-				 "%c",
-				 last_character );
-
-				message_string_index += 2;
-
-				continue;
-			}
-			/* Replace %b = space */
-			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
-			{
-				last_character = (libcstring_system_character_t) ' ';
-
-				fprintf(
-				 export_handle->notify_stream,
-				 "%c",
-				 last_character );
-
-				message_string_index += 2;
-
-				continue;
-			}
-			/* Replace %n = new line */
-			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
-			{
-				if( last_character != (libcstring_system_character_t) '\n' )
-				{
-					last_character = (libcstring_system_character_t) '\n';
-
-					fprintf(
-					 export_handle->notify_stream,
-					 "%c",
-					 last_character );
-				}
-				message_string_index += 2;
-
-				continue;
-			}
-			/* Replace %t = tab */
-			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
-			{
-				last_character = (libcstring_system_character_t) '\t';
-
-				fprintf(
-				 export_handle->notify_stream,
-				 "%c",
-				 last_character );
-
-				message_string_index += 2;
-
-				continue;
-			}
-			if( ( ( message_string->string )[ message_string_index + 1 ] < (libcstring_system_character_t) '1' )
-			 || ( ( message_string->string )[ message_string_index + 1 ] > (libcstring_system_character_t) '9' ) )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
-				 function,
-				 &( ( message_string->string )[ message_string_index ] ) );
-
-				goto on_error;
-			}
-			value_string_index = (int) ( message_string->string )[ message_string_index + 1 ] - (int) '0';
-
-			conversion_specifier_length = 2;
-
-		 	if( ( ( message_string_index + 3 ) < message_string_length )
-			 && ( ( message_string->string )[ message_string_index + 2 ] >= (libcstring_system_character_t) '0' )
-			 && ( ( message_string->string )[ message_string_index + 2 ] <= (libcstring_system_character_t) '9' ) )
-			{
-				value_string_index *= 10;
-				value_string_index += (int) ( message_string->string )[ message_string_index + 2 ] - (int) '0';
-
-				conversion_specifier_length += 1;
-			}
-			value_string_index -= 1;
-
-		 	if( ( ( message_string_index + conversion_specifier_length + 3 ) < message_string_length )
-			 && ( ( message_string->string )[ message_string_index + conversion_specifier_length ] == (libcstring_system_character_t) '!' ) )
-			{
-				if( ( ( message_string->string )[ message_string_index + conversion_specifier_length + 1 ] != (libcstring_system_character_t) 's' )
-				 || ( ( message_string->string )[ message_string_index + conversion_specifier_length + 2 ] != (libcstring_system_character_t) '!' ) )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported conversion specifier: %" PRIs_LIBCSTRING_SYSTEM ".",
-					 function,
-					 &( ( message_string->string )[ message_string_index ] ) );
-
-					goto on_error;
-				}
-				conversion_specifier_length += 3;
-			}
-/* TODO remove index check after user data support */
-			if( value_string_index < number_of_strings )
-			{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libevtx_record_get_utf16_string_size(
-					  record,
-					  value_string_index,
-					  &value_string_size,
-					  error );
-#else
-				result = libevtx_record_get_utf8_string_size(
-					  record,
-					  value_string_index,
-					  &value_string_size,
-					  error );
-#endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve string: %d size.",
-					 function,
-					 value_string_index );
-
-					goto on_error;
-				}
-			}
-			if( value_string_size > 0 )
-			{
-				value_string = libcstring_system_string_allocate(
-						value_string_size );
-
-				if( value_string == NULL )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value string.",
-					 function );
-
-					goto on_error;
-				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libevtx_record_get_utf16_string(
-					  record,
-					  value_string_index,
-					  (uint16_t *) value_string,
-					  value_string_size,
-					  error );
-#else
-				result = libevtx_record_get_utf8_string(
-					  record,
-					  value_string_index,
-					  (uint8_t *) value_string,
-					  value_string_size,
-					  error );
-#endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve string: %d.",
-					 function,
-					 value_string_index );
-
-					goto on_error;
-				}
-				fprintf(
-				 export_handle->notify_stream,
-				 "%" PRIs_LIBCSTRING_SYSTEM "",
-				 value_string );
-
-				memory_free(
-				 value_string );
-
-				value_string = NULL;
-			}
-			message_string_index += conversion_specifier_length;
-		}
-		else
-		{
-			if( ( message_string->string )[ message_string_index ] != 0 )
-			{
-				if( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '\r' )
-				{
-					/* Ignore \r characters */
-				}
-				else if( ( ( message_string->string )[ message_string_index ] == (libcstring_system_character_t) '\n' )
-				      && ( last_character == (libcstring_system_character_t) '\n' ) )
-				{
-					/* Ignore multiple \n characters */
-				}
-				else
-				{
-					fprintf(
-					 export_handle->notify_stream,
-					 "%" PRIc_LIBCSTRING_SYSTEM "",
-					 ( message_string->string )[ message_string_index ] );
-
-					last_character = ( message_string->string )[ message_string_index ];
-				}
-			}
-			message_string_index += 1;
-		}
-	}
-	fprintf(
-	 export_handle->notify_stream,
-	 "\n" );
-
-	return( 1 );
-
-on_error:
-	if( value_string != NULL )
-	{
-		memory_free(
-		 value_string );
-	}
-	return( -1 );
-}
-
 /* Copies the GUID string to a byte stream
  * Returns 1 if successful or -1 on error
  */
@@ -1735,7 +1418,10 @@ int export_handle_export_record_event_message(
 		 export_handle->notify_stream,
 		 "Resource filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 		 resource_filename );
-
+	}
+	if( ( export_handle->use_template_definition != 0 )
+	 && ( resource_filename != NULL ) )
+	{
 		if( export_handle_guid_string_copy_to_byte_stream(
 		     export_handle,
 		     event_provider_identifier,
@@ -1891,28 +1577,31 @@ int export_handle_export_record_event_message(
 
 		message_filename = NULL;
 	}
-	result = libevtx_record_parse_data(
-	          record,
-	          template_definition,
-	          error );
-
-	if( result == -1 )
+	if( export_handle->use_template_definition != 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GENERIC,
-		 "%s: unable to parse record data.",
-		 function );
+		result = libevtx_record_parse_data_with_template_definition(
+			  record,
+			  template_definition,
+			  error );
 
-		goto on_error;
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to parse record data.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	if( message_string != NULL )
 	{
-		if( export_handle_message_string_fprint(
-		     export_handle,
+		if( message_string_fprint(
 		     message_string,
 		     record,
+		     export_handle->notify_stream,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

@@ -1263,16 +1263,18 @@ int libevtx_record_get_utf16_user_security_identifier(
 	return( result );
 }
 
-/* Parses the record data
+/* Parses the record data with a template definition
+ * This function needs to be called before accessing the strings otherwise
+ * the record data will be parsed without a template definition by default
  * Returns 1 if successful, 0 if data could not be parsed or -1 on error
  */
-int libevtx_record_parse_data(
+int libevtx_record_parse_data_with_template_definition(
      libevtx_record_t *record,
      libevtx_template_definition_t *template_definition,
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
-	static char *function                      = "libevtx_record_parse_data";
+	static char *function                      = "libevtx_record_parse_data_with_template_definition";
 	int result                                 = 0;
 
 	if( record == NULL )
@@ -1288,6 +1290,17 @@ int libevtx_record_parse_data(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
+	if( template_definition == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid template definition.",
+		 function );
+
+		return( -1 );
+	}
 	result = libevtx_record_values_parse_data(
 	          internal_record->record_values,
 	          internal_record->io_handle,
@@ -1334,6 +1347,7 @@ int libevtx_record_get_number_of_strings(
 
 	if( libevtx_record_values_get_number_of_strings(
 	     internal_record->record_values,
+	     internal_record->io_handle,
 	     number_of_strings,
 	     error ) != 1 )
 	{
@@ -1377,6 +1391,7 @@ int libevtx_record_get_utf8_string_size(
 
 	if( libevtx_record_values_get_utf8_string_size(
 	     internal_record->record_values,
+	     internal_record->io_handle,
 	     string_index,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -1423,6 +1438,7 @@ int libevtx_record_get_utf8_string(
 
 	if( libevtx_record_values_get_utf8_string(
 	     internal_record->record_values,
+	     internal_record->io_handle,
 	     string_index,
 	     utf8_string,
 	     utf8_string_size,
@@ -1469,6 +1485,7 @@ int libevtx_record_get_utf16_string_size(
 
 	if( libevtx_record_values_get_utf16_string_size(
 	     internal_record->record_values,
+	     internal_record->io_handle,
 	     string_index,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -1515,6 +1532,7 @@ int libevtx_record_get_utf16_string(
 
 	if( libevtx_record_values_get_utf16_string(
 	     internal_record->record_values,
+	     internal_record->io_handle,
 	     string_index,
 	     utf16_string,
 	     utf16_string_size,
@@ -1560,6 +1578,7 @@ int libevtx_record_get_data_size(
 
 	result = libevtx_record_values_get_data_size(
 	          internal_record->record_values,
+	          internal_record->io_handle,
 	          data_size,
 	          error );
 
@@ -1605,6 +1624,7 @@ int libevtx_record_get_data(
 
 	result = libevtx_record_values_get_data(
 	          internal_record->record_values,
+	          internal_record->io_handle,
 	          data,
 	          data_size,
 	          error );

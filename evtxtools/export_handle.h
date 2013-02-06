@@ -75,6 +75,10 @@ struct export_handle
 	 */
 	int event_log_type;
 
+	/* Value to indicate to use a template definition to parse event data
+	 */
+	int use_template_definition;
+
 	/* Value to indicate the input is open
 	 */
 	int input_is_open;

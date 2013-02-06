@@ -1,4 +1,4 @@
-.Dd January 10, 2013
+.Dd February 5, 2013
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
@@ -121,7 +121,7 @@ Record functions
 .Ft int
 .Fn libevtx_record_get_utf16_user_security_identifier "libevtx_record_t *record, uint16_t *utf16_string, size_t utf16_string_size, libevtx_error_t **error"
 .Ft int
-.Fn libevtx_record_parse_data "libevtx_record_t *record, libevtx_template_definition_t *template_definition, libevtx_error_t **error"
+.Fn libevtx_record_parse_data_with_template_definition "libevtx_record_t *record, libevtx_template_definition_t *template_definition, libevtx_error_t **error"
 .Ft int
 .Fn libevtx_record_get_number_of_strings "libevtx_record_t *record, int *number_of_strings, libevtx_error_t **error"
 .Ft int
