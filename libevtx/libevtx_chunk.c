@@ -359,7 +359,7 @@ int libevtx_chunk_read(
 		libcnotify_print_data(
 		 chunk_data,
 		 sizeof( evtx_chunk_header_t ),
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	if( memory_compare(
@@ -470,7 +470,7 @@ int libevtx_chunk_read(
 		libcnotify_print_data(
 		 ( (evtx_chunk_header_t *) chunk_data )->unknown1,
 		 64,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_data )->unknown2,
@@ -547,7 +547,7 @@ int libevtx_chunk_read(
 		libcnotify_print_data(
 		 &( chunk_data[ chunk_data_offset ] ),
 		 384,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	chunk_data_offset += 384;
@@ -663,7 +663,7 @@ int libevtx_chunk_read(
 			libcnotify_print_data(
 			 &( chunk_data[ chunk_data_offset ] ),
 			 free_space_size,
-			 0 );
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 #endif
 		while( chunk_data_offset < chunk_data_size )

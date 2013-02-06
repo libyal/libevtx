@@ -248,7 +248,7 @@ int libevtx_io_handle_read_file_header(
 		libcnotify_print_data(
 		 file_header_data,
 		 sizeof( evtx_file_header_t ),
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
 	if( memory_compare(
@@ -360,7 +360,7 @@ int libevtx_io_handle_read_file_header(
 		libcnotify_print_data(
 		 ( (evtx_file_header_t *) file_header_data )->unknown1,
 		 76,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (evtx_file_header_t *) file_header_data )->flags,

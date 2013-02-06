@@ -1,4 +1,6 @@
 TODO
+* evtxeport implement -t option
+* correct \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * format string
   - merge with libevt (check)
   - print unsupported conversion specifiers ?
@@ -22,6 +24,8 @@ TODO
   - Keywords add 0x no leading 0's
     <Keywords>8080000000000000</Keywords>
     <Keywords>0x8080000000000000</Keywords>
+  - merge <Data Name="ExtraInfo">\n</Data> into <Data Name="ExtraInfo"/>
+  - remove \n (\r) from <Data> value strings ?
 
 strings:
 - support non-contiguous data elements ?
@@ -63,6 +67,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130206
+* worked on record parsing
 
 20130205
 * library now parses records without template by default

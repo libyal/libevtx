@@ -1593,7 +1593,16 @@ int export_handle_export_record_event_message(
 			 "%s: unable to parse record data.",
 			 function );
 
-			goto on_error;
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( ( error != NULL )
+			 && ( *error != NULL ) )
+			{
+				libcnotify_print_error_backtrace(
+				 *error );
+			}
+#endif
+			libcerror_error_free(
+			 error );
 		}
 	}
 	if( message_string != NULL )
@@ -1615,7 +1624,8 @@ int export_handle_export_record_event_message(
 		}
 		message_string = NULL;
 	}
-	else
+// TODO test
+//	else
 	{
 		if( libevtx_record_get_number_of_strings(
 		     record,

@@ -60,7 +60,7 @@ void usage_fprint(
 	                 "                  [ -m mode ] [ -p resource_files_path ]\n"
 	                 "                  [ -r registy_files_path ] [ -s system_file ]\n"
 	                 "                  [ -S software_file ] [ -t event_log_type ]\n"
-	                 "                  [ -hvV ] source\n\n" );
+	                 "                  [ -hTvV ] source\n\n" );
 
 
 	fprintf( stream, "\tsource: the source file\n\n" );
@@ -84,6 +84,10 @@ void usage_fprint(
 	                 "\t        This option overrides the path provided by -r" );
 	fprintf( stream, "\t-S:     filename of the SOFTWARE (Windows) Registry file.\n"
 	                 "\t        This option overrides the path provided by -r" );
+	fprintf( stream, "\t-t:     event log type, options: application, security, system\n"
+	                 "\t        if not specified the event log type is determined based\n"
+	                 "\t        on the filename.\n" );
+	fprintf( stream, "\t-T:     use event template definitions to parse the event record data\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
 }
@@ -151,6 +155,7 @@ int main( int argc, char * const argv[] )
 	char *program                                                    = "evtxexport";
 	libcstring_system_integer_t option                               = 0;
 	int result                                                       = 0;
+	int use_template_definition                                      = 0;
 	int verbose                                                      = 0;
 
 	libcnotify_stream_set(
@@ -186,7 +191,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:f:hl:m:p:r:s:S:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:f:hl:m:p:r:s:S:t:TvV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -245,6 +250,11 @@ int main( int argc, char * const argv[] )
 
 			case (libcstring_system_integer_t) 'S':
 				option_software_registry_filename = optarg;
+
+				break;
+
+			case (libcstring_system_integer_t) 'T':
+				use_template_definition = 1;
 
 				break;
 
@@ -471,6 +481,8 @@ int main( int argc, char * const argv[] )
 			goto on_error;
 		}
 	}
+	evtxexport_export_handle->use_template_definition = use_template_definition;
+
 	if( log_handle_open(
 	     log_handle,
 	     option_log_filename,
