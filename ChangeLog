@@ -3,7 +3,6 @@ TODO
 * correct \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * format string
   - merge with libevt (check)
-  - print unsupported conversion specifiers ?
 * formatted output
   - check with test data if output is now correct
 * wevt
@@ -66,6 +65,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130207
+* worked on record parsing
 
 20130206
 * worked on record parsing
