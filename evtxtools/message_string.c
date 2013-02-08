@@ -338,11 +338,6 @@ int message_string_fprint(
 	 stream,
 	 "Message format string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 	 message_string->string );
-
-	fprintf(
-	 stream,
-	 "Number of strings\t\t: %d\n",
-	 number_of_strings );
 #endif
 	fprintf(
 	 stream,
@@ -549,9 +544,8 @@ int message_string_fprint(
 					 value_string );
 
 					value_string = NULL;
-
-					message_string_index += conversion_specifier_length;
 				}
+				message_string_index += conversion_specifier_length;
 			}
 			else
 			{

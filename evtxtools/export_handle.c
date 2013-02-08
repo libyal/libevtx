@@ -1419,8 +1419,7 @@ int export_handle_export_record_event_message(
 		 "Resource filename\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 		 resource_filename );
 	}
-	if( ( export_handle->use_template_definition != 0 )
-	 && ( resource_filename != NULL ) )
+	if( resource_filename != NULL )
 	{
 		if( export_handle_guid_string_copy_to_byte_stream(
 		     export_handle,
@@ -1484,25 +1483,28 @@ int export_handle_export_record_event_message(
 			{
 				message_identifier = 0;
 			}
-			result = export_handle_resource_file_get_template_definition(
-				  export_handle,
-				  resource_file,
-				  provider_identifier,
-				  16,
-				  event_identifier,
-				  &template_definition,
-				  error );
-
-			if( result == -1 )
+			if( export_handle->use_template_definition != 0 )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve tempate definition.",
-				 function );
+				result = export_handle_resource_file_get_template_definition(
+					  export_handle,
+					  resource_file,
+					  provider_identifier,
+					  16,
+					  event_identifier,
+					  &template_definition,
+					  error );
 
-				goto on_error;
+				if( result == -1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve tempate definition.",
+					 function );
+
+					goto on_error;
+				}
 			}
 		}
 		memory_free(
@@ -1604,6 +1606,129 @@ int export_handle_export_record_event_message(
 			libcerror_error_free(
 			 error );
 		}
+		if( libevtx_template_definition_free(
+		     &template_definition,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free template definition.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( libevtx_record_get_number_of_strings(
+	     record,
+	     &number_of_strings,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of strings in record.",
+		 function );
+
+		goto on_error;
+	}
+	fprintf(
+	 export_handle->notify_stream,
+	 "Number of strings\t\t: %d\n",
+	 number_of_strings );
+
+	for( value_string_index = 0;
+	     value_string_index < number_of_strings;
+	     value_string_index++ )
+	{
+		fprintf(
+		 export_handle->notify_stream,
+		 "String: %d\t\t\t: ",
+		 value_string_index + 1 );
+
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libevtx_record_get_utf16_string_size(
+			  record,
+			  value_string_index,
+			  &value_string_size,
+			  error );
+#else
+		result = libevtx_record_get_utf8_string_size(
+			  record,
+			  value_string_index,
+			  &value_string_size,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve string: %d size.",
+			 function,
+			 value_string_index );
+
+			goto on_error;
+		}
+		if( value_string_size > 0 )
+		{
+			value_string = libcstring_system_string_allocate(
+					value_string_size );
+
+			if( value_string == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create value string.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libevtx_record_get_utf16_string(
+				  record,
+				  value_string_index,
+				  (uint16_t *) value_string,
+				  value_string_size,
+				  error );
+#else
+			result = libevtx_record_get_utf8_string(
+				  record,
+				  value_string_index,
+				  (uint8_t *) value_string,
+				  value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve string: %d.",
+				 function,
+				 value_string_index );
+
+				goto on_error;
+			}
+			fprintf(
+			 export_handle->notify_stream,
+			 "%" PRIs_LIBCSTRING_SYSTEM "",
+			 value_string );
+
+			memory_free(
+			 value_string );
+
+			value_string = NULL;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "\n" );
 	}
 	if( message_string != NULL )
 	{
@@ -1623,136 +1748,6 @@ int export_handle_export_record_event_message(
 			goto on_error;
 		}
 		message_string = NULL;
-	}
-// TODO test
-//	else
-	{
-		if( libevtx_record_get_number_of_strings(
-		     record,
-		     &number_of_strings,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of strings in record.",
-			 function );
-
-			goto on_error;
-		}
-		fprintf(
-		 export_handle->notify_stream,
-		 "Number of strings\t\t: %d\n",
-		 number_of_strings );
-
-		for( value_string_index = 0;
-		     value_string_index < number_of_strings;
-		     value_string_index++ )
-		{
-			fprintf(
-			 export_handle->notify_stream,
-			 "String: %d\t\t\t: ",
-			 value_string_index + 1 );
-
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-			result = libevtx_record_get_utf16_string_size(
-				  record,
-				  value_string_index,
-				  &value_string_size,
-				  error );
-#else
-			result = libevtx_record_get_utf8_string_size(
-				  record,
-				  value_string_index,
-				  &value_string_size,
-				  error );
-#endif
-			if( result != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve string: %d size.",
-				 function,
-				 value_string_index );
-
-				goto on_error;
-			}
-			if( value_string_size > 0 )
-			{
-				value_string = libcstring_system_string_allocate(
-						value_string_size );
-
-				if( value_string == NULL )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value string.",
-					 function );
-
-					goto on_error;
-				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libevtx_record_get_utf16_string(
-					  record,
-					  value_string_index,
-					  (uint16_t *) value_string,
-					  value_string_size,
-					  error );
-#else
-				result = libevtx_record_get_utf8_string(
-					  record,
-					  value_string_index,
-					  (uint8_t *) value_string,
-					  value_string_size,
-					  error );
-#endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve string: %d.",
-					 function,
-					 value_string_index );
-
-					goto on_error;
-				}
-				fprintf(
-				 export_handle->notify_stream,
-				 "%" PRIs_LIBCSTRING_SYSTEM "",
-				 value_string );
-
-				memory_free(
-				 value_string );
-
-				value_string = NULL;
-			}
-			fprintf(
-			 export_handle->notify_stream,
-			 "\n" );
-		}
-	}
-	if( template_definition != NULL )
-	{
-		if( libevtx_template_definition_free(
-		     &template_definition,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free template definition.",
-			 function );
-
-			goto on_error;
-		}
 	}
 	return( 1 );
 

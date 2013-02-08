@@ -1,4 +1,5 @@
 TODO
+* fix user data attribute value event string support
 * evtxeport implement -t option
 * correct \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * format string
@@ -65,6 +66,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130208
+* worked on formatted strings
 
 20130207
 * worked on record parsing

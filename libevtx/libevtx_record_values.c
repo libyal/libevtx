@@ -3808,7 +3808,7 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 		}
 	}
 	for( attribute_index = 0;
-	     attribute_index < number_of_template_attributes;
+	     attribute_index < number_of_data_attributes;
 	     attribute_index++ )
 	{
 		if( libfwevt_xml_tag_get_attribute_by_index(
