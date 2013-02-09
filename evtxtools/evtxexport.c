@@ -253,6 +253,11 @@ int main( int argc, char * const argv[] )
 
 				break;
 
+			case (libcstring_system_integer_t) 't':
+				option_event_log_type = optarg;
+
+				break;
+
 			case (libcstring_system_integer_t) 'T':
 				use_template_definition = 1;
 

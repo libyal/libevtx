@@ -1,6 +1,6 @@
 TODO
-* fix user data attribute value event string support
-* evtxeport implement -t option
+* binary data parse from EventData
+* sync output style with libevt
 * correct \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * format string
   - merge with libevt (check)
@@ -69,6 +69,7 @@ Recovery:
 
 20130208
 * worked on formatted strings
+* added decimal representation to level
 
 20130207
 * worked on record parsing

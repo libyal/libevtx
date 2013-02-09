@@ -2003,9 +2003,10 @@ int export_handle_export_record_text(
 	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Event level\t\t\t: %s\n",
+	 "Event level\t\t\t: %s (%d)\n",
 	 export_handle_get_event_level(
-	  event_level ) );
+	  event_level ),
+	 event_level );
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libevtx_record_get_utf16_user_security_identifier_size(
