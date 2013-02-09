@@ -225,7 +225,7 @@ int registry_file_set_ascii_codepage(
      int ascii_codepage,
      libcerror_error_t **error )
 {
-	static char *function  = "registry_file_set_ascii_codepage";
+	static char *function = "registry_file_set_ascii_codepage";
 
 	if( registry_file == NULL )
 	{

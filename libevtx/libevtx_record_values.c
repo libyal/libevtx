@@ -37,6 +37,11 @@
 
 const uint8_t evtx_event_record_signature[ 4 ] = { 0x2a, 0x2a, 0x00, 0x00 };
 
+const uint8_t evtx_event_record_empty_header[ 24 ] = \
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
 /* Initialize record values
  * Make sure the value record values is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
@@ -290,7 +295,7 @@ on_error:
 }
 
 /* Reads the record values header
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not or -1 on error
  */
 int libevtx_record_values_read_header(
      libevtx_record_values_t *record_values,
@@ -304,6 +309,7 @@ int libevtx_record_values_read_header(
 	static char *function             = "libevtx_record_values_read_header";
 	size_t event_record_data_size     = 0;
 	uint32_t copy_of_size             = 0;
+	uint32_t signature                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t filetime_string[ 32 ];
@@ -393,6 +399,13 @@ int libevtx_record_values_read_header(
 		 0 );
 	}
 #endif
+	if( memory_compare(
+	     event_record_data,
+	     evtx_event_record_empty_header,
+	     sizeof( evtx_event_record_header_t ) ) == 0 )
+	{
+		return( 0 );
+	}
 	if( memory_compare(
 	     ( (evtx_event_record_header_t *) event_record_data )->signature,
 	     evtx_event_record_signature,

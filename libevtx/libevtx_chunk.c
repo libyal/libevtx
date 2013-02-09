@@ -239,6 +239,7 @@ int libevtx_chunk_read(
 	uint32_t number_of_event_records       = 0;
 	uint32_t stored_checksum               = 0;
 	int entry_index                        = 0;
+	int result                             = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 	uint64_t calculated_chunk_number       = 0;
@@ -596,7 +597,7 @@ int libevtx_chunk_read(
 #endif
 		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
 	}
-	while( chunk_data_offset < free_space_offset )
+	while( chunk_data_offset <= last_event_record_offset )
 	{
 		if( libevtx_record_values_initialize(
 		     &record_values,
@@ -611,23 +612,39 @@ int libevtx_chunk_read(
 
 			goto on_error;
 		}
-		if( libevtx_record_values_read_header(
-		     record_values,
-		     io_handle,
-		     chunk_data,
-		     chunk_data_size,
-		     chunk_data_offset,
-		     error ) != 1 )
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: reading record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+			 function,
+			 file_offset + chunk_data_offset,
+			 file_offset + chunk_data_offset );
+		}
+#endif
+		result = libevtx_record_values_read_header(
+		          record_values,
+		          io_handle,
+		          chunk_data,
+		          chunk_data_size,
+		          chunk_data_offset,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record values header at chunk data offset: %" PRIzd ".",
+			 "%s: unable to read record values header at offset: %" PRIi64 ".",
 			 function,
-			 chunk_data_offset );
+			 file_offset + chunk_data_offset );
 
 			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			break;
 		}
 		chunk_data_offset += record_values->data_size;
 
@@ -693,10 +710,10 @@ int libevtx_chunk_read(
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
-					 "%s: reading recovered record at chunk data offset: %" PRIzd " (0x%08" PRIzx ")\n",
+					 "%s: reading recovered record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 					 function,
-					 chunk_data_offset,
-					 chunk_data_offset );
+					 file_offset + chunk_data_offset,
+					 file_offset + chunk_data_offset );
 				}
 #endif
 				if( libevtx_record_values_read_header(
@@ -711,9 +728,9 @@ int libevtx_chunk_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_IO,
 					 LIBCERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read record values header at chunk data offset: %" PRIzd ".",
+					 "%s: unable to read record values header at offset: %" PRIi64 ".",
 					 function,
-					 chunk_data_offset );
+					 file_offset + chunk_data_offset );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 					if( libcnotify_verbose != 0 )
