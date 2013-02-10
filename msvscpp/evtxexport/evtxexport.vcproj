@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtexport"
+	Name="evtxexport"
 	ProjectGUID="{C27BEBA4-D27C-4E67-96D4-B5B8DD355641}"
-	RootNamespace="evtexport"
+	RootNamespace="evtxexport"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

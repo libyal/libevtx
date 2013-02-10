@@ -1,4 +1,6 @@
 TODO
+* msvscpp files: check and fix debug output generation
+* check signal abort
 * parse binary data from EventData
 * correctly deal with \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * improve detecting corrupted recovered event records
@@ -58,6 +60,10 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130210
+* updated libcfile to allow reading from open files
+* fixed incorrect name of resulting evtxexport binary in msvscpp files
 
 20130209
 * small fix in the libcdirectory msvscpp files
