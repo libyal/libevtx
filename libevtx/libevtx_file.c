@@ -839,6 +839,9 @@ int libevtx_file_open_read(
 	uint16_t number_of_records             = 0;
 	int element_index                      = 0;
 
+#if defined( HAVE_VERBOSE_OUTPUT )
+	uint64_t previous_record_identifier    = 0;
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint8_t *trailing_data                 = NULL;
 	size_t trailing_data_size              = 0;
@@ -1187,21 +1190,30 @@ int libevtx_file_open_read(
 			{
 				internal_file->io_handle->last_record_identifier = record_values->identifier;
 			}
-			if( record_values->identifier != ( internal_file->io_handle->previous_record_identifier + 1 ) )
-			{
 #if defined( HAVE_VERBOSE_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-					libcnotify_printf(
-					 "%s: gap in record identifier ( %" PRIu64 " != %" PRIu64 " ).\n",
-					 function,
-					 internal_file->io_handle->previous_record_identifier + 1,
-					 record_values->identifier );
-				}
-#endif
+			if( ( chunk_index == 0 )
+			 && ( record_index == 0 ) )
+			{
+				previous_record_identifier = record_values->identifier;
 			}
-			internal_file->io_handle->previous_record_identifier = record_values->identifier;
+			else
+			{
+				previous_record_identifier++;
 
+				if( record_values->identifier != previous_record_identifier )
+				{
+					if( libcnotify_verbose != 0 )
+					{
+						libcnotify_printf(
+						 "%s: detected gap in record identifier ( %" PRIu64 " != %" PRIu64 " ).\n",
+						 function,
+						 previous_record_identifier,
+						 record_values->identifier );
+					}
+					previous_record_identifier = record_values->identifier;
+				}
+			}
+#endif
 			/* The chunk index is stored in the element data size
 			 */
 			if( libfdata_list_append_element(
@@ -1330,7 +1342,7 @@ int libevtx_file_open_read(
 			 calculated_number_of_chunks );
 		}
 #endif
-		internal_file->io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		internal_file->io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -1437,6 +1449,47 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
+}
+
+/* Determine if the file corrupted
+ * Returns 1 if corrupted, 0 if not or -1 on error
+ */
+int libevtx_file_is_corrupted(
+     libevtx_file_t *file,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_is_corrupted";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( internal_file->io_handle->flags & LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED ) != 0 )
+	{
+		return( 1 );
+	}
+	return( 0 );
 }
 
 /* Retrieves the file ASCII codepage
@@ -1614,6 +1667,57 @@ int libevtx_file_get_version(
 	}
 	*major_version = internal_file->io_handle->major_version;
 	*minor_version = internal_file->io_handle->minor_version;
+
+	return( 1 );
+}
+
+/* Retrieves the flags
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_get_flags(
+     libevtx_file_t *file,
+     uint32_t *flags,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_get_flags";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( flags == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid flags.",
+		 function );
+
+		return( -1 );
+	}
+	*flags = internal_file->io_handle->file_flags;
 
 	return( 1 );
 }

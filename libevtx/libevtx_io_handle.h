@@ -60,13 +60,17 @@ struct libevtx_io_handle
 	 */
 	size64_t chunks_data_size;
 
+	/* The file flags
+	 */
+	uint32_t file_flags;
+
 	/* The chunk size
 	 */
 	uint32_t chunk_size;
 
 	/* Various flags
 	 */
-	uint32_t flags;
+	uint8_t flags;
 
 	/* The first record identifier
 	 */
@@ -75,10 +79,6 @@ struct libevtx_io_handle
 	/* The last record identifier
 	 */
 	uint64_t last_record_identifier;
-
-	/* The previous record identifier
-	 */
-	uint64_t previous_record_identifier;
 
 	/* The codepage of the ASCII strings
 	 */

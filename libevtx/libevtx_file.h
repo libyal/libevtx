@@ -133,6 +133,11 @@ int libevtx_file_open_read(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_file_is_corrupted(
+     libevtx_file_t *file,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_file_get_ascii_codepage(
      libevtx_file_t *file,
      int *ascii_codepage,
@@ -149,6 +154,12 @@ int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_file_get_flags(
+     libevtx_file_t *file,
+     uint32_t *flags,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \

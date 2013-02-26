@@ -416,8 +416,10 @@ int info_handle_file_fprint(
 {
 	const libcstring_system_character_t *event_log_type = NULL;
 	static char *function                               = "evtxinfo_file_info_fprint";
+	uint32_t flags                                      = 0;
 	uint16_t major_version                              = 0;
 	uint16_t minor_version                              = 0;
+	int is_corrupted                                    = 0;
 	int number_of_recovered_records                     = 0;
 	int number_of_records                               = 0;
 
@@ -443,6 +445,35 @@ int info_handle_file_fprint(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve file version.",
+		 function );
+
+		return( -1 );
+	}
+	if( libevtx_file_get_flags(
+	     info_handle->input_file,
+	     &flags,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve flags.",
+		 function );
+
+		return( -1 );
+	}
+	is_corrupted = libevtx_file_is_corrupted(
+	                info_handle->input_file,
+	                error );
+
+	if( is_corrupted == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine if file is corrupted.",
 		 function );
 
 		return( -1 );
@@ -535,6 +566,31 @@ int info_handle_file_fprint(
 		 info_handle->notify_stream,
 		 "\tLog type\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
 		 event_log_type );
+	}
+	if( is_corrupted != 0 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tIs corrupted\n" );
+	}
+	if( flags != 0 )
+	{
+		fprintf(
+		 info_handle->notify_stream,
+		 "\tFlags:\n" );
+
+		if( ( flags & LIBEVTX_FILE_FLAG_IS_DIRTY ) != 0 )
+		{
+			fprintf(
+			 info_handle->notify_stream,
+			 "\t\tIs dirty\n" );
+		}
+		if( ( flags & LIBEVTX_FILE_FLAG_IS_FULL ) != 0 )
+		{
+			fprintf(
+			 info_handle->notify_stream,
+			 "\t\tIs full\n" );
+		}
 	}
 	fprintf(
 	 info_handle->notify_stream,

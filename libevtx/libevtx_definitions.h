@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20130209
+#define LIBEVTX_VERSION						20130226
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20130209"
+#define LIBEVTX_VERSION_STRING					"20130226"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -74,16 +74,25 @@ enum LIBEVTX_EVENT_LEVELS
 	LIBEVTX_EVENT_LEVEL_VERBOSE				= 5,
 };
 
-#endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
-
-/* The file flags definitions
+/* The event file flags
  */
 enum LIBEVTX_FILE_FLAGS
 {
+	LIBEVTX_FILE_FLAG_IS_DIRTY				= 0x00000001UL,
+	LIBEVTX_FILE_FLAG_IS_FULL				= 0x00000002UL,
+};
+
+#endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
+
+/* The IO handle flags
+ */
+enum LIBEVTX_IO_HANDLE_FLAGS
+{
 	/* The file is corrupted
 	 */
-	LIBEVTX_FILE_FLAG_CORRUPTED				= 0x01,
+	LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED			= 0x01,
 };
+
 
 /* The binary XML token definitions
  */

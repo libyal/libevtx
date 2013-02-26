@@ -30,6 +30,23 @@
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
+/* Prints the file flags
+ */
+void libevtx_debug_print_file_flags(
+      uint32_t file_flags )
+{
+	if( ( file_flags & LIBEVTX_FILE_FLAG_IS_DIRTY ) != 0 )
+	{
+		libcnotify_printf(
+		 "Is dirty\n" );
+	}
+	if( ( file_flags & LIBEVTX_FILE_FLAG_IS_FULL ) != 0 )
+	{
+		libcnotify_printf(
+		 "Is full\n" );
+	}
+}
+
 /* Prints the value type
  */
 void libevtx_debug_print_value_type(

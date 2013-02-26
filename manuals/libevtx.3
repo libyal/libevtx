@@ -1,4 +1,4 @@
-.Dd February 5, 2013
+.Dd February 26, 2013
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
@@ -61,9 +61,23 @@ File functions
 .Ft int
 .Fn libevtx_file_close "libevtx_file_t *file, libevtx_error_t **error"
 .Ft int
+.Fn libevtx_file_is_corrupted "libevtx_file_t *file, libevtx_error_t **error"
+.Ft int
 .Fn libevtx_file_get_ascii_codepage "libevtx_file_t *file, int *ascii_codepage, libevtx_error_t **error"
 .Ft int
 .Fn libevtx_file_set_ascii_codepage "libevtx_file_t *file, int ascii_codepage, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_version "libevtx_file_t *file, uint16_t *major_version, uint16_t *minor_version, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_flags "libevtx_file_t *file, uint32_t *flags, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_number_of_records "libevtx_file_t *file, int *number_of_records, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_record "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_number_of_recovered_records "libevtx_file_t *file, int *number_of_records, libevtx_error_t **error"
+.Ft int
+.Fn libevtx_file_get_recovered_record "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int

@@ -84,10 +84,10 @@ struct evtx_file_header
 	 */
 	uint8_t unknown1[ 76 ];
 
-	/* Flags
+	/* The file flags
 	 * Consists of 4 bytes
 	 */
-	uint8_t flags[ 4 ];
+	uint8_t file_flags[ 4 ];
 
 	/* Checksum
 	 * Consists of 4 bytes

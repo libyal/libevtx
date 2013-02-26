@@ -290,6 +290,10 @@ int libevtx_io_handle_read_file_header(
 	 io_handle->number_of_chunks );
 
 	byte_stream_copy_to_uint32_little_endian(
+	 ( (evtx_file_header_t *) file_header_data )->file_flags,
+	 io_handle->file_flags );
+
+	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->checksum,
 	 stored_checksum );
 
@@ -362,13 +366,14 @@ int libevtx_io_handle_read_file_header(
 		 76,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (evtx_file_header_t *) file_header_data )->flags,
-		 value_32bit );
 		libcnotify_printf(
-		 "%s: flags\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: file flags\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
-		 value_32bit );
+		 io_handle->file_flags );
+		libevtx_debug_print_file_flags(
+		 io_handle->file_flags );
+		libcnotify_printf(
+		 "\n" );
 
 		libcnotify_printf(
 		 "%s: checksum\t\t\t\t: 0x%08" PRIx32 "\n",
@@ -407,7 +412,7 @@ int libevtx_io_handle_read_file_header(
 			 calculated_checksum );
 		}
 #endif
-		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -433,7 +438,7 @@ int libevtx_io_handle_read_file_header(
 			 last_chunk_number );
 		}
 #endif
-		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 	else if( io_handle->number_of_chunks != ( last_chunk_number - first_chunk_number + 1 ) )
 	{
@@ -447,7 +452,7 @@ int libevtx_io_handle_read_file_header(
 			 last_chunk_number - first_chunk_number + 1 );
 		}
 #endif
-		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 	memory_free(
 	 file_header_data );

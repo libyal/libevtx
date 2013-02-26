@@ -35,6 +35,9 @@ extern "C" {
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
+void libevtx_debug_print_file_flags(
+      uint32_t file_flags );
+
 void libevtx_debug_print_value_type(
       uint8_t value_type );
 

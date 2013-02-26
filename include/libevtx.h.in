@@ -252,6 +252,14 @@ int libevtx_file_close(
      libevtx_file_t *file,
      libevtx_error_t **error );
 
+/* Determine if the file corrupted
+ * Returns 1 if corrupted, 0 if not or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_is_corrupted(
+     libevtx_file_t *file,
+     libevtx_error_t **error );
+
 /* Retrieves the file ASCII codepage
  * Returns 1 if successful or -1 on error
  */
@@ -278,6 +286,15 @@ int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
+     libevtx_error_t **error );
+
+/* Retrieves the flags
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_file_get_flags(
+     libevtx_file_t *file,
+     uint32_t *flags,
      libevtx_error_t **error );
 
 /* Retrieves the number of records

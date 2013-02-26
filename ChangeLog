@@ -1,9 +1,11 @@
 TODO
+* mark file as corrupted on CRC mismatch ?
 * msvscpp files: check and fix debug output generation
 * check signal abort
 * parse binary data from EventData
 * correctly deal with \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * improve detecting corrupted recovered event records
+* improve dealing with corrupted event records?
 * formatted output
   - check with test data if output is now correct
 * wevt
@@ -60,6 +62,10 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130226
+* worked on error tolerance
+* added debug output for file flags
 
 20130210
 * updated libcfile to allow reading from open files

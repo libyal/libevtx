@@ -308,8 +308,8 @@ int libevtx_record_values_read_header(
 	const uint8_t *event_record_data  = NULL;
 	static char *function             = "libevtx_record_values_read_header";
 	size_t event_record_data_size     = 0;
-	uint32_t copy_of_size             = 0;
 	uint32_t signature                = 0;
+	uint32_t size_copy                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t filetime_string[ 32 ];
@@ -544,21 +544,21 @@ int libevtx_record_values_read_header(
 	}
 	byte_stream_copy_to_uint32_little_endian(
 	 &( event_record_data[ record_values->data_size - 4 ] ),
-	 copy_of_size );
+	 size_copy );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: copy of size\t\t\t\t: %" PRIu32 "\n",
+		 "%s: size copy\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 copy_of_size );
+		 size_copy );
 
 		libcnotify_printf(
 		 "\n" );
 	}
 #endif
-	if( size != size_copy )
+	if( record_values->data_size != size_copy )
 	{
 		libcerror_error_set(
 		 error,

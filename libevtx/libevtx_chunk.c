@@ -224,30 +224,33 @@ int libevtx_chunk_read(
      off64_t file_offset,
      libcerror_error_t **error )
 {
-	libevtx_record_values_t *record_values = NULL;
-	uint8_t *chunk_data                    = NULL;
-	static char *function                  = "libevtx_chunk_read";
-	size_t chunk_data_offset               = 0;
-	size_t chunk_data_size                 = 0;
-	ssize_t read_count                     = 0;
-	uint32_t calculated_checksum           = 0;
-	uint32_t event_records_checksum        = 0;
-	uint32_t first_event_record_number     = 0;
-	uint32_t free_space_offset             = 0;
-	uint32_t last_event_record_number      = 0;
-	uint32_t last_event_record_offset      = 0;
-	uint32_t number_of_event_records       = 0;
-	uint32_t stored_checksum               = 0;
-	int entry_index                        = 0;
-	int result                             = 0;
+	libevtx_record_values_t *record_values      = NULL;
+	uint8_t *chunk_data                         = NULL;
+	static char *function                       = "libevtx_chunk_read";
+	size_t chunk_data_offset                    = 0;
+	size_t chunk_data_size                      = 0;
+	ssize_t read_count                          = 0;
+	uint64_t calculated_number_of_event_records = 0;
+	uint64_t first_event_record_identifier      = 0;
+	uint64_t first_event_record_number          = 0;
+	uint64_t last_event_record_identifier       = 0;
+	uint64_t last_event_record_number           = 0;
+	uint64_t number_of_event_records            = 0;
+	uint32_t calculated_checksum                = 0;
+	uint32_t event_records_checksum             = 0;
+	uint32_t free_space_offset                  = 0;
+	uint32_t header_size                        = 0;
+	uint32_t last_event_record_offset           = 0;
+	uint32_t stored_checksum                    = 0;
+	int entry_index                             = 0;
+	int result                                  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
-	uint64_t calculated_chunk_number       = 0;
+	uint64_t calculated_chunk_number            = 0;
 #endif
 #if defined( HAVE_DEBUG_OUTPUT )
-	ssize_t free_space_size                = 0;
-	uint64_t value_64bit                   = 0;
-	uint32_t value_32bit                   = 0;
+	ssize_t free_space_size                     = 0;
+	uint32_t value_32bit                        = 0;
 #endif
 
 	if( chunk == NULL )
@@ -385,6 +388,18 @@ int libevtx_chunk_read(
 	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_number,
 	 last_event_record_number );
 
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_identifier,
+	 first_event_record_identifier );
+
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_identifier,
+	 last_event_record_identifier );
+
+	byte_stream_copy_to_uint32_little_endian(
+	 ( (evtx_chunk_header_t *) chunk_data )->header_size,
+	 header_size );
+
 	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_offset,
 	 last_event_record_offset );
@@ -426,29 +441,20 @@ int libevtx_chunk_read(
 		 function,
 		 last_event_record_number );
 
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_identifier,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: first event record identifier\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 first_event_record_identifier );
 
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_identifier,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: last event record identifier\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 last_event_record_identifier );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (evtx_chunk_header_t *) chunk_data )->header_size,
-		 value_32bit );
 		libcnotify_printf(
 		 "%s: header size\t\t\t\t\t\t: %" PRIu32 "\n",
 		 function,
-		 value_32bit );
+		 header_size );
 
 		libcnotify_printf(
 		 "%s: last event record offset\t\t\t\t: 0x%08" PRIx32 "\n",
@@ -490,6 +496,18 @@ int libevtx_chunk_read(
 		 "\n" );
 	}
 #endif
+	if( header_size != 128 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported header size: %" PRIu32 ".",
+		 function,
+		 header_size );
+
+		goto on_error;
+	}
 	if( libevtx_checksum_calculate_little_endian_crc32(
 	     &calculated_checksum,
 	     chunk_data,
@@ -535,7 +553,7 @@ int libevtx_chunk_read(
 			 calculated_checksum );
 		}
 #endif
-		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 	chunk_data_offset = sizeof( evtx_chunk_header_t );
 
@@ -588,14 +606,14 @@ int libevtx_chunk_read(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: mismatch in chunk: %" PRIu64 " events records CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
+			 "%s: mismatch in chunk: %" PRIu64 " event records CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
 			 function,
 			 calculated_chunk_number,
 			 event_records_checksum,
 			 calculated_checksum );
 		}
 #endif
-		io_handle->flags |= LIBEVTX_FILE_FLAG_CORRUPTED;
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
 	while( chunk_data_offset <= last_event_record_offset )
 	{
@@ -679,8 +697,65 @@ int libevtx_chunk_read(
 
 		number_of_event_records++;
 	}
-/* TODO validate number of event records */
+	if( first_event_record_number > last_event_record_number )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: invalid chunk: %" PRIu64 " first event record number: %" PRIu64 " exceeds last event record number: %" PRIu64 ".\n",
+			 function,
+			 calculated_chunk_number,
+			 first_event_record_number,
+			 last_event_record_number );
+		}
+#endif
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+	}
+	else if( result == 1 )
+	{
+		calculated_number_of_event_records = last_event_record_number - first_event_record_number + 1;
 
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: calculated number of records\t\t\t: %" PRIu64 "\n",
+			 function,
+			 calculated_number_of_event_records );
+		}
+#endif
+		if( number_of_event_records != calculated_number_of_event_records )
+		{
+#if defined( HAVE_VERBOSE_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: mismatch in chunk: %" PRIu64 " number of event records ( %" PRIu64 " != %" PRIu64 " ).\n",
+				 function,
+				 calculated_chunk_number,
+				 number_of_event_records,
+				 calculated_number_of_event_records );
+			}
+#endif
+			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+		}
+	}
+	if( first_event_record_identifier > last_event_record_identifier )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: in chunk: %" PRIu64 " first event record identifier: %" PRIu64 " exceeds last event record identifier: %" PRIu64 ".\n",
+			 function,
+			 calculated_chunk_number,
+			 first_event_record_identifier,
+			 last_event_record_identifier );
+		}
+#endif
+		/* TODO mark this as corruption ? */
+	}
 	if( chunk_data_offset < chunk_data_size )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
