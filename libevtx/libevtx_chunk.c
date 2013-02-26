@@ -640,9 +640,21 @@ int libevtx_chunk_read(
 			 function,
 			 file_offset + chunk_data_offset );
 
-			goto on_error;
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				if( ( error != NULL )
+				 && ( *error != NULL ) )
+				{
+					libcnotify_print_error_backtrace(
+					 *error );
+				}
+			}
+#endif
+			libcerror_error_free(
+			 error );
 		}
-		else if( result == 0 )
+		if( result != 1 )
 		{
 			break;
 		}
@@ -667,6 +679,8 @@ int libevtx_chunk_read(
 
 		number_of_event_records++;
 	}
+/* TODO validate number of event records */
+
 	if( chunk_data_offset < chunk_data_size )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -787,8 +801,6 @@ int libevtx_chunk_read(
 			}
 		}
 	}
-
-/* TODO validate number of event records */
 	return( 1 );
 
 on_error:

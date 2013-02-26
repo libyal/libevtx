@@ -558,7 +558,17 @@ int libevtx_record_values_read_header(
 		 "\n" );
 	}
 #endif
-/* TODO validate size with copy */
+	if( size != size_copy )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_INPUT,
+		 LIBCERROR_INPUT_ERROR_VALUE_MISMATCH,
+		 "%s: value mismatch for size and size copy.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
