@@ -176,6 +176,7 @@ int libevtx_chunks_table_read_record(
 	libevtx_record_values_t *chunk_record_values = NULL;
 	libevtx_record_values_t *record_values       = NULL;
 	static char *function                        = "libevtx_io_handle_read_chunk";
+	size_t calculated_chunk_data_offset          = 0;
 	size_t chunk_data_offset                     = 0;
 	uint16_t number_of_records                   = 0;
 	uint16_t record_index                        = 0;
@@ -252,7 +253,7 @@ int libevtx_chunks_table_read_record(
 
 		goto on_error;
 	}
-	chunk_data_offset = (size_t) ( element_data_offset - chunk->file_offset );
+	calculated_chunk_data_offset = (size_t) ( element_data_offset - chunk->file_offset );
 
 	if( libevtx_chunk_get_number_of_records(
 	     chunk,
@@ -268,7 +269,7 @@ int libevtx_chunks_table_read_record(
 
 		goto on_error;
 	}
-/* TODO optimize this */
+/* TODO optimize determining the corresponding record */
 	for( record_index = 0;
 	     record_index < number_of_records;
 	     record_index++ )
@@ -301,13 +302,15 @@ int libevtx_chunks_table_read_record(
 
 			goto on_error;
 		}
-		if( chunk_record_values->chunk_data_offset == chunk_data_offset )
+		chunk_data_offset = chunk_record_values->chunk_data_offset;
+
+		if( calculated_chunk_data_offset == chunk_data_offset )
 		{
 			break;
 		}
 	}
 /* TODO allow to control look up in normal vs recovered */
-	if( chunk_record_values->chunk_data_offset != chunk_data_offset )
+	if( calculated_chunk_data_offset != chunk_data_offset )
 	{
 		if( libevtx_chunk_get_number_of_recovered_records(
 		     chunk,
@@ -355,13 +358,15 @@ int libevtx_chunks_table_read_record(
 
 				goto on_error;
 			}
-			if( chunk_record_values->chunk_data_offset == chunk_data_offset )
+			chunk_data_offset = chunk_record_values->chunk_data_offset;
+
+			if( calculated_chunk_data_offset == chunk_data_offset )
 			{
 				break;
 			}
 		}
 	}
-	if( chunk_record_values->chunk_data_offset != chunk_data_offset )
+	if( calculated_chunk_data_offset != chunk_data_offset )
 	{
 		libcerror_error_set(
 		 error,

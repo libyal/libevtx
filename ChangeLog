@@ -63,6 +63,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20130301
+* fixed bug in handling recovered records when no records are available
+
 20130226
 * worked on error tolerance
 * added debug output for file flags
