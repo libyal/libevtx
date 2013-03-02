@@ -27,6 +27,7 @@ libevtx_la_SOURCES = \
 	evtx_event_record.h \
 	evtx_file_header.h \
 	libevtx.c \
+	libevtx_byte_stream.c libevtx_byte_stream.h \
 	libevtx_checksum.c libevtx_checksum.h \
 	libevtx_chunk.c libevtx_chunk.h \
 	libevtx_chunks_table.c libevtx_chunks_table.h \

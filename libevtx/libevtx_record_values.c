@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libevtx_byte_stream.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libcnotify.h"
@@ -36,11 +37,6 @@
 #include "evtx_event_record.h"
 
 const uint8_t evtx_event_record_signature[ 4 ] = { 0x2a, 0x2a, 0x00, 0x00 };
-
-const uint8_t evtx_event_record_empty_header[ 24 ] = \
-	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 /* Initialize record values
  * Make sure the value record values is pointing to is set to NULL
@@ -310,12 +306,12 @@ int libevtx_record_values_read_header(
 	size_t event_record_data_size     = 0;
 	uint32_t signature                = 0;
 	uint32_t size_copy                = 0;
+	int result                        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t filetime_string[ 32 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
-	int result                        = 0;
 #endif
 
 	if( record_values == NULL )
@@ -399,10 +395,23 @@ int libevtx_record_values_read_header(
 		 0 );
 	}
 #endif
-	if( memory_compare(
-	     event_record_data,
-	     evtx_event_record_empty_header,
-	     sizeof( evtx_event_record_header_t ) ) == 0 )
+	result = libevtx_byte_stream_check_for_zero_byte_fill(
+	          event_record_data,
+	          sizeof( evtx_event_record_header_t ),
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine of event record header is 0-byte filled.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
 	{
 		return( 0 );
 	}

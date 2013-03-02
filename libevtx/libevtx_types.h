@@ -45,7 +45,12 @@ typedef intptr_t libevtx_template_definition_t;
 
 #endif
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBEVTX ) */
+
+/* The largest primary (or scalar) available
+ * supported by a single load and store instruction
+ */
+typedef unsigned long int libevtx_aligned_t;
 
 #endif
 

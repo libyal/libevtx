@@ -171,6 +171,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libevtx\libevtx_byte_stream.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libevtx\libevtx_checksum.c"
 				>
 			</File>
@@ -246,6 +250,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libevtx\evtx_file_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libevtx\libevtx_byte_stream.h"
 				>
 			</File>
 			<File

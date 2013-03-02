@@ -23,6 +23,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libevtx_byte_stream.h"
 #include "libevtx_checksum.h"
 #include "libevtx_chunk.h"
 #include "libevtx_definitions.h"
@@ -366,395 +367,418 @@ int libevtx_chunk_read(
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
-	if( memory_compare(
-	     ( (evtx_chunk_header_t *) chunk_data )->signature,
-	     evtx_chunk_signature,
-	     8 ) != 0 )
+	result = libevtx_byte_stream_check_for_zero_byte_fill(
+	          chunk_data,
+	          sizeof( evtx_chunk_header_t ),
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported chunk signature.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine of chunk header is 0-byte filled.",
 		 function );
 
 		goto on_error;
 	}
-	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_number,
-	 first_event_record_number );
-
-	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_number,
-	 last_event_record_number );
-
-	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_identifier,
-	 first_event_record_identifier );
-
-	byte_stream_copy_to_uint64_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_identifier,
-	 last_event_record_identifier );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->header_size,
-	 header_size );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_offset,
-	 last_event_record_offset );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->free_space_offset,
-	 free_space_offset );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->event_records_checksum,
-	 event_records_checksum );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (evtx_chunk_header_t *) chunk_data )->checksum,
-	 stored_checksum );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
+	else if( result != 0 )
 	{
-		libcnotify_printf(
-		 "%s: signature\t\t\t\t\t\t: %c%c%c%c%c%c%c\\x%02x\n",
-		 function,
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 0 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 1 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 2 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 3 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 4 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 5 ] ,
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 6 ],
-		 ( (evtx_chunk_header_t *) chunk_data )->signature[ 7 ] );
+		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+	}
+	else
+	{
+		if( memory_compare(
+		     ( (evtx_chunk_header_t *) chunk_data )->signature,
+		     evtx_chunk_signature,
+		     8 ) != 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported chunk signature.",
+			 function );
 
-		libcnotify_printf(
-		 "%s: first event record number\t\t\t\t: %" PRIu64 "\n",
-		 function,
+			goto on_error;
+		}
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_number,
 		 first_event_record_number );
 
-		libcnotify_printf(
-		 "%s: last event record number\t\t\t\t: %" PRIu64 "\n",
-		 function,
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_number,
 		 last_event_record_number );
 
-		libcnotify_printf(
-		 "%s: first event record identifier\t\t\t: %" PRIu64 "\n",
-		 function,
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_identifier,
 		 first_event_record_identifier );
 
-		libcnotify_printf(
-		 "%s: last event record identifier\t\t\t: %" PRIu64 "\n",
-		 function,
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_identifier,
 		 last_event_record_identifier );
 
-		libcnotify_printf(
-		 "%s: header size\t\t\t\t\t\t: %" PRIu32 "\n",
-		 function,
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->header_size,
 		 header_size );
-
-		libcnotify_printf(
-		 "%s: last event record offset\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 last_event_record_offset );
-
-		libcnotify_printf(
-		 "%s: free space offset\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 free_space_offset );
-
-		libcnotify_printf(
-		 "%s: event records checksum\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 event_records_checksum );
-
-		libcnotify_printf(
-		 "%s: unknown1:\n",
-		 function );
-		libcnotify_print_data(
-		 ( (evtx_chunk_header_t *) chunk_data )->unknown1,
-		 64,
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (evtx_chunk_header_t *) chunk_data )->unknown2,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown2\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
+		 ( (evtx_chunk_header_t *) chunk_data )->last_event_record_offset,
+		 last_event_record_offset );
 
-		libcnotify_printf(
-		 "%s: checksum\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->free_space_offset,
+		 free_space_offset );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->event_records_checksum,
+		 event_records_checksum );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (evtx_chunk_header_t *) chunk_data )->checksum,
 		 stored_checksum );
 
-		libcnotify_printf(
-		 "\n" );
-	}
-#endif
-	if( header_size != 128 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported header size: %" PRIu32 ".",
-		 function,
-		 header_size );
-
-		goto on_error;
-	}
-	if( libevtx_checksum_calculate_little_endian_crc32(
-	     &calculated_checksum,
-	     chunk_data,
-	     120,
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to calculate CRC-32 checksum.",
-		 function );
-
-		goto on_error;
-	}
-	if( libevtx_checksum_calculate_little_endian_crc32(
-	     &calculated_checksum,
-	     &( chunk_data[ 128 ] ),
-	     384,
-	     calculated_checksum,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to calculate CRC-32 checksum.",
-		 function );
-
-		goto on_error;
-	}
-	if( stored_checksum != calculated_checksum )
-	{
-#if defined( HAVE_VERBOSE_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: mismatch in chunk: %" PRIu64 " header CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
-			 function,
-			 calculated_chunk_number,
-			 stored_checksum,
-			 calculated_checksum );
-		}
-#endif
-		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
-	}
-	chunk_data_offset = sizeof( evtx_chunk_header_t );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: chunk table data:\n",
-		 function );
-		libcnotify_print_data(
-		 &( chunk_data[ chunk_data_offset ] ),
-		 384,
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-	}
-#endif
-	chunk_data_offset += 384;
-/* TODO can free_space_offset be 0 ? */
-
-	if( ( free_space_offset < chunk_data_offset )
-	 || ( free_space_offset > chunk_data_size ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid free space offset value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	if( libevtx_checksum_calculate_little_endian_crc32(
-	     &calculated_checksum,
-	     &( chunk_data[ 512 ] ),
-	     free_space_offset - chunk_data_offset,
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to calculate CRC-32 checksum.",
-		 function );
-
-		goto on_error;
-	}
-	if( event_records_checksum != calculated_checksum )
-	{
-#if defined( HAVE_VERBOSE_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: mismatch in chunk: %" PRIu64 " event records CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
-			 function,
-			 calculated_chunk_number,
-			 event_records_checksum,
-			 calculated_checksum );
-		}
-#endif
-		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
-	}
-	while( chunk_data_offset <= last_event_record_offset )
-	{
-		if( libevtx_record_values_initialize(
-		     &record_values,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create record values.",
-			 function );
-
-			goto on_error;
-		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: reading record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+			 "%s: signature\t\t\t\t\t\t: %c%c%c%c%c%c%c\\x%02x\n",
 			 function,
-			 file_offset + chunk_data_offset,
-			 file_offset + chunk_data_offset );
-		}
-#endif
-		result = libevtx_record_values_read_header(
-		          record_values,
-		          io_handle,
-		          chunk_data,
-		          chunk_data_size,
-		          chunk_data_offset,
-		          error );
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 0 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 1 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 2 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 3 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 4 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 5 ] ,
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 6 ],
+			 ( (evtx_chunk_header_t *) chunk_data )->signature[ 7 ] );
 
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record values header at offset: %" PRIi64 ".",
-			 function,
-			 file_offset + chunk_data_offset );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				if( ( error != NULL )
-				 && ( *error != NULL ) )
-				{
-					libcnotify_print_error_backtrace(
-					 *error );
-				}
-			}
-#endif
-			libcerror_error_free(
-			 error );
-		}
-		if( result != 1 )
-		{
-			break;
-		}
-		chunk_data_offset += record_values->data_size;
-
-		if( libcdata_array_append_entry(
-		     chunk->records_array,
-		     &entry_index,
-		     (intptr_t *) record_values,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append record values to records array.",
-			 function );
-
-			goto on_error;
-		}
-		record_values = NULL;
-
-		number_of_event_records++;
-	}
-	if( first_event_record_number > last_event_record_number )
-	{
-#if defined( HAVE_VERBOSE_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
 			libcnotify_printf(
-			 "%s: invalid chunk: %" PRIu64 " first event record number: %" PRIu64 " exceeds last event record number: %" PRIu64 ".\n",
+			 "%s: first event record number\t\t\t\t: %" PRIu64 "\n",
 			 function,
-			 calculated_chunk_number,
-			 first_event_record_number,
+			 first_event_record_number );
+
+			libcnotify_printf(
+			 "%s: last event record number\t\t\t\t: %" PRIu64 "\n",
+			 function,
 			 last_event_record_number );
-		}
-#endif
-		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
-	}
-	else if( result == 1 )
-	{
-		calculated_number_of_event_records = last_event_record_number - first_event_record_number + 1;
 
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
 			libcnotify_printf(
-			 "%s: calculated number of records\t\t\t: %" PRIu64 "\n",
+			 "%s: first event record identifier\t\t\t: %" PRIu64 "\n",
 			 function,
-			 calculated_number_of_event_records );
+			 first_event_record_identifier );
+
+			libcnotify_printf(
+			 "%s: last event record identifier\t\t\t: %" PRIu64 "\n",
+			 function,
+			 last_event_record_identifier );
+
+			libcnotify_printf(
+			 "%s: header size\t\t\t\t\t\t: %" PRIu32 "\n",
+			 function,
+			 header_size );
+
+			libcnotify_printf(
+			 "%s: last event record offset\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 last_event_record_offset );
+
+			libcnotify_printf(
+			 "%s: free space offset\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 free_space_offset );
+
+			libcnotify_printf(
+			 "%s: event records checksum\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 event_records_checksum );
+
+			libcnotify_printf(
+			 "%s: unknown1:\n",
+			 function );
+			libcnotify_print_data(
+			 ( (evtx_chunk_header_t *) chunk_data )->unknown1,
+			 64,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (evtx_chunk_header_t *) chunk_data )->unknown2,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown2\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
+
+			libcnotify_printf(
+			 "%s: checksum\t\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 stored_checksum );
+
+			libcnotify_printf(
+			 "\n" );
 		}
 #endif
-		if( number_of_event_records != calculated_number_of_event_records )
+		if( header_size != 128 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported header size: %" PRIu32 ".",
+			 function,
+			 header_size );
+
+			goto on_error;
+		}
+		if( libevtx_checksum_calculate_little_endian_crc32(
+		     &calculated_checksum,
+		     chunk_data,
+		     120,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to calculate CRC-32 checksum.",
+			 function );
+
+			goto on_error;
+		}
+		if( libevtx_checksum_calculate_little_endian_crc32(
+		     &calculated_checksum,
+		     &( chunk_data[ 128 ] ),
+		     384,
+		     calculated_checksum,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to calculate CRC-32 checksum.",
+			 function );
+
+			goto on_error;
+		}
+		if( stored_checksum != calculated_checksum )
 		{
 #if defined( HAVE_VERBOSE_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: mismatch in chunk: %" PRIu64 " number of event records ( %" PRIu64 " != %" PRIu64 " ).\n",
+				 "%s: mismatch in chunk: %" PRIu64 " header CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
 				 function,
 				 calculated_chunk_number,
-				 number_of_event_records,
-				 calculated_number_of_event_records );
+				 stored_checksum,
+				 calculated_checksum );
 			}
 #endif
 			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 		}
-	}
-	if( first_event_record_identifier > last_event_record_identifier )
-	{
-#if defined( HAVE_VERBOSE_OUTPUT )
+		chunk_data_offset = sizeof( evtx_chunk_header_t );
+
+#if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: in chunk: %" PRIu64 " first event record identifier: %" PRIu64 " exceeds last event record identifier: %" PRIu64 ".\n",
-			 function,
-			 calculated_chunk_number,
-			 first_event_record_identifier,
-			 last_event_record_identifier );
+			 "%s: chunk table data:\n",
+			 function );
+			libcnotify_print_data(
+			 &( chunk_data[ chunk_data_offset ] ),
+			 384,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 #endif
-		/* TODO mark this as corruption ? */
+		chunk_data_offset += 384;
+/* TODO can free_space_offset be 0 ? */
+
+		if( ( free_space_offset < chunk_data_offset )
+		 || ( free_space_offset > chunk_data_size ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid free space offset value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+		if( libevtx_checksum_calculate_little_endian_crc32(
+		     &calculated_checksum,
+		     &( chunk_data[ 512 ] ),
+		     free_space_offset - chunk_data_offset,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to calculate CRC-32 checksum.",
+			 function );
+
+			goto on_error;
+		}
+		if( event_records_checksum != calculated_checksum )
+		{
+#if defined( HAVE_VERBOSE_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: mismatch in chunk: %" PRIu64 " event records CRC-32 checksum ( 0x%08" PRIx32 " != 0x%08" PRIx32 " ).\n",
+				 function,
+				 calculated_chunk_number,
+				 event_records_checksum,
+				 calculated_checksum );
+			}
+#endif
+			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+		}
+		while( chunk_data_offset <= last_event_record_offset )
+		{
+			if( libevtx_record_values_initialize(
+			     &record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create record values.",
+				 function );
+
+				goto on_error;
+			}
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: reading record at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+				 function,
+				 file_offset + chunk_data_offset,
+				 file_offset + chunk_data_offset );
+			}
+#endif
+			result = libevtx_record_values_read_header(
+				  record_values,
+				  io_handle,
+				  chunk_data,
+				  chunk_data_size,
+				  chunk_data_offset,
+				  error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read record values header at offset: %" PRIi64 ".",
+				 function,
+				 file_offset + chunk_data_offset );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					if( ( error != NULL )
+					 && ( *error != NULL ) )
+					{
+						libcnotify_print_error_backtrace(
+						 *error );
+					}
+				}
+#endif
+				libcerror_error_free(
+				 error );
+			}
+			if( result != 1 )
+			{
+				break;
+			}
+			chunk_data_offset += record_values->data_size;
+
+			if( libcdata_array_append_entry(
+			     chunk->records_array,
+			     &entry_index,
+			     (intptr_t *) record_values,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append record values to records array.",
+				 function );
+
+				goto on_error;
+			}
+			record_values = NULL;
+
+			number_of_event_records++;
+		}
+		if( first_event_record_number > last_event_record_number )
+		{
+#if defined( HAVE_VERBOSE_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: invalid chunk: %" PRIu64 " first event record number: %" PRIu64 " exceeds last event record number: %" PRIu64 ".\n",
+				 function,
+				 calculated_chunk_number,
+				 first_event_record_number,
+				 last_event_record_number );
+			}
+#endif
+			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+		}
+		else if( result == 1 )
+		{
+			calculated_number_of_event_records = last_event_record_number - first_event_record_number + 1;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: calculated number of records\t\t\t: %" PRIu64 "\n",
+				 function,
+				 calculated_number_of_event_records );
+			}
+#endif
+			if( number_of_event_records != calculated_number_of_event_records )
+			{
+#if defined( HAVE_VERBOSE_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: mismatch in chunk: %" PRIu64 " number of event records ( %" PRIu64 " != %" PRIu64 " ).\n",
+					 function,
+					 calculated_chunk_number,
+					 number_of_event_records,
+					 calculated_number_of_event_records );
+				}
+#endif
+				io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+			}
+		}
+		if( first_event_record_identifier > last_event_record_identifier )
+		{
+#if defined( HAVE_VERBOSE_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: in chunk: %" PRIu64 " first event record identifier: %" PRIu64 " exceeds last event record identifier: %" PRIu64 ".\n",
+				 function,
+				 calculated_chunk_number,
+				 first_event_record_identifier,
+				 last_event_record_identifier );
+			}
+#endif
+			/* TODO mark this as corruption ? */
+		}
 	}
 	if( chunk_data_offset < chunk_data_size )
 	{
@@ -774,6 +798,7 @@ int libevtx_chunk_read(
 #endif
 		while( chunk_data_offset < chunk_data_size )
 		{
+/* TODO optimize scan ? */
 			if( memory_compare(
 			     &( chunk_data[ chunk_data_offset ] ),
 			     evtx_event_record_signature,

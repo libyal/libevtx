@@ -1284,30 +1284,26 @@ int libevtx_file_open_read(
 
 				goto on_error;
 			}
-			if( ( record_values->identifier < internal_file->io_handle->first_record_identifier )
-			 || ( record_values->identifier > internal_file->io_handle->last_record_identifier ) )
+/* TODO check for and remove duplicate identifiers ? */
+			/* The chunk index is stored in the element data size
+			 */
+			if( libfdata_list_append_element(
+			     internal_file->recovered_records_list,
+			     &element_index,
+			     file_offset + record_values->chunk_data_offset,
+			     (size64_t) chunk_index,
+			     0,
+			     error ) != 1 )
 			{
-				/* The chunk index is stored in the element data size
-				 */
-				if( libfdata_list_append_element(
-				     internal_file->recovered_records_list,
-				     &element_index,
-				     file_offset + record_values->chunk_data_offset,
-				     (size64_t) chunk_index,
-				     0,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append element to recovered records list.",
-					 function );
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append element to recovered records list.",
+				 function );
 
-					goto on_error;
-				}
+				goto on_error;
 			}
-/* TODO cache recovered record values ? */
 		}
 		file_offset += chunk->data_size;
 
