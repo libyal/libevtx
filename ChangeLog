@@ -1,6 +1,8 @@
 TODO
+* msvscpp:
+  - check and fix debug output generation
+  - check 64-bit compilation output
 * mark file as corrupted on CRC mismatch ?
-* msvscpp files: check and fix debug output generation
 * check signal abort
 * parse binary data from EventData
 * correctly deal with \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
@@ -62,6 +64,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130303
+* added PackageMaker files
 
 20130301
 * fixed bug in handling recovered records when no records are available

@@ -3067,6 +3067,7 @@ int message_handle_get_resource_file(
 	if( libfcache_cache_set_value_by_index(
 	     message_handle->resource_file_cache,
 	     message_handle->next_resource_file_cache_index,
+	     0,
 	     message_handle->next_resource_file_cache_index,
 	     libfcache_date_time_get_timestamp(),
 	     (intptr_t *) *resource_file,
@@ -3287,6 +3288,7 @@ int message_handle_get_mui_resource_file(
 	if( libfcache_cache_set_value_by_index(
 	     message_handle->mui_resource_file_cache,
 	     message_handle->next_mui_resource_file_cache_index,
+	     0,
 	     message_handle->next_mui_resource_file_cache_index,
 	     libfcache_date_time_get_timestamp(),
 	     (intptr_t *) *resource_file,

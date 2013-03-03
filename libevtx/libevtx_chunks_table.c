@@ -165,9 +165,10 @@ int libevtx_chunks_table_read_record(
      libbfio_handle_t *file_io_handle,
      libfdata_list_element_t *list_element,
      libfcache_cache_t *cache,
-     off64_t element_data_offset,
-     size64_t element_data_size,
-     uint32_t element_data_flags LIBEVTX_ATTRIBUTE_UNUSED,
+     int data_range_file_index LIBEVTX_ATTRIBUTE_UNUSED,
+     off64_t data_range_offset,
+     size64_t data_range_size,
+     uint32_t data_range_flags LIBEVTX_ATTRIBUTE_UNUSED,
      uint8_t read_flags LIBEVTX_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
@@ -181,7 +182,8 @@ int libevtx_chunks_table_read_record(
 	uint16_t number_of_records                   = 0;
 	uint16_t record_index                        = 0;
 
-	LIBEVTX_UNREFERENCED_PARAMETER( element_data_flags );
+	LIBEVTX_UNREFERENCED_PARAMETER( data_range_file_index );
+	LIBEVTX_UNREFERENCED_PARAMETER( data_range_flags );
 	LIBEVTX_UNREFERENCED_PARAMETER( read_flags );
 
 	if( io_handle == NULL )
@@ -197,15 +199,15 @@ int libevtx_chunks_table_read_record(
 	}
 	chunks_table = (libevtx_chunks_table_t *) io_handle;
 
-	/* The chunk index is stored in the element data size
+	/* The chunk index is stored in the data range size
 	*/
-	if( element_data_size > (uint64_t) UINT16_MAX )
+	if( data_range_size > (uint64_t) UINT16_MAX )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid element data size value out of bounds.",
+		 "%s: invalid data range size value out of bounds.",
 		 function );
 
 		goto on_error;
@@ -214,7 +216,7 @@ int libevtx_chunks_table_read_record(
 	     chunks_table->chunks_vector,
 	     file_io_handle,
 	     chunks_table->chunks_cache,
-	     (uint16_t) element_data_size,
+	     (uint16_t) data_range_size,
 	     (intptr_t **) &chunk,
 	     0,
 	     error ) != 1 )
@@ -225,7 +227,7 @@ int libevtx_chunks_table_read_record(
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve chunk: %" PRIu64 ".",
 		 function,
-		 element_data_size );
+		 data_range_size );
 
 		goto on_error;
 	}
@@ -237,12 +239,12 @@ int libevtx_chunks_table_read_record(
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: missing chunk: %" PRIu64 ".",
 		 function,
-		 element_data_size );
+		 data_range_size );
 
 		goto on_error;
 	}
-	if( ( element_data_offset < chunk->file_offset )
-	 || ( element_data_offset >= (off64_t) ( chunk->file_offset + chunk->data_size ) ) )
+	if( ( data_range_offset < chunk->file_offset )
+	 || ( data_range_offset >= (off64_t) ( chunk->file_offset + chunk->data_size ) ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -253,7 +255,7 @@ int libevtx_chunks_table_read_record(
 
 		goto on_error;
 	}
-	calculated_chunk_data_offset = (size_t) ( element_data_offset - chunk->file_offset );
+	calculated_chunk_data_offset = (size_t) ( data_range_offset - chunk->file_offset );
 
 	if( libevtx_chunk_get_number_of_records(
 	     chunk,
@@ -374,7 +376,7 @@ int libevtx_chunks_table_read_record(
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: no record found at offset: %" PRIi64 ".",
 		 function,
-		 element_data_offset );
+		 data_range_offset );
 
 		goto on_error;
 	}

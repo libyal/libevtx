@@ -985,6 +985,7 @@ int resource_file_get_message_string(
 			if( libfcache_cache_set_value_by_index(
 			     resource_file->message_string_cache,
 			     resource_file->next_message_string_cache_index,
+			     0,
 			     resource_file->next_message_string_cache_index,
 			     libfcache_date_time_get_timestamp(),
 			     (intptr_t *) *message_string,

@@ -838,6 +838,7 @@ int libevtx_file_open_read(
 	uint16_t record_index                  = 0;
 	uint16_t number_of_records             = 0;
 	int element_index                      = 0;
+	int segment_index                      = 0;
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 	uint64_t previous_record_identifier    = 0;
@@ -971,8 +972,9 @@ int libevtx_file_open_read(
 	     (intptr_t *) internal_file->io_handle,
 	     NULL,
 	     NULL,
-	     &libevtx_io_handle_read_chunk,
-	     LIBFDATA_FLAG_IO_HANDLE_NON_MANAGED,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfcache_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_io_handle_read_chunk,
+	     NULL,
+	     LIBFDATA_FLAG_DATA_HANDLE_NON_MANAGED,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -986,6 +988,8 @@ int libevtx_file_open_read(
 	}
 	if( libfdata_vector_append_segment(
 	     internal_file->chunks_vector,
+	     &segment_index,
+	     0,
 	     internal_file->io_handle->chunks_data_offset,
 	     internal_file->io_handle->chunks_data_size,
 	     0,
@@ -1043,8 +1047,9 @@ int libevtx_file_open_read(
 	     (intptr_t *) chunks_table,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunks_table_free,
 	     NULL,
-	     &libevtx_chunks_table_read_record,
-	     LIBFDATA_FLAG_IO_HANDLE_MANAGED,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
+	     NULL,
+	     LIBFDATA_FLAG_DATA_HANDLE_MANAGED,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1056,13 +1061,16 @@ int libevtx_file_open_read(
 
 		goto on_error;
 	}
+	/* The chunks_table is managed by the list */
+
 	if( libfdata_list_initialize(
 	     &( internal_file->recovered_records_list ),
 	     (intptr_t *) chunks_table,
 	     NULL,
 	     NULL,
-	     &libevtx_chunks_table_read_record,
-	     LIBFDATA_FLAG_IO_HANDLE_MANAGED,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
+	     NULL,
+	     LIBFDATA_FLAG_DATA_HANDLE_NON_MANAGED,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1219,6 +1227,7 @@ int libevtx_file_open_read(
 			if( libfdata_list_append_element(
 			     internal_file->records_list,
 			     &element_index,
+			     0,
 			     file_offset + record_values->chunk_data_offset,
 			     (size64_t) chunk_index,
 			     0,
@@ -1290,6 +1299,7 @@ int libevtx_file_open_read(
 			if( libfdata_list_append_element(
 			     internal_file->recovered_records_list,
 			     &element_index,
+			     0,
 			     file_offset + record_values->chunk_data_offset,
 			     (size64_t) chunk_index,
 			     0,

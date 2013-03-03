@@ -68,9 +68,10 @@ int libevtx_chunks_table_read_record(
      libbfio_handle_t *file_io_handle,
      libfdata_list_element_t *list_element,
      libfcache_cache_t *cache,
-     off64_t element_data_offset,
-     size64_t element_data_size,
-     uint32_t element_data_flags,
+     int data_range_file_index,
+     off64_t data_range_offset,
+     size64_t data_range_size,
+     uint32_t data_range_flags,
      uint8_t read_flags,
      libcerror_error_t **error );
 
