@@ -1808,7 +1808,7 @@ int libevtx_file_get_record(
 	}
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->records_list,
-	     internal_file->file_io_handle,
+	     (intptr_t *) internal_file->file_io_handle,
 	     internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,
@@ -1925,7 +1925,7 @@ int libevtx_file_get_recovered_record(
 	}
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->recovered_records_list,
-	     internal_file->file_io_handle,
+	     (intptr_t *) internal_file->file_io_handle,
 	     internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,

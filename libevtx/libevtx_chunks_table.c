@@ -214,7 +214,7 @@ int libevtx_chunks_table_read_record(
 	}
 	if( libfdata_vector_get_element_value_by_index(
 	     chunks_table->chunks_vector,
-	     file_io_handle,
+	     (intptr_t *) file_io_handle,
 	     chunks_table->chunks_cache,
 	     (uint16_t) data_range_size,
 	     (intptr_t **) &chunk,

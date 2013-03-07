@@ -1,7 +1,7 @@
 <pkmkdoc spec="1.12">
 	<properties>
 		<title>libevtx</title>
-		<build>/home/lordyesta/Projects/libevtx/macosx/libevtx.mpkg</build>
+		<build>/usr/local/google/home/jbmetz/Projects/libevtx/macosx/libevtx.mpkg</build>
 		<organization>com.google.code.p</organization>
 		<userSees ui="both"/>
 		<min-target os="1"/>

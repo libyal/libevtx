@@ -5,7 +5,7 @@
 	<description/>
 	<post-install type="none"/>
 	<requireAuthorization/>
-	<installFrom>/home/lordyesta/Projects/libevtx/macosx/tmp/</installFrom>
+	<installFrom>/usr/local/google/home/jbmetz/Projects/libevtx/macosx/tmp/</installFrom>
 	<installTo mod="true"></installTo>
 	<flags>
 		<followSymbolicLinks/>
