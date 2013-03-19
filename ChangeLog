@@ -65,6 +65,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20120319
+* updated dependencies
+* changes for libfdata update
+
 20130307
 * updated macosx files
 
@@ -222,17 +226,17 @@ Recovery:
 * worked on evtxexport
 
 20120924
-* applied updates
+* updated dependencies
 * libcdata update
 
 20120919
-* applied updates
+* updated dependencies
 
 20120912
-* applied updates
+* updated dependencies
 
 20120819
-* applied updates
+* updated dependencies
 
 20120817
 * worked on python bindings
@@ -249,16 +253,16 @@ Recovery:
 * worked on tools
 
 20120805
-* applied updates
+* updated dependencies
 
 20120718
-* applied updates
+* updated dependencies
 * added libcstring, libfwevt
 * worked on libfwevt integration into libevtx
 * added support for empty element tag value
 
 20120501
-* applied updates
+* updated dependencies
 * worked on text format export
 
 20120430
