@@ -483,6 +483,7 @@ int libevtx_io_handle_read_chunk(
      int element_data_file_index LIBEVTX_ATTRIBUTE_UNUSED,
      off64_t element_data_offset,
      size64_t element_data_size LIBEVTX_ATTRIBUTE_UNUSED,
+     uint32_t element_data_flags LIBEVTX_ATTRIBUTE_UNUSED,
      uint8_t read_flags LIBEVTX_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
@@ -491,6 +492,7 @@ int libevtx_io_handle_read_chunk(
 
 	LIBEVTX_UNREFERENCED_PARAMETER( element_data_file_index );
 	LIBEVTX_UNREFERENCED_PARAMETER( element_data_size );
+	LIBEVTX_UNREFERENCED_PARAMETER( element_data_flags );
 	LIBEVTX_UNREFERENCED_PARAMETER( read_flags );
 
 	if( libevtx_chunk_initialize(

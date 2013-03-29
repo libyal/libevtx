@@ -28,6 +28,8 @@ MSVSCPP_FILES = \
 	libevtx.sln
 
 SCRIPT_FILES = \
+	scripts/build_vs2008_x86.bat \
+	scripts/build_vs2010_x64.bat \
 	scripts/vs2008_x64.sh \
 	scripts/vs2008_x64_sln.sed \
 	scripts/vs2008_x64_vcproj.sed \

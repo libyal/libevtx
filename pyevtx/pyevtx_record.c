@@ -44,63 +44,63 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  METH_NOARGS,
 	  "get_offset() -> Long\n"
 	  "\n"
-	  "Retrieves the offset" },
+	  "Retrieves the offset." },
 
 	{ "get_identifier",
 	  (PyCFunction) pyevtx_record_get_identifier,
 	  METH_NOARGS,
 	  "get_identifier() -> Integer\n"
 	  "\n"
-	  "Retrieves the identifier (number)" },
+	  "Retrieves the identifier (number)." },
 
 	{ "get_written_time",
 	  (PyCFunction) pyevtx_record_get_written_time,
 	  METH_NOARGS,
 	  "get_written_time() -> Datetime\n"
 	  "\n"
-	  "Returns the written date and time" },
+	  "Returns the written date and time." },
 
 	{ "get_written_time_as_integer",
 	  (PyCFunction) pyevtx_record_get_written_time_as_integer,
 	  METH_NOARGS,
 	  "get_written_time_as_integer() -> Long\n"
 	  "\n"
-	  "Returns the written date and time as a 64-bit integer containing a FILETIME value" },
+	  "Returns the written date and time as a 64-bit integer containing a FILETIME value." },
 
 	{ "get_event_identifier",
 	  (PyCFunction) pyevtx_record_get_event_identifier,
 	  METH_NOARGS,
 	  "get_event_identifier() -> Integer\n"
 	  "\n"
-	  "Retrieves the event identifier" },
+	  "Retrieves the event identifier." },
 
 	{ "get_event_level",
 	  (PyCFunction) pyevtx_record_get_event_level,
 	  METH_NOARGS,
 	  "get_event_level() -> Integer\n"
 	  "\n"
-	  "Retrieves the event level" },
+	  "Retrieves the event level." },
 
 	{ "get_source_name",
 	  (PyCFunction) pyevtx_record_get_source_name,
 	  METH_NOARGS,
 	  "get_source_name() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the source name" },
+	  "Retrieves the source name." },
 
 	{ "get_computer_name",
 	  (PyCFunction) pyevtx_record_get_computer_name,
 	  METH_NOARGS,
 	  "get_computer_name() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the computer name" },
+	  "Retrieves the computer name." },
 
 	{ "get_user_security_identifier",
 	  (PyCFunction) pyevtx_record_get_user_security_identifier,
 	  METH_NOARGS,
 	  "get_user_security_identifier() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the user security identifier (SID)" },
+	  "Retrieves the user security identifier (SID)." },
 
 	/* Functions to access the string */
 
@@ -109,21 +109,21 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  METH_NOARGS,
 	  "get_number_of_strings() -> Integer\n"
 	  "\n"
-	  "Retrieves the number of strings" },
+	  "Retrieves the number of strings." },
 
 	{ "get_string",
 	  (PyCFunction) pyevtx_record_get_string,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_string(string_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves a specific string" },
+	  "Retrieves a specific string." },
 
 	{ "get_xml_string",
 	  (PyCFunction) pyevtx_record_get_xml_string,
 	  METH_NOARGS,
 	  "get_xml_string -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the XML string" },
+	  "Retrieves the XML string." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -134,67 +134,67 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	{ "offset",
 	  (getter) pyevtx_record_get_offset,
 	  (setter) 0,
-	  "The offset",
+	  "The offset.",
 	  NULL },
 
 	{ "identifier",
 	  (getter) pyevtx_record_get_identifier,
 	  (setter) 0,
-	  "The identifier (number)",
+	  "The identifier (number).",
 	  NULL },
 
 	{ "written_time",
 	  (getter) pyevtx_record_get_written_time,
 	  (setter) 0,
-	  "The written date and time",
+	  "The written date and time.",
 	  NULL },
 
 	{ "event_identifier",
 	  (getter) pyevtx_record_get_event_identifier,
 	  (setter) 0,
-	  "The event identifier",
+	  "The event identifier.",
 	  NULL },
 
 	{ "event_level",
 	  (getter) pyevtx_record_get_event_level,
 	  (setter) 0,
-	  "The event level",
+	  "The event level.",
 	  NULL },
 
 	{ "source_name",
 	  (getter) pyevtx_record_get_source_name,
 	  (setter) 0,
-	  "The source name",
+	  "The source name.",
 	  NULL },
 
 	{ "computer_name",
 	  (getter) pyevtx_record_get_computer_name,
 	  (setter) 0,
-	  "The computer name",
+	  "The computer name.",
 	  NULL },
 
 	{ "user_security_identifier",
 	  (getter) pyevtx_record_get_user_security_identifier,
 	  (setter) 0,
-	  "The user security identifier (SID)",
+	  "The user security identifier (SID).",
 	  NULL },
 
 	{ "number_of_strings",
 	  (getter) pyevtx_record_get_number_of_strings,
 	  (setter) 0,
-	  "The number of strings",
+	  "The number of strings.",
 	  NULL },
 
 	{ "strings",
 	  (getter) pyevtx_record_get_strings,
 	  (setter) 0,
-	  "The strings",
+	  "The strings.",
 	  NULL },
 
 	{ "xml_string",
 	  (getter) pyevtx_record_get_xml_string,
 	  (setter) 0,
-	  "The XML string",
+	  "The XML string.",
 	  NULL },
 
 	/* Sentinel */

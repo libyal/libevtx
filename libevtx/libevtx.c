@@ -1,5 +1,5 @@
 /*
- * Library to support the Windows XML EventViewer Log (EVTX) format
+ * Library to access the Windows XML EventViewer Log (EVTX) format
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *

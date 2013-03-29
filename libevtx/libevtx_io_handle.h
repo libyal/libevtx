@@ -112,6 +112,7 @@ int libevtx_io_handle_read_chunk(
      int element_data_file_index,
      off64_t element_data_offset,
      size64_t element_data_size,
+     uint32_t element_data_flags,
      uint8_t read_flags,
      libcerror_error_t **error );
 

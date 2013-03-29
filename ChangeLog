@@ -65,6 +65,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20120329
+* bug fix for recent libfdata changes
+* updated dependencies
+
 20120319
 * updated dependencies
 * changes for libfdata update
