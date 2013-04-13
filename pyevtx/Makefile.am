@@ -28,7 +28,8 @@ pyevtx_la_SOURCES = \
 	pyevtx_python.h \
 	pyevtx_record.c pyevtx_record.h \
 	pyevtx_records.c pyevtx_records.h \
-	pyevtx_strings.c pyevtx_strings.h
+	pyevtx_strings.c pyevtx_strings.h \
+	pyevtx_unused.h
 
 pyevtx_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \

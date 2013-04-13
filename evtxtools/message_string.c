@@ -30,7 +30,8 @@
 #include "evtxtools_libwrc.h"
 #include "message_string.h"
 
-/* Initializes the message string
+/* Creates a message string
+ * Make sure the value message_string is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int message_string_initialize(
@@ -110,7 +111,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the message string and its elements
+/* Frees a message string
  * Returns 1 if successful or -1 on error
  */
 int message_string_free(
@@ -360,10 +361,18 @@ int message_string_fprint(
 
 				continue;
 			}
-			/* Replace %% = % */
-			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '%' )
+			/* Replace:
+			 *  %<space> = <space>
+			 *  %! = !
+			 *  %% = %
+			 *  %. = .
+			 */
+			if( ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) ' ' )
+			 || ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '!' )
+			 || ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '%' )
+			 || ( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) '.' ) )
 			{
-				last_character = (libcstring_system_character_t) '%';
+				last_character = ( message_string->string )[ message_string_index + 1 ];
 
 				fprintf(
 				 stream,
@@ -374,7 +383,7 @@ int message_string_fprint(
 
 				continue;
 			}
-			/* Replace %b = space */
+			/* Replace %b = <space> */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'b' )
 			{
 				last_character = (libcstring_system_character_t) ' ';
@@ -388,7 +397,7 @@ int message_string_fprint(
 
 				continue;
 			}
-			/* Replace %n = new line */
+			/* Replace %n = <new line> */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 'n' )
 			{
 				if( last_character != (libcstring_system_character_t) '\n' )
@@ -404,7 +413,7 @@ int message_string_fprint(
 
 				continue;
 			}
-			/* Replace %t = tab */
+			/* Replace %t = <tab> */
 			if( ( message_string->string )[ message_string_index + 1 ] == (libcstring_system_character_t) 't' )
 			{
 				last_character = (libcstring_system_character_t) '\t';

@@ -28,7 +28,8 @@
 #include "evtxtools_libregf.h"
 #include "registry_file.h"
 
-/* Initializes the registry file
+/* Creates a registry file
+ * Make sure the value registry_file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int registry_file_initialize(
@@ -118,7 +119,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the registry file and its elements
+/* Frees a registry file
  * Returns 1 if successful or -1 on error
  */
 int registry_file_free(

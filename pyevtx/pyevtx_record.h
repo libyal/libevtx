@@ -64,34 +64,44 @@ void pyevtx_record_free(
       pyevtx_record_t *pyevtx_record );
 
 PyObject *pyevtx_record_get_offset(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_identifier(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_written_time(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_written_time_as_integer(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_event_identifier(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_event_level(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_source_name(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_computer_name(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_user_security_identifier(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_number_of_strings(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_string_by_index(
            pyevtx_record_t *pyevtx_record,
@@ -103,10 +113,12 @@ PyObject *pyevtx_record_get_string(
            PyObject *keywords );
 
 PyObject *pyevtx_record_get_strings(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 PyObject *pyevtx_record_get_xml_string(
-           pyevtx_record_t *pyevtx_record );
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
 
 #if defined( __cplusplus )
 }

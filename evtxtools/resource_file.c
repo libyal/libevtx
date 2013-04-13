@@ -31,7 +31,8 @@
 #include "message_string.h"
 #include "resource_file.h"
 
-/* Initializes the resource file
+/* Creates a resource file
+ * Make sure the value resource_file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int resource_file_initialize(
@@ -163,7 +164,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the resource file and its elements
+/* Frees a resource file
  * Returns 1 if successful or -1 on error
  */
 int resource_file_free(
@@ -430,7 +431,7 @@ int resource_file_close(
 	}
 	if( resource_file->is_open != 0 )
 	{
-		if( libfcache_cache_clear(
+		if( libfcache_cache_empty(
 		     resource_file->message_string_cache,
 		     error ) != 1 )
 		{
@@ -438,7 +439,7 @@ int resource_file_close(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to clear message string cache.",
+			 "%s: unable to empty message string cache.",
 			 function );
 
 			result = -1;

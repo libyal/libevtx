@@ -1,7 +1,7 @@
 /*
- * Windows XML EventLog (EVTX) file format library open close testing program
+ * Windows Shortcut File (EVTX) format library open close testing program
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -31,22 +31,18 @@
 #include "evtx_test_libcstring.h"
 #include "evtx_test_libevtx.h"
 
-/* Tests single open and close of a file using the filename
+/* Tests single open and close of a file
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int evtx_test_single_open_close_filename(
+int evtx_test_single_open_close_file(
      libcstring_system_character_t *filename,
      int access_flags,
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file     = NULL;
-	static char *function    = "evtx_test_single_open_close_filename";
+	libevtx_file_t *file      = NULL;
+	static char *function    = "evtx_test_single_open_close_file";
 	int result               = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing open close: filename single\t" );
 
 	if( libevtx_file_initialize(
 	     &file,
@@ -135,22 +131,18 @@ int evtx_test_single_open_close_filename(
 	return( 1 );
 }
 
-/* Tests multiple open and close of a file using the filename
+/* Tests multiple open and close of a file
  * Returns 1 if successful, 0 if not or -1 on error
  */
-int evtx_test_multi_open_close_filename(
+int evtx_test_multi_open_close_file(
      libcstring_system_character_t *filename,
      int access_flags,
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file     = NULL;
-	static char *function    = "evtx_test_multi_open_close_filename";
+	libevtx_file_t *file      = NULL;
+	static char *function    = "evtx_test_multi_open_close_file";
 	int result               = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing open close: filename multi\t" );
 
 	if( libevtx_file_initialize(
 	     &file,
@@ -284,51 +276,70 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	/* Case 0: single open and close using filename
+	/* Case 0: single open and close of a file using filename
 	 */
-	if( evtx_test_single_open_close_filename(
+	fprintf(
+	 stdout,
+	 "Testing single open close of: %s with access: read\t",
+	 argv[ 1 ] );
+
+	if( evtx_test_single_open_close_file(
 	     argv[ 1 ],
 	     LIBEVTX_OPEN_READ,
 	     1 ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test open close.\n" );
+		 "Unable to test single open close.\n" );
 
 		return( EXIT_FAILURE );
 	}
-	if( evtx_test_single_open_close_filename(
+	fprintf(
+	 stdout,
+	 "Testing single open close of: NULL with access: read\t" );
+
+	if( evtx_test_single_open_close_file(
 	     NULL,
 	     LIBEVTX_OPEN_READ,
 	     -1 ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test open close.\n" );
+		 "Unable to test single open close.\n" );
 
 		return( EXIT_FAILURE );
 	}
-	if( evtx_test_single_open_close_filename(
+	fprintf(
+	 stdout,
+	 "Testing single open close of: %s with access: write\t",
+	 argv[ 1 ] );
+
+	if( evtx_test_single_open_close_file(
 	     argv[ 1 ],
 	     LIBEVTX_OPEN_WRITE,
 	     -1 ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test open close.\n" );
+		 "Unable to test single open close.\n" );
 
 		return( EXIT_FAILURE );
 	}
-	/* Case 1: multiple open and close using filename
+	/* Case 1: multiple open and close of a file using filename
 	 */
-	if( evtx_test_multi_open_close_filename(
+	fprintf(
+	 stdout,
+	 "Testing multi open close of: %s with access: read\t",
+	 argv[ 1 ] );
+
+	if( evtx_test_multi_open_close_file(
 	     argv[ 1 ],
 	     LIBEVTX_OPEN_READ,
 	     1 ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to test open close.\n" );
+		 "Unable to test multi open close.\n" );
 
 		return( EXIT_FAILURE );
 	}

@@ -29,7 +29,8 @@
 #include "pyevtx_libcstring.h"
 #include "pyevtx_python.h"
 
-/* Initializes the file object IO handle
+/* Creates a file object IO handle
+ * Make sure the value file_object_io_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int pyevtx_file_object_io_handle_initialize(
@@ -202,7 +203,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the file object IO handle and its attributes
+/* Frees a file object IO handle
  * Returns 1 if succesful or -1 on error
  */
 int pyevtx_file_object_io_handle_free(

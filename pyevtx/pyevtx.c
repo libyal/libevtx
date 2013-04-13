@@ -36,6 +36,7 @@
 #include "pyevtx_record.h"
 #include "pyevtx_records.h"
 #include "pyevtx_strings.h"
+#include "pyevtx_unused.h"
 
 #if !defined( LIBEVTX_HAVE_BFIO )
 LIBEVTX_EXTERN \
@@ -90,11 +91,14 @@ PyMethodDef pyevtx_module_methods[] = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_get_version(
-           PyObject *self )
+           PyObject *self,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	const char *errors           = NULL;
 	const char *version_string   = NULL;
 	size_t version_string_length = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	Py_BEGIN_ALLOW_THREADS
 

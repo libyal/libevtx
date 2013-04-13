@@ -34,7 +34,8 @@
 
 #define INFO_HANDLE_NOTIFY_STREAM	stdout
 
-/* Initializes the info handle
+/* Creates an info handle
+ * Make sure the value info_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int info_handle_initialize(
@@ -122,7 +123,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the info handle and its elements
+/* Frees an info handle
  * Returns 1 if successful or -1 on error
  */
 int info_handle_free(

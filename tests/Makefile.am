@@ -12,17 +12,31 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@
 
+if HAVE_PYTHON
+TESTS_PYEVTX  = \
+	test_pyevtx_set_ascii_codepage.sh \
+	test_pyevtx_open_close.sh
+endif
+
 TESTS = \
-	test_open_close.sh
+	test_set_ascii_codepage.sh \
+	test_open_close.sh \
+	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
-	test_open_close.sh
+	pyevtx_test_open_close.py \
+	pyevtx_test_set_ascii_codepage.py \
+	test_open_close.sh \
+	test_pyevtx_open_close.sh \
+	test_pyevtx_set_ascii_codepage.sh \
+	test_set_ascii_codepage.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS =  \
-	evtx_test_open_close
+	evtx_test_open_close \
+	evtx_test_set_ascii_codepage
 
 evtx_test_open_close_SOURCES = \
 	evtx_test_libcerror.h \
@@ -32,16 +46,29 @@ evtx_test_open_close_SOURCES = \
 
 evtx_test_open_close_LDADD = \
 	../libevtx/libevtx.la
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCFILE_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
-	@LIBBFIO_LIBADD@
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
+
+evtx_test_set_ascii_codepage_SOURCES = \
+	evtx_test_libcerror.h \
+	evtx_test_libclocale.h \
+	evtx_test_libevtx.h \
+	evtx_test_libcstring.h \
+	evtx_test_set_ascii_codepage.c
+
+evtx_test_set_ascii_codepage_LDADD = \
+	../libevtx/libevtx.la
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

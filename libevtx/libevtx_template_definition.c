@@ -30,8 +30,8 @@
 #include "libevtx_libfwevt.h"
 #include "libevtx_template_definition.h"
 
-/* Initializes the template definition and its values
- * Make sure the value template_definition is pointing to is set to NULL
+/* Creates a template definition
+ * Make sure the value template_definition is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_template_definition_initialize(
@@ -117,7 +117,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees a template
+/* Frees a template definition
  * Returns 1 if successful or -1 on error
  */
 int libevtx_template_definition_free(

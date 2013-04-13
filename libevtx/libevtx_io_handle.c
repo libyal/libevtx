@@ -41,8 +41,8 @@
 
 const uint8_t *evtx_file_signature = (uint8_t *) "ElfFile";
 
-/* Initialize an IO handle
- * Make sure the value io_handle is pointing to is set to NULL
+/* Creates an IO handle
+ * Make sure the value io_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_io_handle_initialize(

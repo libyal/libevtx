@@ -68,7 +68,8 @@ void pyevtx_file_free(
       pyevtx_file_t *pyevtx_file );
 
 PyObject *pyevtx_file_signal_abort(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 PyObject *pyevtx_file_open(
            pyevtx_file_t *pyevtx_file,
@@ -81,18 +82,30 @@ PyObject *pyevtx_file_open_file_object(
            PyObject *keywords );
 
 PyObject *pyevtx_file_close(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 PyObject *pyevtx_file_get_ascii_codepage(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
+
+int pyevtx_file_set_ascii_codepage_from_string(
+     pyevtx_file_t *pyevtx_file,
+     const char *codepage_string );
 
 PyObject *pyevtx_file_set_ascii_codepage(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments,
            PyObject *keywords );
 
+int pyevtx_file_set_ascii_codepage_setter(
+     pyevtx_file_t *pyevtx_file,
+     PyObject *value_object,
+     void *closure );
+
 PyObject *pyevtx_file_get_number_of_records(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 PyObject *pyevtx_file_get_record_by_index(
            pyevtx_file_t *pyevtx_file,
@@ -104,10 +117,12 @@ PyObject *pyevtx_file_get_record(
            PyObject *keywords );
 
 PyObject *pyevtx_file_get_records(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 PyObject *pyevtx_file_get_number_of_recovered_records(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 PyObject *pyevtx_file_get_recovered_record_by_index(
            pyevtx_file_t *pyevtx_file,
@@ -119,7 +134,8 @@ PyObject *pyevtx_file_get_recovered_record(
            PyObject *keywords );
 
 PyObject *pyevtx_file_get_recovered_records(
-           pyevtx_file_t *pyevtx_file );
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
 
 #if defined( __cplusplus )
 }

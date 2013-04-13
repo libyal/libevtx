@@ -38,7 +38,8 @@
 #include "registry_file.h"
 #include "resource_file.h"
 
-/* Initializes the message handle
+/* Creates a message handle
+ * Make sure the value message_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int message_handle_initialize(
@@ -171,7 +172,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the message handle and its elements
+/* Frees a message handle
  * Returns 1 if successful or -1 on error
  */
 int message_handle_free(
@@ -1696,7 +1697,7 @@ int message_handle_close_input(
 			result = -1;
 		}
 	}
-	if( libfcache_cache_clear(
+	if( libfcache_cache_empty(
 	     message_handle->resource_file_cache,
 	     error ) != 1 )
 	{
@@ -1704,12 +1705,12 @@ int message_handle_close_input(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to clear resource file cache.",
+		 "%s: unable to empty resource file cache.",
 		 function );
 
 		result = -1;
 	}
-	if( libfcache_cache_clear(
+	if( libfcache_cache_empty(
 	     message_handle->mui_resource_file_cache,
 	     error ) != 1 )
 	{
@@ -1717,7 +1718,7 @@ int message_handle_close_input(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to clear MUI resource file cache.",
+		 "%s: unable to empty MUI resource file cache.",
 		 function );
 
 		result = -1;

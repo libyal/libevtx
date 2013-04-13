@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Windows Shortcut File (EVTX) format library open close testing script
+# Windows Shortcut File (EVTX) format library Python-bindings set ASCII codepage testing script
 #
 # Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
 #
@@ -24,55 +24,19 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-INPUT="input";
+PYTHON="/usr/bin/python";
 
-test_open_close()
-{ 
-	echo "Testing open close of input:" $*;
-
-	./${EVTX_TEST_OPEN_CLOSE} $*;
-
-	RESULT=$?;
-
-	echo "";
-
-	return ${RESULT};
-}
-
-EVTX_TEST_OPEN_CLOSE="evtx_test_open_close";
-
-if ! test -x ${EVTX_TEST_OPEN_CLOSE};
+if ! test -x ${PYTHON};
 then
-	EVTX_TEST_OPEN_CLOSE="evtx_test_open_close.exe";
-fi
-
-if ! test -x ${EVTX_TEST_OPEN_CLOSE};
-then
-	echo "Missing executable: ${EVTX_TEST_OPEN_CLOSE}";
+	echo "Missing executable: ${PYTHON}";
 
 	exit ${EXIT_FAILURE};
 fi
 
-if ! test -d ${INPUT};
+if ! PYTHONPATH=../pyevtx/.libs/ ${PYTHON} pyevtx_test_set_ascii_codepage.py ${FILENAME};
 then
-	echo "No input directory found, to test open close create a directory named input and fill it with test files.";
-
-	exit ${EXIT_IGNORE};
+	exit ${EXIT_FAILURE};
 fi
-
-OLDIFS=${IFS};
-IFS="
-";
-
-for FILENAME in ${INPUT}/*;
-do
-	if ! test_open_close ${FILENAME};
-	then
-		exit ${EXIT_FAILURE};
-	fi
-done
-
-IFS=${OLDIFS};
 
 exit ${EXIT_SUCCESS};
 

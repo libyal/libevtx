@@ -34,7 +34,8 @@ extern "C" {
 #define PYEVTX_ERROR_STRING_SIZE		512
 
 PyObject *pyevtx_get_version(
-           PyObject *self );
+           PyObject *self,
+           PyObject *arguments );
 
 PyObject *pyevtx_check_file_signature(
            PyObject *self,

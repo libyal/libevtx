@@ -59,10 +59,7 @@ SPEC_FILES = \
 	libevtx.spec.in
 
 EXTRA_DIST = \
-	README.dll \
 	README.macosx \
-	README.mingw \
-	README.static \
         $(DPKG_FILES) \
         $(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \

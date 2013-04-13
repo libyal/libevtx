@@ -38,8 +38,8 @@
 
 const uint8_t evtx_event_record_signature[ 4 ] = { 0x2a, 0x2a, 0x00, 0x00 };
 
-/* Initialize record values
- * Make sure the value record values is pointing to is set to NULL
+/* Creates record values
+ * Make sure the value record_values is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_record_values_initialize(
@@ -304,7 +304,6 @@ int libevtx_record_values_read_header(
 	const uint8_t *event_record_data  = NULL;
 	static char *function             = "libevtx_record_values_read_header";
 	size_t event_record_data_size     = 0;
-	uint32_t signature                = 0;
 	uint32_t size_copy                = 0;
 	int result                        = 0;
 
@@ -4050,19 +4049,13 @@ int libevtx_record_values_parse_data(
      libevtx_internal_template_definition_t *internal_template_definition,
      libcerror_error_t **error )
 {
-	uint8_t element_name[ 5 ];
-
 	libfwevt_xml_tag_t *element_xml_tag       = NULL;
 	libfwevt_xml_tag_t *event_data_xml_tag    = NULL;
 	libfwevt_xml_tag_t *root_xml_tag          = NULL;
 	libfwevt_xml_tag_t *template_root_xml_tag = NULL;
 	libfwevt_xml_tag_t *user_data_xml_tag     = NULL;
 	static char *function                     = "libevtx_record_values_parse_data";
-	size_t element_name_size                  = 0;
-	int element_index                         = 0;
-	int entry_index                           = 0;
 	int number_of_elements                    = 0;
-	int number_of_strings                     = 0;
 	int result                                = 0;
 
 	if( record_values == NULL )

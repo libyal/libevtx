@@ -139,7 +139,7 @@ int libevtx_notify_stream_close(
  * Error functions
  * ------------------------------------------------------------------------- */
 
-/* Frees the error including elements
+/* Frees an error
  */
 LIBEVTX_EXTERN \
 void libevtx_error_free(
@@ -185,8 +185,8 @@ int libevtx_error_backtrace_sprint(
  * File functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes a file
- * Make sure the value file is pointing to is set to NULL
+/* Creates a file
+ * Make sure the value file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
@@ -719,8 +719,8 @@ int libevtx_record_parse_data(
  * Template definition functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes a template definition
- * Make sure the value template_definition is pointing to is set to NULL
+/* Creates a template definition
+ * Make sure the value template_definition is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \

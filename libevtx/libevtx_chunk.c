@@ -38,8 +38,8 @@
 
 const uint8_t *evtx_chunk_signature = (uint8_t *) "ElfChnk";
 
-/* Initialize a chunk
- * Make sure the value chunk is pointing to is set to NULL
+/* Creates a chunk
+ * Make sure the value chunk is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_chunk_initialize(

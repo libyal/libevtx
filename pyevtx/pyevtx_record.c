@@ -34,6 +34,7 @@
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"
 #include "pyevtx_strings.h"
+#include "pyevtx_unused.h"
 
 PyMethodDef pyevtx_record_object_methods[] = {
 
@@ -465,7 +466,8 @@ void pyevtx_record_free(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_offset(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -473,6 +475,8 @@ PyObject *pyevtx_record_get_offset(
 	static char *function    = "pyevtx_record_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -548,7 +552,8 @@ PyObject *pyevtx_record_get_offset(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_identifier(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -556,6 +561,8 @@ PyObject *pyevtx_record_get_identifier(
 	static char *function    = "pyevtx_record_get_identifier";
 	uint64_t identifier      = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -631,7 +638,8 @@ PyObject *pyevtx_record_get_identifier(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -640,6 +648,8 @@ PyObject *pyevtx_record_get_written_time(
 	static char *function      = "pyevtx_record_get_written_time";
 	uint64_t filetime          = 0;
 	int result                 = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -694,7 +704,8 @@ PyObject *pyevtx_record_get_written_time(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time_as_integer(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -702,6 +713,8 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 	static char *function    = "pyevtx_record_get_written_time_as_integer";
 	uint64_t filetime        = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -777,7 +790,8 @@ PyObject *pyevtx_record_get_written_time_as_integer(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_event_identifier(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -785,6 +799,8 @@ PyObject *pyevtx_record_get_event_identifier(
 	static char *function     = "pyevtx_record_get_event_identifier";
 	uint32_t event_identifier = 0;
 	int result                = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -837,7 +853,8 @@ PyObject *pyevtx_record_get_event_identifier(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_event_level(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -845,6 +862,8 @@ PyObject *pyevtx_record_get_event_level(
 	static char *function    = "pyevtx_record_get_event_level";
 	uint8_t event_level      = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -897,7 +916,8 @@ PyObject *pyevtx_record_get_event_level(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_source_name(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -908,6 +928,8 @@ PyObject *pyevtx_record_get_source_name(
 	static char *function    = "pyevtx_record_get_source_name";
 	size_t source_name_size  = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -1034,7 +1056,8 @@ on_error:
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_computer_name(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1045,6 +1068,8 @@ PyObject *pyevtx_record_get_computer_name(
 	static char *function     = "pyevtx_record_get_computer_name";
 	size_t computer_name_size = 0;
 	int result                = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -1171,7 +1196,8 @@ on_error:
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_user_security_identifier(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1182,6 +1208,8 @@ PyObject *pyevtx_record_get_user_security_identifier(
 	static char *function                = "pyevtx_record_get_user_security_identifier";
 	size_t user_security_identifier_size = 0;
 	int result                           = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -1308,7 +1336,8 @@ on_error:
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_number_of_strings(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1316,6 +1345,8 @@ PyObject *pyevtx_record_get_number_of_strings(
 	static char *function    = "pyevtx_record_get_number_of_strings";
 	int number_of_strings    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -1541,7 +1572,8 @@ PyObject *pyevtx_record_get_string(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_strings(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1550,6 +1582,8 @@ PyObject *pyevtx_record_get_strings(
 	static char *function    = "pyevtx_record_get_strings";
 	int number_of_strings    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
@@ -1615,7 +1649,8 @@ PyObject *pyevtx_record_get_strings(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_xml_string(
-           pyevtx_record_t *pyevtx_record )
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1626,6 +1661,8 @@ PyObject *pyevtx_record_get_xml_string(
 	static char *function    = "pyevtx_record_get_xml_string";
 	size_t xml_string_size   = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{

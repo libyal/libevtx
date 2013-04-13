@@ -33,8 +33,8 @@
 #include "libevtx_record_values.h"
 #include "libevtx_unused.h"
 
-/* Initialize chunks table
- * Make sure the value chunks table is pointing to is set to NULL
+/* Creates a chunks table
+ * Make sure the value chunks_table is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_chunks_table_initialize(
@@ -125,7 +125,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees chunks table
+/* Frees a chunks table
  * Returns 1 if successful or -1 on error
  */
 int libevtx_chunks_table_free(

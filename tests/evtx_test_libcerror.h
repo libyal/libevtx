@@ -1,7 +1,7 @@
 /*
  * The internal libcerror header
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LNK_TEST_LIBCERROR_H )
-#define _LNK_TEST_LIBCERROR_H
+#if !defined( _EVTX_TEST_LIBCERROR_H )
+#define _EVTX_TEST_LIBCERROR_H
 
 #include <common.h>
 

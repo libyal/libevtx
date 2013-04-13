@@ -1,7 +1,7 @@
 TODO
+* size issue with string of system time too much reserved
 * msvscpp:
   - check and fix debug output generation
-  - check 64-bit compilation output
 * mark file as corrupted on CRC mismatch ?
 * check signal abort
 * parse binary data from EventData
@@ -64,6 +64,13 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20120413
+* updated dependencies
+* fixed codepage 1255 restriction
+* worked on tests
+* updates and bug fixes in pyevtx
+* improvements to message string support
 
 20120329
 * bug fix for recent libfdata changes

@@ -1,7 +1,7 @@
 /*
- * The libfdata header wrapper
+ * The internal libclocale header
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,37 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBEVTX_LIBFDATA_H )
-#define _LIBEVTX_LIBFDATA_H
+#if !defined( _EVTX_TEST_LIBCLOCALE_H )
+#define _EVTX_TEST_LIBCLOCALE_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFDATA for local use of libfdata
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
  */
-#if defined( HAVE_LOCAL_LIBFDATA )
+#if defined( HAVE_LOCAL_LIBCLOCALE )
 
-#include <libfdata_buffer.h>
-#include <libfdata_buffer_reference.h>
-#include <libfdata_definitions.h>
-#include <libfdata_list.h>
-#include <libfdata_list_element.h>
-#include <libfdata_reference.h>
-#include <libfdata_stream.h>
-#include <libfdata_tree.h>
-#include <libfdata_tree_node.h>
-#include <libfdata_types.h>
-#include <libfdata_vector.h>
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFDATA_DLL_IMPORT
- * before including libfdata.h
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFDATA_DLL_IMPORT
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-#include <libfdata.h>
+#include <libclocale.h>
 
 #endif
 

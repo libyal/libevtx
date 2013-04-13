@@ -30,7 +30,8 @@
 #include "libevtx_record.h"
 #include "libevtx_record_values.h"
 
-/* Initializes the record and its values
+/* Creates a record
+ * Make sure the value record is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libevtx_record_initialize(

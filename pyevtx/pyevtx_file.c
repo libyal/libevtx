@@ -38,6 +38,7 @@
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"
 #include "pyevtx_records.h"
+#include "pyevtx_unused.h"
 
 #if !defined( LIBEVTX_HAVE_BFIO )
 LIBEVTX_EXTERN \
@@ -133,7 +134,7 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 
 	{ "ascii_codepage",
 	  (getter) pyevtx_file_get_ascii_codepage,
-	  (setter) pyevtx_file_set_ascii_codepage,
+	  (setter) pyevtx_file_set_ascii_codepage_setter,
 	  "The codepage used for ASCII strings in the file",
 	  NULL },
 
@@ -485,13 +486,16 @@ void pyevtx_file_free(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_signal_abort(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_signal_abort";
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -759,13 +763,16 @@ on_error:
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_close(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_close";
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -819,7 +826,8 @@ PyObject *pyevtx_file_close(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_ascii_codepage(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -828,6 +836,8 @@ PyObject *pyevtx_file_get_ascii_codepage(
 	const char *codepage_string = NULL;
 	static char *function       = "pyevtx_file_get_ascii_codepage";
 	int ascii_codepage          = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -895,22 +905,20 @@ PyObject *pyevtx_file_get_ascii_codepage(
 }
 
 /* Sets the codepage used for ASCII strings in the file
- * Returns a Python object if successful or NULL on error
+ * Returns 1 if successful or -1 on error
  */
-PyObject *pyevtx_file_set_ascii_codepage(
-           pyevtx_file_t *pyevtx_file,
-           PyObject *arguments,
-           PyObject *keywords )
+int pyevtx_file_set_ascii_codepage_from_string(
+     pyevtx_file_t *pyevtx_file,
+     const char *codepage_string )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error      = NULL;
-	char *codepage_string         = NULL;
-	static char *keyword_list[]   = { "codepage", NULL };
-	static char *function         = "pyevtx_file_set_ascii_codepage";
+	static char *function         = "pyevtx_file_set_ascii_codepage_from_string";
 	size_t codepage_string_length = 0;
 	uint32_t feature_flags        = 0;
 	int ascii_codepage            = 0;
+	int result                    = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -919,17 +927,8 @@ PyObject *pyevtx_file_set_ascii_codepage(
 		 "%s: invalid file.",
 		 function );
 
-		return( NULL );
+		return( -1 );
 	}
-	if( PyArg_ParseTupleAndKeywords(
-	     arguments,
-	     keywords,
-	     "s",
-	     keyword_list,
-	     &codepage_string ) == 0 )
-        {
-                return( NULL );
-        }
 	if( codepage_string == NULL )
 	{
 		PyErr_Format(
@@ -937,13 +936,12 @@ PyObject *pyevtx_file_set_ascii_codepage(
 		 "%s: invalid codepage string.",
 		 function );
 
-		return( NULL );
+		return( -1 );
 	}
 	codepage_string_length = libcstring_narrow_string_length(
 	                          codepage_string );
 
-	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_KOI8
-	              | LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
+	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
 
 	if( libclocale_codepage_copy_from_string(
 	     &ascii_codepage,
@@ -973,12 +971,18 @@ PyObject *pyevtx_file_set_ascii_codepage(
 		libcerror_error_free(
 		 &error );
 
-		return( NULL );
+		return( -1 );
 	}
-	if( libevtx_file_set_ascii_codepage(
-	     pyevtx_file->file,
-	     ascii_codepage,
-	     &error ) != 1 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_set_ascii_codepage(
+	          pyevtx_file->file,
+	          ascii_codepage,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
 	{
 		if( libcerror_error_backtrace_sprint(
 		     error,
@@ -1001,6 +1005,38 @@ PyObject *pyevtx_file_set_ascii_codepage(
 		libcerror_error_free(
 		 &error );
 
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Sets the codepage used for ASCII strings in the file
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_set_ascii_codepage(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	static char *keyword_list[] = { "codepage", NULL };
+	char *codepage_string       = NULL;
+	int result                  = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "s",
+	     keyword_list,
+	     &codepage_string ) == 0 )
+        {
+                return( NULL );
+        }
+	result = pyevtx_file_set_ascii_codepage_from_string(
+	          pyevtx_file,
+	          codepage_string );
+
+	if( result != 1 )
+	{
 		return( NULL );
 	}
 	Py_IncRef(
@@ -1009,11 +1045,43 @@ PyObject *pyevtx_file_set_ascii_codepage(
 	return( Py_None );
 }
 
+/* Sets the codepage used for ASCII strings in the file
+ * Returns a Python object if successful or NULL on error
+ */
+int pyevtx_file_set_ascii_codepage_setter(
+     pyevtx_file_t *pyevtx_file,
+     PyObject *value_object,
+     void *closure PYEVTX_ATTRIBUTE_UNUSED )
+{
+	char *codepage_string = NULL;
+	int result            = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( closure )
+
+	codepage_string = PyString_AsString(
+	                   value_object );
+
+	if( codepage_string == NULL )
+	{
+		return( -1 );
+	}
+	result = pyevtx_file_set_ascii_codepage_from_string(
+	          pyevtx_file,
+	          codepage_string );
+
+	if( result != 1 )
+	{
+		return( -1 );
+	}
+	return( 0 );
+}
+
 /* Retrieves the number of records
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_number_of_records(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1021,6 +1089,8 @@ PyObject *pyevtx_file_get_number_of_records(
 	static char *function    = "pyevtx_file_get_number_of_records";
 	int number_of_records    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -1187,7 +1257,8 @@ PyObject *pyevtx_file_get_record(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_records(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1196,6 +1267,8 @@ PyObject *pyevtx_file_get_records(
 	static char *function    = "pyevtx_file_get_records";
 	int number_of_records    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -1261,7 +1334,8 @@ PyObject *pyevtx_file_get_records(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_number_of_recovered_records(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1269,6 +1343,8 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
 	static char *function    = "pyevtx_file_get_number_of_recovered_records";
 	int number_of_records    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{
@@ -1435,7 +1511,8 @@ PyObject *pyevtx_file_get_recovered_record(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_recovered_records(
-           pyevtx_file_t *pyevtx_file )
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
@@ -1444,6 +1521,8 @@ PyObject *pyevtx_file_get_recovered_records(
 	static char *function    = "pyevtx_file_get_recovered_records";
 	int number_of_records    = 0;
 	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_file == NULL )
 	{

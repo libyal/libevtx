@@ -28,7 +28,8 @@
 #include "evtxtools_libcstring.h"
 #include "path_handle.h"
 
-/* Initializes the path handle
+/* Creates a path handle
+ * Make sure the value path_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int path_handle_initialize(
@@ -100,7 +101,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the path handle and its elements
+/* Frees a path handle
  * Returns 1 if successful or -1 on error
  */
 int path_handle_free(
