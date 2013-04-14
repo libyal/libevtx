@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Windows Shortcut File (EVTX) format library set ASCII codepage testing script
+# Library set ASCII codepage testing script
 #
 # Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
 #

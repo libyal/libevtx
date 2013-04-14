@@ -1,5 +1,5 @@
 /*
- * Windows Shortcut File (EVTX) format library open close testing program
+ * Library open close testing program
  *
  * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -40,7 +40,7 @@ int evtx_test_single_open_close_file(
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file      = NULL;
+	libevtx_file_t *file     = NULL;
 	static char *function    = "evtx_test_single_open_close_file";
 	int result               = 0;
 
@@ -140,7 +140,7 @@ int evtx_test_multi_open_close_file(
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file      = NULL;
+	libevtx_file_t *file     = NULL;
 	static char *function    = "evtx_test_multi_open_close_file";
 	int result               = 0;
 

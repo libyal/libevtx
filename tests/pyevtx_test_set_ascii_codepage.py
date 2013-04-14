@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Windows Shortcut File (EVTX) format library Python-bindings set ASCII codepage testing program
+# Python-bindings set ASCII codepage testing program
 #
 # Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
 #

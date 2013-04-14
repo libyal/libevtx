@@ -310,11 +310,13 @@ on_error:
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_new_open(
-           PyObject *self,
+           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
 	PyObject *pyevtx_file = NULL;
+
+	PYEVTX_UNREFERENCED_PARAMETER( self )
 
 	pyevtx_file = pyevtx_file_new();
 
@@ -330,11 +332,13 @@ PyObject *pyevtx_file_new_open(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_new_open_file_object(
-           PyObject *self,
+           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
 	PyObject *pyevtx_file = NULL;
+
+	PYEVTX_UNREFERENCED_PARAMETER( self )
 
 	pyevtx_file = pyevtx_file_new();
 

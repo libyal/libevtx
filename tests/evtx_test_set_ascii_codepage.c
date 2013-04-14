@@ -1,5 +1,5 @@
 /*
- * Windows Shortcut File (EVTX) format library open close testing program
+ * Library set ASCII codepage testing program
  *
  * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,7 +41,7 @@ int main( int argc, char * const argv[] )
 #endif
 {
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file      = NULL;
+	libevtx_file_t *file     = NULL;
 	size_t string_length     = 0;
 	uint32_t feature_flags   = 0;
 	int ascii_codepage       = 0;

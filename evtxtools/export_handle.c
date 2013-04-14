@@ -2586,6 +2586,11 @@ int export_handle_export_records(
 		     log_handle,
 		     error ) != 1 )
 		{
+			fprintf(
+			 export_handle->notify_stream,
+			 "Unable to export record: %d.",
+			 record_index );
+
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
@@ -2716,6 +2721,11 @@ int export_handle_export_recovered_records(
 		          log_handle,
 		          error ) != 1 )
 		{
+			fprintf(
+			 export_handle->notify_stream,
+			 "Unable to export recovered record: %d.",
+			 record_index );
+
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,

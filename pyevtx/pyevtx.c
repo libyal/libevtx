@@ -91,13 +91,14 @@ PyMethodDef pyevtx_module_methods[] = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_get_version(
-           PyObject *self,
+           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	const char *errors           = NULL;
 	const char *version_string   = NULL;
 	size_t version_string_length = 0;
 
+	PYEVTX_UNREFERENCED_PARAMETER( self )
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	Py_BEGIN_ALLOW_THREADS
@@ -123,7 +124,7 @@ PyObject *pyevtx_get_version(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_check_file_signature(
-           PyObject *self,
+           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
@@ -134,6 +135,8 @@ PyObject *pyevtx_check_file_signature(
 	static char *keyword_list[] = { "filename", NULL };
 	const char *filename        = NULL;
 	int result                  = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( self )
 
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
@@ -188,7 +191,7 @@ PyObject *pyevtx_check_file_signature(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
+           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
@@ -200,6 +203,8 @@ PyObject *pyevtx_check_file_signature_file_object(
 	static char *function            = "pyevtx_check_file_signature_file_object";
 	static char *keyword_list[]      = { "file_object", NULL };
 	int result                       = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( self )
 
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,

@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBESEDB_LIBFCACHE_H )
-#define _LIBESEDB_LIBFCACHE_H
+#if !defined( _LIBEVTX_LIBFCACHE_H )
+#define _LIBEVTX_LIBFCACHE_H
 
 #include <common.h>
 

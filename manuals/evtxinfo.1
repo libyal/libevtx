@@ -1,4 +1,4 @@
-.Dd January 7, 2013
+.Dd April 14, 2013
 .Dt evtxinfo
 .Os libevtx
 .Sh NAME
@@ -6,6 +6,7 @@
 .Nd determines information about a Windows XML EventViewer Log (EVTX) file
 .Sh SYNOPSIS
 .Nm evtxinfo
+.Op Fl c Ar codepage
 .Op Fl hvV
 .Va Ar source
 .Sh DESCRIPTION
@@ -24,6 +25,8 @@ is the source file.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
+.It Fl c Ar codepage
+specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
 .It Fl h
 shows this help
 .It Fl v

@@ -2,6 +2,7 @@ TODO
 * size issue with string of system time too much reserved
 * msvscpp:
   - check and fix debug output generation
+  - check 64-bit compilation output (warnings)
 * mark file as corrupted on CRC mismatch ?
 * check signal abort
 * parse binary data from EventData
@@ -64,6 +65,10 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20120414
+* textual changes
+* code clean up
 
 20120413
 * updated dependencies
