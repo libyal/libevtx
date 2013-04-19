@@ -2588,7 +2588,7 @@ int export_handle_export_records(
 		{
 			fprintf(
 			 export_handle->notify_stream,
-			 "Unable to export record: %d.",
+			 "Unable to export record: %d.\n",
 			 record_index );
 
 			libcerror_error_set(
@@ -2723,7 +2723,7 @@ int export_handle_export_recovered_records(
 		{
 			fprintf(
 			 export_handle->notify_stream,
-			 "Unable to export recovered record: %d.",
+			 "Unable to export recovered record: %d.\n",
 			 record_index );
 
 			libcerror_error_set(

@@ -66,6 +66,12 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20120418
+* fixed issue for uftf16 base16 string too small
+
+20120417
+* comparing the results of various builds
+
 20120414
 * textual changes
 * code clean up
