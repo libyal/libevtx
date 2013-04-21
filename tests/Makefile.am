@@ -21,6 +21,9 @@ endif
 TESTS = \
 	test_set_ascii_codepage.sh \
 	test_open_close.sh \
+	test_evtxinfo.sh \
+	test_evtxexport.sh \
+	test_evtxexport_xml.sh \
 	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
@@ -29,6 +32,9 @@ check_SCRIPTS = \
 	test_open_close.sh \
 	test_pyevtx_open_close.sh \
 	test_pyevtx_set_ascii_codepage.sh \
+	test_evtxexport.sh \
+	test_evtxexport_xml.sh \
+	test_evtxinfo.sh \
 	test_set_ascii_codepage.sh
 
 EXTRA_DIST = \

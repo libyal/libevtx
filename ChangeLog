@@ -66,6 +66,11 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20120421
+* worked on tests
+* updated dependencies
+* bug fixes in binary xml parsing
+
 20120418
 * fixed issue for uftf16 base16 string too small
 

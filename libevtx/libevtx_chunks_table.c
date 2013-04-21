@@ -416,6 +416,7 @@ int libevtx_chunks_table_read_record(
 	}
 	if( libfdata_list_element_set_element_value(
 	     list_element,
+	     (intptr_t *) file_io_handle,
 	     cache,
 	     (intptr_t *) record_values,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_record_values_free,
