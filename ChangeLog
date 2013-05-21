@@ -60,11 +60,20 @@ libfwevt optimization:
 * codepage support
 * flag internally if the file is corrupted (CRC mismatch)
 
+Format:
+* what about empty binary xml data in the event record? does it only contain a 0x00 byte?
+
 Debug:
 * libfwevt: character reference print trailing data
+* handle empty XML document:
+  libevtx_record_values_read_xml_document: XML document:
+  libfwevt_xml_tag_debug_print: invalid XML tag.
 
 Recovery:
 * scan for records in chunk free space
+
+20120521
+* worked on improving corruption detection for recovered records
 
 20120421
 * worked on tests

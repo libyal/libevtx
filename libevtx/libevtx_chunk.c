@@ -35,6 +35,7 @@
 #include "libevtx_record_values.h"
 
 #include "evtx_chunk.h"
+#include "evtx_event_record.h"
 
 const uint8_t *evtx_chunk_signature = (uint8_t *) "ElfChnk";
 
@@ -230,6 +231,8 @@ int libevtx_chunk_read(
 	static char *function                       = "libevtx_chunk_read";
 	size_t chunk_data_offset                    = 0;
 	size_t chunk_data_size                      = 0;
+	size_t xml_data_offset                      = 0;
+	size_t xml_data_size                        = 0;
 	ssize_t read_count                          = 0;
 	uint64_t calculated_number_of_event_records = 0;
 	uint64_t first_event_record_identifier      = 0;
@@ -862,24 +865,53 @@ int libevtx_chunk_read(
 				}
 				else
 				{
-					chunk_data_offset += record_values->data_size - 4;
+					xml_data_offset = chunk_data_offset + sizeof( evtx_event_record_header_t );
+					xml_data_size   = 0;
 
-					if( libcdata_array_append_entry(
-					     chunk->recovered_records_array,
-					     &entry_index,
-					     (intptr_t *) record_values,
-					     error ) != 1 )
+					if( record_values->data_size > ( sizeof( evtx_event_record_header_t ) + 4 ) )
 					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-						 "%s: unable to append record values to recovered records array.",
-						 function );
-
-						goto on_error;
+						xml_data_size = record_values->data_size - ( sizeof( evtx_event_record_header_t ) + 4 );
 					}
-					record_values = NULL;
+					result = 0;
+
+					if( xml_data_size > 0 )
+					{
+						if( ( xml_data_size >= 5 )
+						 && ( chunk_data[ xml_data_offset ] == 0x0a ) )
+						{
+							result = 1;
+						}
+						else if( ( xml_data_size >= 4 )
+						      && ( chunk_data[ xml_data_offset ] == 0x0f )
+						      && ( chunk_data[ xml_data_offset + 1 ] == 0x01 )
+						      && ( chunk_data[ xml_data_offset + 2 ] == 0x01 )
+						      && ( chunk_data[ xml_data_offset + 3 ] == 0x00 ) )
+						{
+							result = 1;
+						}
+/* TODO what about 0x00 allow it ? */
+					}
+					if( result != 0 )
+					{
+						chunk_data_offset += record_values->data_size - 4;
+
+						if( libcdata_array_append_entry(
+						     chunk->recovered_records_array,
+						     &entry_index,
+						     (intptr_t *) record_values,
+						     error ) != 1 )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+							 "%s: unable to append record values to recovered records array.",
+							 function );
+
+							goto on_error;
+						}
+						record_values = NULL;
+					}
 				}
 			}
 			chunk_data_offset += 4;
