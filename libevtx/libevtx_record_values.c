@@ -4196,9 +4196,30 @@ int libevtx_record_values_parse_data(
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	else if( result == 0 )
 	{
-		/* The EventData templates start with the EventData tag
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+			  root_xml_tag,
+			  (uint8_t *) "ProcessingErrorData",
+			  19,
+			  &event_data_xml_tag,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve ProcessingErrorData XML element.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( result != 0 )
+	{
+		/* The EventData templates start with the EventData or ProcessingErrorData
 		 */
 		result = libevtx_record_values_parse_data_xml_tag_by_template(
 			  record_values,

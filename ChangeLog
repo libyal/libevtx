@@ -1,12 +1,11 @@
 TODO
-* size issue with string of system time too much reserved
 * msvscpp:
   - check and fix debug output generation
-  - check 64-bit compilation output (warnings)
 * mark file as corrupted on CRC mismatch ?
 * check signal abort
 * parse binary data from EventData
-* correctly deal with \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
+* event message file ?
+  - correctly deal with \\ in C:\Program Files\Common Files\McAfee\SystemCore\\naievent.dll
 * improve detecting corrupted recovered event records
 * improve dealing with corrupted event records?
 * formatted output
@@ -71,6 +70,14 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+2013712
+* fix for encoding special characters in XML output
+* code clean up
+* pyevtx small changes to docstrings
+* worked on tests
+* updated dependencies
+* added support for parsing ProcessingErrorData
 
 20130609
 * updated dependencies
