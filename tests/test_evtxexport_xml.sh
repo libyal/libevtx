@@ -24,13 +24,29 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-test_export()
+list_contains()
+{
+	LIST=$1;
+	SEARCH=$2;
+
+	for LINE in $LIST;
+	do
+		if test $LINE = $SEARCH;
+		then
+			return ${EXIT_SUCCESS};
+		fi
+	done
+
+	return ${EXIT_FAILURE};
+}
+
+test_export_xml()
 { 
 	DIRNAME=$1;
 	INPUT_FILE=$2;
 	BASENAME=`basename ${INPUT_FILE}`;
 
-	if [ -d tmp ];
+	if test -d tmp;
 	then
 		rm -rf tmp;
 	fi
@@ -40,7 +56,7 @@ test_export()
 
 	RESULT=$?;
 
-	if [ -f "input/.evtxexport_xml/${DIRNAME}/${BASENAME}.log.gz" ];
+	if test -f "input/.evtxexport_xml/${DIRNAME}/${BASENAME}.log.gz";
 	then
 		zdiff "input/.evtxexport_xml/${DIRNAME}/${BASENAME}.log.gz" "tmp/${BASENAME}.log";
 
@@ -97,28 +113,42 @@ then
 
 	EXIT_RESULT=${EXIT_IGNORE};
 else
+	IGNORELIST="";
+
 	if ! test -d "input/.evtxexport_xml";
 	then
 		mkdir "input/.evtxexport_xml";
 	fi
-
+	if test -f "input/.evtxexport_xml/ignore";
+	then
+		IGNORELIST=`cat input/.evtxexport_xml/ignore | sed '/^#/d'`;
+	fi
 	for TESTDIR in input/*;
 	do
-		if [ -d "${TESTDIR}" ];
+		if test -d "${TESTDIR}";
 		then
 			DIRNAME=`basename ${TESTDIR}`;
 
-			if [ ! -d "input/.evtxexport_xml/${DIRNAME}" ];
+			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
 			then
-				mkdir "input/.evtxexport_xml/${DIRNAME}";
-			fi
-			for TESTFILE in ${TESTDIR}/*;
-			do
-				if ! test_export "${DIRNAME}" "${TESTFILE}";
+				if ! test -d "input/.evtxexport_xml/${DIRNAME}";
 				then
-					exit ${EXIT_FAILURE};
+					mkdir "input/.evtxexport_xml/${DIRNAME}";
 				fi
-			done
+				if test -f "input/.evtxexport_xml/${DIRNAME}/files";
+				then
+					TESTFILES=`cat input/.evtxexport_xml/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+				else
+					TESTFILES=`ls ${TESTDIR}/*`;
+				fi
+				for TESTFILE in ${TESTFILES};
+				do
+					if ! test_export_xml "${DIRNAME}" "${TESTFILE}";
+					then
+						exit ${EXIT_FAILURE};
+					fi
+				done
+			fi
 		fi
 	done
 

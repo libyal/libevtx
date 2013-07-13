@@ -48,7 +48,7 @@ do
 
 	echo -n -e "Testing setting supported ASCII codepage: ${CODEPAGE}\t"
 
-	if [[ ${RESULT} -ne 0 ]];
+	if test ${RESULT} -ne 0;
 	then
 		echo "(FAIL)";
 	else
@@ -56,7 +56,7 @@ do
 	fi
 	echo "";
 
-	if [[ ${RESULT} -ne 0 ]];
+	if test ${RESULT} -ne 0;
 	then
 		exit ${EXIT_FAILURE};
 	fi
@@ -72,7 +72,7 @@ do
 
 	echo -n -e "Testing setting unsupported ASCII codepage: ${CODEPAGE}\t"
 
-	if [[ ${RESULT} -eq 0 ]];
+	if test ${RESULT} -eq 0;
 	then
 		echo "(FAIL)";
 	else
@@ -80,7 +80,7 @@ do
 	fi
 	echo "";
 
-	if [[ ${RESULT} -eq 0 ]];
+	if test ${RESULT} -eq 0;
 	then
 		exit ${EXIT_FAILURE};
 	fi

@@ -54,7 +54,7 @@ then
 else
 	for TESTDIR in input/*;
 	do
-		if [ -d "${TESTDIR}" ];
+		if test -d "${TESTDIR}";
 		then
 			DIRNAME=`basename ${TESTDIR}`;
 
