@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20130712
+#define LIBEVTX_VERSION						20130713
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20130712"
+#define LIBEVTX_VERSION_STRING					"20130713"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -90,9 +90,17 @@ enum LIBEVTX_IO_HANDLE_FLAGS
 {
 	/* The file is corrupted
 	 */
-	LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED			= 0x01,
+	LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED			= 0x01
 };
 
+/* The chunk flags
+ */
+enum LIBEVTX_CHUNK_FLAGS
+{
+	/* The chunk is corrupted
+	 */
+	LIBEVTX_CHUNK_FLAG_IS_CORRUPTED				= 0x01
+};
 
 /* The binary XML token definitions
  */

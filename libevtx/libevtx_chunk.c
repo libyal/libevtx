@@ -217,7 +217,7 @@ int libevtx_chunk_free(
 }
 
 /* Reads the chunk
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if the chunk is 0-byte filled or -1 on error
  */
 int libevtx_chunk_read(
      libevtx_chunk_t *chunk,
@@ -372,7 +372,7 @@ int libevtx_chunk_read(
 #endif
 	result = libevtx_byte_stream_check_for_zero_byte_fill(
 	          chunk_data,
-	          sizeof( evtx_chunk_header_t ),
+	          chunk_data_size,
 	          error );
 
 	if( result == -1 )
@@ -381,31 +381,32 @@ int libevtx_chunk_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to determine of chunk header is 0-byte filled.",
+		 "%s: unable to determine of chunk is 0-byte filled.",
 		 function );
 
 		goto on_error;
 	}
 	else if( result != 0 )
 	{
-		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+		return( 0 );
+	}
+	if( memory_compare(
+	     ( (evtx_chunk_header_t *) chunk_data )->signature,
+	     evtx_chunk_signature,
+	     8 ) != 0 )
+	{
+#if defined( HAVE_VERBOSE_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: unsupported chunk signature.\n",
+			 function );
+		}
+#endif
+		chunk->flags |= LIBEVTX_CHUNK_FLAG_IS_CORRUPTED;
 	}
 	else
 	{
-		if( memory_compare(
-		     ( (evtx_chunk_header_t *) chunk_data )->signature,
-		     evtx_chunk_signature,
-		     8 ) != 0 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported chunk signature.",
-			 function );
-
-			goto on_error;
-		}
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (evtx_chunk_header_t *) chunk_data )->first_event_record_number,
 		 first_event_record_number );
@@ -579,7 +580,7 @@ int libevtx_chunk_read(
 				 calculated_checksum );
 			}
 #endif
-			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+			chunk->flags |= LIBEVTX_CHUNK_FLAG_IS_CORRUPTED;
 		}
 		chunk_data_offset = sizeof( evtx_chunk_header_t );
 
@@ -639,7 +640,7 @@ int libevtx_chunk_read(
 				 calculated_checksum );
 			}
 #endif
-			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+			chunk->flags |= LIBEVTX_CHUNK_FLAG_IS_CORRUPTED;
 		}
 		while( chunk_data_offset <= last_event_record_offset )
 		{
@@ -736,7 +737,7 @@ int libevtx_chunk_read(
 				 last_event_record_number );
 			}
 #endif
-			io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+			chunk->flags |= LIBEVTX_CHUNK_FLAG_IS_CORRUPTED;
 		}
 		else if( result == 1 )
 		{
@@ -764,7 +765,7 @@ int libevtx_chunk_read(
 					 calculated_number_of_event_records );
 				}
 #endif
-				io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+				chunk->flags |= LIBEVTX_CHUNK_FLAG_IS_CORRUPTED;
 			}
 		}
 		if( first_event_record_identifier > last_event_record_identifier )

@@ -21,6 +21,8 @@ TODO
   - cache template providers
   - cache template events
   - cache template definitions
+* tests
+  - evtexport: handle "Provider identifier" in debug ouput
 
 * XML output change
   - Keywords add no leading 0's
@@ -71,10 +73,11 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
-2013713
+20130713
 * worked on tests
+* improved reading from dirty files with an incorrect number of chunks
 
-2013712
+20130712
 * fix for encoding special characters in XML output
 * code clean up
 * pyevtx small changes to docstrings

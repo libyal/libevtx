@@ -58,6 +58,10 @@ struct libevtx_chunk
 	/* The recovered records array
 	 */
 	libcdata_array_t *recovered_records_array;
+
+	/* Various flags
+	 */
+	uint8_t flags;
 };
 
 int libevtx_chunk_initialize(

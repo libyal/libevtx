@@ -833,11 +833,12 @@ int libevtx_file_open_read(
 	static char *function                  = "libevtx_file_open_read";
 	off64_t file_offset                    = 0;
 	size64_t file_size                     = 0;
-	uint16_t calculated_number_of_chunks   = 0;
 	uint16_t chunk_index                   = 0;
-	uint16_t record_index                  = 0;
+	uint16_t number_of_chunks              = 0;
 	uint16_t number_of_records             = 0;
+	uint16_t record_index                  = 0;
 	int element_index                      = 0;
+	int result                             = 0;
 	int segment_index                      = 0;
 
 #if defined( HAVE_VERBOSE_OUTPUT )
@@ -1102,14 +1103,8 @@ int libevtx_file_open_read(
 	}
 	file_offset = internal_file->io_handle->chunks_data_offset;
 
-	for( chunk_index = 0;
-	     chunk_index < internal_file->io_handle->number_of_chunks;
-	     chunk_index++ )
+	while( ( file_offset + internal_file->io_handle->chunk_size ) <= (off64_t) file_size )
 	{
-		if( file_offset >= (off64_t) file_size )
-		{
-			break;
-		}
 		if( libevtx_chunk_initialize(
 		     &chunk,
 		     error ) != 1 )
@@ -1124,12 +1119,14 @@ int libevtx_file_open_read(
 
 			goto on_error;
 		}
-		if( libevtx_chunk_read(
-		     chunk,
-		     internal_file->io_handle,
-		     internal_file->file_io_handle,
-		     file_offset,
-		     error ) != 1 )
+		result = libevtx_chunk_read(
+		          chunk,
+		          internal_file->io_handle,
+		          internal_file->file_io_handle,
+		          file_offset,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1141,178 +1138,246 @@ int libevtx_file_open_read(
 
 			goto on_error;
 		}
-		if( libevtx_chunk_get_number_of_records(
-		     chunk,
-		     &number_of_records,
-		     error ) != 1 )
+		else if( result == 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve chunk: %" PRIu16 " number of records.",
-			 function,
-			 chunk_index );
-
-			goto on_error;
-		}
-		for( record_index = 0;
-		     record_index < number_of_records;
-		     record_index++ )
-		{
-			if( libevtx_chunk_get_record(
-			     chunk,
-			     record_index,
-			     &record_values,
-			     error ) != 1 )
+			if( chunk_index < internal_file->io_handle->number_of_chunks )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve chunk: %" PRIu16 " record: %" PRIu16 ".",
-				 function,
-				 chunk_index,
-				 record_index );
-
-				goto on_error;
-			}
-			if( record_values == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing chunk: %" PRIu16 " record: %" PRIu16 ".",
-				 function,
-				 chunk_index,
-				 record_index );
-
-				goto on_error;
-			}
-			if( record_values->identifier < internal_file->io_handle->first_record_identifier )
-			{
-				internal_file->io_handle->first_record_identifier = record_values->identifier;
-			}
-			if( record_values->identifier > internal_file->io_handle->last_record_identifier )
-			{
-				internal_file->io_handle->last_record_identifier = record_values->identifier;
-			}
 #if defined( HAVE_VERBOSE_OUTPUT )
-			if( ( chunk_index == 0 )
-			 && ( record_index == 0 ) )
-			{
-				previous_record_identifier = record_values->identifier;
-			}
-			else
-			{
-				previous_record_identifier++;
-
-				if( record_values->identifier != previous_record_identifier )
+				if( libcnotify_verbose != 0 )
 				{
-					if( libcnotify_verbose != 0 )
-					{
-						libcnotify_printf(
-						 "%s: detected gap in record identifier ( %" PRIu64 " != %" PRIu64 " ).\n",
-						 function,
-						 previous_record_identifier,
-						 record_values->identifier );
-					}
-					previous_record_identifier = record_values->identifier;
+					libcnotify_printf(
+					 "%s: corruption detected in chunk: %" PRIu16 ".\n",
+					 function,
+					 chunk_index );
+				}
+#endif
+				internal_file->io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
+			}
+		}
+		else
+		{
+			if( ( chunk->flags & LIBEVTX_CHUNK_FLAG_IS_CORRUPTED ) != 0 )
+			{
+#if defined( HAVE_VERBOSE_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: corruption detected in chunk: %" PRIu16 ".\n",
+					 function,
+					 chunk_index );
+				}
+#endif
+				if( chunk_index < internal_file->io_handle->number_of_chunks )
+				{
+					internal_file->io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 				}
 			}
-#endif
-			/* The chunk index is stored in the element data size
-			 */
-			if( libfdata_list_append_element(
-			     internal_file->records_list,
-			     &element_index,
-			     0,
-			     file_offset + record_values->chunk_data_offset,
-			     (size64_t) chunk_index,
-			     0,
-			     error ) != 1 )
+			if( ( chunk_index < internal_file->io_handle->number_of_chunks )
+			 || ( ( chunk->flags & LIBEVTX_CHUNK_FLAG_IS_CORRUPTED ) == 0 ) )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append element to records list.",
-				 function );
-
-				goto on_error;
+				number_of_chunks++;
 			}
-/* TODO cache record values ? */
-		}
-		if( libevtx_chunk_get_number_of_recovered_records(
-		     chunk,
-		     &number_of_records,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve chunk: %" PRIu16 " number of recovered records.",
-			 function,
-			 chunk_index );
-
-			goto on_error;
-		}
-		for( record_index = 0;
-		     record_index < number_of_records;
-		     record_index++ )
-		{
-			if( libevtx_chunk_get_recovered_record(
+			if( libevtx_chunk_get_number_of_records(
 			     chunk,
-			     record_index,
-			     &record_values,
+			     &number_of_records,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+				 "%s: unable to retrieve chunk: %" PRIu16 " number of records.",
 				 function,
-				 chunk_index,
-				 record_index );
+				 chunk_index );
 
 				goto on_error;
 			}
-			if( record_values == NULL )
+			for( record_index = 0;
+			     record_index < number_of_records;
+			     record_index++ )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: missing chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
-				 function,
-				 chunk_index,
-				 record_index );
+				if( libevtx_chunk_get_record(
+				     chunk,
+				     record_index,
+				     &record_values,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve chunk: %" PRIu16 " record: %" PRIu16 ".",
+					 function,
+					 chunk_index,
+					 record_index );
 
-				goto on_error;
+					goto on_error;
+				}
+				if( record_values == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 "%s: missing chunk: %" PRIu16 " record: %" PRIu16 ".",
+					 function,
+					 chunk_index,
+					 record_index );
+
+					goto on_error;
+				}
+				if( record_values->identifier < internal_file->io_handle->first_record_identifier )
+				{
+					internal_file->io_handle->first_record_identifier = record_values->identifier;
+				}
+				if( record_values->identifier > internal_file->io_handle->last_record_identifier )
+				{
+					internal_file->io_handle->last_record_identifier = record_values->identifier;
+				}
+#if defined( HAVE_VERBOSE_OUTPUT )
+				if( ( chunk_index == 0 )
+				 && ( record_index == 0 ) )
+				{
+					previous_record_identifier = record_values->identifier;
+				}
+				else
+				{
+					previous_record_identifier++;
+
+					if( record_values->identifier != previous_record_identifier )
+					{
+						if( libcnotify_verbose != 0 )
+						{
+							libcnotify_printf(
+							 "%s: detected gap in record identifier ( %" PRIu64 " != %" PRIu64 " ).\n",
+							 function,
+							 previous_record_identifier,
+							 record_values->identifier );
+						}
+						previous_record_identifier = record_values->identifier;
+					}
+				}
+#endif
+				/* The chunk index is stored in the element data size
+				 */
+				if( ( chunk_index < internal_file->io_handle->number_of_chunks )
+				 || ( ( internal_file->io_handle->file_flags & LIBEVTX_FILE_FLAG_IS_DIRTY ) != 0 ) )
+				{
+					if( libfdata_list_append_element(
+					     internal_file->records_list,
+					     &element_index,
+					     0,
+					     file_offset + record_values->chunk_data_offset,
+					     (size64_t) chunk_index,
+					     0,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+						 "%s: unable to append element to records list.",
+						 function );
+
+						goto on_error;
+					}
+				}
+				else
+				{
+					/* If the file is not dirty, records found in chunks outside the indicated
+					 * range are considered recovered
+					 */
+					if( libfdata_list_append_element(
+					     internal_file->recovered_records_list,
+					     &element_index,
+					     0,
+					     file_offset + record_values->chunk_data_offset,
+					     (size64_t) chunk_index,
+					     0,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+						 "%s: unable to append element to recovered records list.",
+						 function );
+
+						goto on_error;
+					}
+				}
+/* TODO cache record values ? */
 			}
-/* TODO check for and remove duplicate identifiers ? */
-			/* The chunk index is stored in the element data size
-			 */
-			if( libfdata_list_append_element(
-			     internal_file->recovered_records_list,
-			     &element_index,
-			     0,
-			     file_offset + record_values->chunk_data_offset,
-			     (size64_t) chunk_index,
-			     0,
+			if( libevtx_chunk_get_number_of_recovered_records(
+			     chunk,
+			     &number_of_records,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append element to recovered records list.",
-				 function );
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve chunk: %" PRIu16 " number of recovered records.",
+				 function,
+				 chunk_index );
 
 				goto on_error;
+			}
+			for( record_index = 0;
+			     record_index < number_of_records;
+			     record_index++ )
+			{
+				if( libevtx_chunk_get_recovered_record(
+				     chunk,
+				     record_index,
+				     &record_values,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+					 function,
+					 chunk_index,
+					 record_index );
+
+					goto on_error;
+				}
+				if( record_values == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+					 "%s: missing chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+					 function,
+					 chunk_index,
+					 record_index );
+
+					goto on_error;
+				}
+/* TODO check for and remove duplicate identifiers ? */
+				/* The chunk index is stored in the element data size
+				 */
+				if( libfdata_list_append_element(
+				     internal_file->recovered_records_list,
+				     &element_index,
+				     0,
+				     file_offset + record_values->chunk_data_offset,
+				     (size64_t) chunk_index,
+				     0,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append element to recovered records list.",
+					 function );
+
+					goto on_error;
+				}
 			}
 		}
 		file_offset += chunk->data_size;
@@ -1331,12 +1396,12 @@ int libevtx_file_open_read(
 
 			goto on_error;
 		}
-		calculated_number_of_chunks++;
+		chunk_index++;
 	}
 	internal_file->io_handle->chunks_data_size = file_offset
 	                                           - internal_file->io_handle->chunks_data_offset;
 
-	if( internal_file->io_handle->number_of_chunks != calculated_number_of_chunks )
+	if( number_of_chunks != internal_file->io_handle->number_of_chunks )
 	{
 #if defined( HAVE_VERBOSE_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -1345,7 +1410,7 @@ int libevtx_file_open_read(
 			 "%s: mismatch in number of chunks ( %" PRIu16 " != %" PRIu16 " ).\n",
 			 function,
 			 internal_file->io_handle->number_of_chunks,
-			 calculated_number_of_chunks );
+			 chunk_index );
 		}
 #endif
 		internal_file->io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
