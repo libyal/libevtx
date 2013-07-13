@@ -600,10 +600,8 @@ int libevtx_file_open_file_io_handle(
 	{
 		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
 	}
-	internal_file->file_io_handle = file_io_handle;
-
 	file_io_handle_is_open = libbfio_handle_is_open(
-	                          internal_file->file_io_handle,
+	                          file_io_handle,
 	                          error );
 
 	if( file_io_handle_is_open == -1 )
@@ -620,7 +618,7 @@ int libevtx_file_open_file_io_handle(
 	else if( file_io_handle_is_open == 0 )
 	{
 		if( libbfio_handle_open(
-		     internal_file->file_io_handle,
+		     file_io_handle,
 		     bfio_access_flags,
 		     error ) != 1 )
 		{
@@ -637,6 +635,7 @@ int libevtx_file_open_file_io_handle(
 	}
 	if( libevtx_file_open_read(
 	     internal_file,
+	     file_io_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -648,6 +647,8 @@ int libevtx_file_open_file_io_handle(
 
 		goto on_error;
 	}
+	internal_file->file_io_handle = file_io_handle;
+
 	return( 1 );
 
 on_error:
@@ -752,6 +753,19 @@ int libevtx_file_close(
 	internal_file->file_io_handle                    = NULL;
 	internal_file->file_io_handle_created_in_library = 0;
 
+	if( libevtx_io_handle_clear(
+	     internal_file->io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		result = -1;
+	}
 	if( libfdata_list_free(
 	     &( internal_file->recovered_records_list ),
 	     error ) != 1 )
@@ -825,6 +839,7 @@ int libevtx_file_close(
  */
 int libevtx_file_open_read(
      libevtx_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
 	libevtx_chunk_t *chunk                 = NULL;
@@ -928,7 +943,7 @@ int libevtx_file_open_read(
 		return( -1 );
 	}
 	if( libbfio_handle_get_size(
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     &file_size,
 	     error ) != 1 )
 	{
@@ -950,7 +965,7 @@ int libevtx_file_open_read(
 #endif
 	if( libevtx_io_handle_read_file_header(
 	     internal_file->io_handle,
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     0,
 	     error ) != 1 )
 	{
@@ -1122,7 +1137,7 @@ int libevtx_file_open_read(
 		result = libevtx_chunk_read(
 		          chunk,
 		          internal_file->io_handle,
-		          internal_file->file_io_handle,
+		          file_io_handle,
 		          file_offset,
 		          error );
 
@@ -1437,7 +1452,7 @@ int libevtx_file_open_read(
 				goto on_error;
 			}
 			read_count = libbfio_handle_read_buffer(
-				      internal_file->file_io_handle,
+				      file_io_handle,
 				      trailing_data,
 				      trailing_data_size,
 				      error );
