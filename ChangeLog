@@ -1,4 +1,5 @@
 TODO
+* add clean IO handle function
 * msvscpp:
   - check and fix debug output generation
 * mark file as corrupted on CRC mismatch ?
@@ -72,6 +73,10 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20130718
+* updated dependencies
+* removed unnecessary restriction in library include headers
 
 20130713
 * worked on tests

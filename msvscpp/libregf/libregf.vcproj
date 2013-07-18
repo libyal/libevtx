@@ -191,7 +191,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libregf\libregf_key_item_values.c"
+				RelativePath="..\..\libregf\libregf_key_item.c"
 				>
 			</File>
 			<File
@@ -211,7 +211,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libregf\libregf_value_item_values.c"
+				RelativePath="..\..\libregf\libregf_value_item.c"
 				>
 			</File>
 			<File
@@ -277,7 +277,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libregf\libregf_key_item_values.h"
+				RelativePath="..\..\libregf\libregf_key_item.h"
 				>
 			</File>
 			<File
@@ -345,7 +345,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libregf\libregf_value_item_values.h"
+				RelativePath="..\..\libregf\libregf_value_item.h"
 				>
 			</File>
 			<File
