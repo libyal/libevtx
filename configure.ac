@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20130727],
+ [20130909],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -59,6 +59,9 @@ AX_LIBCSTRING_CHECK_ENABLE
 
 dnl Check for enabling libcerror for cross-platform C error functions
 AX_LIBCERROR_CHECK_ENABLE
+
+dnl Check for enabling libcthreads for cross-platform C threads functions
+AX_LIBCTHREADS_CHECK_ENABLE
 
 dnl Check for enabling libcdata for cross-platform C generic data functions
 AX_LIBCDATA_CHECK_ENABLE
@@ -152,7 +155,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwevt" = xyes || test "x$ac_cv_libfwnt" = xyes],
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwevt" = xyes || test "x$ac_cv_libfwnt" = xyes],
  [AC_SUBST(
   [libevtx_spec_requires],
   [Requires:])
@@ -189,6 +192,7 @@ AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
+AC_CONFIG_FILES([libcthreads/Makefile])
 AC_CONFIG_FILES([libcdata/Makefile])
 AC_CONFIG_FILES([libclocale/Makefile])
 AC_CONFIG_FILES([libcnotify/Makefile])
@@ -249,6 +253,7 @@ AC_MSG_NOTICE([
 Building:
    libcstring support:                        $ac_cv_libcstring
    libcerror support:                         $ac_cv_libcerror
+   libcthreads support:                       $ac_cv_libcthreads
    libcdata support:                          $ac_cv_libcdata
    libclocale support:                        $ac_cv_libclocale
    libcnotify support:                        $ac_cv_libcnotify
@@ -271,6 +276,7 @@ Building:
    libcsystem support:                        $ac_cv_libcsystem
 
 Features:
+   Multi-threading support:                   $ac_cv_libcthreads_multi_threading
    Wide character type support:               $ac_cv_enable_wide_character_type
    evtxtools are build as static executables: $ac_cv_enable_static_executables
    Python (pyevtx) support:                   $ac_cv_enable_python

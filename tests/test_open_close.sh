@@ -44,11 +44,16 @@ test_open_close()
 { 
 	INPUT_FILE=$1;
 
+	rm -rf tmp;
+	mkdir tmp;
+
 	echo "Testing open close of input: ${INPUT_FILE}";
 
-	./${EVTX_TEST_OPEN_CLOSE} ${INPUT_FILE};
+	${TEST_RUNNER} ./${EVTX_TEST_OPEN_CLOSE} ${INPUT_FILE};
 
 	RESULT=$?;
+
+	rm -rf tmp;
 
 	echo "";
 
@@ -65,6 +70,20 @@ fi
 if ! test -x ${EVTX_TEST_OPEN_CLOSE};
 then
 	echo "Missing executable: ${EVTX_TEST_OPEN_CLOSE}";
+
+	exit ${EXIT_FAILURE};
+fi
+
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+	TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+	echo "Missing test runner: ${TEST_RUNNER}";
 
 	exit ${EXIT_FAILURE};
 fi

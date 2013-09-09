@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
 	@LIBCNOTIFY_CPPFLAGS@ \
@@ -35,6 +36,7 @@ check_SCRIPTS = \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
 	test_evtxinfo.sh \
+	test_runner.sh \
 	test_set_ascii_codepage.sh
 
 EXTRA_DIST = \

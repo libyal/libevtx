@@ -46,13 +46,10 @@ test_export()
 	INPUT_FILE=$2;
 	BASENAME=`basename ${INPUT_FILE}`;
 
-	if test -d tmp;
-	then
-		rm -rf tmp;
-	fi
+	rm -rf tmp;
 	mkdir tmp;
 
-	${EVTXEXPORT} ${INPUT_FILE} | sed '1,2d' > tmp/${BASENAME}.log;
+	${TEST_RUNNER} ${EVTXEXPORT} ${INPUT_FILE} | sed '1,2d' > tmp/${BASENAME}.log;
 
 	RESULT=$?;
 
@@ -92,6 +89,20 @@ then
 	echo "Missing executable: ${EVTXEXPORT}";
 
 	exit ${EXIT_FAILURE};
+fi
+
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+        TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+        echo "Missing test runner: ${TEST_RUNNER}";
+
+        exit ${EXIT_FAILURE};
 fi
 
 if ! test -d "input";

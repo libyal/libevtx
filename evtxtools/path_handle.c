@@ -139,7 +139,7 @@ int path_handle_free(
 
 /* Retrieves the name of a directory entry by name ignoring case
  * If a corresponding entry is found entry name is update
- * This function is neede to find case insensitive directory entries on a case sensitive system
+ * This function is needed to find case insensitive directory entries on a case sensitive system
  * Return 1 if successful, 0 if no corresponding entry was found or -1 on error
  */
 int path_handle_get_directory_entry_name_by_name_no_case(

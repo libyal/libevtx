@@ -38,15 +38,34 @@ then
 	exit ${EXIT_FAILURE};
 fi
 
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+	TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+	echo "Missing test runner: ${TEST_RUNNER}";
+
+	exit ${EXIT_FAILURE};
+fi
+
 CODEPAGES="ascii windows-874 windows-932 windows-936 windows-949 windows-950 windows-1250 windows-1251 windows-1252 windows-1253 windows-1254 windows-1255 windows-1256 windows-1257 windows-1258";
 
 for CODEPAGE in ${CODEPAGES};
 do
-	./${EVTX_TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
+	echo -n -e "Testing setting supported ASCII codepage: ${CODEPAGE}\t"
+
+	rm -rf tmp;
+	mkdir tmp;
+
+	${TEST_RUNNER} ./${EVTX_TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
 
 	RESULT=$?;
 
-	echo -n -e "Testing setting supported ASCII codepage: ${CODEPAGE}\t"
+	rm -rf tmp;
 
 	if test ${RESULT} -ne 0;
 	then
@@ -66,11 +85,16 @@ CODEPAGES="iso-8859-1 iso-8859-2 iso-8859-3 iso-8859-4 iso-8859-5 iso-8859-6 iso
 
 for CODEPAGE in ${CODEPAGES};
 do
-	./${EVTX_TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
+	echo -n -e "Testing setting unsupported ASCII codepage: ${CODEPAGE}\t"
+
+	rm -rf tmp;
+	mkdir tmp;
+
+	${TEST_RUNNER} ./${EVTX_TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
 
 	RESULT=$?;
 
-	echo -n -e "Testing setting unsupported ASCII codepage: ${CODEPAGE}\t"
+	rm -rf tmp;
 
 	if test ${RESULT} -eq 0;
 	then
