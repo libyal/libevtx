@@ -32,6 +32,7 @@
 #include <libfdatetime_definitions.h>
 #include <libfdatetime_fat_date_time.h>
 #include <libfdatetime_filetime.h>
+#include <libfdatetime_floatingtime.h>
 #include <libfdatetime_nsf_timedate.h>
 #include <libfdatetime_posix_time.h>
 #include <libfdatetime_systemtime.h>

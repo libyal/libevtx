@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20130831
+# Version: 20130922
 
 # Generic auto-generated build files
 *~
@@ -101,6 +101,16 @@ stamp-h1
 /include/libevtx/types.h
 /libevtx/libevtx.rc
 /libevtx/libevtx.h
+/macosx/Introduction.rtf
+/macosx/libevtx.pmdoc/01bin.xml
+/macosx/libevtx.pmdoc/02include.xml
+/macosx/libevtx.pmdoc/03lib.xml
+/macosx/libevtx.pmdoc/04share.xml
+/macosx/libevtx.pmdoc/05python.xml
+/macosx/libevtx.pmdoc/index.xml
+/tests/input
+/tests/evtx_test_open_close
+/tests/evtx_test_set_ascii_codepage
 
 # Local library dependencies specific files
 /libbfio
