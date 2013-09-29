@@ -108,6 +108,7 @@ stamp-h1
 /macosx/libevtx.pmdoc/04share.xml
 /macosx/libevtx.pmdoc/05python.xml
 /macosx/libevtx.pmdoc/index.xml
+/pyevtx/setup.py
 /tests/input
 /tests/evtx_test_open_close
 /tests/evtx_test_set_ascii_codepage

@@ -74,6 +74,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20130929
+* worked on setup.py, largely for MSI builds
+
 20130923
 * updated dependencies
 

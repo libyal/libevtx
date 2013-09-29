@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20130923],
+ [20130929],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -241,6 +241,7 @@ AC_CONFIG_FILES([macosx/libevtx.pmdoc/04share.xml])
 AC_CONFIG_FILES([macosx/libevtx.pmdoc/05python.xml])
 AC_CONFIG_FILES([macosx/libevtx.pmdoc/index.xml])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
+AC_CONFIG_FILES([pyevtx/setup.py])
 AC_CONFIG_FILES([libevtx.pc])
 AC_CONFIG_FILES([libevtx.spec])
 dnl Have configure write its configuration
