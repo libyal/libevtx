@@ -100,7 +100,7 @@ stamp-h1
 /include/libevtx/features.h
 /include/libevtx/types.h
 /libevtx/libevtx.rc
-/libevtx/libevtx.h
+/libevtx/libevtx_definitions.h
 /macosx/Introduction.rtf
 /macosx/libevtx.pmdoc/01bin.xml
 /macosx/libevtx.pmdoc/02include.xml

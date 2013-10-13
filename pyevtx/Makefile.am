@@ -20,6 +20,7 @@ pyevtx_la_SOURCES = \
 	pyevtx_datetime.c pyevtx_datetime.h \
 	pyevtx_file.c pyevtx_file.h \
 	pyevtx_file_object_io_handle.c pyevtx_file_object_io_handle.h \
+	pyevtx_integer.c pyevtx_integer.h \
 	pyevtx_libbfio.h \
 	pyevtx_libcerror.h \
 	pyevtx_libclocale.h \

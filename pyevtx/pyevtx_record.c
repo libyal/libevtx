@@ -28,6 +28,7 @@
 
 #include "pyevtx.h"
 #include "pyevtx_datetime.h"
+#include "pyevtx_integer.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libcstring.h"
 #include "pyevtx_libevtx.h"
@@ -43,7 +44,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_offset",
 	  (PyCFunction) pyevtx_record_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Long\n"
+	  "get_offset() -> Integer\n"
 	  "\n"
 	  "Retrieves the offset." },
 
@@ -64,14 +65,14 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_written_time_as_integer",
 	  (PyCFunction) pyevtx_record_get_written_time_as_integer,
 	  METH_NOARGS,
-	  "get_written_time_as_integer() -> Long\n"
+	  "get_written_time_as_integer() -> Integer\n"
 	  "\n"
 	  "Returns the written date and time as a 64-bit integer containing a FILETIME value." },
 
 	{ "get_event_identifier",
 	  (PyCFunction) pyevtx_record_get_event_identifier,
 	  METH_NOARGS,
-	  "get_event_identifier() -> Long\n"
+	  "get_event_identifier() -> Integer\n"
 	  "\n"
 	  "Retrieves the event identifier." },
 
@@ -472,6 +473,7 @@ PyObject *pyevtx_record_get_offset(
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
@@ -521,31 +523,10 @@ PyObject *pyevtx_record_get_offset(
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( offset > (off64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
+	integer_object = pyevtx_integer_signed_new_from_64bit(
+	                  (int64_t) offset );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) offset ) );
-#else
-	if( offset > (off64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: offset value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) offset ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the identifier
@@ -558,6 +539,7 @@ PyObject *pyevtx_record_get_identifier(
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_identifier";
 	uint64_t identifier      = 0;
 	int result               = 0;
@@ -607,31 +589,10 @@ PyObject *pyevtx_record_get_identifier(
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( identifier > (uint64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: identifier value exceeds maximum.",
-		 function );
+	integer_object = pyevtx_integer_unsigned_new_from_64bit(
+	                  (uint64_t) identifier );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) identifier ) );
-#else
-	if( identifier > (uint64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: identifier value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) identifier ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the written date and time
@@ -710,6 +671,7 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
 
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_written_time_as_integer";
 	uint64_t filetime        = 0;
 	int result               = 0;
@@ -759,31 +721,10 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 
 		return( NULL );
 	}
-#if defined( HAVE_LONG_LONG )
-	if( filetime > (uint64_t) LLONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: filetime value exceeds maximum.",
-		 function );
+	integer_object = pyevtx_integer_unsigned_new_from_64bit(
+	                  (uint64_t) filetime );
 
-		return( NULL );
-	}
-	return( PyLong_FromLongLong(
-	         (long long) filetime ) );
-#else
-	if( filetime > (uint64_t) LONG_MAX )
-	{
-		PyErr_Format(
-		 PyExc_OverflowError,
-		 "%s: filetime value exceeds maximum.",
-		 function );
-
-		return( NULL );
-	}
-	return( PyLong_FromLong(
-	         (long) filetime ) );
-#endif
+	return( integer_object );
 }
 
 /* Retrieves the event identifier
