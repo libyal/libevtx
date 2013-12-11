@@ -28,6 +28,7 @@
 
 #include "pyevtx.h"
 #include "pyevtx_datetime.h"
+#include "pyevtx_error.h"
 #include "pyevtx_integer.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libcstring.h"
@@ -388,8 +389,6 @@ int pyevtx_record_init(
 void pyevtx_record_free(
       pyevtx_record_t *pyevtx_record )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_free";
 
@@ -433,24 +432,12 @@ void pyevtx_record_free(
 	     &( pyevtx_record->record ),
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libevtx record.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to free libevtx record.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to free libevtx record.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 	}
@@ -470,8 +457,6 @@ PyObject *pyevtx_record_get_offset(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_offset";
@@ -500,24 +485,12 @@ PyObject *pyevtx_record_get_offset(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve offset.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve offset.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -536,8 +509,6 @@ PyObject *pyevtx_record_get_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_identifier";
@@ -566,24 +537,12 @@ PyObject *pyevtx_record_get_identifier(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve identifier.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve identifier.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -602,8 +561,6 @@ PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error   = NULL;
 	PyObject *date_time_object = NULL;
 	static char *function      = "pyevtx_record_get_written_time";
@@ -632,24 +589,12 @@ PyObject *pyevtx_record_get_written_time(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve written time.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve written time.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve written time.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -668,8 +613,6 @@ PyObject *pyevtx_record_get_written_time_as_integer(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_written_time_as_integer";
@@ -698,24 +641,12 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve written time.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve written time.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve written time.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -734,8 +665,6 @@ PyObject *pyevtx_record_get_event_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error  = NULL;
 	static char *function     = "pyevtx_record_get_event_identifier";
 	uint32_t event_identifier = 0;
@@ -763,24 +692,12 @@ PyObject *pyevtx_record_get_event_identifier(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve event identifier.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve event identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve event identifier.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -797,8 +714,6 @@ PyObject *pyevtx_record_get_event_level(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_event_level";
 	uint8_t event_level      = 0;
@@ -826,24 +741,12 @@ PyObject *pyevtx_record_get_event_level(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve event level.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve event level.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve event level.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -860,8 +763,6 @@ PyObject *pyevtx_record_get_source_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
 	const char *errors       = NULL;
@@ -892,24 +793,12 @@ PyObject *pyevtx_record_get_source_name(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve source name size.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve source name size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve source name size.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -947,24 +836,12 @@ PyObject *pyevtx_record_get_source_name(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve source name.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve source name.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve source name.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1000,8 +877,6 @@ PyObject *pyevtx_record_get_computer_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error  = NULL;
 	PyObject *string_object   = NULL;
 	const char *errors        = NULL;
@@ -1032,24 +907,12 @@ PyObject *pyevtx_record_get_computer_name(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve computer name size.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve computer name size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve computer name size.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1087,24 +950,12 @@ PyObject *pyevtx_record_get_computer_name(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve computer name.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve computer name.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve computer name.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1140,8 +991,6 @@ PyObject *pyevtx_record_get_user_security_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error             = NULL;
 	PyObject *string_object              = NULL;
 	const char *errors                   = NULL;
@@ -1172,24 +1021,12 @@ PyObject *pyevtx_record_get_user_security_identifier(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve user security identifier size.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve user security identifier size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve user security identifier size.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1227,24 +1064,12 @@ PyObject *pyevtx_record_get_user_security_identifier(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve user security identifier.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve user security identifier.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve user security identifier.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1280,8 +1105,6 @@ PyObject *pyevtx_record_get_number_of_strings(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_number_of_strings";
 	int number_of_strings    = 0;
@@ -1309,24 +1132,12 @@ PyObject *pyevtx_record_get_number_of_strings(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of strings.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of strings.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of strings.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1343,8 +1154,6 @@ PyObject *pyevtx_record_get_string_by_index(
            pyevtx_record_t *pyevtx_record,
            int string_index )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
 	uint8_t *string          = NULL;
@@ -1374,26 +1183,13 @@ PyObject *pyevtx_record_get_string_by_index(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve string: %d size.",
-			 function,
-			 string_index );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve string: %d size.\n%s",
-			 function,
-			 string_index,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve string: %d size.",
+		 function,
+		 string_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1433,26 +1229,13 @@ PyObject *pyevtx_record_get_string_by_index(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve string: %d.",
-			 function,
-			 string_index );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve string: %d.\n%s",
-			 function,
-			 string_index,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve string: %d.",
+		 function,
+		 string_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1516,8 +1299,6 @@ PyObject *pyevtx_record_get_strings(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *strings_object = NULL;
 	static char *function    = "pyevtx_record_get_strings";
@@ -1546,24 +1327,12 @@ PyObject *pyevtx_record_get_strings(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of strings.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of strings.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of strings.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1593,8 +1362,6 @@ PyObject *pyevtx_record_get_xml_string(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
 	const char *errors       = NULL;
@@ -1625,24 +1392,12 @@ PyObject *pyevtx_record_get_xml_string(
 
 	if( result == -1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve XML string size.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve XML string size.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve XML string size.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1680,24 +1435,12 @@ PyObject *pyevtx_record_get_xml_string(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve XML string.",
-			 function );
-		}
-		else
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve XML string.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve XML string.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 

@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyevtx\pyevtx_error.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyevtx\pyevtx_file.c"
 				>
 			</File>
@@ -236,6 +240,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pyevtx\pyevtx_datetime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyevtx\pyevtx_error.h"
 				>
 			</File>
 			<File

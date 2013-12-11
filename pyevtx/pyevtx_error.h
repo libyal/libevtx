@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * Error functions
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,34 +19,26 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYEVTX_H )
-#define _PYEVTX_H
+#if !defined( _PYEVTX_ERROR_H )
+#define _PYEVTX_ERROR_H
 
 #include <common.h>
 #include <types.h>
 
+#include "pyevtx_libcerror.h"
 #include "pyevtx_python.h"
+
+#define PYEVTX_ERROR_STRING_SIZE	768
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-PyObject *pyevtx_get_version(
-           PyObject *self,
-           PyObject *arguments );
-
-PyObject *pyevtx_check_file_signature(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_check_file_signature_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyMODINIT_FUNC initpyevtx(
-                void );
+void pyevtx_error_raise(
+      libcerror_error_t *error,
+      PyObject *exception_object,
+      const char *format_string,
+      ... );
 
 #if defined( __cplusplus )
 }

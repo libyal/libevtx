@@ -28,6 +28,7 @@
 
 #include "pyevtx.h"
 #include "pyevtx_codepage.h"
+#include "pyevtx_error.h"
 #include "pyevtx_file.h"
 #include "pyevtx_file_object_io_handle.h"
 #include "pyevtx_libbfio.h"
@@ -356,8 +357,6 @@ PyObject *pyevtx_file_new_open_file_object(
 int pyevtx_file_init(
      pyevtx_file_t *pyevtx_file )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	static char *function    = "pyevtx_file_init";
 	libcerror_error_t *error = NULL;
 
@@ -378,24 +377,12 @@ int pyevtx_file_init(
 	     &( pyevtx_file->file ),
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to initialize file.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to initialize file.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to initialize file.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -409,8 +396,6 @@ int pyevtx_file_init(
 void pyevtx_file_free(
       pyevtx_file_t *pyevtx_file )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_free";
 	int result               = 0;
@@ -461,24 +446,12 @@ void pyevtx_file_free(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to free libevtx file.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to free libevtx file.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to free libevtx file.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 	}
@@ -493,8 +466,6 @@ PyObject *pyevtx_file_signal_abort(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_signal_abort";
 	int result               = 0;
@@ -520,24 +491,12 @@ PyObject *pyevtx_file_signal_abort(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to signal abort.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to signal abort.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to signal abort.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -557,8 +516,6 @@ PyObject *pyevtx_file_open(
            PyObject *arguments,
            PyObject *keywords )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error    = NULL;
 	char *filename              = NULL;
 	char *mode                  = NULL;
@@ -608,24 +565,12 @@ PyObject *pyevtx_file_open(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to open file.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to open file.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open file.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -645,8 +590,6 @@ PyObject *pyevtx_file_open_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	PyObject *file_object            = NULL;
 	libbfio_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error         = NULL;
@@ -690,24 +633,12 @@ PyObject *pyevtx_file_open_file_object(
 	     file_object,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to initialize file IO handle.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_MemoryError,
-			 "%s: unable to initialize file IO handle.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to initialize file IO handle.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -725,24 +656,12 @@ PyObject *pyevtx_file_open_file_object(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to open file.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to open file.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open file.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -770,8 +689,6 @@ PyObject *pyevtx_file_close(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_close";
 	int result               = 0;
@@ -797,24 +714,12 @@ PyObject *pyevtx_file_close(
 
 	if( result != 0 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to close file.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to close file.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to close file.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -833,8 +738,6 @@ PyObject *pyevtx_file_get_ascii_codepage(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
 	const char *codepage_string = NULL;
@@ -857,24 +760,12 @@ PyObject *pyevtx_file_get_ascii_codepage(
 	     &ascii_codepage,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve ASCII codepage.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve ASCII codepage.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve ASCII codepage.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -915,8 +806,6 @@ int pyevtx_file_set_ascii_codepage_from_string(
      pyevtx_file_t *pyevtx_file,
      const char *codepage_string )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error      = NULL;
 	static char *function         = "pyevtx_file_set_ascii_codepage_from_string";
 	size_t codepage_string_length = 0;
@@ -954,24 +843,12 @@ int pyevtx_file_set_ascii_codepage_from_string(
 	     feature_flags,
 	     &error ) != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_RuntimeError,
-			 "%s: unable to determine ASCII codepage.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_RuntimeError,
-			 "%s: unable to determine ASCII codepage.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_RuntimeError,
+		 "%s: unable to determine ASCII codepage.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -988,24 +865,12 @@ int pyevtx_file_set_ascii_codepage_from_string(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to set ASCII codepage.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to set ASCII codepage.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to set ASCII codepage.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1087,8 +952,6 @@ PyObject *pyevtx_file_get_number_of_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_get_number_of_records";
 	int number_of_records    = 0;
@@ -1116,24 +979,12 @@ PyObject *pyevtx_file_get_number_of_records(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of records.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of records.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of records.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1150,8 +1001,6 @@ PyObject *pyevtx_file_get_record_by_index(
            pyevtx_file_t *pyevtx_file,
            int record_index )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	libevtx_record_t *record = NULL;
 	PyObject *record_object  = NULL;
@@ -1179,26 +1028,13 @@ PyObject *pyevtx_file_get_record_by_index(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve record: %d.",
-			 function,
-			 record_index );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve record: %d.\n%s",
-			 function,
-			 record_index,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve record: %d.",
+		 function,
+		 record_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1264,8 +1100,6 @@ PyObject *pyevtx_file_get_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *records_object = NULL;
 	static char *function    = "pyevtx_file_get_records";
@@ -1294,24 +1128,12 @@ PyObject *pyevtx_file_get_records(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of records.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of records.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of records.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1341,8 +1163,6 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_get_number_of_recovered_records";
 	int number_of_records    = 0;
@@ -1370,24 +1190,12 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of recovered records.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of recovered records.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of recovered records.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1404,8 +1212,6 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
            pyevtx_file_t *pyevtx_file,
            int record_index )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	libevtx_record_t *record = NULL;
 	PyObject *record_object  = NULL;
@@ -1433,26 +1239,13 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve recovered record: %d.",
-			 function,
-			 record_index );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve recovered record: %d.\n%s",
-			 function,
-			 record_index,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve recovered record: %d.",
+		 function,
+		 record_index );
+
 		libcerror_error_free(
 		 &error );
 
@@ -1518,8 +1311,6 @@ PyObject *pyevtx_file_get_recovered_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	char error_string[ PYEVTX_ERROR_STRING_SIZE ];
-
 	libcerror_error_t *error = NULL;
 	PyObject *records_object = NULL;
 	static char *function    = "pyevtx_file_get_recovered_records";
@@ -1548,24 +1339,12 @@ PyObject *pyevtx_file_get_recovered_records(
 
 	if( result != 1 )
 	{
-		if( libcerror_error_backtrace_sprint(
-		     error,
-		     error_string,
-		     PYEVTX_ERROR_STRING_SIZE ) == -1 )
-                {
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of recovered records.",
-			 function );
-		}
-		else
-		{
-			PyErr_Format(
-			 PyExc_IOError,
-			 "%s: unable to retrieve number of recovered records.\n%s",
-			 function,
-			 error_string );
-		}
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of recovered records.",
+		 function );
+
 		libcerror_error_free(
 		 &error );
 

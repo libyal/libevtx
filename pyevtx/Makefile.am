@@ -18,6 +18,7 @@ pyevtx_la_SOURCES = \
 	pyevtx.c pyevtx.h \
 	pyevtx_codepage.c pyevtx_codepage.h \
 	pyevtx_datetime.c pyevtx_datetime.h \
+	pyevtx_error.c pyevtx_error.h \
 	pyevtx_file.c pyevtx_file.h \
 	pyevtx_file_object_io_handle.c pyevtx_file_object_io_handle.h \
 	pyevtx_integer.c pyevtx_integer.h \

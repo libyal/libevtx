@@ -81,9 +81,9 @@ void usage_fprint(
 	fprintf( stream, "\t-r:     name of the directory containing the SOFTWARE and SYSTEM\n"
 	                 "\t        (Windows) Registry file\n" );
 	fprintf( stream, "\t-s:     filename of the SYSTEM (Windows) Registry file.\n"
-	                 "\t        This option overrides the path provided by -r" );
+	                 "\t        This option overrides the path provided by -r\n" );
 	fprintf( stream, "\t-S:     filename of the SOFTWARE (Windows) Registry file.\n"
-	                 "\t        This option overrides the path provided by -r" );
+	                 "\t        This option overrides the path provided by -r\n" );
 	fprintf( stream, "\t-t:     event log type, options: application, security, system\n"
 	                 "\t        if not specified the event log type is determined based\n"
 	                 "\t        on the filename.\n" );
