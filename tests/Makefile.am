@@ -53,7 +53,7 @@ evtx_test_open_close_SOURCES = \
 	evtx_test_open_close.c
 
 evtx_test_open_close_LDADD = \
-	../libevtx/libevtx.la
+	../libevtx/libevtx.la \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
@@ -73,7 +73,7 @@ evtx_test_set_ascii_codepage_SOURCES = \
 	evtx_test_set_ascii_codepage.c
 
 evtx_test_set_ascii_codepage_LDADD = \
-	../libevtx/libevtx.la
+	../libevtx/libevtx.la \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@

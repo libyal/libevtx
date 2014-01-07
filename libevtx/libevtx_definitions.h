@@ -1,7 +1,7 @@
 /*
  * The internal definitions
  *
- * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -37,11 +37,11 @@
  * for local use of libevtx
  */
 #else
-#define LIBEVTX_VERSION						20131211
+#define LIBEVTX_VERSION						20140105
 
 /* The version string
  */
-#define LIBEVTX_VERSION_STRING					"20131211"
+#define LIBEVTX_VERSION_STRING					"20140105"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
