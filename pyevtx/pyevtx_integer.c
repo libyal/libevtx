@@ -22,7 +22,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pyevtx.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_integer.h"
 #include "pyevtx_python.h"

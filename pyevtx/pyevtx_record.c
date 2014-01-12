@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #endif
 
-#include "pyevtx.h"
 #include "pyevtx_datetime.h"
 #include "pyevtx_error.h"
 #include "pyevtx_integer.h"

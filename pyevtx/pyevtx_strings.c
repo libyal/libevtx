@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "pyevtx.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"

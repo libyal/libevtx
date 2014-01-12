@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #endif
 
-#include "pyevtx.h"
 #include "pyevtx_codepage.h"
 #include "pyevtx_error.h"
 #include "pyevtx_file.h"
