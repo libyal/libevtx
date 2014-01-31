@@ -1,4 +1,5 @@
 TODO
+* create evtxexport.1 man page
 * add clean IO handle function
 * msvscpp:
   - check and fix debug output generation
@@ -73,6 +74,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20140131
+* removed examples
 
 20140112
 * updated dependencies
