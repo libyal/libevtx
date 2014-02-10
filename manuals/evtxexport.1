@@ -1,0 +1,89 @@
+.Dd February 10, 2014
+.Dt evtxexport
+.Os libevtx
+.Sh NAME
+.Nm evtxexport
+.Nd exports items stored in a Windows XML EventViewer Log (EVTX) file
+.Sh SYNOPSIS
+.Nm evtxexport
+.Op Fl c Ar codepage
+.Op Fl f Ar format
+.Op Fl l Ar log_file
+.Op Fl m Ar mode
+.Op Fl p Ar message_files_path
+.Op Fl r Ar registy_files_path
+.Op Fl s Ar system_file
+.Op Fl S Ar software_file
+.Op Fl t Ar event_log_type
+.Op Fl hTvV
+.Va Ar source
+.Sh DESCRIPTION
+.Nm evtxexport
+is a utility to export items stored in a Windows XML EventViewer Log (EVTX) file
+.Pp
+.Nm evtxexport
+is part of the
+.Nm libevtx
+package.
+.Nm libevtx
+is a library to access the Windows XML EventViewer Log (EVTX) file
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl c Ar codepage
+specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+.It Fl f Ar format
+output format, options: xml, text (default)
+.It Fl h
+shows this help
+.It Fl l Ar log_file
+specify the file in which to log information about the exported items
+.It Fl m Ar mode
+export mode, option: all, items (default), recovered 'all' exports the (allocated) items and recovered items, 'items' exports the (allocated) items and 'recovered' exports the recovered items
+.It Fl p Ar message_files_path
+search PATH for the resource files (default is the current working directory)
+.It Fl r Ar registy_files_path
+name of the directory containing the SOFTWARE and SYSTEM (Windows) Registry file
+.It Fl s Ar system_file
+filename of the SYSTEM (Windows) Registry file
+This option overrides the path provided by \-r
+.It Fl S Ar software_file
+filename of the SOFTWARE (Windows) Registry file
+This option overrides the path provided by \-r
+.It Fl t Ar event_log_type
+event log type, options: application, security, system if not specified the event log type is determined based on the filename.
+.It Fl T
+use event template definitions to parse the event record data
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# evtxexport evtxexport -p c/ -r c/Windows/System32/config/ c/Windows/System32/winevt/Logs/Apllication.Evtx
+evtxexport 20120910
+
+.Dl ...
+
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+http://code.google.com/p/libevtx/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright 2011-2014, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+.Xr evtxinfo 1
