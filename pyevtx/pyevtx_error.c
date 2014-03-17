@@ -70,7 +70,7 @@ void VARARGS(
 
 	static char *function     = "pyevtx_error_raise";
 	size_t error_string_index = 0;
-	size_t print_count        = 0;
+	int print_count           = 0;
 
        	if( format_string == NULL )
 	{

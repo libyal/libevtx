@@ -28,7 +28,9 @@
 
 #include "pyevtx.h"
 #include "pyevtx_error.h"
+#include "pyevtx_event_levels.h"
 #include "pyevtx_file.h"
+#include "pyevtx_file_flags.h"
 #include "pyevtx_file_object_io_handle.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libcstring.h"
@@ -279,12 +281,14 @@ on_error:
 PyMODINIT_FUNC initpyevtx(
                 void )
 {
-	PyObject *module                  = NULL;
-	PyTypeObject *file_type_object    = NULL;
-	PyTypeObject *record_type_object  = NULL;
-	PyTypeObject *records_type_object = NULL;
-	PyTypeObject *strings_type_object = NULL;
-	PyGILState_STATE gil_state        = 0;
+	PyObject *module                       = NULL;
+	PyTypeObject *event_levels_type_object = NULL;
+	PyTypeObject *file_type_object         = NULL;
+	PyTypeObject *file_flags_type_object   = NULL;
+	PyTypeObject *record_type_object       = NULL;
+	PyTypeObject *records_type_object      = NULL;
+	PyTypeObject *strings_type_object      = NULL;
+	PyGILState_STATE gil_state             = 0;
 
 	/* Create the module
 	 * This function must be called before grabbing the GIL
@@ -315,8 +319,8 @@ PyMODINIT_FUNC initpyevtx(
 
 	PyModule_AddObject(
 	 module,
-	"file",
-	(PyObject *) file_type_object );
+	 "file",
+	 (PyObject *) file_type_object );
 
 	/* Setup the records type object
 	 */
@@ -334,8 +338,8 @@ PyMODINIT_FUNC initpyevtx(
 
 	PyModule_AddObject(
 	 module,
-	"_records",
-	(PyObject *) records_type_object );
+	 "_records",
+	 (PyObject *) records_type_object );
 
 	/* Setup the record type object
 	 */
@@ -372,8 +376,56 @@ PyMODINIT_FUNC initpyevtx(
 
 	PyModule_AddObject(
 	 module,
-	"_strings",
-	(PyObject *) strings_type_object );
+	 "_strings",
+	 (PyObject *) strings_type_object );
+
+	/* Setup the event levels type object
+	 */
+	pyevtx_event_levels_type_object.tp_new = PyType_GenericNew;
+
+	if( pyevtx_event_levels_init_type(
+             &pyevtx_event_levels_type_object ) != 1 )
+	{
+		goto on_error;
+	}
+	if( PyType_Ready(
+	     &pyevtx_event_levels_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyevtx_event_levels_type_object );
+
+	event_levels_type_object = &pyevtx_event_levels_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "event_levels",
+	 (PyObject *) event_levels_type_object );
+
+	/* Setup the file flags type object
+	 */
+	pyevtx_file_flags_type_object.tp_new = PyType_GenericNew;
+
+	if( pyevtx_file_flags_init_type(
+             &pyevtx_file_flags_type_object ) != 1 )
+	{
+		goto on_error;
+	}
+	if( PyType_Ready(
+	     &pyevtx_file_flags_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pyevtx_file_flags_type_object );
+
+	file_flags_type_object = &pyevtx_file_flags_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "file_flags",
+	 (PyObject *) file_flags_type_object );
 
 on_error:
 	PyGILState_Release(

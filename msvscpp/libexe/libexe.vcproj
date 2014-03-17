@@ -155,6 +155,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libexe\libexe_debug_data.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libexe\libexe_error.c"
 				>
 			</File>
@@ -205,7 +209,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libexe\libexe_data_directory_descriptor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libexe\libexe_debug.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_debug_data.h"
 				>
 			</File>
 			<File
@@ -250,10 +262,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libexe\libexe_libcstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libexe\libexe_libfcache.h"
 				>
 			</File>
 			<File

@@ -201,7 +201,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyevtx\pyevtx_event_levels.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyevtx\pyevtx_file.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyevtx\pyevtx_file_flags.c"
 				>
 			</File>
 			<File
@@ -247,7 +255,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pyevtx\pyevtx_event_levels.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pyevtx\pyevtx_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pyevtx\pyevtx_file_flags.h"
 				>
 			</File>
 			<File
