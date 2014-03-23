@@ -652,14 +652,16 @@ int libevtx_file_open_file_io_handle(
 	return( 1 );
 
 on_error:
-	if( file_io_handle_is_open == 0 )
+	if( ( file_io_handle_is_open == 0 )
+	 && ( internal_file->file_io_handle_opened_in_library != 0 ) )
 	{
 		libbfio_handle_close(
 		 file_io_handle,
 		 error );
+
+		internal_file->file_io_handle_opened_in_library = 0;
 	}
-	internal_file->file_io_handle                   = NULL;
-	internal_file->file_io_handle_opened_in_library = 0;
+	internal_file->file_io_handle = NULL;
 
 	return( -1 );
 }
@@ -699,10 +701,10 @@ int libevtx_file_close(
 
 		return( -1 );
 	}
-	if( internal_file->file_io_handle_created_in_library != 0 )
-	{
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
+	{
+		if( internal_file->file_io_handle_created_in_library != 0 )
 		{
 			if( libevtx_debug_print_read_offsets(
 			     internal_file->file_io_handle,
@@ -718,24 +720,27 @@ int libevtx_file_close(
 				result = -1;
 			}
 		}
+	}
 #endif
-		if( internal_file->file_io_handle_opened_in_library != 0 )
+	if( internal_file->file_io_handle_opened_in_library != 0 )
+	{
+		if( libbfio_handle_close(
+		     internal_file->file_io_handle,
+		     error ) != 0 )
 		{
-			if( libbfio_handle_close(
-			     internal_file->file_io_handle,
-			     error ) != 0 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close file IO handle.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close file IO handle.",
+			 function );
 
-				result = -1;
-			}
-			internal_file->file_io_handle_opened_in_library = 0;
+			result = -1;
 		}
+		internal_file->file_io_handle_opened_in_library = 0;
+	}
+	if( internal_file->file_io_handle_created_in_library != 0 )
+	{
 		if( libbfio_handle_free(
 		     &( internal_file->file_io_handle ),
 		     error ) != 1 )
@@ -749,9 +754,9 @@ int libevtx_file_close(
 
 			result = -1;
 		}
+		internal_file->file_io_handle_created_in_library = 0;
 	}
-	internal_file->file_io_handle                    = NULL;
-	internal_file->file_io_handle_created_in_library = 0;
+	internal_file->file_io_handle = NULL;
 
 	if( libevtx_io_handle_clear(
 	     internal_file->io_handle,

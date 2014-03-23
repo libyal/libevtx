@@ -368,9 +368,8 @@ int pyevtx_file_init(
 
 		return( -1 );
 	}
-	/* Make sure libevtx file is set to NULL
-	 */
-	pyevtx_file->file = NULL;
+	pyevtx_file->file           = NULL;
+	pyevtx_file->file_io_handle = NULL;
 
 	if( libevtx_file_initialize(
 	     &( pyevtx_file->file ),
@@ -589,13 +588,12 @@ PyObject *pyevtx_file_open_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *file_object            = NULL;
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-        char *mode                       = NULL;
-	static char *keyword_list[]      = { "file_object", "mode", NULL };
-	static char *function            = "pyevtx_file_open_file_object";
-	int result                       = 0;
+	PyObject *file_object       = NULL;
+	libcerror_error_t *error    = NULL;
+        char *mode                  = NULL;
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	static char *function       = "pyevtx_file_open_file_object";
+	int result                  = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -628,7 +626,7 @@ PyObject *pyevtx_file_open_file_object(
 		return( NULL );
 	}
 	if( pyevtx_file_object_initialize(
-	     &file_io_handle,
+	     &( pyevtx_file->file_io_handle ),
 	     file_object,
 	     &error ) != 1 )
 	{
@@ -647,7 +645,7 @@ PyObject *pyevtx_file_open_file_object(
 
 	result = libevtx_file_open_file_io_handle(
 	          pyevtx_file->file,
-                  file_io_handle,
+                  pyevtx_file->file_io_handle,
                   LIBEVTX_OPEN_READ,
 	          &error );
 
@@ -672,10 +670,10 @@ PyObject *pyevtx_file_open_file_object(
 	return( Py_None );
 
 on_error:
-	if( file_io_handle != NULL )
+	if( pyevtx_file->file_io_handle != NULL )
 	{
 		libbfio_handle_free(
-		 &file_io_handle,
+		 &( pyevtx_file->file_io_handle ),
 		 NULL );
 	}
 	return( NULL );
@@ -723,6 +721,30 @@ PyObject *pyevtx_file_close(
 		 &error );
 
 		return( NULL );
+	}
+	if( pyevtx_file->file_io_handle != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libbfio_handle_free(
+		          &( pyevtx_file->file_io_handle ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyevtx_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libbfio file IO handle.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
 	}
 	Py_IncRef(
 	 Py_None );
