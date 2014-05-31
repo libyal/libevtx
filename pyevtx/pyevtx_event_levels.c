@@ -72,7 +72,7 @@ PyTypeObject pyevtx_event_levels_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyevtx event levels object (wraps LIBEVTX_EVENT_LEVELS)",
@@ -145,42 +145,42 @@ int pyevtx_event_levels_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "CRITICAL",
-             PyInt_FromLong(
-              LIBEVTX_EVENT_LEVEL_CRITICAL ) ) != 0 )
+	     type_object->tp_dict,
+	     "CRITICAL",
+	     PyInt_FromLong(
+	      LIBEVTX_EVENT_LEVEL_CRITICAL ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "ERROR",
-             PyInt_FromLong(
-              LIBEVTX_EVENT_LEVEL_ERROR ) ) != 0 )
+	     type_object->tp_dict,
+	     "ERROR",
+	     PyInt_FromLong(
+	      LIBEVTX_EVENT_LEVEL_ERROR ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "WARNING",
-             PyInt_FromLong(
-              LIBEVTX_EVENT_LEVEL_WARNING ) ) != 0 )
+	     type_object->tp_dict,
+	     "WARNING",
+	     PyInt_FromLong(
+	      LIBEVTX_EVENT_LEVEL_WARNING ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "INFORMATION",
-             PyInt_FromLong(
-              LIBEVTX_EVENT_LEVEL_INFORMATION ) ) != 0 )
+	     type_object->tp_dict,
+	     "INFORMATION",
+	     PyInt_FromLong(
+	      LIBEVTX_EVENT_LEVEL_INFORMATION ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "VERBOSE",
-             PyInt_FromLong(
-              LIBEVTX_EVENT_LEVEL_VERBOSE ) ) != 0 )
+	     type_object->tp_dict,
+	     "VERBOSE",
+	     PyInt_FromLong(
+	      LIBEVTX_EVENT_LEVEL_VERBOSE ) ) != 0 )
 	{
 		goto on_error;
 	}

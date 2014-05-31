@@ -101,13 +101,6 @@ stamp-h1
 /include/libevtx/types.h
 /libevtx/libevtx.rc
 /libevtx/libevtx_definitions.h
-/macosx/Introduction.rtf
-/macosx/libevtx.pmdoc/01bin.xml
-/macosx/libevtx.pmdoc/02include.xml
-/macosx/libevtx.pmdoc/03lib.xml
-/macosx/libevtx.pmdoc/04share.xml
-/macosx/libevtx.pmdoc/05python.xml
-/macosx/libevtx.pmdoc/index.xml
 /pyevtx/setup.py
 /tests/input
 /tests/evtx_test_open_close

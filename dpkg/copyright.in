@@ -35,6 +35,6 @@ The Debian packaging is:
 
     Copyright (C) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
 
-and is licensed under the GPL version 3,
-see `/usr/share/common-licenses/GPL-3'.
+and is licensed under the GNU Lesser General Public License,
+see `/usr/share/common-licenses/LGPL-3'.
 

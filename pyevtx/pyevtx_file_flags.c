@@ -72,7 +72,7 @@ PyTypeObject pyevtx_file_flags_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyevtx file flags object (wraps LIBEVTX_FILE_FLAGS)",
@@ -145,18 +145,18 @@ int pyevtx_file_flags_init_type(
 		return( -1 );
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "IS_DIRTY",
-             PyInt_FromLong(
-              LIBEVTX_FILE_FLAG_IS_DIRTY ) ) != 0 )
+	     type_object->tp_dict,
+	     "IS_DIRTY",
+	     PyInt_FromLong(
+	      LIBEVTX_FILE_FLAG_IS_DIRTY ) ) != 0 )
 	{
 		goto on_error;
 	}
 	if( PyDict_SetItemString(
-             type_object->tp_dict,
-             "IS_FULL",
-             PyInt_FromLong(
-              LIBEVTX_FILE_FLAG_IS_FULL ) ) != 0 )
+	     type_object->tp_dict,
+	     "IS_FULL",
+	     PyInt_FromLong(
+	      LIBEVTX_FILE_FLAG_IS_FULL ) ) != 0 )
 	{
 		goto on_error;
 	}

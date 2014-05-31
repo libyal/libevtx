@@ -32,7 +32,6 @@ SUBDIRS = \
 	po \
 	manuals \
 	tests \
-	macosx \
 	msvscpp
 
 DPKG_FILES = \
@@ -138,4 +137,5 @@ splint:
 	(cd $(srcdir)/evtxtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pyevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/tests && $(MAKE) $(AM_MAKEFLAGS))
 

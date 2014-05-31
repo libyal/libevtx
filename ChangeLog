@@ -75,6 +75,17 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20140531
+* updated msvscpp files
+
+20140530
+* updated dependencies
+* worked on Python-bindings
+* replaced PackageMaker for pkgbuild
+
+20140402
+* code clean up
+
 20140323
 * worked on Python-bindings
 

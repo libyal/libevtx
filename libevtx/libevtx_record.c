@@ -278,7 +278,7 @@ int libevtx_record_get_offset(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 "%s: invalid record - missing record values.",
 		 function );
 
 		return( -1 );
@@ -329,7 +329,7 @@ int libevtx_record_get_identifier(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 "%s: invalid record - missing record values.",
 		 function );
 
 		return( -1 );
@@ -381,7 +381,7 @@ int libevtx_record_get_written_time(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal record - missing record values.",
+		 "%s: invalid record - missing record values.",
 		 function );
 
 		return( -1 );

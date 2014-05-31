@@ -13,7 +13,7 @@ MSVSCPP_FILES = \
 	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
-	libevtx_dll/libevtx_dll.vcproj \
+	libevtx/libevtx.vcproj \
 	libexe/libexe.vcproj \
 	libfcache/libfcache.vcproj \
 	libfdata/libfdata.vcproj \

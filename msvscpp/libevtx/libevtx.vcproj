@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libevtx_dll"
-	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
+	Name="libevtx"
+	ProjectGUID="{9DF4AFB0-CED6-4BC5-802D-E8C951C5AED9}"
 	RootNamespace="libevtx"
 	TargetFrameworkVersion="131072"
 	>
@@ -58,8 +58,9 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\libevtx.dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
 				ImportLibrary="$(OutDir)\libevtx.lib"
 			/>
 			<Tool
@@ -115,6 +116,7 @@
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
 				WarningLevel="4"
+				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -132,7 +134,8 @@
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				DataExecutionPrevention="1"
+				TargetMachine="1"
 				ImportLibrary="$(OutDir)\libevtx.lib"
 			/>
 			<Tool

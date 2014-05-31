@@ -28,6 +28,7 @@
 
 #include "pyevtx_datetime.h"
 #include "pyevtx_error.h"
+#include "pyevtx_file.h"
 #include "pyevtx_integer.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libcstring.h"
@@ -244,7 +245,7 @@ PyTypeObject pyevtx_record_type_object = {
 	0,
 	/* tp_as_buffer */
 	0,
-        /* tp_flags */
+	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
 	"pyevtx record object (wraps libevtx_record_t)",
@@ -1281,9 +1282,9 @@ PyObject *pyevtx_record_get_string(
 	     "i",
 	     keyword_list,
 	     &string_index ) == 0 )
-        {
+	{
 		return( NULL );
-        }
+	}
 	string_object = pyevtx_record_get_string_by_index(
 	                 pyevtx_record,
 	                 string_index );
