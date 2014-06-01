@@ -23,6 +23,15 @@
 #include <memory.h>
 #include <types.h>
 
+#if defined( TIME_WITH_SYS_TIME )
+#include <sys/time.h>
+#include <time.h>
+#elif defined( HAVE_SYS_TIME_H )
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"
@@ -861,6 +870,7 @@ int resource_file_get_message_string(
 {
 	static char *function        = "resource_file_get_message_string";
 	uint32_t language_identifier = 0;
+	time_t timestamp             = 0;
 	int result                   = 0;
 
 	if( resource_file == NULL )
@@ -983,12 +993,29 @@ int resource_file_get_message_string(
 		}
 		else if( result != 0 )
 		{
+			if( libfcache_date_time_get_timestamp(
+			     &timestamp,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve cache timestamp.",
+				 function );
+
+				message_string_free(
+				 message_string,
+				 NULL );
+
+				return( -1 );
+			}
 			if( libfcache_cache_set_value_by_index(
 			     resource_file->message_string_cache,
 			     resource_file->next_message_string_cache_index,
 			     0,
 			     resource_file->next_message_string_cache_index,
-			     libfcache_date_time_get_timestamp(),
+			     timestamp,
 			     (intptr_t *) *message_string,
 			     (int (*)(intptr_t **, libcerror_error_t **)) &message_string_free,
 			     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
@@ -1379,7 +1406,7 @@ int resource_file_get_template_definition(
 			goto on_error;
 		}
 	}
-	return( result );
+	return( 1 );
 
 on_error:
 	if( *event != NULL )

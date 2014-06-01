@@ -23,6 +23,15 @@
 #include <memory.h>
 #include <types.h>
 
+#if defined( TIME_WITH_SYS_TIME )
+#include <sys/time.h>
+#include <time.h>
+#elif defined( HAVE_SYS_TIME_H )
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+
 #include "evtxtools_libcdirectory.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcpath.h"
@@ -2998,6 +3007,7 @@ int message_handle_get_resource_file(
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_get_resource_file";
+	time_t timestamp      = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3065,12 +3075,25 @@ int message_handle_get_resource_file(
 
 		goto on_error;
 	}
+	if( libfcache_date_time_get_timestamp(
+	     &timestamp,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve cache timestamp.",
+		 function );
+
+		return( -1 );
+	}
 	if( libfcache_cache_set_value_by_index(
 	     message_handle->resource_file_cache,
 	     message_handle->next_resource_file_cache_index,
 	     0,
 	     message_handle->next_resource_file_cache_index,
-	     libfcache_date_time_get_timestamp(),
+	     timestamp,
 	     (intptr_t *) *resource_file,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &resource_file_free,
 	     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
@@ -3219,6 +3242,7 @@ int message_handle_get_mui_resource_file(
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_get_mui_resource_file";
+	time_t timestamp      = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3286,12 +3310,25 @@ int message_handle_get_mui_resource_file(
 
 		goto on_error;
 	}
+	if( libfcache_date_time_get_timestamp(
+	     &timestamp,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve cache timestamp.",
+		 function );
+
+		return( -1 );
+	}
 	if( libfcache_cache_set_value_by_index(
 	     message_handle->mui_resource_file_cache,
 	     message_handle->next_mui_resource_file_cache_index,
 	     0,
 	     message_handle->next_mui_resource_file_cache_index,
-	     libfcache_date_time_get_timestamp(),
+	     timestamp,
 	     (intptr_t *) *resource_file,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &resource_file_free,
 	     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
