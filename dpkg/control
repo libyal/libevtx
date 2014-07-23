@@ -10,8 +10,16 @@ Package: libevtx
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libevtx-dbg
 Description: Library to access the Windows XML Event Log (EVTX) format
  libevtx is a library to access the Windows XML Event Log (EVTX) format.
+
+Package: libevtx-dbg
+Architecture: any
+Section: debug
+Depends: libevtx (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libevtx
+ Debugging symbols for libevtx.
 
 Package: libevtx-dev
 Section: libdevel
@@ -31,6 +39,14 @@ Package: libevtx-python
 Section: python
 Architecture: any
 Depends: libevtx (= ${Source-Version}), ${shlibs:Depends}, ${python:Depends}
+Suggests: libevtx-python-dbg
 Description: Python bindings for libevtx
  Python bindings for libevtx.
+
+Package: libevtx-python-dbg
+Section: debug
+Architecture: any
+Depends: libevtx-python (= ${Source-Version})
+Description: Debugging symbols for libevtx-python
+ Debugging symbols for libevtx-python.
 
