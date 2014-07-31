@@ -123,13 +123,13 @@ else
 			then
 				if test -f "input/.libevtx/${DIRNAME}/files";
 				then
-					TESTFILES=`cat input/.libevtx/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+					TEST_FILES=`cat input/.libevtx/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
 				else
-					TESTFILES=`ls ${TESTDIR}/*`;
+					TEST_FILES=`ls -1 ${TESTDIR}/* 2> /dev/null`;
 				fi
-				for TESTFILE in ${TESTFILES};
+				for TEST_FILE in ${TEST_FILES};
 				do
-					if ! test_open_close "${TESTFILE}";
+					if ! test_open_close "${TEST_FILE}";
 					then
 						exit ${EXIT_FAILURE};
 					fi

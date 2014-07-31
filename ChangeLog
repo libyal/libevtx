@@ -1,4 +1,5 @@
 TODO
+* add parameter expansion support
 * evtxexport: add add support for .mui files in the same directory
 * add clean IO handle function
 * msvscpp:
@@ -74,6 +75,9 @@ Debug:
 
 Recovery:
 * scan for records in chunk free space
+
+20140731
+* bug fix in Python-bindings
 
 20140723
 * worked on dpkg debug packages support
