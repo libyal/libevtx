@@ -32,6 +32,7 @@
 #include <time.h>
 #endif
 
+#include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"

@@ -35,6 +35,7 @@ evtxexport_SOURCES = \
 	evtxexport.c \
 	evtxinput.c evtxinput.h \
 	evtxoutput.c evtxoutput.h \
+	evtxtools_libbfio.h \
 	evtxtools_libcdirectory.h \
 	evtxtools_libcerror.h \
 	evtxtools_libclocale.h \
@@ -71,6 +72,8 @@ evtxexport_LDADD = \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCDIRECTORY_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	../libevtx/libevtx.la \
 	@LIBCNOTIFY_LIBADD@ \
