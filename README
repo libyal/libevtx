@@ -1,4 +1,10 @@
-See:
-* http://code.google.com/p/libevtx/wiki/Building
-* README.macosx
+libevtx is a library to access the Windows XML Event Log (EVTX) format.
+
+Planned:
+* Multi-threading support
+* Python 3 support
+
+For more information see:
+* Project documentation: https://github.com/libyal/libevtx/wiki/Home
+* How to build from source: https://github.com/libyal/libevtx/wiki/Building
 

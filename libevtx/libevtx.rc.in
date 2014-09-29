@@ -28,7 +28,7 @@ BEGIN
       VALUE "OriginalFilename",		"libevtx.dll\0"
       VALUE "ProductName",		"libevtx\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://code.google.com/p/libevtx/\0"
+      VALUE "Comments",			"For more information visit https://github.com/libyal/libevtx/\0"
     END
   END
   BLOCK "VarFileInfo"
