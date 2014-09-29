@@ -102,6 +102,8 @@ stamp-h1
 /libevtx/libevtx.rc
 /libevtx/libevtx_definitions.h
 /pyevtx/setup.py
+/evtxtools/evtxexport
+/evtxtools/evtxinfo
 /tests/input
 /tests/evtx_test_open_close
 /tests/evtx_test_set_ascii_codepage
@@ -117,6 +119,8 @@ stamp-h1
 /libcnotify
 /libcpath
 /libcsplit
+/libcstring
+/libcsystem
 /libcthreads
 /libexe
 /libfcache
