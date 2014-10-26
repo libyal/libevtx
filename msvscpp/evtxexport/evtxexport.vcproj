@@ -286,6 +286,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\evtxtools\evtxtools_libfvalue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\evtxtools_libfwnt.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\evtxtools\evtxtools_libregf.h"
 				>
 			</File>

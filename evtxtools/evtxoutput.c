@@ -24,31 +24,16 @@
 #include <memory.h>
 #include <types.h>
 
-#if defined( HAVE_LOCAL_LIBBFIO )
-#include <libbfio_definitions.h>
-#elif defined( HAVE_LIBBFIO_H )
-#include <libbfio.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFVALUE )
-#include <libfvalue_definitions.h>
-#elif defined( HAVE_LIBFVALUE_H )
-#include <libfvalue.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFWNT )
-#include <libfwnt_definitions.h>
-#elif defined( HAVE_LIBFWNT_H )
-#include <libfwnt.h>
-#endif
-
 #include "evtxoutput.h"
+#include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libclocale.h"
 #include "evtxtools_libcstring.h"
 #include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"
+#include "evtxtools_libfvalue.h"
+#include "evtxtools_libfwnt.h"
 #include "evtxtools_libfguid.h"
 #include "evtxtools_libuna.h"
 

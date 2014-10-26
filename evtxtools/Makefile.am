@@ -48,6 +48,8 @@ evtxexport_SOURCES = \
 	evtxtools_libfcache.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
+	evtxtools_libfvalue.h \
+	evtxtools_libfwnt.h \
 	evtxtools_libexe.h \
 	evtxtools_libregf.h \
 	evtxtools_libuna.h \
@@ -94,6 +96,8 @@ evtxinfo_SOURCES = \
 	evtxtools_libevtx.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
+	evtxtools_libfvalue.h \
+	evtxtools_libfwnt.h \
 	evtxtools_libuna.h \
 	info_handle.c info_handle.h
 
