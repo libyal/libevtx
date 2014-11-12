@@ -385,7 +385,7 @@ int libevtx_record_get_event_identifier(
      libevtx_error_t **error );
 
 /* Retrieves the event identifier qualifiers
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 LIBEVTX_EXTERN \
 int libevtx_record_get_event_identifier_qualifiers(

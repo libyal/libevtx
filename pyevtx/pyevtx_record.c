@@ -752,7 +752,7 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyevtx_error_raise(
 		 error,
