@@ -77,6 +77,13 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Retrieves the event identifier." },
 
+	{ "get_event_identifier_qualifiers",
+	  (PyCFunction) pyevtx_record_get_event_identifier_qualifiers,
+	  METH_NOARGS,
+	  "get_event_identifier_qualifiers() -> Integer\n"
+	  "\n"
+	  "Retrieves the event identifier qualifiers." },
+
 	{ "get_event_level",
 	  (PyCFunction) pyevtx_record_get_event_level,
 	  METH_NOARGS,
@@ -156,6 +163,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_event_identifier,
 	  (setter) 0,
 	  "The event identifier.",
+	  NULL },
+
+	{ "event_identifier_qualifiers",
+	  (getter) pyevtx_record_get_event_identifier_qualifiers,
+	  (setter) 0,
+	  "The event identifier qualifiers.",
 	  NULL },
 
 	{ "event_level",
@@ -705,6 +718,55 @@ PyObject *pyevtx_record_get_event_identifier(
 	}
 	return( PyLong_FromUnsignedLong(
 	         (unsigned long) event_identifier ) );
+}
+
+/* Retrieves the event identifier qualifiers
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_event_identifier_qualifiers(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error             = NULL;
+	static char *function                = "pyevtx_record_get_event_identifier_qualifiers";
+	uint32_t event_identifier_qualifiers = 0;
+	int result                           = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_event_identifier_qualifiers(
+	          pyevtx_record->record,
+	          &event_identifier_qualifiers,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve event identifier qualifiers.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	return( PyLong_FromUnsignedLong(
+	         (unsigned long) event_identifier_qualifiers ) );
 }
 
 /* Retrieves the event level

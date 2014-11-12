@@ -76,6 +76,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20141112
+* changes to expose the event identifier qualifiers in the python bindings
+
 20141026
 * changes for deployment
 
