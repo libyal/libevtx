@@ -5,9 +5,6 @@ compiler:
 before_install:
   - sudo apt-get install autopoint
 install:
-  - ./synclibs.sh
-  - ./autogen.sh
+  - ./synclibs.sh && ./autogen.sh
 script:
-  - ./configure
-  - make
-  - make check
+  - ./configure && make && make check
