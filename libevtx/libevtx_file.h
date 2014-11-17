@@ -108,13 +108,15 @@ int libevtx_file_open(
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
+
 LIBEVTX_EXTERN \
 int libevtx_file_open_wide(
      libevtx_file_t *file,
      const wchar_t *filename,
      int access_flags,
      libcerror_error_t **error );
-#endif
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBEVTX_EXTERN \
 int libevtx_file_open_file_io_handle(
