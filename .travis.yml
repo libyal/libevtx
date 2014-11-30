@@ -1,9 +1,14 @@
 language: c
+os:
+  - linux
+  - osx
+osx_image: xcode61
 compiler:
   - clang
   - gcc
 before_install:
-  - sudo apt-get install autopoint
+  - if test `uname -s` = 'Darwin'; then brew update && brew install gettext && brew link --force gettext; fi
+  - if test `uname -s` = 'Linux'; then sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confnew" -y upgrade && sudo apt-get install autopoint; fi
 install:
   - ./synclibs.sh && ./autogen.sh
 script:
