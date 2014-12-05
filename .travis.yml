@@ -2,7 +2,6 @@ language: c
 os:
   - linux
   - osx
-osx_image: xcode61
 compiler:
   - clang
   - gcc
@@ -13,3 +12,4 @@ install:
   - ./synclibs.sh && ./autogen.sh
 script:
   - ./configure --enable-python && make && make check
+  - if test -f tests/test-suite.log; then cat tests/test-suite.log; fi
