@@ -63,7 +63,7 @@ test_open_close()
 	return ${RESULT};
 }
 
-PYTHON=`which python`;
+PYTHON=`which python${PYTHON_VERSION} 2> /dev/null`;
 
 if ! test -x ${PYTHON};
 then
@@ -102,9 +102,9 @@ then
 else
 	IGNORELIST="";
 
-	if test -f "input/.libevtx/ignore";
+	if test -f "input/.pyevtx/ignore";
 	then
-		IGNORELIST=`cat input/.libevtx/ignore | sed '/^#/d'`;
+		IGNORELIST=`cat input/.pyevtx/ignore | sed '/^#/d'`;
 	fi
 	for TESTDIR in input/*;
 	do
@@ -114,9 +114,9 @@ else
 
 			if ! list_contains "${IGNORELIST}" "${DIRNAME}";
 			then
-				if test -f "input/.libevtx/${DIRNAME}/files";
+				if test -f "input/.pyevtx/${DIRNAME}/files";
 				then
-					TEST_FILES=`cat input/.libevtx/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
+					TEST_FILES=`cat input/.pyevtx/${DIRNAME}/files | sed "s?^?${TESTDIR}/?"`;
 				else
 					TEST_FILES=`ls -1 ${TESTDIR}/* 2> /dev/null`;
 				fi

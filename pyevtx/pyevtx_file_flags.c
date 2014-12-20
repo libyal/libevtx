@@ -32,10 +32,8 @@
 #include "pyevtx_unused.h"
 
 PyTypeObject pyevtx_file_flags_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyevtx.file_flags",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyevtx_file_flags_type_object = {
 int pyevtx_file_flags_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,19 +144,31 @@ int pyevtx_file_flags_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_FILE_FLAG_IS_DIRTY );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_FILE_FLAG_IS_DIRTY );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "IS_DIRTY",
-	     PyInt_FromLong(
-	      LIBEVTX_FILE_FLAG_IS_DIRTY ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_FILE_FLAG_IS_FULL );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_FILE_FLAG_IS_FULL );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "IS_FULL",
-	     PyInt_FromLong(
-	      LIBEVTX_FILE_FLAG_IS_FULL ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -241,7 +253,8 @@ int pyevtx_file_flags_init(
 void pyevtx_file_flags_free(
       pyevtx_file_flags_t *pyevtx_file_flags )
 {
-	static char *function = "pyevtx_file_flags_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyevtx_file_flags_free";
 
 	if( pyevtx_file_flags == NULL )
 	{
@@ -252,25 +265,28 @@ void pyevtx_file_flags_free(
 
 		return;
 	}
-	if( pyevtx_file_flags->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyevtx_file_flags );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid file flags - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyevtx_file_flags->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid file flags - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyevtx_file_flags->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyevtx_file_flags );
 }
 

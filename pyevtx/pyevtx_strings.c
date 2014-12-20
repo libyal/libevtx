@@ -57,10 +57,8 @@ PySequenceMethods pyevtx_strings_sequence_methods = {
 };
 
 PyTypeObject pyevtx_strings_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyevtx._strings",
 	/* tp_basicsize */
@@ -259,7 +257,8 @@ int pyevtx_strings_init(
 void pyevtx_strings_free(
       pyevtx_strings_t *pyevtx_strings )
 {
-	static char *function = "pyevtx_strings_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyevtx_strings_free";
 
 	if( pyevtx_strings == NULL )
 	{
@@ -270,20 +269,23 @@ void pyevtx_strings_free(
 
 		return;
 	}
-	if( pyevtx_strings->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyevtx_strings );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings - missing ob_type.",
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyevtx_strings->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings - invalid ob_type - missing tp_free.",
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -293,7 +295,7 @@ void pyevtx_strings_free(
 		Py_DecRef(
 		 (PyObject *) pyevtx_strings->record_object );
 	}
-	pyevtx_strings->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyevtx_strings );
 }
 

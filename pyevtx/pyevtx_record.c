@@ -218,10 +218,8 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 };
 
 PyTypeObject pyevtx_record_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyevtx.record",
 	/* tp_basicsize */
@@ -402,8 +400,9 @@ int pyevtx_record_init(
 void pyevtx_record_free(
       pyevtx_record_t *pyevtx_record )
 {
-	libcerror_error_t *error = NULL;
-	static char *function    = "pyevtx_record_free";
+	libcerror_error_t *error    = NULL;
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyevtx_record_free";
 
 	if( pyevtx_record == NULL )
 	{
@@ -414,29 +413,32 @@ void pyevtx_record_free(
 
 		return;
 	}
-	if( pyevtx_record->ob_type == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid record - missing ob_type.",
-		 function );
-
-		return;
-	}
-	if( pyevtx_record->ob_type->tp_free == NULL )
-	{
-		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid record - invalid ob_type - missing tp_free.",
-		 function );
-
-		return;
-	}
 	if( pyevtx_record->record == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
 		 "%s: invalid record - missing libevtx record.",
+		 function );
+
+		return;
+	}
+	ob_type = Py_TYPE(
+	           pyevtx_record );
+
+	if( ob_type == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
+		 function );
+
+		return;
+	}
+	if( ob_type->tp_free == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
@@ -459,7 +461,7 @@ void pyevtx_record_free(
 		Py_DecRef(
 		 (PyObject *) pyevtx_record->file_object );
 	}
-	pyevtx_record->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyevtx_record );
 }
 
@@ -777,6 +779,7 @@ PyObject *pyevtx_record_get_event_level(
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_event_level";
 	uint8_t event_level      = 0;
 	int result               = 0;
@@ -814,8 +817,14 @@ PyObject *pyevtx_record_get_event_level(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) event_level ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) event_level );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) event_level );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves the source name
@@ -1168,6 +1177,7 @@ PyObject *pyevtx_record_get_number_of_strings(
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
 	static char *function    = "pyevtx_record_get_number_of_strings";
 	int number_of_strings    = 0;
 	int result               = 0;
@@ -1205,8 +1215,14 @@ PyObject *pyevtx_record_get_number_of_strings(
 
 		return( NULL );
 	}
-	return( PyInt_FromLong(
-	         (long) number_of_strings ) );
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_strings );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_strings );
+#endif
+	return( integer_object );
 }
 
 /* Retrieves a specific string by index

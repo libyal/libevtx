@@ -4,9 +4,11 @@ Project information:
 * Status: alpha
 * Licence: LGPLv3+
 
+Work in progress:
+* Python 3 support
+
 Planned:
 * Multi-threading support
-* Python 3 support
 
 For more information see:
 * Project documentation: https://github.com/libyal/libevtx/wiki/Home

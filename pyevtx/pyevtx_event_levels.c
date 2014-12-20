@@ -32,10 +32,8 @@
 #include "pyevtx_unused.h"
 
 PyTypeObject pyevtx_event_levels_type_object = {
-	PyObject_HEAD_INIT( NULL )
+	PyVarObject_HEAD_INIT( NULL, 0 )
 
-	/* ob_size */
-	0,
 	/* tp_name */
 	"pyevtx.event_levels",
 	/* tp_basicsize */
@@ -134,6 +132,8 @@ PyTypeObject pyevtx_event_levels_type_object = {
 int pyevtx_event_levels_init_type(
      PyTypeObject *type_object )
 {
+	PyObject *value_object = NULL;
+
 	if( type_object == NULL )
 	{
 		return( -1 );
@@ -144,43 +144,73 @@ int pyevtx_event_levels_init_type(
 	{
 		return( -1 );
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_EVENT_LEVEL_CRITICAL );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_EVENT_LEVEL_CRITICAL );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "CRITICAL",
-	     PyInt_FromLong(
-	      LIBEVTX_EVENT_LEVEL_CRITICAL ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_EVENT_LEVEL_ERROR );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_EVENT_LEVEL_ERROR );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "ERROR",
-	     PyInt_FromLong(
-	      LIBEVTX_EVENT_LEVEL_ERROR ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_EVENT_LEVEL_WARNING );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_EVENT_LEVEL_WARNING );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "WARNING",
-	     PyInt_FromLong(
-	      LIBEVTX_EVENT_LEVEL_WARNING ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_EVENT_LEVEL_INFORMATION );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_EVENT_LEVEL_INFORMATION );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "INFORMATION",
-	     PyInt_FromLong(
-	      LIBEVTX_EVENT_LEVEL_INFORMATION ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
+#if PY_MAJOR_VERSION >= 3
+	value_object = PyLong_FromLong(
+	                LIBEVTX_EVENT_LEVEL_VERBOSE );
+#else
+	value_object = PyInt_FromLong(
+	                LIBEVTX_EVENT_LEVEL_VERBOSE );
+#endif
 	if( PyDict_SetItemString(
 	     type_object->tp_dict,
 	     "VERBOSE",
-	     PyInt_FromLong(
-	      LIBEVTX_EVENT_LEVEL_VERBOSE ) ) != 0 )
+	     value_object ) != 0 )
 	{
 		goto on_error;
 	}
@@ -265,7 +295,8 @@ int pyevtx_event_levels_init(
 void pyevtx_event_levels_free(
       pyevtx_event_levels_t *pyevtx_event_levels )
 {
-	static char *function = "pyevtx_event_levels_free";
+	struct _typeobject *ob_type = NULL;
+	static char *function       = "pyevtx_event_levels_free";
 
 	if( pyevtx_event_levels == NULL )
 	{
@@ -276,25 +307,28 @@ void pyevtx_event_levels_free(
 
 		return;
 	}
-	if( pyevtx_event_levels->ob_type == NULL )
+	ob_type = Py_TYPE(
+	           pyevtx_event_levels );
+
+	if( ob_type == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid event levels - missing ob_type.",
+		 PyExc_ValueError,
+		 "%s: missing ob_type.",
 		 function );
 
 		return;
 	}
-	if( pyevtx_event_levels->ob_type->tp_free == NULL )
+	if( ob_type->tp_free == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
-		 "%s: invalid event levels - invalid ob_type - missing tp_free.",
+		 PyExc_ValueError,
+		 "%s: invalid ob_type - missing tp_free.",
 		 function );
 
 		return;
 	}
-	pyevtx_event_levels->ob_type->tp_free(
+	ob_type->tp_free(
 	 (PyObject*) pyevtx_event_levels );
 }
 

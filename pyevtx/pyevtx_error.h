@@ -28,11 +28,23 @@
 #include "pyevtx_libcerror.h"
 #include "pyevtx_python.h"
 
-#define PYEVTX_ERROR_STRING_SIZE	768
+#define PYEVTX_ERROR_STRING_SIZE		768
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
+
+void pyevtx_error_fetch(
+      libcerror_error_t **error,
+      int error_domain,
+      int error_code,
+      const char *format_string,
+      ... );
+
+void pyevtx_error_fetch_and_raise(
+      PyObject *exception_object,
+      const char *format_string,
+      ... );
 
 void pyevtx_error_raise(
       libcerror_error_t *error,

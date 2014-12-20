@@ -76,11 +76,15 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20141220
+* worked on Python 3 support
+* worked on tests
+
 20141117
 * code clean up
 
 20141112
-* changes to expose the event identifier qualifiers in the python bindings
+* changes to expose the event identifier qualifiers in the Python bindings
 
 20141026
 * changes for deployment
@@ -141,7 +145,7 @@ Recovery:
 20132111
 * small fix in evtxexport -h output
 * updated dependencies
-* worked on python bindings
+* worked on Python bindings
 
 20131013
 * updated dependencies
@@ -387,17 +391,17 @@ Recovery:
 * updated dependencies
 
 20120817
-* worked on python bindings
+* worked on Python bindings
   - added iterator
 
 20120816
-* worked on python bindings
+* worked on Python bindings
 
 20120815
 * worked on library
 
 20120814
-* worked on python bindings
+* worked on Python bindings
 * worked on tools
 
 20120805

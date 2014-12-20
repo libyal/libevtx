@@ -105,7 +105,7 @@ PyObject *pyevtx_file_set_ascii_codepage(
 
 int pyevtx_file_set_ascii_codepage_setter(
      pyevtx_file_t *pyevtx_file,
-     PyObject *value_object,
+     PyObject *string_object,
      void *closure );
 
 PyObject *pyevtx_file_get_number_of_records(
