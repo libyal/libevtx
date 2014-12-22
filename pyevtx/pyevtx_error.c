@@ -287,7 +287,6 @@ void VARARGS(
 		PyErr_Format(
 		 exception_object,
 		 "%s with error: %s.",
-		 function,
 		 error_string,
 		 exception_string );
 	}
@@ -296,7 +295,6 @@ void VARARGS(
 		PyErr_Format(
 		 exception_object,
 		 "%s.",
-		 function,
 		 error_string );
 	}
 	Py_DecRef(
