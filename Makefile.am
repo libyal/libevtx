@@ -44,7 +44,8 @@ DPKG_FILES = \
        	dpkg/rules \
        	dpkg/libevtx-dev.docs \
        	dpkg/libevtx.docs \
-       	dpkg/libevtx-tools.docs
+       	dpkg/libevtx-tools.docs \
+	dpkg/source/format
 
 GETTEXT_FILES = \
 	config.rpath \
