@@ -76,6 +76,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20141229
+* updated dependencies
+* updated version for release
+
 20141228
 * updated dpkg files
 
