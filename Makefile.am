@@ -59,10 +59,10 @@ SPEC_FILES = \
 	libevtx.spec.in
 
 EXTRA_DIST = \
-        $(DPKG_FILES) \
-        $(GETTEXT_FILES) \
-        $(PKGCONFIG_FILES) \
-        $(SPEC_FILES)
+	$(DPKG_FILES) \
+	$(GETTEXT_FILES) \
+	$(PKGCONFIG_FILES) \
+	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

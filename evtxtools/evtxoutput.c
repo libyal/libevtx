@@ -1,7 +1,7 @@
 /*
  * Common output functions for the evtxtools
  *
- * Copyright (c) 2011-2014, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -50,7 +50,7 @@ void evtxoutput_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Copyright (c) 2011-2014, %s.\n" ),
+	 _( "Copyright (C) 2011-2015, %s.\n" ),
 	 _( "Joachim Metz" ) );
 
 	fprintf(

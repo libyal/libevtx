@@ -1,6 +1,6 @@
 dnl Functions for libcdirectory
 dnl
-dnl Version: 20120501
+dnl Version: 20140929
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -79,7 +79,7 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LOCAL],
  [AS_IF(
   [test "x$ac_cv_enable_winapi" = xno],
   [dnl Headers included in libcdirectory/libcdirectory_directory.h
-  AC_CHECK_HEADERS([dirent.h sys/stat.h])
+  AC_CHECK_HEADERS([dirent.h errno.h sys/stat.h])
 
   dnl Directory functions used in libcdirectory/libcdirectory_directory.h
   AC_CHECK_FUNCS([closedir opendir readdir_r])
