@@ -275,20 +275,975 @@ See section: <<binary_xml,Binary XML>>
 *TODO migrate remaining documentation*
 
 == Event
+=== Event identifier
+The event identifier is 4 bytes of size and consist of:
 
-*TODO migrate remaining documentation*
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0.0 | 16 bits | | Code
+| 2.0 | 12 bits | | Facility
+| 3.4 | 1 bit | | Reserved
+| 3.5 | 1 bit | | Customer flags +
+0 => System code +
+1 => Customer code
+| 3.6 | 2 bits | | Severity +
+00 => Success +
+01 => Informational +
+10 => Warning +
+11 => Error
+|===
+
+=== Level
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00000000 | | Identifies an event that should always be logged +
+(win:LogAlways) +
+Shown as "Information" in Event Viewer
+| 0x00000001 | WINEVENT_LEVEL_CRITICAL | Identifies an abnormal exit or termination event +
+(win:Critical)
+| 0x00000002 | WINEVENT_LEVEL_ERROR | Identifies a severe error event +
+(win:Error)
+| 0x00000003 | WINEVENT_LEVEL_WARNING | Identifies a warning event such as an allocation failure +
+(win:Warning)
+| 0x00000004 | WINEVENT_LEVEL_INFO | Identifies a non-error event such as an entry or exit event +
+(win:Informational)
+| 0x00000005 | WINEVENT_LEVEL_VERBOSE | Identifies a detailed trace event +
+(win:Verbose)
+| 0x00000006 | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel6)*
+| 0x00000007 | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel7)*
+| 0x00000008 | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel8)*
+| 0x00000009 | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel9)*
+| 0x0000000a | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel10)*
+| 0x0000000b | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel11)*
+| 0x0000000c | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel12)*
+| 0x0000000d | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel13)*
+| 0x0000000e | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel14)*
+| 0x0000000f | | [yellow-background]*Reserved* +
+[yellow-background]*(win:ReservedLevel15)*
+|===
+
+=== Keywords
+
+[cols="1,1,5",options="header"]
+|===
+| 0x0000000000000000 | | [yellow-background]*win:AnyKeyword*
+| | | 
+| [yellow-background]*0x0000000000010000* | | [yellow-background]*Shell*
+| [yellow-background]*0x0000000000020000* | | [yellow-background]*Properties*
+| [yellow-background]*0x0000000000040000* | | [yellow-background]*FileClassStoreAndIconCache*
+| [yellow-background]*0x0000000000080000* | | [yellow-background]*Controls*
+| [yellow-background]*0x0000000000100000* | | [yellow-background]*APICalls*
+| [yellow-background]*0x0000000000200000* | | [yellow-background]*InternetExplorer*
+| [yellow-background]*0x0000000000400000* | | [yellow-background]*ShutdownUX*
+| [yellow-background]*0x0000000000800000* | | [yellow-background]*CopyEngine*
+| [yellow-background]*0x0000000001000000* | | [yellow-background]*Tasks*
+| [yellow-background]*0x0000000002000000* | | [yellow-background]*WDI*
+| [yellow-background]*0x0000000004000000* | | [yellow-background]*StartupPerf*
+| [yellow-background]*0x0000000008000000* | | [yellow-background]*StructuredQuery*
+| | | 
+| 0x0001000000000000 | | [yellow-background]*win:Reserved*
+| 0x0002000000000000 | | [yellow-background]*win:WDIContext*
+| 0x0004000000000000 | | [yellow-background]*win:WDIDiag*
+| 0x0008000000000000 | | [yellow-background]*win:SQM*
+| 0x0010000000000000 | | [yellow-background]*win:AuditFailure*
+| 0x0020000000000000 | | [yellow-background]*win:AuditSuccess*
+| 0x0040000000000000 | | [yellow-background]*win:CorrelationHint*
+| 0x0080000000000000 | | [yellow-background]*Classic* +
+[yellow-background]*win:EventlogClassic*
+| 0x0100000000000000 | | [yellow-background]*win:ReservedKeyword56*
+| 0x0200000000000000 | | [yellow-background]*win:ReservedKeyword57*
+| 0x0400000000000000 | | [yellow-background]*win:ReservedKeyword58*
+| 0x0800000000000000 | | [yellow-background]*win:ReservedKeyword59*
+| 0x1000000000000000 | | [yellow-background]*win:ReservedKeyword60*
+| 0x2000000000000000 | | [yellow-background]*win:ReservedKeyword61*
+| 0x4000000000000000 | | [yellow-background]*win:ReservedKeyword62*
+| 0x8000000000000000 | | [yellow-background]*win:ReservedKeyword63* +
+[yellow-background]*Microsoft-Windows-Shell-Core/Diagnostic*
+|===
+
+=== Externally stored values
+Some of the data that Event Viewer shows is stored outside the event log files.
+
+On Windows XP (and earlier) the first step to determine the location of these 
+values is find the corresponding "eventlog type sub key" in the Windows 
+Registry under:
+....
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\
+....
+
+Every event log type has its own sub key, e.g.:
+....
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\System
+....
+
+Common event log types are:
+
+* Application
+* Security
+* System
+
+[NOTE]
+The event log type is also stored in the "Channel" event XML element.
+
+The event log type sub key has a "event source sub key" for every source name, 
+e.g for the source name "Workstation":
+....
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\System\Workstation
+....
+
+[NOTE]
+The source name is case insensitive; so "Workstation" and "workstation" are 
+considered equivalent.
+
+The source name is stored as an attribute of the "Provider" element within the Event XML, e.g.
+....
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+    <Provider Name="Microsoft-Windows-Search"
+              Guid="{CA4E628D-8567-4896-AB6B-835B221F373F}"
+              EventSourceName="Windows Search Service"/>
+....
+
+The "EventSourceName" attribute contains the source name. If there is no 
+"EventSourceName" attribute the "Name" attribute is used.
+
+As of Windows Vista the event log type sub key contains the value 
+"ProviderGuid" which should contain the same GUID as indicated in the Event XML:
+....
+{CA4E628D-8567-4896-AB6B-835B221F373F}
+....
+
+The corresponding provider settings can be found in the event message provider 
+Registry key:
+....
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{ca4e628d-8567-4896-ab6b-835b221f373f}
+....
+
+On a Windows Vista (or later) system "wevtutil" can be used to determine more 
+about the provider. E.g.
+....
+wevtutil gp Microsoft-Windows-Search
+....
+
+==== Message strings
+The event message strings are stored in event message files.
+
+The event message provider Registry key has a value named "EventMessageFile" 
+which contains a path specification of the event message file, e.g.
+....
+%SystemRoot%\System32\netmsg.dll
+....
+
+[NOTE]
+The value can contain multiple filenames separated by a semi colon (;) 
+character and that the name of the event message files is case insensitive.
+
+On Windows XP (and earlier) the event source sub key has a value named 
+"EventMessageFile" which contains the same path. As of Windows Vista this value 
+is not always present and using the value "MessageFileName" in the event 
+message provider Registry key seems to be the preferred method. However it is 
+possible that the event message provider Registry key is not present and the 
+event source sub key is needs to be used instead.
+
+Here "%SystemRoot%" is case insensitive and needs to be expanded to the Windows 
+directory. The actual value of %SystemRoot% can be found in the Registry value:
+....
+Key: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\
+Value:	SystemRoot
+....
+
+This value is depended on the Windows version, e.g.
+
+[cols="1,5",options="header"]
+|===
+| Value | Version
+| C:\WINDOWS | Windows XP (NT 5.1) and later
+| C:\WINNT | Windows NT 3.1, Windows NT 4.0 and Windows 2000 (NT 5.0)
+| C:\WINNT35 | Windows NT 3.5x
+| C:\WTSRV | Windows NT 4.0 Terminal Server
+|===
+
+Other placeholders that found to be used are:
+....
+%WinDir%
+....
+
+The actual value of e.g. %WinDir% can be found in the Registry value:
+....
+Key: HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\
+Value: windir
+....
+
+Event message files are PE/COFF executables that contains a resource (".rsrc ") 
+section. Event message files can have various extensions, e.g. ".exe", ".dll", 
+".dll.mui", ".sys".
+
+There different types of event message files:
+
+* Message-table resource
+* Multilingual User Interface (MUI) resource
+
+The event message files can have any combination of these resources. The rules 
+of preference seems to be:
+
+* use message-table resource if present, before checking MUI resource
+
+===== Event resource file
+The event message provider Registry key has a value named "ResourceFileName". 
+It is currently assumed that this Registry value contains a path specification 
+of the event resource file, e.g.
+....
+%SystemRoot%\System32\tquery.dll
+....
+
+The event resource file should contain a Windows Event Template (WEVT_TEMPLATE) 
+resource. The MUI resource should also contain a main name type "WEVT_TEMPLATE".
+
+The information stored in this resource is used to:
+
+* determine the message string identifier
+* determine the string identifiers of channels, keywords, levels, opcodes and tasks
+* parse Event XML "UserData"
+
+For more detailed information see: `[LIBEXE]`.
+
+===== Message string identifier
+On Windows XP (and earlier) the message string identifier was a direct mapping 
+of the event identifier as of Windows Vista this is no longer the case. There 
+seem to be multiple methods how the event identifier is mapped to the message 
+string identifier, namely:
+
+* Using the event identifier qualifiers
+* Using the Windows Event Template resource
+
+====== Using the event identifier qualifiers
+If the EventID element in Event XML has the Qualifiers attribute set, e.g.:
+....
+<EventID Qualifiers="16384">7036</EventID>
+....
+
+Then the message string identifier can be determined as following:
+....
+16384 in hexadecimal is 0x4000
+ 7036 in hexadecimal is 0x1b7c
+....
+
+....
+message string identifier = ( 0x4000 << 16 ) | 0x1b7c = 0x40001b7c
+....
+
+====== Using the Windows Event Template (WEVT_TEMPLATE) resource
+If an event resource file has been specified and if the Provider element in the 
+Event XML has the GUID attribute set, e.g.:
+....
+<Provider Name="Microsoft-Windows-UAC"
+          Guid="{E7558269-3FA5-46ED-9F4D-3C6E282DDE55}"/>
+<EventID>1</EventID>
+....
+
+This GUID can be used to find a corresponding provider in the Windows Event 
+Template (WEVT_TEMPLATE) resource. This resource should contain an event 
+definition with the same identifier as the EventID in the Event XML, e.g. in 
+case of the example 1. The event definition will also contain a reference the 
+the message identifier, e.g. in case of the example 0xb9000001.
+
+===== Message-table resource event message files
+In a message-table resource event message file the event message strings are 
+stored in the message-table resource of the event message file.
+
+The resource section of a message-table resource event message file contains a 
+message-table resource which contains the event message strings. E.g. on 
+Windows Vista
+....
+C:\Windows\Microsoft.NET\Framework\v2.0.50727\EventLogMessages.dll
+....
+
+The event message strings have identifiers similar to the event identifiers. 
+E.g. if the event identifier is 0 and the message string identifier 0, the 
+corresponding event message string would be:
+....
+%1
+....
+
+The placeholder values %1 represent the first string in the event.
+
+The event strings are stored as "Data" elements in the "EventData" element 
+....
+within the Event XML, e.g.
+  <EventData>
+    <Data>Service has been successfully shut down.</Data>
+  </EventData>
+....
+
+For a more comprehensive description of how to extract the event strings from 
+the Event XML see section: <<event_data,Event data>>. Sometimes the message 
+string can have more placeholder than the event data contains strings, it seems 
+in such a case the placeholders are not replaced and shown as %# in the 
+resulting string.
+
+Note that the event message strings are language specific. An event message 
+file can therefore contain event message strings for multiple languages.
+
+===== Multilingual User Interface (MUI) event message files
+The resource section of a Multilingual User Interface (MUI) event message file 
+contains Multilingual User Interface (MUI) resource. E.g. on Windows Vista
+....
+C:\Windows\System32\services.exe
+....
+
+The MUI event message files do not have to contain a message-table resource but 
+forward to a language specific message-table resource event message file, e.g. 
+"en-US":
+....
+C:\Windows\System32\en-US\services.exe.mui
+....
+
+Note that it also possible that the corresponding "language specific" event 
+message file is stored in the same directory as the MUI event message file.
+....
+C:\Windows\System32\services.exe.mui
+....
+
+It is this file that contains the language specific event message-table 
+resource.
+
+The event message strings have identifiers similar to the event identifiers. 
+E.g. if the event identifier in XML is:
+....
+<EventID Qualifiers="16384">7036</EventID>
+....
+
+This would correspond to the event message string identifier:
+....
+16384 in hexadecimal is 0x4000
+ 7036 in hexadecimal is 0x1b7c
+....
+
+....
+event message string identifier  = ( 0x4000 << 16 ) | 0x1b7c = 0x40001b7c
+....
+
+The corresponding event message string would be:
+....
+The %1 service entered the %2 state.
+....
+
+The placeholder values %1 and %2 represent the first and second string in the 
+event.
+
+The event strings are stored as "Data" elements in the "EventData" element 
+within the Event XML, e.g.
+....
+  <EventData>
+    <Data Name="param1">Volume Shadow Copy</Data>
+    <Data Name="param2">stopped</Data>
+  </EventData>
+....
+
+===== [[event_data]]Event data
+As previously mentioned the event strings (and binary data) are stored as 
+"Data" elements in the "EventData" element within the Event XML. Another way to 
+store the event data is in a "UserData" element. The information in this 
+section is partially deduced on the behavior of the "General", "Details 
+Friendly View" and "Details XML View" of Event Viewer.
+
+Let's start out with the following variant of event data.
+....
+  <EventData>
+    <Data>SessionEnv</Data>
+    <Binary>D9060000</Binary>
+  </EventData>
+....
+
+In this case "EventData" in the "Details Friendly View" contains both the value 
+of the "Data" and the "Binary" tag. The value of the Binary tag is additionally 
+interpreted as "Binary Data", which is base16 encoded.
+....
+  SessionEnv
+  D9060000
+....
+
+If the Data has a corresponding "Name" attribute the "EventData" in the 
+"Details Friendly View" shows the value of the "Name" attribute followed by the 
+value of the "Data" tag, e.g.
+....
+  <EventData>
+    <Data Name="param1">86400</Data>
+    <Data Name="param2">SuppressDuplicateDuration</Data>
+    <Data Name="param3">Software\Microsoft\EventSystem\EventLog</Data>
+  </EventData>
+....
+
+....
+  param1 86400
+  param2 SuppressDuplicateDuration
+  param3 Software\Microsoft\EventSystem\EventLog
+....
+
+The data of an empty "Data" is not ignored but not directly visible int the 
+"Details Friendly View". In case of the following example on the value of the 
+"Name" attribute would be shown.
+....
+  <EventData>
+    <Data Name="ExtraInfo"/>
+  </EventData>
+
+  ExtraInfo
+....
+
+ProcessingErrorData is a variation of EventData:
+....
+  <ProcessingErrorData> 
+    <ErrorCode>15005</ErrorCode> 
+    <DataItemName>Value</DataItemName> 
+    <EventPayload>804110C3E253BF01</EventPayload> 
+  </ProcessingErrorData> 
+....
+
+....
+    ErrorCode 15005
+    DataItemName Value
+    EventPayload 804110C3E253BF01
+....
+
+In some events the data is not stored in a "EventData" tag within the Event XML 
+but in a "UserData" tag, e.g.
+....
+  <UserData>
+    <EventXML xmlns:auto-ns2="..." xmlns="LoadPerf">
+      <param1>WmiApRpl</param1>
+      <param2>WmiApRpl</param2>
+      <binaryDataSize>4</binaryDataSize>
+      <binaryData>44415441</binaryData>
+    </EventXML>
+  </UserData>
+....
+
+In this case the "EventData" in the "Details Friendly View" will show the data 
+as:
+....
+EventXML
+  param1 WmiApRpl
+  param2 WmiApRpl
+  binaryDataSize 4
+  binaryData 44415441
+....
+
+The binary data is not interpreted as the binary data seen with the "EventData" 
+tag.
+
+Here "WmiApRpl" is the first string and "44415441" the fourth.
+
+Event strings can also be stored as attribute values.
+....
+  <UserData>
+    <EventProcessingFailure xmlns="http://manifests.microsoft.com/...">
+      <Error Code="15007"/>
+      <EventID>4616</EventID>
+      <PublisherID>Microsoft-Windows-Security-Auditing</PublisherID>
+    </EventProcessingFailure>
+  </UserData>
+....
+
+....
+EventProcessingFailure
+  Error
+     [Code] 15007
+  EventID 4616
+  PublisherID Microsoft-Windows-Security-Auditing
+....
+
+The corresponding message string is:
+....
+The event logging service encountered an error while processing an incoming event published from %3.
+....
+
+Which indicates the attribute value should be considered the first event string.
+
+Some event records have a corresponding template definition in the 
+WEVT_TEMPLATE data.
+
+An example of an event record with a corresponding template definition is:
+....
+  <EventData Name="EVENT_HIVE_LEAK">
+    <Data Name="Detail">1 user registry handles leaked from ...</Data>
+  </EventData>
+....
+
+....
+<EventData Name="EVENT_HIVE_LEAK">
+  <Data Name="Detail">Detail</Data>
+</EventData>
+....
+
+Note that not all event records have corresponding WEVT_TEMPLATE data or 
+template definition. Sometimes the template definition does not entirely match 
+the event record e.g. the following example where the template definition 
+contains Name="%1" but not the event record.
+....
+  <EventData>
+    <Data>http://www.download.windowsupdate.com/...</Data>
+    <Data>The data is invalid.</Data>
+  </EventData>
+....
+
+....
+<EventData>
+  <Data Name="%1">%1</Data>
+  <Data Name="%2">%2</Data>
+</EventData>
+....
+
+This however might be a special case of the "EventData".
+
+===== Parsing event data
+In the initial phases of the libevtx project several attempts have been made to 
+uniformly parse the event data.
+
+Firstly the naive approach. This approach considers the element values of the 
+sub elements of the "EventData" or "UserData" elements as event string. Alas 
+this approach fails to handle event strings that are defined as element 
+attributes values mainly seen in "UserData" elements, e.g.
+....
+  <UserData>
+    <EventProcessingFailure xmlns="http://manifests.microsoft.com/...">
+      <Error Code="15007"/>
+      <EventID>4616</EventID>
+      <PublisherID>Microsoft-Windows-Security-Auditing</PublisherID>
+    </EventProcessingFailure>
+  </UserData>
+....
+
+The next approach was to use the template definitions, if available, to parse 
+the "EventData" and "UserData" elements. This approach seemed to solve the 
+issue with the event strings defined as attribute values. Alas not every 
+template definition seem to match the event record data, at least for some of 
+the "EventData" elements, e.g.
+....
+  <EventData>
+    <Data>http://www.download.windowsupdate.com/...</Data>
+    <Data>The data is invalid.</Data>
+  </EventData>
+....
+
+....
+<EventData>
+  <Data Name="%1">%1</Data>
+  <Data Name="%2">%2</Data>
+</EventData>
+....
+
+However using the template definitions to parse the event data proved an 
+interesting insight that the the binary XML substitution tokens of the template 
+definition match those of the event record. Which is the technique used as of 
+version 20130208.
+
+===== Parameter expansion
+Parameter expansion is e.g. seen in event identifier 7006 of the Service 
+Control Manager (SC Manager).
+....
+  <EventData>
+    <Data Name="param1">ScRegSetValueExW</Data>
+    <Data Name="param2">FailureActions</Data>
+    <Data Name="param3">%%5</Data>
+  </EventData>
+....
+
+Here the string translates to:
+....
+The ScRegSetValueExW call failed for FailureActions with the following error: 
+Access is denied.
+....
+
+The event source sub key has a value named "ParameterMessageFile" which for the 
+Service Control Manager refers to:
+....
+%SystemRoot%\System32\MsObjs.dll
+....
+
+Here %%5 corresponds to the message string with identifier 5 stored in 
+msobjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".
+
+====  Category
+[yellow-background]*TODO: CategoryMessageFile*
 
 == Recovery
+1. Scan the chunk free space for event records and make sure the size and copy of size match.
+2. Ignore any record with an identifier that already exists. Often the free space contains former versions of existing event records.
 
-*TODO migrate remaining documentation*
+[yellow-background]*How useful are former versions of event records for 
+correcting corrupted event records?*
+
+=== Detecting corrupted records
+Comparing the size and copy of size is a quick way to detect corrupted records 
+but sometimes the sizes match while the record is not recoverable. The 
+detection of corrupted records can be improved by looking at:
+the Binary XML data.
+
+[yellow-background]*TODO what about the identifier is it signed?*
+
+According `[MS-EVEN6]` the binary XML structure should consist of:
+
+The document (BinXMLDocument) consists of:
+
+* Prologue (BinXMLPI) (zero or one)
+* Fragment (zero or more)
+* Miscellaneous (BinXMLPI) (zero or one)
+* End of file token
+
+This translates to the Binary XML data should start with either:
+
+* 0x0a; the data size must be 5 or more bytes (for EVTX)
+* 0x0f 0x01 0x01 0x00; the data size must be 4 or more bytes
+* 0x00; which means there is no Binary XML data
 
 == Corruption scenarios
+=== String value oddities
+This has been seen in PI data and CDATA section structures.
+....
+libevtx_binary_xml_document_read_pi_data: type                  : 0x0b
+libevtx_binary_xml_document_read_pi_data: number of characters  : 18
+libevtx_binary_xml_document_read_pi_data: value data:
+00000000: 4d 00 79 00 50 00 69 00  44 00 61 00 74 00 61 00   M.y.P.i. D.a.t.a.
+00000010: 3d 00 22 00 76 00 61 00  6c 00 75 00 65 00 22 00   =.".v.a. l.u.e.".
+00000020: 01 ff ff 0f 05 ff ff 0f                            ....
+....
 
-*TODO migrate remaining documentation*
+EventViewer seems to interpret 05 ff ff 0f as part of the string? But 18 x 2 
+seems to be the correct data size.
+....
+<?MyPiTarget MyPiData="value"！<U+0FFF>！<U+05FF>?>
+....
+
+Even 01 ff ff 0f part of the string looks like valid BinXML.
+....
+libevtx_binary_xml_document_read_cdata_section: type                    : 0x07
+libevtx_binary_xml_document_read_cdata_section: number of characters    : 110
+libevtx_binary_xml_document_read_cdata_section: value data:
+00000000: 0d 00 0a 00 66 00 75 00  6e 00 63 00 74 00 69 00   ....f.u. n.c.t.i.
+00000010: 6f 00 6e 00 20 00 6d 00  61 00 74 00 63 00 68 00   o.n. .m. a.t.c.h.
+00000020: 77 00 6f 00 28 00 61 00  2c 00 62 00 29 00 0d 00   w.o.(.a. ,.b.)...
+00000030: 0a 00 7b 00 0d 00 0a 00  69 00 66 00 20 00 28 00   ..{..... i.f. .(.
+00000040: 61 00 20 00 3c 00 20 00  62 00 20 00 26 00 26 00   a. .<. . b. .&.&.
+00000050: 20 00 61 00 20 00 3c 00  20 00 30 00 29 00 20 00    .a. .<.  .0.). .
+00000060: 74 00 68 00 65 00 6e 00  0d 00 0a 00 20 00 20 00   t.h.e.n. .... . .
+00000070: 7b 00 0d 00 0a 00 20 00  20 00 72 00 65 00 74 00   {..... .  .r.e.t.
+00000080: 75 00 72 00 6e 00 20 00  31 00 3b 00 0d 00 0a 00   u.r.n. . 1.;.....
+00000090: 20 00 20 00 7d 00 0d 00  0a 00 65 00 6c 00 73 00    . .}... ..e.l.s.
+000000a0: 65 00 0d 00 0a 00 20 00  20 00 7b 00 0d 00 0a 00   e..... .  .{.....
+000000b0: 20 00 20 00 72 00 65 00  74 00 75 00 72 00 6e 00    . .r.e. t.u.r.n.
+000000c0: 20 00 30 00 3b 00 0d 00  0a 00 20 00 20 00 7d 00    .0.;... .. . .}.
+000000d0: 0d 00 0a 00 7d 00 0d 00  0a 00 04 04 04 04         ....}... ....
+....
+
+....
+      <![CDATA[
+function matchwo(a,b)
+{
+if (a < b && a < 0) then
+  {
+  return 1;
+  }
+else
+  {
+  return 0;
+  }
+}
+Є]]>
+....
+
+EventViewer shows the last line as:
+....
+ЄЄ]]>
+....
+
+Even the 04 04 part of the string looks like valid BinXML.
+
+=== Corrupted file header with correct checksum
+For some reason in EVTX file the file header was written with incorrect data 
+although the checksum checks out. As you can see the first chunk number: 206 
+exceeds last chunk number: 205.
+....
+signature                           : ElfFile\x00
+first chunk number                  : 206
+last chunk number                   : 205
+next record identifier              : 123510
+header size                         : 128
+minor version                       : 1
+major version                       : 3
+header block size                   : 4096
+number of chunks                    : 1024
+flags                               : 0x00000000
+checksum                            : 0x7fc747e2
+....
+
+[yellow-background]*TODO check the number of chunks in the file and if the 
+event ids are in sequential order. At first glance it seems to be this way.*
+
+=== Dirty file with invalid number of chunks
+In the dirty file with invalid offset values scenarios the file header 
+indicates the incorrect number of chunks in the file; in this case less than 
+the actual number of chunks.
+....
+signature                           : ElfFile\x00 
+first chunk number                  : 0 
+last chunk number                   : 35 
+next record identifier              : 150158 
+header size                         : 128 
+minor version                       : 1 
+major version                       : 3 
+header block size                   : 4096 
+number of chunks                    : 36 
+flags                               : 0x00000001
+checksum                            : 0x98053517
+....
+
+Event Viewer seems to "correct" files that are dirty and where the number of 
+chunks in the file header is less than the actual number of chunks.
+
+The approach implemented in libevtx 20130713 to deal with these files is to 
+keep scanning for chunks after the last chunk indicated by the file header. The 
+records in these chunks are not marked as recovered records.
+
+=== Corrupt event record
+Corruption of an event record can occur in multiple ways, the following variant 
+have been seen:
+
+* In the middle of a chunk there is suddenly a large block of 0-byte values directly after an event record.
+* In the middle of a chunk there is an event record that is corrupt e.g. the size of the event record does not match the copy of size.
+
+The approach is to start scanning for recoverable event records in the 
+remainder of the chunk. Any event records found are considered recovered.
+
+=== Corrupted chunk
+Corruption of an chunk can occur in multiple ways, the following variant have 
+been seen:
+
+* In the middle of a chunk there is suddenly a large block of 0-byte values directly after an event record. These 0-byte values continue across the next (expected) chunk header.
+
+The approach is to start scanning for recoverable event records until a correct 
+chunk header is found or the end of file is reached. Any event records found 
+are considered recovered.
 
 == Notes
+=== Normal behavior
+Lets consider a "normal" Application.evtx file.
 
-*TODO migrate remaining documentation*
+EventViewer shows 20568 events.
+
+Using "Save All Events As ..." as an XML file from EventViewer shows 4168 events.
+
+Wevtutil get-log-info shows 20568 events.
+....
+wevtutil qli /lf:true file.evtx
+....
+
+[yellow-background]*TODO behavior of oldestRecordNumber*
+
+Wevtutil query-events shows 20568 events.
+....
+wevtutil qe /lf:true file.evtx > file.xml
+....
+
+....
+cat file.xml | grep EventRecordID | wc -l
+....
+
+This file has the following header.
+....
+signature                           : ElfFile\x00
+first chunk number                  : 0
+last chunk number                   : 181
+next record identifier              : 20569
+header size                         : 128
+minor version                       : 1
+major version                       : 3
+header block size                   : 4096
+number of chunks                    : 182
+file flags                          : 0x00000000
+checksum                            : 0x9d4c00e2
+....
+
+In the file the event records are in order, meaning that the first chunk 
+contains the event record with the lowest event record number.
+....
+signature                                           : ElfChnk\x00
+first event record number                           : 1
+last event record number                            : 117
+first event record identifier                       : 1
+last event record identifier                        : 117
+header size                                         : 128
+last event record offset                            : 0x0000e380
+free space offset                                   : 0x0000f3b0
+event records checksum                              : 0x731087d8
+....
+
+The number of event records in the chunk should be:
+....
+last event record number - first event record number + 1
+....
+
+Successive chunks contain successive event record numbers.
+....
+signature                                           : ElfChnk\x00
+first event record number                           : 118
+last event record number                            : 232
+first event record identifier                       : 118
+last event record identifier                        : 232
+header size                                         : 128
+last event record offset                            : 0x0000fcc8
+free space offset                                   : 0x0000ff30
+event records checksum                              : 0x7fa7a9df
+....
+
+[yellow-background]*TODO determine if gaps in event record identifiers is 
+normal behavior?*
+
+=== Corruption scenario: event record mismatch between size and copy of size
+Lets consider a dirty Security.evtx file.
+
+EventViewer shows 4001 events.
+
+Using "Save All Events As ..." as an XML file from EventViewer shows 1180 events.
+
+Wevtutil get-log-info shows 4001 events.
+....
+wevtutil qli /lf:true file.evtx
+....
+
+The "oldestRecordNumber" is 1 and does not match the data in the file.
+
+Wevtutil query-events shows 4001 events.
+....
+wevtutil qe /lf:true file.evtx > file.xml
+....
+
+....
+cat file.xml | grep EventRecordID | wc -l
+....
+
+Looking at the file in more detail the following chunk seems to be corrupt.
+....
+signature                                           : ElfChnk\x00
+first event record number                           : 72431823
+last event record number                            : 72431919
+first event record identifier                       : 72433834
+last event record identifier                        : 72433930
+header size                                         : 128
+last event record offset                            : 0x0000fd18
+free space offset                                   : 0x0000ffb0
+event records checksum                              : 0x6df0577c
+checksum                                            : 0x5ff97a22
+....
+
+mismatch in chunk: 14 event records CRC-32 checksum (0x6df0577c != 0xd97de631)
+
+In the middle of this chunk the size of the event record does not match the 
+copy of size.
+....
+signature                            : \x2a\x2a\x00\x00
+size                                 : 664
+identifier                           : 72433924
+written time                         : Feb 20, 2013 20:50:20.671208000 UTC
+size copy                            : 1694526976
+....
+
+Judging by the data structures the size points in the middle of the binary XML.
+
+In this case scanning for event record signatures in the remainder of the chunk 
+yields 6 results:
+
+* 1x corrupt event record (72433924)
+* 5x recoverable event records (73882240 - 73882244)
+
+The discontinuation in event record numbers suggest that the file was copied 
+while event record 72433924 was being written.
+
+By continuing scanning for event records in total 21045 event records were 
+found with the first event number of 72432422.
+
+=== Corruption scenario: cross chunk 0-byte values
+Lets consider a dirty Security.evtx file.
+
+EventViewer shows 102019 events.
+
+Using "Save All Events As ..." as an XML file from EventViewer shows 68269 
+events.
+
+Wevtutil get-log-info shows 102019 events.
+....
+wevtutil qli file.evtx /lf:true
+....
+
+The "oldestRecordNumber" is 20496.
+
+Wevtutil query-events shows 19660 events.
+....
+wevtutil qe file.evtx /lf:true > file.xml
+....
+
+Failed to read events. The event log file is corrupted.
+
+....
+cat file.xml | grep EventRecordID | wc -l
+....
+
+Recall that in the previous corruption scenario wevtutil did not report it but 
+in this case it does.
+....
+signature                                           : ElfChnk\x00
+first event record number                           : 40163
+last event record number                            : 40261
+first event record identifier                       : 41158
+last event record identifier                        : 41256
+header size                                         : 128
+last event record offset                            : 0x0000fba8
+free space offset                                   : 0x0000fe18
+event records checksum                              : 0x9981f715
+checksum                                            : 0x4931f4a2
+....
+
+....
+mismatch in chunk: 402 event records CRC-32 checksum (0x9981f715 != 0x31aa1bb0).
+....
+
+....
+signature                            : \x2a\x2a\x00\x00
+size                                 : 624
+identifier                           : 41173
+written time                         : Mar 15, 2012 11:03:23.546212500 UTC
+size copy                            : 0
+....
+
+....
+chunk header data:
+00000000: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+...
+00000070: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
+....
+
+By continuing scanning for event records in total 98927 event records and 1043 
+recoverable event records were found.
+
+=== Other
+What are .ax files? As seen in:
+....
+Source          : Microsoft-Windows-DirectShow-KernelSupport
+Categories      : None
+Messages        : [u'ksproxy.ax']
+....
 
 :numbered!:
 [appendix]
