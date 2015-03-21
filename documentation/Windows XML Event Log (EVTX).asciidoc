@@ -271,8 +271,493 @@ See section: <<binary_xml,Binary XML>>
 |===
 
 == [[binary_xml]]Binary XML
+=== Document structure
+According `[MS-EVEN6]` the binary XML structure should consist of:
+
+The document (BinXMLDocument) consists of:
+
+* Prologue (BinXMLPI) (zero or one)
+* Fragment (zero or more)
+* Miscellaneous (BinXMLPI) (zero or one)
+* End of file token
+
+==== Fragment
+The fragment (BinXMLFragment) consists of:
+
+* fragment header
+* an element or a template instance
+
+==== Fragment header
+The fragment header (BinXMLFragmentHeader) is 4 byte of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0f | Fragment header token +
+Should be: BinXmlFragmentHeaderToken +
+See section: <<token_type,Token types>>
+| 1 | 1 | 0x01 | Major version
+| 2 | 1 | 0x01 | Minor version
+| 3 | 1 | 0x00 | Flags
+|===
+
+==== Element
+An element (BinXMLElement) can either be 'empty' or a 'filled'.
+
+BinXMLEmpyElement:
+
+* element start
+* close empty element token
+
+Example of an 'empty' element in textual XML:
+....
+<Provider Name="Provider"/>
+....
+
+BinXMLFilledElement:
+
+* element start
+* close start element token
+* content
+* end element token
+
+Example of a 'filled' element in textual XML:
+....
+<EventID>400</EventID>
+....
+
+[yellow-background]*TODO: is it valid for a fragment with more then one element?*
+
+==== Element start
+The element start (BinXMLElementStart) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x01 +
+0x41 | Open start element tag token +
+Should be: BinXmlTokenOpenStartElementTag +
+See section: <<token_type,Token types>>
+| 1 | 2 | | Dependency identifier +
+-1 (0xffff) => not set
+| 3 | 4 | | Data size +
+The size of the data. +
+This includes the size of the element name, attribute list, close element tag, content and end element tag, except for the first 7 bytes of the element start.
+| 7 | 4 | | Element name offset +
+The offset is relative from the start of the chunk +
+See section: <<name,Name>>
+| 11 | ... | | Attribute list +
+See section: <<attribute_list,Attribute list>>
+|===
+
+A token type of 0x01 indicates that the element start tag contains no elements; 
+a token type of 0x41 indicates that an attribute list can be expected in the 
+element start tag.
+
+[NOTE]
+The element name can be stored before the attribute list.
+
+The name offset is not used in the binary XML in the Windows Event Template 
+resource.
+
+==== [[attribute_list]]Attribute list
+The attribute (BinXmlAttributeList) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | | Data size +
+Does not include the 4 byte of the size.
+| 4 | ... | | Array of attributes +
+See section: <<attribute,Attribute>>
+|===
+
+[yellow-background]*TODO: if attribute list is empty it is trailed by 2 bytes? 
+Is this 32-bit alignment padding?*
+
+==== [[attribute]]Attribute
+The attribute (BinXmlAttribute) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x06 +
+0x46 | Attribute token +
+Should be: BinXmlTokenAttribute +
+See section: <<token_type,Token types>>
+| 1 | 4 | | Attribute name offset +
+The offset is relative from the start of the chunk +
+See section: <<name,Name>>
+| 5 | ... | | Attribute data
+|===
+
+A token type of 0x46 indicates that there is another attribute in the attribute 
+list; a token type of 0x06 indicates that no more attributes exist.
+
+[NOTE]
+The attribute name can be stored before the attribute list.
+
+The attribute data (BinXMLAttributeData) can be:
+
+* value text
+* substitution
+* character entity reference
+* entity reference
+
+The name offset is not used in the binary XML in the Windows Event Template 
+resource.
+
+==== [[name]]Name
+The name (BinXmlName) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | | [yellow-background]*Unknown*
+| 4 | 2 | | Name hash +
+[yellow-background]*Which hash algorithm?*
+| 6 | 2 | | Number of characters
+| 8 | ... | | UTF-16 little-endian string with an end-of-string character
+|===
+
+The unknown 4 bytes are not present in the binary XML in the Windows Event 
+Template resource.
+
+==== Content
+The content (BinXMLContent) can be:
+
+* an element
+* content string data
+* character entity reference
+* entity reference
+* CDATA section
+* PI
+
+==== Content string
+The content string data (BinXMLContentStringData) can be:
+
+* value text
+* substitution
+
+[yellow-background]*TODO: a content string containing an end-of-line character 
+seems to be considered empty by Event Viewer*
+
+==== Value text
+The value text (BinXmlValueText) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x05 +
+0x45 | Value token +
+Should be: BinXmlTokenValue +
+See section: <<token_type,Token types>>
+| 1 | 1 | 0x01 | Value type +
+Should be: StringType +
+See section: <<value_type,Value types>>
+| 2 | ... | | Value data +
+See section: <<unicode_text_string,Unicode text string>>
+|===
+
+A token type of 0x45 indicates that more data can be expected to follow in the 
+current content of the element or attribute; a token type of 0x05 indicates 
+that no more such data follows.
+
+A value text can be stored spanning multiple value tokens.
+
+==== Substitution
+The substitution (BinXmSubstitution) can be:
+
+* normal substitution
+* optional substitution
+
+==== Normal substitution
+The normal substitution (BinXmNormalSubstitution) is 4 byte of size and 
+consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0d | Normal substitution token +
+Should be: BinXmlTokenNormalSubstitution +
+See section: <<token_type,Token types>>
+| 1 | 2 | | Substitution identifier +
+Identifier of the value in the template instance data, where 0 represents the first value
+| 3 | 1 | | Value type +
+See section: <<value_types,Value types>>
+|===
+
+If the value type is an array type (0x80) the substitution is repeated for 
+every element of the array. If the size of an array type is 0 then a single 
+empty element should be created.
+
+If the value type is Size (0x10) the corresponding substitution value should be 
+a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The 
+same applies to an array of Size (0x90) where the substitution value should be 
+an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
+integer (0x95).
+
+If the value type is the Binary XML type (0x21) the value data should be either 
+a fragment or a template instance.
+
+==== Optional substitution
+The optional substitution (BinXmlOptionalSubstitution) is 4 byte of size and 
+consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0e | Optional substitution token +
+Should be: BinXmlTokenOptionallSubstitution +
+See section: <<token_type,Token types>>
+| 1 | 2 | | Substitution identifier +
+Identifier of the value in the template instance data, where 0 represents the first value
+| 3 | 1 | | Value type +
+See section: <<value_types,Value types>>
+|===
+
+If the value type of the corresponding template value is NULL (0x00) the 
+element should be ignored and not created.
+
+If the value type is an array type (0x80) the substitution is repeated for 
+every element of the array. If the size of an array type is 0 then a single 
+empty element should be created.
+
+If the value type is Size (0x10) the corresponding substitution value should be 
+a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The 
+same applies to an array of Size (0x90) where the substitution value should be 
+an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
+integer (0x95).
+
+If the value type is the Binary XML type (0x21) the value data should be either 
+a fragment or a template instance.
+
+==== Character entity reference
 
 *TODO migrate remaining documentation*
+
+==== [[unicode_text_string]]Unicode text string
+The Unicode text string is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 2 | 2 | | Number of characters
+| 4 | ... | | UTF-16 little-endian string without an end-of-string character
+|===
+
+==== PI
+The PI consists of:
+
+* PI target
+* PI data
+
+==== PI target
+The PI target (BinXmlPITarget) is 5 bytes of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0a | PI target reference token +
+Should be: BinXmlTokenPITarget +
+See section: <<token_type,Token types>>
+| 1 | 4 | | PI target name offset +
+The offset is relative from the start of the chunk +
+See section: <<name,Name>>
+|===
+
+The name offset is not used in the binary XML in the Windows Event Template resource.
+
+==== PI data
+The entity reference (BinXmlPIData) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0b | PI data token +
+Should be: BinXmlTokenCDATASection +
+See section: <<token_type,Token types>>
+| 1 | ... | | PI data text +
+See section: <<unicode_text_string,Unicode text string>>
+|===
+
+=== [[token_types]]Token types
+Binary XML defines multiple token types.
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00 | BinXmlTokenEOF | End of file
+| 0x01 +
+0x41 | BinXmlTokenOpenStartElementTag | Open start element tag +
+Indicates the start of a start element, correlates to '<' in '<Event>'
+| 0x02 | BinXmlTokenCloseStartElementTag | Close start element tag +
+Indicates the end of a start element, correlates to '>' in '<Event>'
+| 0x03 | BinXmlTokenCloseEmptyElementTag | Close empty element tag +
+Indicates the end of a start element, correlates to '/>' in '<Event/>'
+| 0x04 | BinXmlTokenEndElementTag | Close end element tag +
+Indicates the end of element, correlates to  '</Event>'
+| 0x05 +
+0x45 | BinXmlTokenValue | Value
+| 0x06 +
+0x46 | BinXmlTokenAttribute | Attribute
+| 0x07 +
+0x47 | BinXmlTokenCDATASection | CDATA section
+| 0x08 +
+0x48 | BinXmlTokenCharRef | Character entity reference
+| 0x09 +
+0x49 | BinXmlTokenEntityRef | Entity reference
+| 0x0a | BinXmlTokenPITarget | Processing instructions (PI) target +
+XML processing instructions
+| 0x0b | BinXmlTokenPIData | Processing instructions (PI) data +
+XML processing instructions
+| 0x0c | BinXmlTokenTemplateInstance | Template instance
+| 0x0d | BinXmlTokenNormalSubstitution | Normal substitution
+| 0x0e | BinXmlTokenOptionalSubstitution | Optional substitution
+| 0x0f | BinXmlFragmentHeaderToken | Fragment header token
+|===
+
+Some of the token types can contain the has more data flag 0x40.
+
+[yellow-background]*TODO bitmask of 0x1f ? is this defined in winevt.h ? If so 
+what do the other flags signify?*
+
+=== [[value_types]]Value types
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00 | NullType | NULL or empty
+| 0x01 | StringType | Unicode string +
+Stored as UTF-16 little-endian without an end-of-string character
+| 0x02 | AnsiStringType | ASCII string +
+Stored using a codepage without an end-of-string character
+| 0x03 | Int8Type | 8-bit integer signed
+| 0x04 | UInt8Type | 8-bit integer unsigned
+| 0x05 | Int16Type | 16-bit integer signed
+| 0x06 | UInt16Type | 16-bit integer unsigned
+| 0x07 | Int32Type | 32-bit integer signed
+| 0x08 | UInt32Type | 32-bit integer unsigned
+| 0x09 | Int64Type | 64-bit integer signed
+| 0x0a | UInt64Type | 64-bit integer unsigned
+| 0x0b | Real32Type | Floating point 32-bit (single precision)
+| 0x0c | Real64Type | Floating point 64-bit (double precision)
+| 0x0d | BoolType | Boolean +
+[yellow-background]*An 32-bit integer that MUST be 0x00 or 0x01 (mapping to true or false, respectively).*
+| 0x0e | BinaryType | Binary data
+| 0x0f | GuidType | GUID +
+Stored in little-endian
+| 0x10 | SizeTType | Size type +
+Either 32 or 64-bits. This value type should be pair up with a HexInt32Type or HexInt64Type
+| 0x11 | FileTimeType | FILETIME (64-bit) +
+Stored in little-endian
+| 0x12 | SysTimeType | System time (128-bit) +
+Stored in little-endian
+| 0x13 | SidType | NT Security Identifier (SID) +
+See `[NTSID]`
+| 0x14 | HexInt32Type | 32-bit integer hexadecimal +
+32-bit (unsigned) integer that should be represented in hexadecimal notation
+| 0x15 | HexInt64Type | 64-bit integer hexadecimal +
+64-bit (unsigned) integer that should be represented in hexadecimal notation
+| | | 
+| 0x20 | EvtHandle | [yellow-background]*Unknown*
+| 0x21 | BinXmlType | Binary XML fragment
+| | | 
+| 0x23 | EvtXml | [yellow-background]*Unknown*
+|===
+
+If the MSB of the value type (0x80) is use to indicate an array type. According 
+to `[MSDN]` binary data and binary XML fragment types are not supported. For the 
+string types the end-of-string character is used as a separator.
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x81 | | Array of Unicode strings +
+Individual strings are stored as UTF-16 little-endian with an end-of-string character
+| 0x82 | | Array of ASCII strings +
+Individual strings are stored as ASCII string using a codepage with an end-of-string character
+| 0x83 | | Array of 8-bit integer signed +
+Every 1 byte is an individual value
+| 0x84 | | Array of 8-bit integer unsigned +
+Every 1 byte is an individual value
+| 0x85 | | Array of 16-bit integer signed +
+Every 2 bytes are an individual value in little-endian
+| 0x86 | | Array of 16-bit integer unsigned +
+Every 2 bytes are an individual value in little-endian
+| 0x87 | | Array of 32-bit integer signed +
+Every 4 bytes are an individual value in little-endian
+| 0x88 | | Array of 32-bit integer unsigned +
+Every 4 bytes are an individual value in little-endian
+| 0x89 | | Array of 64-bit integer signed +
+Every 8 bytes are an individual value in little-endian
+| 0x8a | | Array of 64-bit integer unsigned +
+Every 8 bytes are an individual value in little-endian
+| 0x8b | | Array of Floating point 32-bit (single precision) +
+Every 4 bytes are an individual value in little-endian
+| 0x8c | | Array of Floating point 64-bit (double precision) +
+Every 8 bytes are an individual value in little-endian
+| 0x8d | | [yellow-background]*Array of boolean* +
+[yellow-background]*Every 4 bytes are an individual value in little-endian*
+| | | 
+| 0x8f | | Array of GUID +
+Every 16 bytes are an individual value in little-endian
+| 0x90 | | Array of size type +
+An individual value is either 32 or 64-bits. This value type should be pair up with an array of HexInt32Type or HexInt64Type
+| 0x91 | | Array of FILETIME +
+Every 8 bytes are an individual value in little-endian
+| 0x92 | | Array of system time +
+Every 16 bytes are an individual value in little-endian
+| 0x93 | | [yellow-background]*Array of NT Security Identifiers (SID)*
+| 0x94 | | Array of 32-bit integer hexadecimal +
+Every 4 bytes are an individual value in little-endian
+| 0x95 | | Array of 64-bit integer hexadecimal +
+Every 8 bytes are an individual value in little-endian
+|===
+
+==== String
+If in a string the characters: <, >, &, " and ' are not escaped they must 
+respectively be replaced by the following character entities: &lt;, &gt;, 
+&amp;, &quot; and &apos;. This does not apply to Character entity reference and 
+Entity reference encoded strings.
+
+Event Viewer will not escape the character entities in the XML view, but will 
+when exported as XML. Event Viewer seems to apply the XML character entity 
+escaping inside element values for &, < and > but not for ' and ".
+
+==== Systemtime
+The systemtime is 16 bytes of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 2 | | Year
+| 2 | 2 | | Month
+| 4 | 2 | | Day of week
+| 6 | 2 | | Day of month
+| 8 | 2 | | Hours
+| 10 | 2 | | Minutes
+| 12 | 2 | | Seconds
+| 14 | 2 | | Milliseconds
+|===
+
+==== Floating point
+Floating point values are represented as the following stings.
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| -1.#INF | | Negative infinity/overflow
+| 1.#INF | | Positive infinity/overflow
+| -1.#IND | | Indeterminate
+| [-]?0 | | Positive or negative zero
+| [yellow-background]*[-]?[0-9]+* | | [yellow-background]*Any positive or negative value that can be represented as an integer*
+| [yellow-background]*[-]?[0-9]+.[0-9]{6}* | | [yellow-background]*Any positive or negative value that can be represented in 6 fractional digits*
+| [yellow-background]*[-]?[0-9]+.[0-9]{6}e-[0-9]{3}* | | [yellow-background]*Any positive or negative value that could not be represented in 6 fractional digits*
+|===
+
+[yellow-background]*TODO validate the highlighted ones; 32-bit fractional of 6, 
+64-bit fractional of 14*
 
 == Event
 === Event identifier
