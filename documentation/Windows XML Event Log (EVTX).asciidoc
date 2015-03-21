@@ -533,8 +533,140 @@ If the value type is the Binary XML type (0x21) the value data should be either
 a fragment or a template instance.
 
 ==== Character entity reference
+The character entity reference (BinXmlCharacterEntityReference) is 3 byte of size and consists of:
 
-*TODO migrate remaining documentation*
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x08 +
+0x48 | Character entity reference token +
+Should be: BinXmlTokenCharRef +
+See section: <<token_type,Token types>>
+| 1 | 2 | | Character entity value
+|===
+
+A token type of 0x48 indicates that more data can be expected to follow in the 
+current content of the element or attribute; a token type of 0x08 indicates 
+that no more such data follows.
+
+In the resulting XML the character entity is replaced e.g. `38` becomes `&#38;`.
+
+[yellow-background]*According to `[MS-EVEN6]` emit the characters '&' and '#' 
+and the decimal string representation of the value. TODO create a test file.*
+
+==== Entity reference
+The entity reference (BinXmlEntityReference) is 5 bytes of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x09 +
+0x49 | Entity reference token +
+Should be: BinXmlTokenEntityRef +
+See section: <<token_type,Token types>>
+| 1 | 4 | | Entity name offset +
+The offset is relative from the start of the chunk +
+See section: <<name,Name>>
+|===
+
+A token type of 0x49 indicates that more data can be expected to follow in the 
+current content of the element or attribute; a token type of 0x09 indicates 
+that no more such data follows.
+
+In the resulting string the entity is replaced e.g. `amp` becomes & for a 
+Unicode string and `&amp;` for an XML string.
+
+The name offset is not used in the binary XML in the Windows Event Template 
+resource.
+
+It currently is assumed that the following entity references are supported lt, 
+gt, amp, quot and apos.
+
+==== CDATA section
+The entity reference (BinXmlEntityReference) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x07 +
+0x47 | CDATA section token +
+Should be: BinXmlTokenCDATASection +
+See section: <<token_type,Token types>>
+| 1 | ... | | CDATA text +
+See section: <<unicode_text_string,Unicode text string>>
+|===
+
+A token type of 0x47 indicates that more data can be expected to follow in the 
+current content of the element or attribute; a token type of 0x07 indicates 
+that no more such data follows.
+
+==== Template instance
+The template instance (BinXmlTemplateInstance) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | 0x0c | Template instance token +
+Should be: BinXmlTokenTemplateInstance +
+See section: <<token_type,Token types>>
+| 1 | ... | | Template definition
+| ... | ... | | Template instance data
+|===
+
+==== Template definition
+The template definition (BinXmlTemplateDefinition) is variable of size and 
+consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 1 | | [yellow-background]*Unknown(Version? Or number of template defs?)* +
+[yellow-background]*Seen: 0x01*
+| 1 | 4 | | [yellow-background]*Unknown (Template identifier?)*
+| 5 | 4 | | Template definition data offset +
+Template definition data
+| 9 | 4 | | [yellow-background]*Unknown (Next template definition offset)* +
+[yellow-background]*0 if not used*
+| 13 | 16 | | Template identifier +
+Contains a GUID
+| 29 | 4 | | Data size +
+The size of the data. +
+This includes the size of the fragment header, element and end of file token, except for the first 33 bytes of the template definition.
+| 33 | ... | | Fragment header
+| ... | ... | | Element
+| ... | 1 | | End of file token +
+Should be: BinXmlTokenEOF +
+See section: <<token_type,Token types>>
+|===
+
+[NOTE]
+The template definition data offset either point to the offset directly after 
+this value or somewhere previously in the chunk. The template definition can 
+therefore be stored non-continuous.
+
+[yellow-background]*What does the %b0 in `[MS-EVEN6]` signify?*
+
+==== Template instance data
+The template instance data (BinXmlTemplateInstanceData) is variable of size and 
+consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | | Number of template values
+| 4 | ... | | Array of template value descriptors
+| ... | ... | | Array of template value data
+|===
+
+The template value descriptor is 4 bytes of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 2 | | Value size
+| 2 | 1 | | Value type
+| 1 | 1 | 0x00 | [yellow-background]*Unknown (Empty value)*
+|===
 
 ==== [[unicode_text_string]]Unicode text string
 The Unicode text string is variable of size and consists of:
@@ -717,9 +849,9 @@ Every 8 bytes are an individual value in little-endian
 
 ==== String
 If in a string the characters: <, >, &, " and ' are not escaped they must 
-respectively be replaced by the following character entities: &lt;, &gt;, 
-&amp;, &quot; and &apos;. This does not apply to Character entity reference and 
-Entity reference encoded strings.
+respectively be replaced by the following character entities: `&lt;`, `&gt;`, 
+`&amp;`, `&quot;` and `&apos;`. This does not apply to Character entity 
+reference and Entity reference encoded strings.
 
 Event Viewer will not escape the character entities in the XML view, but will 
 when exported as XML. Event Viewer seems to apply the XML character entity 
