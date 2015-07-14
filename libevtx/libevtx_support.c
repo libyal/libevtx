@@ -435,7 +435,7 @@ on_error:
 	{
 		libbfio_handle_close(
 		 file_io_handle,
-		 error );
+		 NULL );
 	}
 	return( -1 );
 }
