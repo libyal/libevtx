@@ -604,6 +604,7 @@ int libevtx_record_values_read_xml_document(
 	static char *function         = "libevtx_record_values_read_xml_document";
 	size_t chunk_data_offset      = 0;
 	size_t event_record_data_size = 0;
+	uint8_t flags                 = 0;
 
 	if( record_values == NULL )
 	{
@@ -723,13 +724,16 @@ int libevtx_record_values_read_xml_document(
 		 0 );
 	}
 #endif
+	flags = LIBFWEVT_XML_DOCUMENT_READ_FLAG_HAS_DATA_OFFSETS
+	      | LIBFWEVT_XML_DOCUMENT_READ_FLAG_HAS_DEPENDENCY_IDENTIFIERS;
+
 	if( libfwevt_xml_document_read(
 	     record_values->xml_document,
 	     chunk_data,
 	     chunk_data_size,
 	     chunk_data_offset,
 	     io_handle->ascii_codepage,
-	     LIBFWEVT_XML_DOCUMENT_READ_FLAG_HAS_DATA_OFFSETS,
+	     flags,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

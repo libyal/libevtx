@@ -32,7 +32,7 @@ files.
 [preface]
 == License
 ....
-Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the 
 terms of the GNU Free Documentation License, Version 1.3 or any later version 
 published by the Free Software Foundation; with no Invariant Sections, no 
@@ -64,6 +64,7 @@ April 2012 | Additional information.
 | 0.0.15 | J.B. Metz | February 2014 | Additional information regarding MUI and "language specific" event message files.
 | 0.0.16 | J.B. Metz | July 2014 | Additional information about parameter expansion.
 | 0.0.16 | J.B. Metz | March 2015 | Switched to asccidoc format.
+| 0.0.17 | J.B. Metz | January 2016 | Additional information about Binary XML type (0x21).
 |===
 
 :numbered:
@@ -96,9 +97,9 @@ The following version of programs were used to test the information within this 
 * Windows Vista
 * Windows 2008
 * Windows 7
-* Windows 8 (Consumer Preview)
-* [yellow-background]*TODO: Windows 8*
-* [yellow-background]*TODO: Windows 10*
+* Windows 8
+* [yellow-background]*TODO: Windows 2012*
+* Windows 10
 
 === Event Log files
 The event logs files can normally be found in:
@@ -341,14 +342,18 @@ The element start (BinXMLElementStart) is variable of size and consists of:
 0x41 | Open start element tag token +
 Should be: BinXmlTokenOpenStartElementTag +
 See section: <<token_type,Token types>>
+4+| _Optional see notes below_
 | 1 | 2 | | Dependency identifier +
 -1 (0xffff) => not set
+4+| _Common_
 | 3 | 4 | | Data size +
 The size of the data. +
 This includes the size of the element name, attribute list, close element tag, content and end element tag, except for the first 7 bytes of the element start.
+4+| _Optional see notes below_
 | 7 | 4 | | Element name offset +
 The offset is relative from the start of the chunk +
 See section: <<name,Name>>
+4+| _Common_
 | 11 | ... | | Attribute list +
 See section: <<attribute_list,Attribute list>>
 |===
@@ -360,8 +365,13 @@ element start tag.
 [NOTE]
 The element name can be stored before the attribute list.
 
-The name offset is not used in the binary XML in the Windows Event Template 
+[NOTE]
+The name offset is not present in the binary XML in the Windows Event Template 
 resource.
+
+[NOTE]
+The dependency identifier is not present when the element start is used in a 
+substitution token with value type: Binary XML (0x21).
 
 ==== [[attribute_list]]Attribute list
 The attribute (BinXmlAttributeList) is variable of size and consists of:
@@ -388,9 +398,11 @@ The attribute (BinXmlAttribute) is variable of size and consists of:
 0x46 | Attribute token +
 Should be: BinXmlTokenAttribute +
 See section: <<token_type,Token types>>
+4+| _Optional see notes below_
 | 1 | 4 | | Attribute name offset +
 The offset is relative from the start of the chunk +
 See section: <<name,Name>>
+4+| _Common_
 | 5 | ... | | Attribute data
 |===
 
@@ -407,7 +419,8 @@ The attribute data (BinXMLAttributeData) can be:
 * character entity reference
 * entity reference
 
-The name offset is not used in the binary XML in the Windows Event Template 
+[NOTE]
+The name offset is not present in the binary XML in the Windows Event Template 
 resource.
 
 ==== [[name]]Name
@@ -500,8 +513,12 @@ same applies to an array of Size (0x90) where the substitution value should be
 an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
 integer (0x95).
 
-If the value type is the Binary XML type (0x21) the value data should be either 
-a fragment or a template instance.
+If the value type is the Binary XML type (0x21) the value data should be one of 
+the following:
+
+* an open start element tag (BinXmlTokenOpenStartElementTag);
+* a fragment (BinXMLFragment);
+* a template instance (BinXmlTemplateInstance).
 
 ==== Optional substitution
 The optional substitution (BinXmlOptionalSubstitution) is 4 byte of size and 
@@ -532,8 +549,12 @@ same applies to an array of Size (0x90) where the substitution value should be
 an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
 integer (0x95).
 
-If the value type is the Binary XML type (0x21) the value data should be either 
-a fragment or a template instance.
+If the value type is the Binary XML type (0x21) the value data should be one of 
+the following:
+
+* an open start element tag (BinXmlTokenOpenStartElementTag);
+* a fragment (BinXMLFragment);
+* a template instance (BinXmlTemplateInstance).
 
 ==== Character entity reference
 The character entity reference (BinXmlCharacterEntityReference) is 3 byte of size and consists of:
@@ -567,6 +588,7 @@ The entity reference (BinXmlEntityReference) is 5 bytes of size and consists of:
 0x49 | Entity reference token +
 Should be: BinXmlTokenEntityRef +
 See section: <<token_type,Token types>>
+4+| _Optional see notes below_
 | 1 | 4 | | Entity name offset +
 The offset is relative from the start of the chunk +
 See section: <<name,Name>>
@@ -579,7 +601,8 @@ that no more such data follows.
 In the resulting string the entity is replaced e.g. `amp` becomes & for a 
 Unicode string and `&amp;` for an XML string.
 
-The name offset is not used in the binary XML in the Windows Event Template 
+[NOTE]
+The name offset is not present in the binary XML in the Windows Event Template 
 resource.
 
 It currently is assumed that the following entity references are supported lt, 
@@ -696,12 +719,15 @@ The PI target (BinXmlPITarget) is 5 bytes of size and consists of:
 | 0 | 1 | 0x0a | PI target reference token +
 Should be: BinXmlTokenPITarget +
 See section: <<token_type,Token types>>
+4+| _Optional see notes below_
 | 1 | 4 | | PI target name offset +
 The offset is relative from the start of the chunk +
 See section: <<name,Name>>
 |===
 
-The name offset is not used in the binary XML in the Windows Event Template resource.
+[NOTE]
+The name offset is not present in the binary XML in the Windows Event Template 
+resource.
 
 ==== PI data
 The entity reference (BinXmlPIData) is variable of size and consists of:

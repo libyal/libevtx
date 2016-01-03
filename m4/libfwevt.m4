@@ -1,6 +1,6 @@
 dnl Functions for libfwevt
 dnl
-dnl Version: 20141026
+dnl Version: 20160103
 
 dnl Function to detect if libfwevt is available
 dnl ac_libfwevt_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -24,7 +24,7 @@ AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
    [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
    [PKG_CHECK_MODULES(
     [libfwevt],
-    [libfwevt >= 20141026],
+    [libfwevt >= 20160103],
     [ac_cv_libfwevt=yes],
     [ac_cv_libfwevt=no])
    ])
@@ -47,8 +47,168 @@ AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
      libfwevt_get_version,
      [ac_cv_libfwevt_dummy=yes],
      [ac_cv_libfwevt=no])
+   
+    dnl Channel functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_channel_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_channel_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
   
-    dnl TODO add functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_channel_read,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+   
+    dnl Event functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_event_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_event_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Keyword functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_keyword_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_keyword_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Level functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_level_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_level_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Manifest functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_manifest_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_manifest_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Map functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_map_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_map_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Opcode functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_opcode_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_opcode_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Provider functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_provider_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_provider_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Task functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_task_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_task_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl Template functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_template_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_template_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+   
+    dnl XML document functions
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_xml_document_initialize,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+    AC_CHECK_LIB(
+     fwevt,
+     libfwevt_xml_document_free,
+     [ac_cv_libfwevt_dummy=yes],
+     [ac_cv_libfwevt=no])
+  
+    dnl TODO add remaining functions
+
+    dnl XML tag functions
+  
+    dnl TODO add remaining functions
 
     ac_cv_libfwevt_LIBADD="-lfwevt"
     ])
