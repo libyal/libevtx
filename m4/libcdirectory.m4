@@ -1,6 +1,6 @@
 dnl Functions for libcdirectory
 dnl
-dnl Version: 20140929
+dnl Version: 20160102
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -48,7 +48,85 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
      [ac_cv_libcdirectory_dummy=yes],
      [ac_cv_libcdirectory=no])
   
-    dnl TODO add functions
+    dnl Directory functions
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_initialize,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_free,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_open,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_close,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_read_entry,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_has_entry,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+
+    AS_IF(
+     [test "x$ac_cv_enable_wide_character_type" != xno],
+     [AC_CHECK_LIB(
+      cdirectory,
+      libcdirectory_directory_open_wide,
+      [ac_cv_libcdirectory_dummy=yes],
+      [ac_cv_libcdirectory=no])
+     AC_CHECK_LIB(
+      cdirectory,
+      libcdirectory_directory_has_entry_wide,
+      [ac_cv_libcdirectory_dummy=yes],
+      [ac_cv_libcdirectory=no])
+     ])
+
+    dnl Directory entry functions
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_entry_initialize,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_entry_free,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_entry_get_type,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+    AC_CHECK_LIB(
+     cdirectory,
+     libcdirectory_directory_entry_get_name,
+     [ac_cv_libcdirectory_dummy=yes],
+     [ac_cv_libcdirectory=no])
+
+    AS_IF(
+     [test "x$ac_cv_enable_wide_character_type" != xno],
+     [AC_CHECK_LIB(
+      cdirectory,
+      libcdirectory_directory_entry_get_name_wide,
+      [ac_cv_libcdirectory_dummy=yes],
+      [ac_cv_libcdirectory=no])
+     ])
 
     ac_cv_libcdirectory_LIBADD="-lcdirectory"
     ])

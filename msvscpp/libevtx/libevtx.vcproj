@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libevtx"
-	ProjectGUID="{9DF4AFB0-CED6-4BC5-802D-E8C951C5AED9}"
+	ProjectGUID="{91D35439-5C77-4084-B94A-45B055A97971}"
 	RootNamespace="libevtx"
 	TargetFrameworkVersion="131072"
 	>

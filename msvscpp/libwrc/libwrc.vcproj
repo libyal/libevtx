@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libwrc"
-	ProjectGUID="{EAC7955A-6861-48CF-B6BA-B09C5E8642CA}"
+	ProjectGUID="{B5E43F96-E790-4DBA-8891-4A14E7183D9A}"
 	RootNamespace="libwrc"
 	TargetFrameworkVersion="131072"
 	>

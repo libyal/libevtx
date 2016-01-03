@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libexe"
-	ProjectGUID="{E08719BD-29D2-4ED9-8987-25DC3814554E}"
+	ProjectGUID="{D9D3120F-1242-4538-82CD-A99B1BC9A3DF}"
 	RootNamespace="libexe"
 	TargetFrameworkVersion="131072"
 	>

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="evtxexport"
-	ProjectGUID="{C27BEBA4-D27C-4E67-96D4-B5B8DD355641}"
+	ProjectGUID="{4C0A33FC-0B42-4735-B5C9-EA49F17A9478}"
 	RootNamespace="evtxexport"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

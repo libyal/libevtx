@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libregf"
-	ProjectGUID="{947FD65B-9B2F-4103-B797-2DD4162CC332}"
+	ProjectGUID="{7F42F80A-6FE8-4634-8455-5D08A1E24BAA}"
 	RootNamespace="libregf"
 	TargetFrameworkVersion="131072"
 	>

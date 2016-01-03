@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcerror"
-	ProjectGUID="{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}"
+	ProjectGUID="{5299814A-9BDD-4F91-ADF9-723068B3B642}"
 	RootNamespace="libcerror"
 	TargetFrameworkVersion="131072"
 	>

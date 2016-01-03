@@ -1,7 +1,7 @@
 /*
  * Export handle
  *
- * Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -1847,7 +1847,7 @@ int export_handle_export_record_text(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t filetime_string[ 32 ];
+	libcstring_system_character_t filetime_string[ 48 ];
 
 	libcstring_system_character_t *source_name         = NULL;
 	libcstring_system_character_t *provider_identifier = NULL;
@@ -1948,14 +1948,14 @@ int export_handle_export_record_text(
 	result = libfdatetime_filetime_copy_to_utf16_string(
 		  filetime,
 		  (uint16_t *) filetime_string,
-		  32,
+		  48,
 		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #else
 	result = libfdatetime_filetime_copy_to_utf8_string(
 		  filetime,
 		  (uint8_t *) filetime_string,
-		  32,
+		  48,
 		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  error );
 #endif

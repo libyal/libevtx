@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="pyevtx"
-	ProjectGUID="{E221DB4C-B254-47CB-993D-DC7FED580DA1}"
+	ProjectGUID="{2D239718-8401-4E75-88FD-E81DF267543A}"
 	RootNamespace="pyevtx"
 	TargetFrameworkVersion="131072"
 	>

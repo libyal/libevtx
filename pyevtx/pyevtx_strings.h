@@ -1,7 +1,7 @@
 /*
  * Python object definition of the strings sequence and iterator
  *
- * Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,9 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include "pyevtx_record.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
+#include "pyevtx_record.h"
 
 #if defined( __cplusplus )
 extern "C" {
