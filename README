@@ -1,16 +1,16 @@
 libevtx is a library to access the Windows XML Event Log (EVTX) format.
 
 Project information:
+
 * Status: alpha
 * Licence: LGPLv3+
 
-Work in progress:
-* Python 3 support
-
 Planned:
+
 * Multi-threading support
 
 For more information see:
+
 * Project documentation: https://github.com/libyal/libevtx/wiki/Home
 * How to build from source: https://github.com/libyal/libevtx/wiki/Building
 

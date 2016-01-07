@@ -12,7 +12,7 @@ export DH_OPTIONS
 
 .PHONY: override_dh_auto_configure
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-python CFLAGS="-g"
+	dh_auto_configure -- --enable-python2 --enable-python3 CFLAGS="-g"
 
 .PHONY: override_dh_auto_test
 override_dh_auto_test:
@@ -33,8 +33,11 @@ override_dh_install:
 	dh_install "debian/tmp/usr/bin/*" -p libevtx-tools
 	dh_install "debian/tmp/usr/share/man/man1/*" -p libevtx-tools
 	# Create the libevtx-python package.
-	dh_install -X"*_d.so" "debian/tmp/usr/lib/python*/*" -p libevtx-python
-	# The libevtx-dbg and libevtx-python-dbg packages are created by dh_strip.
+	dh_install -X"*_d.so" "debian/tmp/usr/lib/python2*/*" -p libevtx-python
+	# Create the libevtx-python3 package.
+	dh_install -X"*_d.so" "debian/tmp/usr/lib/python3*/*" -p libevtx-python3
+	# The libevtx-dbg, libevtx-python-dbg and libevtx-python3-dbg packages
+	# are created by dh_strip.
 	dh_install
 
 .PHONY: override_dh_installmenu
@@ -84,6 +87,7 @@ override_dh_strip:
 ifeq (,$(filter nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -plibevtx --dbg-package=libevtx-dbg
 	dh_strip -plibevtx-python --dbg-package=libevtx-python-dbg
+	dh_strip -plibevtx-python3 --dbg-package=libevtx-python3-dbg
 endif
 
 .PHONY: override_dh_shlibdeps

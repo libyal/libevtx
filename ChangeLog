@@ -76,6 +76,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20160107
+* worked on Python 3 support
+
 20160103
 * 2016 update
 * Worked on format support
