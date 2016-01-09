@@ -57,7 +57,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-%make_instal
+%make_install
 
 %clean
 rm -rf %{buildroot}

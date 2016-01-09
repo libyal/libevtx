@@ -76,6 +76,9 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20160109
+* fixes for rpmbuild
+
 20160107
 * worked on Python 3 support
 

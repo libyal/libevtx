@@ -61,15 +61,15 @@ pyevtx_la_CPPFLAGS = $(PYTHON3_CPPFLAGS)
 pyevtx_la_LDFLAGS  = -module -avoid-version $(PYTHON3_LDFLAGS)
 
 $(BUILT_SOURCES):
-	/bin/cp -f $(top_srcdir)/pyevtx/pyevtx*.[ch] .
-
-clean-local:
-	/bin/rm -f pyevtx*.[ch]
+	/bin/cp -f $(top_srcdir)/pyevtx/$@ $@
 
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+clean-local:
+	/bin/rm -f pyevtx*.[ch]
 
 distclean: clean
 	/bin/rm -f Makefile

@@ -114,7 +114,6 @@ stamp-h[1-9]
 /libevtx/libevtx.rc
 /libevtx/libevtx_definitions.h
 /pyevtx[23]/*.[ch]
-/LICENSE.pyevtx
 /evtxtools/evtxexport
 /evtxtools/evtxinfo
 /tests/evtx_test_open_close
