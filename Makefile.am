@@ -29,8 +29,8 @@ SUBDIRS = \
 	libcsystem \
 	evtxtools \
 	pyevtx \
-	pyevtx2 \
-	pyevtx3 \
+	pyevtx-python2 \
+	pyevtx-python3 \
 	po \
 	manuals \
 	tests \
