@@ -76,6 +76,10 @@ Debug:
 Recovery:
 * scan for records in chunk free space
 
+20160126
+* applied updates
+* worked on tests
+
 20160109
 * fixes for rpmbuild
 
