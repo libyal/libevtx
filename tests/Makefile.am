@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
 
-if HAVE_PYTHON
+if HAVE_PYTHON_TESTS
 TESTS_PYEVTX  = \
 	test_pyevtx_set_ascii_codepage.sh \
 	test_pyevtx_open_close.sh

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Library set ASCII codepage testing script
 #
-# Version: 20160126
+# Version: 20160128
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -16,7 +16,7 @@ then
 	exit ${EXIT_IGNORE};
 fi
 
-TEST_SET_ASCII_CODEPAGE="${TEST_PREFIX}_test_set_ascii_codepage";
+TEST_SET_ASCII_CODEPAGE="./${TEST_PREFIX}_test_set_ascii_codepage";
 
 if ! test -x ${TEST_SET_ASCII_CODEPAGE};
 then
@@ -55,7 +55,7 @@ do
 	rm -rf ${TMPDIR};
 	mkdir ${TMPDIR};
 
-	${TEST_RUNNER} ${TMPDIR} ./${TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
+	${TEST_RUNNER} ${TMPDIR} ${TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
 
 	RESULT=$?;
 
@@ -86,7 +86,7 @@ do
 	rm -rf ${TMPDIR};
 	mkdir ${TMPDIR};
 
-	${TEST_RUNNER} ${TMPDIR} ./${TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
+	${TEST_RUNNER} ${TMPDIR} ${TEST_SET_ASCII_CODEPAGE} ${CODEPAGE};
 
 	RESULT=$?;
 
