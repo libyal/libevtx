@@ -23,9 +23,8 @@
 #define _LIBEVTX_NOTIFY_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #include "libevtx_extern.h"
 #include "libevtx_libcerror.h"
@@ -54,11 +53,11 @@ LIBEVTX_EXTERN \
 int libevtx_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_NOTIFY_H ) */
 

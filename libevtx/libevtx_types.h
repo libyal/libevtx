@@ -52,5 +52,5 @@ typedef intptr_t libevtx_template_definition_t;
  */
 typedef unsigned long int libevtx_aligned_t;
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_TYPES_H ) */
 

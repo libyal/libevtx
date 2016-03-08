@@ -28,7 +28,7 @@
 #include "pyevtx_libcerror.h"
 #include "pyevtx_python.h"
 
-#define PYEVTX_ERROR_STRING_SIZE		2048
+#define PYEVTX_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pyevtx_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_ERROR_H ) */
 

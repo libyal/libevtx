@@ -112,5 +112,5 @@ const char *libevtx_codepage_get_description(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_CODEPAGE_H ) */
 
