@@ -39,16 +39,16 @@ SUBDIRS = \
 DPKG_FILES = \
 	dpkg/changelog \
 	dpkg/changelog.in \
-       	dpkg/compat \
-       	dpkg/control \
-       	dpkg/copyright \
-       	dpkg/copyright.in \
-       	dpkg/rules \
-       	dpkg/libevtx.docs \
-       	dpkg/libevtx-dev.docs \
-       	dpkg/libevtx-python.docs \
-       	dpkg/libevtx-python3.docs \
-       	dpkg/libevtx-tools.docs \
+	dpkg/compat \
+	dpkg/control \
+	dpkg/copyright \
+	dpkg/copyright.in \
+	dpkg/rules \
+	dpkg/libevtx.docs \
+	dpkg/libevtx-dev.docs \
+	dpkg/libevtx-python.docs \
+	dpkg/libevtx-python3.docs \
+	dpkg/libevtx-tools.docs \
 	dpkg/source/format
 
 GETTEXT_FILES = \

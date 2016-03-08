@@ -15,7 +15,7 @@ AM_CPPFLAGS = \
 	@LIBEVTX_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
-TESTS_PYEVTX  = \
+TESTS_PYEVTX = \
 	test_pyevtx_set_ascii_codepage.sh \
 	test_pyevtx_open_close.sh
 endif
@@ -43,7 +43,7 @@ check_SCRIPTS = \
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
-check_PROGRAMS =  \
+check_PROGRAMS = \
 	evtx_test_open_close \
 	evtx_test_set_ascii_codepage
 

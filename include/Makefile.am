@@ -1,13 +1,13 @@
 include_HEADERS = \
-        libevtx.h
+	libevtx.h
 
 pkginclude_HEADERS = \
-        libevtx/codepage.h \
-        libevtx/definitions.h \
-        libevtx/error.h \
-        libevtx/extern.h \
-        libevtx/features.h \
-        libevtx/types.h
+	libevtx/codepage.h \
+	libevtx/definitions.h \
+	libevtx/error.h \
+	libevtx/extern.h \
+	libevtx/features.h \
+	libevtx/types.h
 
 EXTRA_DIST = \
 	libevtx.h.in \
