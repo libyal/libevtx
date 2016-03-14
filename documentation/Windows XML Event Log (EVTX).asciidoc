@@ -671,6 +671,7 @@ this value or somewhere previously in the chunk. The template definition can
 therefore be stored non-continuous.
 
 [yellow-background]*What does the %b0 in `[MS-EVEN6]` signify?*
+[yellow-background]*Possibly a bit value of 0 seeing that in other MSDN documentation %d16 indicates a decimal value of 16.*
 
 ==== Template instance data
 The template instance data (BinXmlTemplateInstanceData) is variable of size and 
