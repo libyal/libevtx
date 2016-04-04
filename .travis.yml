@@ -11,10 +11,10 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      compiler: "MinGW 32-bit"
+      compiler: ": MinGW 32-bit"
       env: HOST=i686-w64-mingw32 PACKAGES="gcc-mingw-w64-i686 binutils-mingw-w64-i686 mingw-w64-dev"
     - os: linux
-      compiler: "MinGW 64-bit"
+      compiler: ": MinGW 64-bit"
       env: HOST=x86_64-w64-mingw32 PACKAGES="gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-dev"
 before_install:
   - if test `uname -s` = 'Darwin'; then brew update && brew install gettext && brew link --force gettext; fi
