@@ -1,7 +1,7 @@
 #!/bin/bash
 # Python module functions testing script
 #
-# Version: 20160403
+# Version: 20160407
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -86,6 +86,8 @@ then
 fi
 
 source ${TEST_RUNNER};
+
+RESULT=${EXIT_IGNORE};
 
 for TEST_FUNCTION in ${TEST_FUNCTIONS};
 do
