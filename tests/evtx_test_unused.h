@@ -1,5 +1,5 @@
 /*
- * The internal libcstring header
+ * The unused definition
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,33 +19,26 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _EVTX_TEST_LIBCSTRING_H )
-#define _EVTX_TEST_LIBCSTRING_H
+#if !defined( _EVTX_TEST_UNUSED_H )
+#define _EVTX_TEST_UNUSED_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCSTRING for local use of libcstring
- */
-#if defined( HAVE_LOCAL_LIBCSTRING )
-
-#include <libcstring_definitions.h>
-#include <libcstring_narrow_string.h>
-#include <libcstring_system_string.h>
-#include <libcstring_types.h>
-#include <libcstring_wide_string.h>
-
+#if !defined( EVTX_TEST_ATTRIBUTE_UNUSED )
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define EVTX_TEST_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
 #else
-
-/* If libtool DLL support is enabled set LIBCSTRING_DLL_IMPORT
- * before including libcstring.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBCSTRING_DLL_IMPORT
+#define EVTX_TEST_ATTRIBUTE_UNUSED
+#endif
 #endif
 
-#include <libcstring.h>
+#if defined( _MSC_VER )
+#define EVTX_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+#else
+#define EVTX_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
+#endif
 
-#endif /* defined( HAVE_LOCAL_LIBCSTRING ) */
-
-#endif /* !defined( _EVTX_TEST_LIBCSTRING_H ) */
+#endif
 

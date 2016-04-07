@@ -1,4 +1,5 @@
 MSVSCPP_FILES = \
+	evtx_test_get_version/evtx_test_get_version.vcproj \
 	evtx_test_open_close/evtx_test_open_close.vcproj \
 	evtx_test_set_ascii_codepage/evtx_test_set_ascii_codepage.vcproj \
 	evtxexport/evtxexport.vcproj \

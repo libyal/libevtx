@@ -33,5 +33,5 @@
 
 #include <libevtx.h>
 
-#endif
+#endif /* !defined( _EVTX_TEST_LIBEVTX_H ) */
 

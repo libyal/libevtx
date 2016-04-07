@@ -20,12 +20,11 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
-
-#include <stdio.h>
 
 #include "evtx_test_libcerror.h"
 #include "evtx_test_libclocale.h"
@@ -125,7 +124,7 @@ on_error:
 	{
 		libcerror_error_backtrace_fprint(
 		 error,
-		 stdout );
+		 stderr );
 
 		libcerror_error_free(
 		 &error );

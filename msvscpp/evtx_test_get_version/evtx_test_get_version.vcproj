@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtx_test_set_ascii_codepage"
-	ProjectGUID="{1334CDE0-EC94-47D4-B3A7-22F69298695B}"
-	RootNamespace="evtx_test_set_ascii_codepage"
+	Name="evtx_test_get_version"
+	ProjectGUID="{A9606286-71C2-4AD3-B730-7CDADACC0522}"
+	RootNamespace="evtx_test_get_version"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_set_ascii_codepage.c"
+				RelativePath="..\..\tests\evtx_test_get_version.c"
 				>
 			</File>
 		</Filter>
@@ -186,19 +186,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_libcerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\evtx_test_libclocale.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\evtx_test_libcstring.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\evtx_test_libevtx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_unused.h"
 				>
 			</File>
 		</Filter>

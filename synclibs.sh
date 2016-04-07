@@ -1,7 +1,7 @@
 #!/bin/sh
 # Script that synchronizes the local library dependencies
 #
-# Version: 20160228
+# Version: 20160320
 
 GIT_URL_PREFIX="https://github.com/libyal";
 LOCAL_LIBS="libbfio libcdata libcdirectory libcerror libcfile libclocale libcnotify libcpath libcsplit libcstring libcsystem libcthreads libexe libfcache libfdata libfdatetime libfguid libfvalue libfwevt libfwnt libregf libuna libwrc";
@@ -30,7 +30,7 @@ do
 	LOCAL_LIB_VERSION=`grep -A 2 AC_INIT ${LOCAL_LIB}-$$/configure.ac | tail -n 1 | sed 's/^\s*\[\([0-9]*\)\],\s*$/\1/'`;
 	LOCAL_LIB_MAKEFILE_AM="${LOCAL_LIB}/Makefile.am";
 
-	cp ${LOCAL_LIB}-$$/${LOCAL_LIB}/*.[ch] ${LOCAL_LIB};
+	cp ${LOCAL_LIB}-$$/${LOCAL_LIB}/*.[chly] ${LOCAL_LIB};
 	cp ${LOCAL_LIB}-$$/${LOCAL_LIB_MAKEFILE_AM} ${LOCAL_LIB_MAKEFILE_AM};
 
 	# Make the necessary changes to libyal/Makefile.am
@@ -80,7 +80,14 @@ endif
 
 	sed -i'~' "/${LOCAL_LIB}_definitions.h.in/d" ${LOCAL_LIB_MAKEFILE_AM};
 	sed -i'~' "/${LOCAL_LIB}.rc/d" ${LOCAL_LIB_MAKEFILE_AM};
-	sed -i'~' '/EXTRA_DIST = /d' ${LOCAL_LIB_MAKEFILE_AM};
+
+	if test ${LOCAL_LIB} = "libodraw";
+	then
+		# TODO: make this more generic to strip the last \\
+		sed -i'~' 's/libodraw_cue_scanner.c \\/libodraw_cue_scanner.c/' ${LOCAL_LIB_MAKEFILE_AM};
+	else
+		sed -i'~' '/EXTRA_DIST = /,/^$/d' ${LOCAL_LIB_MAKEFILE_AM};
+	fi
 
 SED_SCRIPT="/^$/ {
 	x
