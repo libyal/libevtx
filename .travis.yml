@@ -15,5 +15,5 @@ install:
 script:
   - if test `uname -s` = 'Linux'; then export PATH=$(echo $PATH | tr ":" "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s/::/:/g"); fi
   - ./runtests.sh
-  - if test `uname -s` = 'Linux' && test ${CC} = "gcc"; then make clean && ./configure --host=i686-w64-mingw32 --enable-winapi=yes && make > /dev/null; fi
-  - if test `uname -s` = 'Linux' && test ${CC} = "gcc"; then make clean && ./configure --host=x86_64-w64-mingw32 --enable-winapi=yes && make > /dev/null; fi
+  - if test `uname -s` = 'Linux' && test ${CC} = "gcc"; then dpkg -L mingw-w64-i686-dev && make clean && ./configure --host=i686-w64-mingw32 --enable-winapi=yes && make > /dev/null; fi
+  - if test `uname -s` = 'Linux' && test ${CC} = "gcc"; then dpkg -L mingw-w64-x86-64-dev && make clean && ./configure --host=x86_64-w64-mingw32 --enable-winapi=yes && make > /dev/null; fi
