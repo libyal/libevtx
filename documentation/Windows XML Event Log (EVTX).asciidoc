@@ -13,7 +13,7 @@ Schuster `[SCHUSTER11]` and on `[MS-EVEN6]`. It was complemented by other
 public available information and reverse engineering of the file format.
 
 This document is intended as a working document for the Windows XML EventLog 
-(EVXT) specification. Which should allow existing Open Source forensic tooling 
+(EVTX) specification. Which should allow existing Open Source forensic tooling 
 to be able to process this file type.
 
 Special thanks to A. Schuster for his excellent work on the format and test 
@@ -65,6 +65,7 @@ April 2012 | Additional information.
 | 0.0.16 | J.B. Metz | July 2014 | Additional information about parameter expansion.
 | 0.0.16 | J.B. Metz | March 2015 | Switched to asccidoc format.
 | 0.0.17 | J.B. Metz | January 2016 | Additional information about Binary XML type (0x21).
+| 0.0.18 | J.B. Metz | April 2016 | Fixed typo.
 |===
 
 :numbered:
