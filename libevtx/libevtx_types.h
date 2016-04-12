@@ -33,7 +33,7 @@
 
 /* The following type definitions hide internal data structures
  */
-#if defined( HAVE_DEBUG_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
 typedef struct libevtx_file {}			libevtx_file_t;
 typedef struct libevtx_record {}		libevtx_record_t;
 typedef struct libevtx_template_definition {}	libevtx_template_definition_t;
@@ -43,7 +43,7 @@ typedef intptr_t libevtx_file_t;
 typedef intptr_t libevtx_record_t;
 typedef intptr_t libevtx_template_definition_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
 #endif /* defined( HAVE_LOCAL_LIBEVTX ) */
 
