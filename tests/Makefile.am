@@ -30,6 +30,7 @@ TESTS = \
 	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
+	pyevtx_test_get_version.py \
 	pyevtx_test_open_close.py \
 	pyevtx_test_set_ascii_codepage.py \
 	test_api_functions.sh \
