@@ -184,8 +184,8 @@ def pyevtx_test_multi_open_close_file_object(filename, mode):
 
 
 def main():
-  args_parser = argparse.ArgumentParser(description=(
-      "Tests open and close."))
+  args_parser = argparse.ArgumentParser(
+      description="Tests open and close.")
 
   args_parser.add_argument(
       "source", nargs="?", action="store", metavar="FILENAME",

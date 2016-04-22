@@ -112,9 +112,9 @@ def main():
 
   return True
 
+
 if __name__ == "__main__":
   if not main():
     sys.exit(1)
   else:
     sys.exit(0)
-
