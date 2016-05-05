@@ -72,8 +72,8 @@ evtx_test_open_close_LDADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
-	../libevtx/libevtx.la \
 	@LIBCDATA_LIBADD@ \
+	../libevtx/libevtx.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
