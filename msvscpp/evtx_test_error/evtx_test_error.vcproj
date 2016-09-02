@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtx_test_get_version"
-	ProjectGUID="{A9606286-71C2-4AD3-B730-7CDADACC0522}"
-	RootNamespace="evtx_test_get_version"
+	Name="evtx_test_error"
+	ProjectGUID="{D5374706-39C2-43A0-BCEA-D4A5B3F7E452}"
+	RootNamespace="evtx_test_error"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_get_version.c"
+				RelativePath="..\..\tests\evtx_test_error.c"
 				>
 			</File>
 		</Filter>
