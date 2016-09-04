@@ -155,6 +155,9 @@ AS_IF(
   [1])
  ])
 
+dnl Check for test function support
+AX_TESTS_CHECK_LOCAL
+
 dnl Check if DLL support is needed
 AS_IF(
  [test "x$enable_shared" = xyes],

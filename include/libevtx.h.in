@@ -759,5 +759,5 @@ int libevtx_template_definition_set_data(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_H ) */
 
