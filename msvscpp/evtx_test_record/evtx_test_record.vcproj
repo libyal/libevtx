@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtx_test_set_ascii_codepage"
-	ProjectGUID="{1334CDE0-EC94-47D4-B3A7-22F69298695B}"
-	RootNamespace="evtx_test_set_ascii_codepage"
+	Name="evtx_test_record"
+	ProjectGUID="{51C5C6C4-684E-4B2E-A220-3F177CD5D139}"
+	RootNamespace="evtx_test_record"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_set_ascii_codepage.c"
+				RelativePath="..\..\tests\evtx_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_record.c"
 				>
 			</File>
 		</Filter>
@@ -198,7 +202,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\evtx_test_libcsystem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\evtx_test_libevtx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_libuna.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_unused.h"
 				>
 			</File>
 		</Filter>

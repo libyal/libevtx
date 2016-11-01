@@ -209,5 +209,5 @@ typedef intptr_t libevtx_template_definition_t;
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_TYPES_H ) */
 

@@ -69,5 +69,5 @@ enum LIBEVTX_FILE_FLAGS
 	LIBEVTX_FILE_FLAG_IS_FULL				= 0x00000002UL,
 };
 
-#endif
+#endif /* !defined( _LIBEVTX_DEFINITIONS_H ) */
 

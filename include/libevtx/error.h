@@ -39,7 +39,7 @@ enum LIBEVTX_ERROR_DOMAINS
 	LIBEVTX_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBEVTX_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBEVTX_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBEVTX_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBEVTX_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBEVTX_MEMORY_ERROR
 	LIBEVTX_MEMORY_ERROR_SET_FAILED			= 3
 };
 
+/* The output error codes
+ */
+enum LIBEVTX_OUTPUT_ERROR
+{
+	LIBEVTX_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBEVTX_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -276,16 +287,5 @@ enum LIBEVTX_RUNTIME_ERROR
 	LIBEVTX_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
-/* The output error codes
- */
-enum LIBEVTX_OUTPUT_ERROR
-{
-	LIBEVTX_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBEVTX_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
-};
-
-#endif
+#endif /* !defined( _LIBEVTX_ERROR_H ) */
 

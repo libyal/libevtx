@@ -23,7 +23,7 @@ endif
 
 TESTS = \
 	test_api_functions.sh \
-	test_set_ascii_codepage.sh \
+	test_api_types.sh \
 	test_evtxinfo.sh \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
@@ -34,21 +34,22 @@ check_SCRIPTS = \
 	pyevtx_test_open_close.py \
 	pyevtx_test_set_ascii_codepage.py \
 	test_api_functions.sh \
-	test_pyevtx_set_ascii_codepage.sh \
-	test_python_functions.sh \
+	test_api_types.sh \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
 	test_evtxinfo.sh \
-	test_runner.sh \
-	test_set_ascii_codepage.sh
+	test_pyevtx_set_ascii_codepage.sh \
+	test_python_functions.sh \
+	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
 	evtx_test_error \
+	evtx_test_file \
 	evtx_test_open_close \
-	evtx_test_set_ascii_codepage \
+	evtx_test_record \
 	evtx_test_support
 
 evtx_test_error_SOURCES = \
@@ -60,6 +61,27 @@ evtx_test_error_SOURCES = \
 
 evtx_test_error_LDADD = \
 	../libevtx/libevtx.la \
+	@LIBCSTRING_LIBADD@
+
+evtx_test_file_SOURCES = \
+	evtx_test_file.c \
+	evtx_test_libcerror.h \
+	evtx_test_libclocale.h \
+	evtx_test_libcstring.h \
+	evtx_test_libcsystem.h \
+	evtx_test_libevtx.h \
+	evtx_test_libuna.h \
+	evtx_test_memory.c evtx_test_memory.h \
+	evtx_test_unused.h
+
+evtx_test_file_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 evtx_test_open_close_SOURCES = \
@@ -79,28 +101,45 @@ evtx_test_open_close_LDADD = \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
-evtx_test_set_ascii_codepage_SOURCES = \
+evtx_test_record_SOURCES = \
 	evtx_test_libcerror.h \
 	evtx_test_libclocale.h \
-	evtx_test_libevtx.h \
 	evtx_test_libcstring.h \
-	evtx_test_set_ascii_codepage.c
+	evtx_test_libcsystem.h \
+	evtx_test_libevtx.h \
+	evtx_test_libuna.h \
+	evtx_test_memory.c evtx_test_memory.h \
+	evtx_test_record.c \
+	evtx_test_unused.h
 
-evtx_test_set_ascii_codepage_LDADD = \
-	../libevtx/libevtx.la \
+evtx_test_record_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libevtx/libevtx.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 evtx_test_support_SOURCES = \
+	evtx_test_libcerror.h \
+	evtx_test_libclocale.h \
 	evtx_test_libcstring.h \
 	evtx_test_libevtx.h \
+	evtx_test_libuna.h \
 	evtx_test_macros.h \
 	evtx_test_support.c \
 	evtx_test_unused.h
 
 evtx_test_support_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \

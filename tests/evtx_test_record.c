@@ -1,5 +1,5 @@
 /*
- * Library error functions test program
+ * Library record type testing program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,90 +20,55 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
 #include "evtx_test_libcerror.h"
+#include "evtx_test_libcstring.h"
 #include "evtx_test_libevtx.h"
 #include "evtx_test_macros.h"
+#include "evtx_test_memory.h"
 #include "evtx_test_unused.h"
 
-/* Tests the libevtx_error_free function
+/* Tests the libevtx_record_free function
  * Returns 1 if successful or 0 if not
  */
-int evtx_test_error_free(
+int evtx_test_record_free(
      void )
 {
-	/* Test invocation of function only
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
 	 */
-	libevtx_error_free(
-	 NULL );
+	result = libevtx_record_free(
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
 
 	return( 1 );
-}
 
-/* Tests the libevtx_error_fprint function
- * Returns 1 if successful or 0 if not
- */
-int evtx_test_error_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libevtx_error_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libevtx_error_sprint function
- * Returns 1 if successful or 0 if not
- */
-int evtx_test_error_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libevtx_error_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
-}
-
-/* Tests the libevtx_error_backtrace_fprint function
- * Returns 1 if successful or 0 if not
- */
-int evtx_test_error_backtrace_fprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libevtx_error_backtrace_fprint(
-	 NULL,
-	 NULL );
-
-	return( 1 );
-}
-
-/* Tests the libevtx_error_backtrace_sprint function
- * Returns 1 if successful or 0 if not
- */
-int evtx_test_error_backtrace_sprint(
-     void )
-{
-	/* Test invocation of function only
-	 */
-	libevtx_error_backtrace_sprint(
-	 NULL,
-	 NULL,
-	 0 );
-
-	return( 1 );
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
 }
 
 /* The main program
@@ -122,24 +87,8 @@ int main(
 	EVTX_TEST_UNREFERENCED_PARAMETER( argv )
 
 	EVTX_TEST_RUN(
-	 "libevtx_error_free",
-	 evtx_test_error_free );
-
-	EVTX_TEST_RUN(
-	 "libevtx_error_fprint",
-	 evtx_test_error_fprint );
-
-	EVTX_TEST_RUN(
-	 "libevtx_error_sprint",
-	 evtx_test_error_sprint );
-
-	EVTX_TEST_RUN(
-	 "libevtx_error_backtrace_fprint",
-	 evtx_test_error_backtrace_fprint );
-
-	EVTX_TEST_RUN(
-	 "libevtx_error_backtrace_sprint",
-	 evtx_test_error_backtrace_sprint );
+	 "libevtx_record_free",
+	 evtx_test_record_free );
 
 	return( EXIT_SUCCESS );
 

@@ -24,6 +24,10 @@
 
 #include <common.h>
 
+/* Define HAVE_LOCAL_LIBEVTX for local use of libevtx
+ */
+#if !defined( HAVE_LOCAL_LIBEVTX )
+
 /* If libtool DLL support is enabled set LIBEVTX_DLL_EXPORT
  * before including libevtx/extern.h
  */
@@ -33,5 +37,10 @@
 
 #include <libevtx/extern.h>
 
+#else
+#define LIBEVTX_EXTERN	extern
+
 #endif
+
+#endif /* !defined( _LIBEVTX_INTERNAL_EXTERN_H ) */
 
