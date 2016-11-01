@@ -123,9 +123,9 @@ stamp-h[1-9]
 /evtxtools/evtxexport
 /evtxtools/evtxinfo
 /tests/evtx_test_error
-/tests/evtx_test_get_version
 /tests/evtx_test_open_close
 /tests/evtx_test_set_ascii_codepage
+/tests/evtx_test_support
 /tests/input
 /tests/tmp*
 
