@@ -43,12 +43,13 @@
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
 #include "evtxtools_libwrc.h"
+#include "evtxtools_system_split_string.h"
+#include "evtxtools_wide_string.h"
 #include "message_handle.h"
 #include "message_string.h"
 #include "path_handle.h"
 #include "registry_file.h"
 #include "resource_file.h"
-#include "system_split_string.h"
 
 /* Creates a message handle
  * Make sure the value message_handle is referencing, is set to NULL

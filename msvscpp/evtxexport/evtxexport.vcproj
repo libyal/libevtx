@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\evtxtools\evtxtools_wide_string.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\evtxtools\export_handle.c"
 				>
 			</File>
@@ -302,6 +306,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\evtxtools\evtxtools_system_split_string.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\evtxtools_wide_string.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\evtxtools\export_handle.h"
 				>
 			</File>
@@ -327,10 +339,6 @@
 			</File>
 			<File
 				RelativePath="..\..\evtxtools\resource_file.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\evtxtools\system_split_string.h"
 				>
 			</File>
 		</Filter>

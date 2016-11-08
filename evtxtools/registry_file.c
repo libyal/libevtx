@@ -28,6 +28,7 @@
 
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libregf.h"
+#include "evtxtools_wide_string.h"
 #include "registry_file.h"
 
 /* Creates a registry file

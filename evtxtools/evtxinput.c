@@ -30,6 +30,7 @@
 #include "evtxtools_libcpath.h"
 #include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
+#include "evtxtools_wide_string.h"
 
 /* Determines the event log type from a string
  * Returns 1 if successful, 0 if unsupported value or -1 on error

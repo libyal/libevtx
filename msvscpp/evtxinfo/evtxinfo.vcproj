@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\evtxtools\evtxtools_wide_string.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\evtxtools\info_handle.c"
 				>
 			</File>
@@ -243,6 +247,10 @@
 			</File>
 			<File
 				RelativePath="..\..\evtxtools\evtxtools_libuna.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\evtxtools_wide_string.h"
 				>
 			</File>
 			<File

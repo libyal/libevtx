@@ -54,14 +54,15 @@ evtxexport_SOURCES = \
 	evtxtools_libregf.h \
 	evtxtools_libuna.h \
 	evtxtools_libwrc.h \
+	evtxtools_system_split_string.h \
+	evtxtools_wide_string.c evtxtools_wide_string.h \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
 	message_handle.c message_handle.h \
 	message_string.c message_string.h \
 	path_handle.c path_handle.h \
 	registry_file.c registry_file.h \
-	resource_file.c resource_file.h \
-	system_split_string.h
+	resource_file.c resource_file.h
 
 evtxexport_LDADD = \
 	@LIBREGF_LIBADD@ \
@@ -104,6 +105,7 @@ evtxinfo_SOURCES = \
 	evtxtools_libfvalue.h \
 	evtxtools_libfwnt.h \
 	evtxtools_libuna.h \
+	evtxtools_wide_string.c evtxtools_wide_string.h \
 	info_handle.c info_handle.h
 
 evtxinfo_LDADD = \
