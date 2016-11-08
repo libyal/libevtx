@@ -48,6 +48,7 @@
 #include "path_handle.h"
 #include "registry_file.h"
 #include "resource_file.h"
+#include "system_split_string.h"
 
 /* Creates a message handle
  * Make sure the value message_handle is referencing, is set to NULL
@@ -2267,26 +2268,22 @@ int message_handle_get_resource_file_path(
      size_t *resource_file_path_size,
      libcerror_error_t **error )
 {
-	system_character_t *resource_filename_string_segment            = NULL;
-	system_character_t *mui_string                                  = NULL;
-	static char *function                                           = "message_handle_get_resource_file_path";
-	size_t resource_file_path_index                                 = 0;
-	size_t resource_files_path_length                               = 0;
-	size_t resource_filename_directory_name_index                   = 0;
-	size_t resource_filename_string_segment_size                    = 0;
-	size_t mui_string_size                                          = 0;
-	uint8_t directory_entry_type                                    = 0;
-	int resource_filename_number_of_segments                        = 0;
-	int resource_filename_segment_index                             = 0;
-	int result                                                      = 0;
+	system_character_t *mui_string                        = NULL;
+	system_character_t *resource_filename_string_segment  = NULL;
+	system_split_string_t *resource_filename_split_string = NULL;
+	static char *function                                 = "message_handle_get_resource_file_path";
+	size_t mui_string_size                                = 0;
+	size_t resource_file_path_index                       = 0;
+	size_t resource_filename_directory_name_index         = 0;
+	size_t resource_filename_string_segment_size          = 0;
+	size_t resource_files_path_length                     = 0;
+	uint8_t directory_entry_type                          = 0;
+	int resource_filename_number_of_segments              = 0;
+	int resource_filename_segment_index                   = 0;
+	int result                                            = 0;
 
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
-#endif
 #if defined( WINAPI )
-	const system_character_t *volume_letter                         = NULL;
+	const system_character_t *volume_letter               = NULL;
 #endif
 
 	if( message_handle == NULL )
@@ -2425,21 +2422,12 @@ int message_handle_get_resource_file_path(
 #endif
 		}
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
+	if( system_string_split(
 	     &( resource_filename[ resource_filename_directory_name_index ] ),
 	     resource_filename_length - resource_filename_directory_name_index + 1,
 	     (system_character_t) '\\',
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     &( resource_filename[ resource_filename_directory_name_index ] ),
-	     resource_filename_length - resource_filename_directory_name_index + 1,
-	     (system_character_t) '\\',
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -2450,17 +2438,10 @@ int message_handle_get_resource_file_path(
 
 		goto on_error;
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
+	if( system_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     resource_filename_split_string,
-	     &resource_filename_number_of_segments,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -2477,21 +2458,12 @@ int message_handle_get_resource_file_path(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
+		if( system_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
 		     &resource_filename_string_segment,
 		     &resource_filename_string_segment_size,
 		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     resource_filename_split_string,
-		     resource_filename_segment_index,
-		     &resource_filename_string_segment,
-		     &resource_filename_string_segment_size,
-		     error ) != 1 )
-#endif
 		{
 			libcerror_error_set(
 			 error,
@@ -2770,21 +2742,12 @@ int message_handle_get_resource_file_path(
 				break;
 			}
 		}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
+		if( system_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
 		     &resource_filename_string_segment,
 		     &resource_filename_string_segment_size,
 		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     resource_filename_split_string,
-		     resource_filename_segment_index,
-		     &resource_filename_string_segment,
-		     &resource_filename_string_segment_size,
-		     error ) != 1 )
-#endif
 		{
 			libcerror_error_set(
 			 error,
@@ -2946,15 +2909,9 @@ int message_handle_get_resource_file_path(
 	}
 	( *resource_file_path )[ resource_file_path_index - 1 ] = 0;
 
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
+	if( system_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -2975,15 +2932,9 @@ on_error:
 	}
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
+		system_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &resource_filename_split_string,
-		 NULL );
-#endif
 	}
 	if( *resource_file_path != NULL )
 	{
@@ -3777,18 +3728,13 @@ int message_handle_get_message_string(
      message_string_t **message_string,
      libcerror_error_t **error )
 {
-	system_character_t *resource_filename_string_segment            = NULL;
-	static char *function                                           = "message_handle_get_message_string";
-	size_t resource_filename_string_segment_size                    = 0;
-	int resource_filename_number_of_segments                        = 0;
-	int resource_filename_segment_index                             = 0;
-	int result                                                      = 0;
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
-#endif
+	system_character_t *resource_filename_string_segment  = NULL;
+	system_split_string_t *resource_filename_split_string = NULL;
+	static char *function                                 = "message_handle_get_message_string";
+	size_t resource_filename_string_segment_size          = 0;
+	int resource_filename_number_of_segments              = 0;
+	int resource_filename_segment_index                   = 0;
+	int result                                            = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3814,21 +3760,12 @@ int message_handle_get_message_string(
 	}
 	/* The resource filename can contain multiple file names separated by ;
 	 */
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
+	if( system_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
 	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     resource_filename,
-	     resource_filename_length + 1,
-	     (system_character_t) ';',
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -3839,17 +3776,10 @@ int message_handle_get_message_string(
 
 		goto on_error;
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
+	if( system_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     resource_filename_split_string,
-	     &resource_filename_number_of_segments,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -3864,21 +3794,12 @@ int message_handle_get_message_string(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
+		if( system_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
 		     &resource_filename_string_segment,
 		     &resource_filename_string_segment_size,
 		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     resource_filename_split_string,
-		     resource_filename_segment_index,
-		     &resource_filename_string_segment,
-		     &resource_filename_string_segment_size,
-		     error ) != 1 )
-#endif
 		{
 			libcerror_error_set(
 			 error,
@@ -3928,15 +3849,9 @@ int message_handle_get_message_string(
 			break;
 		}
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
+	if( system_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -3952,15 +3867,9 @@ int message_handle_get_message_string(
 on_error:
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
+		system_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &resource_filename_split_string,
-		 NULL );
-#endif
 	}
 	if( *message_string != NULL )
 	{
@@ -3983,21 +3892,16 @@ int message_handle_get_resource_file_by_provider_identifier(
      resource_file_t **resource_file,
      libcerror_error_t **error )
 {
-	system_character_t *resource_filename_string_segment            = NULL;
-	system_character_t *resource_file_path                          = NULL;
-	libwrc_wevt_provider_t *provider                                = NULL;
-	static char *function                                           = "message_handle_get_resource_file_by_provider_identifier";
-	size_t resource_filename_string_segment_size                    = 0;
-	size_t resource_file_path_size                                  = 0;
-	int resource_filename_number_of_segments                        = 0;
-	int resource_filename_segment_index                             = 0;
-	int result                                                      = 0;
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
-#else
-	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
-#endif
+	libwrc_wevt_provider_t *provider                      = NULL;
+	system_character_t *resource_file_path                = NULL;
+	system_character_t *resource_filename_string_segment  = NULL;
+	system_split_string_t *resource_filename_split_string = NULL;
+	static char *function                                 = "message_handle_get_resource_file_by_provider_identifier";
+	size_t resource_file_path_size                        = 0;
+	size_t resource_filename_string_segment_size          = 0;
+	int resource_filename_number_of_segments              = 0;
+	int resource_filename_segment_index                   = 0;
+	int result                                            = 0;
 
 	if( message_handle == NULL )
 	{
@@ -4023,21 +3927,12 @@ int message_handle_get_resource_file_by_provider_identifier(
 	}
 	/* The resource filename can contain multiple file names separated by ;
 	 */
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_string_split(
+	if( system_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
 	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_string_split(
-	     resource_filename,
-	     resource_filename_length + 1,
-	     (system_character_t) ';',
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -4048,17 +3943,10 @@ int message_handle_get_resource_file_by_provider_identifier(
 
 		goto on_error;
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_get_number_of_segments(
+	if( system_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_get_number_of_segments(
-	     resource_filename_split_string,
-	     &resource_filename_number_of_segments,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -4073,21 +3961,12 @@ int message_handle_get_resource_file_by_provider_identifier(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		if( libcsplit_wide_split_string_get_segment_by_index(
+		if( system_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
 		     &resource_filename_string_segment,
 		     &resource_filename_string_segment_size,
 		     error ) != 1 )
-#else
-		if( libcsplit_narrow_split_string_get_segment_by_index(
-		     resource_filename_split_string,
-		     resource_filename_segment_index,
-		     &resource_filename_string_segment,
-		     &resource_filename_string_segment_size,
-		     error ) != 1 )
-#endif
 		{
 			libcerror_error_set(
 			 error,
@@ -4206,15 +4085,9 @@ int message_handle_get_resource_file_by_provider_identifier(
 			}
 		}
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libcsplit_wide_split_string_free(
+	if( system_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
-#else
-	if( libcsplit_narrow_split_string_free(
-	     &resource_filename_split_string,
-	     error ) != 1 )
-#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -4235,15 +4108,9 @@ on_error:
 	}
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		libcsplit_wide_split_string_free(
+		system_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );
-#else
-		libcsplit_narrow_split_string_free(
-		 &resource_filename_split_string,
-		 NULL );
-#endif
 	}
 	return( -1 );
 }

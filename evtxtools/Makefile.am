@@ -60,7 +60,8 @@ evtxexport_SOURCES = \
 	message_string.c message_string.h \
 	path_handle.c path_handle.h \
 	registry_file.c registry_file.h \
-	resource_file.c resource_file.h
+	resource_file.c resource_file.h \
+	system_split_string.h
 
 evtxexport_LDADD = \
 	@LIBREGF_LIBADD@ \

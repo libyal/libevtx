@@ -329,6 +329,10 @@
 				RelativePath="..\..\evtxtools\resource_file.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\evtxtools\system_split_string.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
