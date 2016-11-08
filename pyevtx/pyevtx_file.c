@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -33,7 +34,6 @@
 #include "pyevtx_libbfio.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libclocale.h"
-#include "pyevtx_libcstring.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"
@@ -524,7 +524,7 @@ PyObject *pyevtx_file_open(
 	char *mode                   = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -584,7 +584,7 @@ PyObject *pyevtx_file_open(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS
@@ -990,7 +990,7 @@ int pyevtx_file_set_ascii_codepage_from_string(
 
 		return( -1 );
 	}
-	codepage_string_length = libcstring_narrow_string_length(
+	codepage_string_length = narrow_string_length(
 	                          codepage_string );
 
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;

@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #if defined( TIME_WITH_SYS_TIME )
 #include <sys/time.h>
@@ -36,7 +39,6 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcpath.h"
 #include "evtxtools_libcsplit.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
@@ -468,7 +470,7 @@ int message_handle_set_preferred_language_identifier(
  */
 int message_handle_set_software_registry_filename(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function  = "message_handle_set_software_registry_filename";
@@ -496,7 +498,7 @@ int message_handle_set_software_registry_filename(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
 	if( filename_length > (size_t) SSIZE_MAX )
@@ -519,7 +521,7 @@ int message_handle_set_software_registry_filename(
 	}
 	message_handle->software_registry_filename_size = filename_length + 1;
 
-	message_handle->software_registry_filename = libcstring_system_string_allocate(
+	message_handle->software_registry_filename = system_string_allocate(
 	                                              message_handle->software_registry_filename_size );
 
 	if( message_handle->software_registry_filename == NULL )
@@ -533,7 +535,7 @@ int message_handle_set_software_registry_filename(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     message_handle->software_registry_filename,
 	     filename,
 	     filename_length ) == NULL )
@@ -569,7 +571,7 @@ on_error:
  */
 int message_handle_set_system_registry_filename(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function  = "message_handle_set_system_registry_filename";
@@ -597,7 +599,7 @@ int message_handle_set_system_registry_filename(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
 	if( filename_length > (size_t) SSIZE_MAX )
@@ -620,7 +622,7 @@ int message_handle_set_system_registry_filename(
 	}
 	message_handle->system_registry_filename_size = filename_length + 1;
 
-	message_handle->system_registry_filename = libcstring_system_string_allocate(
+	message_handle->system_registry_filename = system_string_allocate(
 	                                            message_handle->system_registry_filename_size );
 
 	if( message_handle->system_registry_filename == NULL )
@@ -634,7 +636,7 @@ int message_handle_set_system_registry_filename(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     message_handle->system_registry_filename,
 	     filename,
 	     filename_length ) == NULL )
@@ -670,7 +672,7 @@ on_error:
  */
 int message_handle_set_registry_directory_name(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *name,
+     const system_character_t *name,
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_set_registry_directory_name";
@@ -698,7 +700,7 @@ int message_handle_set_registry_directory_name(
 
 		return( -1 );
 	}
-	name_length = libcstring_system_string_length(
+	name_length = system_string_length(
 	               name );
 
 	if( name_length > (size_t) SSIZE_MAX )
@@ -721,7 +723,7 @@ int message_handle_set_registry_directory_name(
 	}
 	message_handle->registry_directory_name_size = name_length + 1;
 
-	message_handle->registry_directory_name = libcstring_system_string_allocate(
+	message_handle->registry_directory_name = system_string_allocate(
 	                                           message_handle->registry_directory_name_size );
 
 	if( message_handle->registry_directory_name == NULL )
@@ -735,7 +737,7 @@ int message_handle_set_registry_directory_name(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     message_handle->registry_directory_name,
 	     name,
 	     name_length ) == NULL )
@@ -771,7 +773,7 @@ on_error:
  */
 int message_handle_set_resource_files_path(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_set_resource_files_path";
@@ -810,16 +812,16 @@ int message_handle_open_software_registry_file(
      message_handle_t *message_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *key_path          = NULL;
-	libcstring_system_character_t *software_filename = NULL;
-	libregf_key_t *sub_key                           = NULL;
-	libregf_value_t *value                           = NULL;
-	const char *sub_key_path                         = NULL;
-	const char *value_name                           = NULL;
-	static char *function                            = "message_handle_open_software_registry_file";
-	size_t key_path_length                           = 0;
-	size_t value_name_length                         = 0;
-	int result                                       = 0;
+	system_character_t *key_path          = NULL;
+	system_character_t *software_filename = NULL;
+	libregf_key_t *sub_key                = NULL;
+	libregf_value_t *value                = NULL;
+	const char *sub_key_path              = NULL;
+	const char *value_name                = NULL;
+	static char *function                 = "message_handle_open_software_registry_file";
+	size_t key_path_length                = 0;
+	size_t value_name_length              = 0;
+	int result                            = 0;
 
 	if( message_handle == NULL )
 	{
@@ -835,7 +837,7 @@ int message_handle_open_software_registry_file(
 	if( ( message_handle->software_registry_filename == NULL )
 	 && ( message_handle->registry_directory_name != NULL ) )
 	{
-		software_filename = libcstring_system_string_allocate(
+		software_filename = system_string_allocate(
 		                     9 );
 
 		if( software_filename == NULL )
@@ -849,9 +851,9 @@ int message_handle_open_software_registry_file(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     software_filename,
-		     _LIBCSTRING_SYSTEM_STRING( "SOFTWARE" ),
+		     _SYSTEM_STRING( "SOFTWARE" ),
 		     8 ) == NULL )
 		{
 			libcerror_error_set(
@@ -880,13 +882,13 @@ int message_handle_open_software_registry_file(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to determine if directory has entry: %" PRIs_SYSTEM ".",
 			 function,
 			 software_filename );
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libcpath_path_join_wide(
 			  &( message_handle->software_registry_filename ),
 			  &( message_handle->software_registry_filename_size ),
@@ -967,9 +969,9 @@ int message_handle_open_software_registry_file(
 		/* Get the value of %SystemRoot% from:
 		 * SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRoot
 		 */
-		key_path = _LIBCSTRING_SYSTEM_STRING( "Microsoft\\Windows NT\\CurrentVersion" );
+		key_path = _SYSTEM_STRING( "Microsoft\\Windows NT\\CurrentVersion" );
 
-		key_path_length = libcstring_system_string_length(
+		key_path_length = system_string_length(
 		                   key_path );
 
 		result = registry_file_get_key_by_path(
@@ -985,7 +987,7 @@ int message_handle_open_software_registry_file(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 			 function,
 			 sub_key_path );
 
@@ -995,7 +997,7 @@ int message_handle_open_software_registry_file(
 		{
 			value_name = "SystemRoot";
 
-			value_name_length = libcstring_narrow_string_length(
+			value_name_length = narrow_string_length(
 			                     value_name );
 
 			result = libregf_key_get_value_by_utf8_name(
@@ -1019,7 +1021,7 @@ int message_handle_open_software_registry_file(
 			}
 			else if( result != 0 )
 			{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libregf_value_get_value_utf16_string_size(
 					  value,
 					  &( message_handle->system_root_path_size ),
@@ -1046,7 +1048,7 @@ int message_handle_open_software_registry_file(
 				 && ( message_handle->system_root_path_size > 0 ) )
 				{
 					if( ( message_handle->system_root_path_size > (size_t) SSIZE_MAX )
-					 || ( ( sizeof( libcstring_system_character_t ) * message_handle->system_root_path_size ) > (size_t) SSIZE_MAX ) )
+					 || ( ( sizeof( system_character_t ) * message_handle->system_root_path_size ) > (size_t) SSIZE_MAX ) )
 					{
 						libcerror_error_set(
 						 error,
@@ -1057,7 +1059,7 @@ int message_handle_open_software_registry_file(
 
 						goto on_error;
 					}
-					message_handle->system_root_path = libcstring_system_string_allocate(
+					message_handle->system_root_path = system_string_allocate(
 						                            message_handle->system_root_path_size );
 
 					if( message_handle->system_root_path == NULL )
@@ -1071,7 +1073,7 @@ int message_handle_open_software_registry_file(
 
 						goto on_error;
 					}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libregf_value_get_value_utf16_string(
 						  value,
 						  (uint16_t *) message_handle->system_root_path,
@@ -1138,8 +1140,8 @@ int message_handle_open_software_registry_file(
 	if( message_handle->system_root_path != NULL )
 	{
 		if( ( message_handle->system_root_path_size < 4 )
-		 || ( ( message_handle->system_root_path )[ 1 ] != (libcstring_system_character_t) ':' )
-		 || ( ( message_handle->system_root_path )[ 2 ] != (libcstring_system_character_t) '\\' ) )
+		 || ( ( message_handle->system_root_path )[ 1 ] != (system_character_t) ':' )
+		 || ( ( message_handle->system_root_path )[ 2 ] != (system_character_t) '\\' ) )
 		{
 			memory_free(
 			 message_handle->system_root_path );
@@ -1154,7 +1156,7 @@ int message_handle_open_software_registry_file(
 	{
 		message_handle->system_root_path_size = 11;
 
-		message_handle->system_root_path = libcstring_system_string_allocate(
+		message_handle->system_root_path = system_string_allocate(
 		                                    message_handle->system_root_path_size );
 
 		if( message_handle->system_root_path == NULL )
@@ -1168,9 +1170,9 @@ int message_handle_open_software_registry_file(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     message_handle->system_root_path,
-		     _LIBCSTRING_SYSTEM_STRING( "C:\\Windows" ),
+		     _SYSTEM_STRING( "C:\\Windows" ),
 		     10 ) == NULL )
 		{
 			libcerror_error_set(
@@ -1195,7 +1197,7 @@ int message_handle_open_software_registry_file(
 	{
 		message_handle->windows_directory_path_size = message_handle->system_root_path_size;
 
-		message_handle->windows_directory_path = libcstring_system_string_allocate(
+		message_handle->windows_directory_path = system_string_allocate(
 		                                           message_handle->windows_directory_path_size );
 
 		if( message_handle->windows_directory_path == NULL )
@@ -1209,7 +1211,7 @@ int message_handle_open_software_registry_file(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     message_handle->windows_directory_path,
 		     message_handle->system_root_path,
 		     message_handle->windows_directory_path_size - 1 ) == NULL )
@@ -1262,13 +1264,13 @@ int message_handle_open_system_registry_file(
      const char *eventlog_key_name,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *key_path        = NULL;
-	libcstring_system_character_t *system_filename = NULL;
-	libregf_key_t *sub_key                         = NULL;
-	static char *function                          = "message_handle_open_system_registry_file";
-	size_t eventlog_key_name_length                = 0;
-	size_t key_path_length                         = 0;
-	int result                                     = 0;
+	libregf_key_t *sub_key              = NULL;
+	system_character_t *key_path        = NULL;
+	system_character_t *system_filename = NULL;
+	static char *function               = "message_handle_open_system_registry_file";
+	size_t eventlog_key_name_length     = 0;
+	size_t key_path_length              = 0;
+	int result                          = 0;
 
 	if( message_handle == NULL )
 	{
@@ -1292,13 +1294,13 @@ int message_handle_open_system_registry_file(
 
 		return( -1 );
 	}
-	eventlog_key_name_length = libcstring_narrow_string_length(
+	eventlog_key_name_length = narrow_string_length(
 	                            eventlog_key_name );
 
 	if( ( message_handle->system_registry_filename == NULL )
 	 && ( message_handle->registry_directory_name != NULL ) )
 	{
-		system_filename = libcstring_system_string_allocate(
+		system_filename = system_string_allocate(
 		                   7 );
 
 		if( system_filename == NULL )
@@ -1312,9 +1314,9 @@ int message_handle_open_system_registry_file(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     system_filename,
-		     _LIBCSTRING_SYSTEM_STRING( "SYSTEM" ),
+		     _SYSTEM_STRING( "SYSTEM" ),
 		     6 ) == NULL )
 		{
 			libcerror_error_set(
@@ -1343,13 +1345,13 @@ int message_handle_open_system_registry_file(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to determine if directory has entry: %" PRIs_SYSTEM ".",
 			 function,
 			 system_filename );
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libcpath_path_join_wide(
 			  &( message_handle->system_registry_filename ),
 			  &( message_handle->system_registry_filename_size ),
@@ -1432,9 +1434,9 @@ int message_handle_open_system_registry_file(
 	/* Get the winevt providers key
 	 * SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Publishers
 	 */
-	key_path = _LIBCSTRING_SYSTEM_STRING( "Microsoft\\Windows\\CurrentVersion\\WINEVT\\Publishers" );
+	key_path = _SYSTEM_STRING( "Microsoft\\Windows\\CurrentVersion\\WINEVT\\Publishers" );
 
-	key_path_length = libcstring_system_string_length(
+	key_path_length = system_string_length(
 	                   key_path );
 
 	result = registry_file_get_key_by_path(
@@ -1450,7 +1452,7 @@ int message_handle_open_system_registry_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 		 function,
 		 key_path );
 
@@ -1459,9 +1461,9 @@ int message_handle_open_system_registry_file(
 	/* Get the control set 1 eventlog services key:
 	 * SYSTEM\ControlSet001\Services\Eventlog
 	 */
-	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet001\\Services\\Eventlog" );
+	key_path = _SYSTEM_STRING( "ControlSet001\\Services\\Eventlog" );
 
-	key_path_length = libcstring_system_string_length(
+	key_path_length = system_string_length(
 	                   key_path );
 
 	result = registry_file_get_key_by_path(
@@ -1477,7 +1479,7 @@ int message_handle_open_system_registry_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 		 function,
 		 key_path );
 
@@ -1521,9 +1523,9 @@ int message_handle_open_system_registry_file(
 	/* Get the control set 2 eventlog services key:
 	 * SYSTEM\ControlSet002\Services\Eventlog
 	 */
-	key_path = _LIBCSTRING_SYSTEM_STRING( "ControlSet002\\Services\\Eventlog" );
+	key_path = _SYSTEM_STRING( "ControlSet002\\Services\\Eventlog" );
 
-	key_path_length = libcstring_system_string_length(
+	key_path_length = system_string_length(
 	                   key_path );
 
 	result = registry_file_get_key_by_path(
@@ -1539,7 +1541,7 @@ int message_handle_open_system_registry_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 		 function,
 		 key_path );
 
@@ -1741,11 +1743,11 @@ int message_handle_close_input(
  */
 int message_handle_get_value_by_event_source(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *event_source,
+     const system_character_t *event_source,
      size_t event_source_length,
-     const libcstring_system_character_t *value_name,
+     const system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **value_string,
+     system_character_t **value_string,
      size_t *value_string_size,
      libcerror_error_t **error )
 {
@@ -1800,7 +1802,7 @@ int message_handle_get_value_by_event_source(
 	}
 	if( message_handle->control_set_1_eventlog_services_key != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libregf_key_get_sub_key_by_utf16_name(
 			  message_handle->control_set_1_eventlog_services_key,
 			  (uint16_t *) event_source,
@@ -1821,7 +1823,7 @@ int message_handle_get_value_by_event_source(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 			 function,
 			 event_source );
 
@@ -1832,7 +1834,7 @@ int message_handle_get_value_by_event_source(
 	{
 		if( message_handle->control_set_2_eventlog_services_key != NULL )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_key_get_sub_key_by_utf16_name(
 				  message_handle->control_set_2_eventlog_services_key,
 				  (uint16_t *) event_source,
@@ -1853,7 +1855,7 @@ int message_handle_get_value_by_event_source(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 				 function,
 				 event_source );
 
@@ -1876,7 +1878,7 @@ int message_handle_get_value_by_event_source(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve value: %" PRIs_SYSTEM ".",
 			 function,
 			 value_name );
 
@@ -1884,7 +1886,7 @@ int message_handle_get_value_by_event_source(
 		}
 		else if( result != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string_size(
 			          value,
 			          value_string_size,
@@ -1917,7 +1919,7 @@ int message_handle_get_value_by_event_source(
 
 				goto on_error;
 			}
-			*value_string = libcstring_system_string_allocate(
+			*value_string = system_string_allocate(
 					 *value_string_size );
 
 			if( value_string == NULL )
@@ -1931,7 +1933,7 @@ int message_handle_get_value_by_event_source(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string(
 				  value,
 				  (uint16_t *) *value_string,
@@ -2016,11 +2018,11 @@ on_error:
  */
 int message_handle_get_value_by_provider_identifier(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *provider_identifier,
+     const system_character_t *provider_identifier,
      size_t provider_identifier_length,
-     const libcstring_system_character_t *value_name,
+     const system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **value_string,
+     system_character_t **value_string,
      size_t *value_string_size,
      libcerror_error_t **error )
 {
@@ -2075,7 +2077,7 @@ int message_handle_get_value_by_provider_identifier(
 	}
 	if( message_handle->winevt_publishers_key != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libregf_key_get_sub_key_by_utf16_name(
 			  message_handle->winevt_publishers_key,
 			  (uint16_t *) provider_identifier,
@@ -2096,7 +2098,7 @@ int message_handle_get_value_by_provider_identifier(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve sub key: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve sub key: %" PRIs_SYSTEM ".",
 			 function,
 			 provider_identifier );
 
@@ -2118,7 +2120,7 @@ int message_handle_get_value_by_provider_identifier(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve value: %" PRIs_SYSTEM ".",
 			 function,
 			 value_name );
 
@@ -2126,7 +2128,7 @@ int message_handle_get_value_by_provider_identifier(
 		}
 		else if( result != 0 )
 		{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string_size(
 			          value,
 			          value_string_size,
@@ -2159,7 +2161,7 @@ int message_handle_get_value_by_provider_identifier(
 
 				goto on_error;
 			}
-			*value_string = libcstring_system_string_allocate(
+			*value_string = system_string_allocate(
 			                 *value_string_size );
 
 			if( value_string == NULL )
@@ -2173,7 +2175,7 @@ int message_handle_get_value_by_provider_identifier(
 
 				goto on_error;
 			}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 			result = libregf_value_get_value_utf16_string(
 				  value,
 				  (uint16_t *) *value_string,
@@ -2257,16 +2259,16 @@ on_error:
  */
 int message_handle_get_resource_file_path(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *language_string,
+     const system_character_t *language_string,
      size_t language_string_length,
-     libcstring_system_character_t **resource_file_path,
+     system_character_t **resource_file_path,
      size_t *resource_file_path_size,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *resource_filename_string_segment = NULL;
-	libcstring_system_character_t *mui_string                       = NULL;
+	system_character_t *resource_filename_string_segment            = NULL;
+	system_character_t *mui_string                                  = NULL;
 	static char *function                                           = "message_handle_get_resource_file_path";
 	size_t resource_file_path_index                                 = 0;
 	size_t resource_files_path_length                               = 0;
@@ -2278,13 +2280,13 @@ int message_handle_get_resource_file_path(
 	int resource_filename_segment_index                             = 0;
 	int result                                                      = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
 #else
 	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
 #endif
 #if defined( WINAPI )
-	const libcstring_system_character_t *volume_letter              = NULL;
+	const system_character_t *volume_letter                         = NULL;
 #endif
 
 	if( message_handle == NULL )
@@ -2405,16 +2407,16 @@ int message_handle_get_resource_file_path(
 	{
 		/* Check if the resource filename starts with a volume letter
 		 */
-		if( ( resource_filename[ 1 ] == (libcstring_system_character_t) ':' )
-		 && ( ( ( resource_filename[ 0 ] >= (libcstring_system_character_t) 'A' )
-		   &&   ( resource_filename[ 0 ] <= (libcstring_system_character_t) 'Z' ) )
-		  || ( ( resource_filename[ 0 ] >= (libcstring_system_character_t) 'a' )
-		   &&  ( resource_filename[ 0 ] <= (libcstring_system_character_t) 'z' ) ) ) )
+		if( ( resource_filename[ 1 ] == (system_character_t) ':' )
+		 && ( ( ( resource_filename[ 0 ] >= (system_character_t) 'A' )
+		   &&   ( resource_filename[ 0 ] <= (system_character_t) 'Z' ) )
+		  || ( ( resource_filename[ 0 ] >= (system_character_t) 'a' )
+		   &&  ( resource_filename[ 0 ] <= (system_character_t) 'z' ) ) ) )
 		{
 			resource_filename_directory_name_index = 2;
 
 			if( ( resource_filename_length >= 3 )
-			 && ( resource_filename[ 2 ] == (libcstring_system_character_t) '\\' ) )
+			 && ( resource_filename[ 2 ] == (system_character_t) '\\' ) )
 			{
 				resource_filename_directory_name_index += 1;
 			}
@@ -2423,18 +2425,18 @@ int message_handle_get_resource_file_path(
 #endif
 		}
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_string_split(
 	     &( resource_filename[ resource_filename_directory_name_index ] ),
 	     resource_filename_length - resource_filename_directory_name_index + 1,
-	     (libcstring_system_character_t) '\\',
+	     (system_character_t) '\\',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #else
 	if( libcsplit_narrow_string_split(
 	     &( resource_filename[ resource_filename_directory_name_index ] ),
 	     resource_filename_length - resource_filename_directory_name_index + 1,
-	     (libcstring_system_character_t) '\\',
+	     (system_character_t) '\\',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #endif
@@ -2448,7 +2450,7 @@ int message_handle_get_resource_file_path(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
@@ -2475,7 +2477,7 @@ int message_handle_get_resource_file_path(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		if( libcsplit_wide_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
@@ -2526,7 +2528,7 @@ int message_handle_get_resource_file_path(
 			goto on_error;
 		}
 		else if( ( resource_filename_string_segment_size == 2 )
-		      && ( resource_filename_string_segment[ 0 ] == (libcstring_system_character_t) '.' ) )
+		      && ( resource_filename_string_segment[ 0 ] == (system_character_t) '.' ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -2539,8 +2541,8 @@ int message_handle_get_resource_file_path(
 			goto on_error;
 		}
 		else if( ( resource_filename_string_segment_size == 3 )
-		      && ( resource_filename_string_segment[ 0 ] == (libcstring_system_character_t) '.' )
-		      && ( resource_filename_string_segment[ 1 ] == (libcstring_system_character_t) '.' ) )
+		      && ( resource_filename_string_segment[ 0 ] == (system_character_t) '.' )
+		      && ( resource_filename_string_segment[ 1 ] == (system_character_t) '.' ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -2552,16 +2554,16 @@ int message_handle_get_resource_file_path(
 
 			goto on_error;
 		}
-		else if( ( resource_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
-		      && ( resource_filename_string_segment[ resource_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
+		else if( ( resource_filename_string_segment[ 0 ] == (system_character_t) '%' )
+		      && ( resource_filename_string_segment[ resource_filename_string_segment_size - 2 ] == (system_character_t) '%' ) )
 		{
 			if( resource_filename_string_segment_size == 9 )
 			{
 				/* Expand %WinDir% to WINDOWS
 				 */
-				if( libcstring_system_string_compare_no_case(
+				if( system_string_compare_no_case(
 				     resource_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
+				     _SYSTEM_STRING( "%WinDir%" ),
 				     8 ) == 0 )
 				{
 					resource_filename_string_segment_size = 8;
@@ -2574,9 +2576,9 @@ int message_handle_get_resource_file_path(
 			{
 				/* Expand %SystemRoot%
 				 */
-				if( libcstring_system_string_compare_no_case(
+				if( system_string_compare_no_case(
 				     resource_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
+				     _SYSTEM_STRING( "%SystemRoot%" ),
 				     12 ) == 0 )
 				{
 					resource_filename_string_segment_size = message_handle->system_root_path_size - 3;
@@ -2596,7 +2598,7 @@ int message_handle_get_resource_file_path(
 	}
 	if( message_handle->resource_files_path != NULL )
 	{
-		resource_files_path_length = libcstring_system_string_length(
+		resource_files_path_length = system_string_length(
 		                              message_handle->resource_files_path );
 	}
 	if( ( message_handle->resource_files_path != NULL )
@@ -2604,7 +2606,7 @@ int message_handle_get_resource_file_path(
 	{
 		*resource_file_path_size += resource_files_path_length;
 
-		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (libcstring_system_character_t) LIBCPATH_SEPARATOR )
+		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (system_character_t) LIBCPATH_SEPARATOR )
 		{
 			*resource_file_path_size += 1;
 		}
@@ -2621,7 +2623,7 @@ int message_handle_get_resource_file_path(
 	}
 	*resource_file_path_size += 1;
 
-	*resource_file_path = libcstring_system_string_allocate(
+	*resource_file_path = system_string_allocate(
 	                       *resource_file_path_size );
 
 	if( *resource_file_path == NULL )
@@ -2640,7 +2642,7 @@ int message_handle_get_resource_file_path(
 	if( ( message_handle->resource_files_path != NULL )
 	 && ( resource_files_path_length > 0 ) )
 	{
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     &( ( *resource_file_path )[ resource_file_path_index ] ),
 		     message_handle->resource_files_path,
 		     resource_files_path_length ) == NULL )
@@ -2656,23 +2658,23 @@ int message_handle_get_resource_file_path(
 		}
 		resource_file_path_index += resource_files_path_length;
 
-		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (libcstring_system_character_t) LIBCPATH_SEPARATOR )
+		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (system_character_t) LIBCPATH_SEPARATOR )
 		{
-			( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+			( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 		}
 	}
 #if defined( WINAPI )
 	else if( volume_letter != NULL )
 	{
 		( *resource_file_path )[ resource_file_path_index++ ] = volume_letter[ 0 ];
-		( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) ':';
-		( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) ':';
+		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 	}
 #endif
 	else
 	{
-		( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) '.';
-		( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) '.';
+		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 	}
 	for( resource_filename_segment_index = 0;
 	     resource_filename_segment_index < resource_filename_number_of_segments;
@@ -2685,7 +2687,7 @@ int message_handle_get_resource_file_path(
 			 */
 			mui_string_size = language_string_length + 1;
 
-			mui_string = libcstring_system_string_allocate(
+			mui_string = system_string_allocate(
 			              mui_string_size );
 
 			if( mui_string == NULL )
@@ -2699,7 +2701,7 @@ int message_handle_get_resource_file_path(
 
 				goto on_error;
 			}
-			if( libcstring_system_string_copy(
+			if( system_string_copy(
 			     mui_string,
 			     language_string,
 			     language_string_length ) == NULL )
@@ -2732,7 +2734,7 @@ int message_handle_get_resource_file_path(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_GENERIC,
-				 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 "%s: unable to determine if directory has entry: %" PRIs_SYSTEM ".",
 				 function,
 				 mui_string );
 
@@ -2740,7 +2742,7 @@ int message_handle_get_resource_file_path(
 			}
 			else if( result != 0 )
 			{
-				if( libcstring_system_string_copy(
+				if( system_string_copy(
 				     &( ( *resource_file_path )[ resource_file_path_index ] ),
 				     mui_string,
 				     language_string_length ) == NULL )
@@ -2756,7 +2758,7 @@ int message_handle_get_resource_file_path(
 				}
 				resource_file_path_index += language_string_length;
 
-				( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+				( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 			}
 			memory_free(
 			 mui_string );
@@ -2768,7 +2770,7 @@ int message_handle_get_resource_file_path(
 				break;
 			}
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		if( libcsplit_wide_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
@@ -2806,16 +2808,16 @@ int message_handle_get_resource_file_path(
 
 			goto on_error;
 		}
-		if( ( resource_filename_string_segment[ 0 ] == (libcstring_system_character_t) '%' )
-		 && ( resource_filename_string_segment[ resource_filename_string_segment_size - 2 ] == (libcstring_system_character_t) '%' ) )
+		if( ( resource_filename_string_segment[ 0 ] == (system_character_t) '%' )
+		 && ( resource_filename_string_segment[ resource_filename_string_segment_size - 2 ] == (system_character_t) '%' ) )
 		{
 			if( resource_filename_string_segment_size == 9 )
 			{
 				/* Expand %WinDir%
 				 */
-				if( libcstring_system_string_compare_no_case(
+				if( system_string_compare_no_case(
 				     resource_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%WinDir%" ),
+				     _SYSTEM_STRING( "%WinDir%" ),
 				     8 ) == 0 )
 				{
 					resource_filename_string_segment      = &( ( message_handle->windows_directory_path )[ 3 ] );
@@ -2826,9 +2828,9 @@ int message_handle_get_resource_file_path(
 			{
 				/* Expand %SystemRoot%
 				 */
-				if( libcstring_system_string_compare_no_case(
+				if( system_string_compare_no_case(
 				     resource_filename_string_segment,
-				     _LIBCSTRING_SYSTEM_STRING( "%SystemRoot%" ),
+				     _SYSTEM_STRING( "%SystemRoot%" ),
 				     12 ) == 0 )
 				{
 					resource_filename_string_segment      = &( ( message_handle->system_root_path )[ 3 ] );
@@ -2846,7 +2848,7 @@ int message_handle_get_resource_file_path(
 			{
 				/* Add .mui to the filename
 			 	 */
-				mui_string = libcstring_system_string_allocate(
+				mui_string = system_string_allocate(
 					      resource_filename_string_segment_size + 4 );
 
 				if( mui_string == NULL )
@@ -2862,7 +2864,7 @@ int message_handle_get_resource_file_path(
 				}
 				resource_filename_string_segment_size--;
 
-				if( libcstring_system_string_copy(
+				if( system_string_copy(
 				     mui_string,
 				     resource_filename_string_segment,
 				     resource_filename_string_segment_size ) == NULL )
@@ -2876,10 +2878,10 @@ int message_handle_get_resource_file_path(
 
 					goto on_error;
 				}
-				mui_string[ resource_filename_string_segment_size++ ] = (libcstring_system_character_t) '.';
-				mui_string[ resource_filename_string_segment_size++ ] = (libcstring_system_character_t) 'm';
-				mui_string[ resource_filename_string_segment_size++ ] = (libcstring_system_character_t) 'u';
-				mui_string[ resource_filename_string_segment_size++ ] = (libcstring_system_character_t) 'i';
+				mui_string[ resource_filename_string_segment_size++ ] = (system_character_t) '.';
+				mui_string[ resource_filename_string_segment_size++ ] = (system_character_t) 'm';
+				mui_string[ resource_filename_string_segment_size++ ] = (system_character_t) 'u';
+				mui_string[ resource_filename_string_segment_size++ ] = (system_character_t) 'i';
 				mui_string[ resource_filename_string_segment_size++ ] = 0;
 
 				resource_filename_string_segment = mui_string;
@@ -2903,7 +2905,7 @@ int message_handle_get_resource_file_path(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_GENERIC,
-			 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to determine if directory has entry: %" PRIs_SYSTEM ".",
 			 function,
 			 resource_filename_string_segment );
 
@@ -2911,7 +2913,7 @@ int message_handle_get_resource_file_path(
 		}
 		else if( result != 0 )
 		{
-			if( libcstring_system_string_copy(
+			if( system_string_copy(
 			     &( ( *resource_file_path )[ resource_file_path_index ] ),
 			     resource_filename_string_segment,
 			     resource_filename_string_segment_size - 1 ) == NULL )
@@ -2928,7 +2930,7 @@ int message_handle_get_resource_file_path(
 			}
 			resource_file_path_index += resource_filename_string_segment_size - 1;
 
-			( *resource_file_path )[ resource_file_path_index++ ] = (libcstring_system_character_t) LIBCPATH_SEPARATOR;
+			( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 		}
 		if( mui_string != NULL )
 		{
@@ -2944,7 +2946,7 @@ int message_handle_get_resource_file_path(
 	}
 	( *resource_file_path )[ resource_file_path_index - 1 ] = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
@@ -2973,7 +2975,7 @@ on_error:
 	}
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		libcsplit_wide_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );
@@ -3000,9 +3002,9 @@ on_error:
  */
 int message_handle_get_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *resource_file_path,
+     const system_character_t *resource_file_path,
      resource_file_t **resource_file,
      libcerror_error_t **error )
 {
@@ -3069,7 +3071,7 @@ int message_handle_get_resource_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open resource file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to open resource file: %" PRIs_SYSTEM ".",
 		 function,
 		 resource_file_path );
 
@@ -3132,7 +3134,7 @@ on_error:
  */
 int message_handle_get_resource_file_from_cache(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      resource_file_t **resource_file,
      libcerror_error_t **error )
@@ -3208,7 +3210,7 @@ int message_handle_get_resource_file_from_cache(
 			{
 				*resource_file = NULL;
 			}
-			else if( libcstring_system_string_compare(
+			else if( system_string_compare(
 				  resource_filename,
 				  ( *resource_file )->name,
 				  resource_filename_length ) != 0 )
@@ -3235,9 +3237,9 @@ int message_handle_get_resource_file_from_cache(
  */
 int message_handle_get_mui_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *resource_file_path,
+     const system_character_t *resource_file_path,
      resource_file_t **resource_file,
      libcerror_error_t **error )
 {
@@ -3304,7 +3306,7 @@ int message_handle_get_mui_resource_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open resource file: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to open resource file: %" PRIs_SYSTEM ".",
 		 function,
 		 resource_file_path );
 
@@ -3367,7 +3369,7 @@ on_error:
  */
 int message_handle_get_mui_resource_file_from_cache(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      resource_file_t **resource_file,
      libcerror_error_t **error )
@@ -3443,7 +3445,7 @@ int message_handle_get_mui_resource_file_from_cache(
 			{
 				*resource_file = NULL;
 			}
-			else if( libcstring_system_string_compare(
+			else if( system_string_compare(
 				  resource_filename,
 				  ( *resource_file )->name,
 				  resource_filename_length ) != 0 )
@@ -3466,20 +3468,20 @@ int message_handle_get_mui_resource_file_from_cache(
  */
 int message_handle_get_message_string_from_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
      message_string_t **message_string,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *resource_file_path     = NULL;
-	libcstring_system_character_t *mui_resource_file_path = NULL;
-	resource_file_t *resource_file                        = NULL;
-	static char *function                                 = "message_handle_get_message_string_from_resource_file";
-	size_t resource_file_path_size                        = 0;
-	size_t mui_resource_file_path_size                    = 0;
-	uint32_t mui_file_type                                = 0;
-	int result                                            = 0;
+	system_character_t *resource_file_path     = NULL;
+	system_character_t *mui_resource_file_path = NULL;
+	resource_file_t *resource_file             = NULL;
+	static char *function                      = "message_handle_get_message_string_from_resource_file";
+	size_t resource_file_path_size             = 0;
+	size_t mui_resource_file_path_size         = 0;
+	uint32_t mui_file_type                     = 0;
+	int result                                 = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3581,7 +3583,7 @@ int message_handle_get_message_string_from_resource_file(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve resource file: %" PRIs_LIBCSTRING_SYSTEM ".",
+				 "%s: unable to retrieve resource file: %" PRIs_SYSTEM ".",
 				 function,
 				 resource_file_path );
 
@@ -3668,7 +3670,7 @@ int message_handle_get_message_string_from_resource_file(
 						  message_handle,
 					          resource_filename,
 					          resource_filename_length,
-					          _LIBCSTRING_SYSTEM_STRING( "en-US" ),
+					          _SYSTEM_STRING( "en-US" ),
 					          5,
 						  &mui_resource_file_path,
 						  &mui_resource_file_path_size,
@@ -3699,7 +3701,7 @@ int message_handle_get_message_string_from_resource_file(
 							 error,
 							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 							 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-							 "%s: unable to retrieve MUI resource file: %" PRIs_LIBCSTRING_SYSTEM ".",
+							 "%s: unable to retrieve MUI resource file: %" PRIs_SYSTEM ".",
 							 function,
 							 mui_resource_file_path );
 
@@ -3769,20 +3771,20 @@ on_error:
  */
 int message_handle_get_message_string(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
      message_string_t **message_string,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *resource_filename_string_segment = NULL;
+	system_character_t *resource_filename_string_segment            = NULL;
 	static char *function                                           = "message_handle_get_message_string";
 	size_t resource_filename_string_segment_size                    = 0;
 	int resource_filename_number_of_segments                        = 0;
 	int resource_filename_segment_index                             = 0;
 	int result                                                      = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
 #else
 	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
@@ -3812,18 +3814,18 @@ int message_handle_get_message_string(
 	}
 	/* The resource filename can contain multiple file names separated by ;
 	 */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
-	     (libcstring_system_character_t) ';',
+	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #else
 	if( libcsplit_narrow_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
-	     (libcstring_system_character_t) ';',
+	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #endif
@@ -3837,7 +3839,7 @@ int message_handle_get_message_string(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
@@ -3862,7 +3864,7 @@ int message_handle_get_message_string(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		if( libcsplit_wide_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
@@ -3914,7 +3916,7 @@ int message_handle_get_message_string(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve message string: 0x%08" PRIx32 " from: %" PRIs_LIBCSTRING_SYSTEM ".",
+			 "%s: unable to retrieve message string: 0x%08" PRIx32 " from: %" PRIs_SYSTEM ".",
 			 function,
 			 message_identifier,
 			 resource_filename_string_segment );
@@ -3926,7 +3928,7 @@ int message_handle_get_message_string(
 			break;
 		}
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
@@ -3950,7 +3952,7 @@ int message_handle_get_message_string(
 on_error:
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		libcsplit_wide_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );
@@ -3974,15 +3976,15 @@ on_error:
  */
 int message_handle_get_resource_file_by_provider_identifier(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      resource_file_t **resource_file,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *resource_filename_string_segment = NULL;
-	libcstring_system_character_t *resource_file_path               = NULL;
+	system_character_t *resource_filename_string_segment            = NULL;
+	system_character_t *resource_file_path                          = NULL;
 	libwrc_wevt_provider_t *provider                                = NULL;
 	static char *function                                           = "message_handle_get_resource_file_by_provider_identifier";
 	size_t resource_filename_string_segment_size                    = 0;
@@ -3991,7 +3993,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 	int resource_filename_segment_index                             = 0;
 	int result                                                      = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	libcsplit_wide_split_string_t *resource_filename_split_string   = NULL;
 #else
 	libcsplit_narrow_split_string_t *resource_filename_split_string = NULL;
@@ -4021,18 +4023,18 @@ int message_handle_get_resource_file_by_provider_identifier(
 	}
 	/* The resource filename can contain multiple file names separated by ;
 	 */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
-	     (libcstring_system_character_t) ';',
+	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #else
 	if( libcsplit_narrow_string_split(
 	     resource_filename,
 	     resource_filename_length + 1,
-	     (libcstring_system_character_t) ';',
+	     (system_character_t) ';',
 	     &resource_filename_split_string,
 	     error ) != 1 )
 #endif
@@ -4046,7 +4048,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_get_number_of_segments(
 	     resource_filename_split_string,
 	     &resource_filename_number_of_segments,
@@ -4071,7 +4073,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 	     resource_filename_segment_index < resource_filename_number_of_segments;
 	     resource_filename_segment_index++ )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		if( libcsplit_wide_split_string_get_segment_by_index(
 		     resource_filename_split_string,
 		     resource_filename_segment_index,
@@ -4153,7 +4155,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve resource file: %" PRIs_LIBCSTRING_SYSTEM ".",
+					 "%s: unable to retrieve resource file: %" PRIs_SYSTEM ".",
 					 function,
 					 resource_file_path );
 
@@ -4204,7 +4206,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 			}
 		}
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcsplit_wide_split_string_free(
 	     &resource_filename_split_string,
 	     error ) != 1 )
@@ -4233,7 +4235,7 @@ on_error:
 	}
 	if( resource_filename_split_string != NULL )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		libcsplit_wide_split_string_free(
 		 &resource_filename_split_string,
 		 NULL );

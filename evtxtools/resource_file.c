@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #if defined( TIME_WITH_SYS_TIME )
 #include <sys/time.h>
@@ -34,7 +37,6 @@
 
 #include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libwrc.h"
@@ -270,7 +272,7 @@ int resource_file_free(
  */
 int resource_file_open(
      resource_file_t *resource_file,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function    = "resource_file_open";
@@ -298,7 +300,7 @@ int resource_file_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libexe_file_open_wide(
 	     resource_file->exe_file,
 	     filename,
@@ -667,7 +669,7 @@ int resource_file_get_resource_available_languague_identifier(
  */
 int resource_file_set_name(
      resource_file_t *resource_file,
-     const libcstring_system_character_t *name,
+     const system_character_t *name,
      size_t name_length,
      libcerror_error_t **error )
 {
@@ -726,7 +728,7 @@ int resource_file_set_name(
 	}
 	resource_file->name_size = name_length + 1;
 
-	resource_file->name = libcstring_system_string_allocate(
+	resource_file->name = system_string_allocate(
 	                       resource_file->name_size );
 
 	if( resource_file->name == NULL )
@@ -740,7 +742,7 @@ int resource_file_set_name(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     resource_file->name,
 	     name,
 	     name_length ) == NULL )

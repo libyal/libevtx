@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20161101],
+ [20161107],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -54,9 +54,6 @@ AX_TYPES_CHECK_LOCAL
 dnl Checks for libraries and library functions
 AX_COMMON_CHECK_LOCAL
 
-dnl Check for enabling libcstring for cross-platform C string functions
-AX_LIBCSTRING_CHECK_ENABLE
-
 dnl Check for enabling libcerror for cross-platform C error functions
 AX_LIBCERROR_CHECK_ENABLE
 
@@ -93,10 +90,10 @@ AX_LIBFCACHE_CHECK_ENABLE
 dnl Check for enabling libfdata for file and memory data block support
 AX_LIBFDATA_CHECK_ENABLE
 
-dnl Check for enabling libfdatetime for file date and time support
+dnl Check for enabling libfdatetime for date and time formats support
 AX_LIBFDATETIME_CHECK_ENABLE
 
-dnl Check for enabling libfguid for file GUID/UUID support
+dnl Check for enabling libfguid for GUID/UUID format support
 AX_LIBFGUID_CHECK_ENABLE
 
 dnl Check for enabling libfwevt for Windows Event Log binary XML support
@@ -120,7 +117,7 @@ AX_LIBREGF_CHECK_ENABLE
 dnl Check for enabling libwrc for Windows Resource support
 AX_LIBWRC_CHECK_ENABLE
 
-dnl Check for enabling libcpath for cross-platform C directory functions
+dnl Check for enabling libcdirectory for cross-platform C directory functions
 AX_LIBCDIRECTORY_CHECK_ENABLE
 
 dnl Check for enabling libcsystem for cross-platform C generic system functions
@@ -186,7 +183,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwevt" = xyes || test "x$ac_cv_libfwnt" = xyes],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwevt" = xyes || test "x$ac_cv_libfwnt" = xyes],
  [AC_SUBST(
   [libevtx_spec_requires],
   [Requires:])
@@ -221,7 +218,6 @@ dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
-AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libcthreads/Makefile])
 AC_CONFIG_FILES([libcdata/Makefile])
@@ -275,7 +271,6 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
-   libcstring support:                        $ac_cv_libcstring
    libcerror support:                         $ac_cv_libcerror
    libcthreads support:                       $ac_cv_libcthreads
    libcdata support:                          $ac_cv_libcdata

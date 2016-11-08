@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libregf.h"
 #include "message_string.h"
@@ -44,7 +43,7 @@ struct message_handle
 {
 	/* The SOFTWARE registry filename
 	 */
-	libcstring_system_character_t *software_registry_filename;
+	system_character_t *software_registry_filename;
 
 	/* The SOFTWARE registry filename size
 	 */
@@ -52,7 +51,7 @@ struct message_handle
 
 	/* The SYSTEM registry filename
 	 */
-	libcstring_system_character_t *system_registry_filename;
+	system_character_t *system_registry_filename;
 
 	/* The SYSTEM registry filename size
 	 */
@@ -60,7 +59,7 @@ struct message_handle
 
 	/* The name of the directory containing the SOFTWARE and SYSTEM registry filename
 	 */
-	libcstring_system_character_t *registry_directory_name;
+	system_character_t *registry_directory_name;
 
 	/* The size of the name of the directory containing the SOFTWARE and SYSTEM registry filename
 	 */
@@ -72,7 +71,7 @@ struct message_handle
 
 	/* The %SystemRoot% path
 	 */
-	libcstring_system_character_t *system_root_path;
+	system_character_t *system_root_path;
 
 	/* The %SystemRoot% path size
 	 */
@@ -80,7 +79,7 @@ struct message_handle
 
 	/* The %WinDir% path
 	 */
-	libcstring_system_character_t *windows_directory_path;
+	system_character_t *windows_directory_path;
 
 	/* The %WinDir% path size
 	 */
@@ -112,7 +111,7 @@ struct message_handle
 
 	/* The resource files path
 	 */
-	const libcstring_system_character_t *resource_files_path;
+	const system_character_t *resource_files_path;
 
 	/* The resource file cache
 	 */
@@ -163,27 +162,27 @@ int message_handle_set_preferred_language_identifier(
 
 int message_handle_set_event_log_type_from_filename(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int message_handle_set_software_registry_filename(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int message_handle_set_system_registry_filename(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int message_handle_set_registry_directory_name(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *name,
+     const system_character_t *name,
      libcerror_error_t **error );
 
 int message_handle_set_resource_files_path(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      libcerror_error_t **error );
 
 int message_handle_open_software_registry_file(
@@ -206,75 +205,75 @@ int message_handle_close_input(
 
 int message_handle_get_value_by_event_source(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *event_source,
+     const system_character_t *event_source,
      size_t event_source_length,
-     const libcstring_system_character_t *value_name,
+     const system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **value_string,
+     system_character_t **value_string,
      size_t *value_string_size,
      libcerror_error_t **error );
 
 int message_handle_get_value_by_provider_identifier(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *provider_identifier,
+     const system_character_t *provider_identifier,
      size_t provider_identifier_length,
-     const libcstring_system_character_t *value_name,
+     const system_character_t *value_name,
      size_t value_name_length,
-     libcstring_system_character_t **value_string,
+     system_character_t **value_string,
      size_t *value_string_size,
      libcerror_error_t **error );
 
 int message_handle_get_resource_file_path(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *language_string,
+     const system_character_t *language_string,
      size_t language_string_length,
-     libcstring_system_character_t **resource_file_path,
+     system_character_t **resource_file_path,
      size_t *resource_file_path_size,
      libcerror_error_t **error );
 
 int message_handle_get_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *resource_file_path,
+     const system_character_t *resource_file_path,
      resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int message_handle_get_resource_file_from_cache(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int message_handle_get_mui_resource_file_path(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     libcstring_system_character_t **resource_file_path,
+     system_character_t **resource_file_path,
      size_t *resource_file_path_size,
      libcerror_error_t **error );
 
 int message_handle_get_mui_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
-     const libcstring_system_character_t *resource_file_path,
+     const system_character_t *resource_file_path,
      resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int message_handle_get_mui_resource_file_from_cache(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int message_handle_get_message_string_from_resource_file(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
      message_string_t **message_string,
@@ -282,7 +281,7 @@ int message_handle_get_message_string_from_resource_file(
 
 int message_handle_get_message_string(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      uint32_t message_identifier,
      message_string_t **message_string,
@@ -290,7 +289,7 @@ int message_handle_get_message_string(
 
 int message_handle_get_resource_file_by_provider_identifier(
      message_handle_t *message_handle,
-     const libcstring_system_character_t *resource_filename,
+     const system_character_t *resource_filename,
      size_t resource_filename_length,
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,

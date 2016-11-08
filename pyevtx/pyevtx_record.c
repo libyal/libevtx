@@ -31,7 +31,6 @@
 #include "pyevtx_file.h"
 #include "pyevtx_integer.h"
 #include "pyevtx_libcerror.h"
-#include "pyevtx_libcstring.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"

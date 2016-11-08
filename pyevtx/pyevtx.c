@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -33,7 +34,6 @@
 #include "pyevtx_file_flags.h"
 #include "pyevtx_file_object_io_handle.h"
 #include "pyevtx_libcerror.h"
-#include "pyevtx_libcstring.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 #include "pyevtx_record.h"
@@ -110,7 +110,7 @@ PyObject *pyevtx_get_version(
 
 	Py_END_ALLOW_THREADS
 
-	version_string_length = libcstring_narrow_string_length(
+	version_string_length = narrow_string_length(
 	                         version_string );
 
 	/* Pass the string length to PyUnicode_DecodeUTF8
@@ -138,7 +138,7 @@ PyObject *pyevtx_check_file_signature(
 	const char *filename_narrow  = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -179,7 +179,7 @@ PyObject *pyevtx_check_file_signature(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS

@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -38,7 +37,7 @@ struct path_handle
 {
 	/* The %SystemRoot% path
 	 */
-	libcstring_system_character_t *system_root_path;
+	system_character_t *system_root_path;
 
 	/* The %SystemRoot% path size
 	 */
@@ -55,9 +54,9 @@ int path_handle_free(
 
 int path_handle_get_directory_entry_name_by_name_no_case(
      path_handle_t *path_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      size_t path_length,
-     libcstring_system_character_t *entry_name,
+     system_character_t *entry_name,
      size_t entry_name_size,
      uint8_t entry_type,
      libcerror_error_t **error );

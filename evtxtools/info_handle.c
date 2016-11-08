@@ -22,12 +22,14 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "evtxinput.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libclocale.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libfdatetime.h"
 #include "evtxtools_libevtx.h"
 #include "info_handle.h"
@@ -216,7 +218,7 @@ int info_handle_signal_abort(
  */
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function  = "info_handle_set_ascii_codepage";
@@ -238,10 +240,10 @@ int info_handle_set_ascii_codepage(
 	feature_flags = LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_KOI8
 	              | LIBCLOCALE_CODEPAGE_FEATURE_FLAG_HAVE_WINDOWS;
 
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libclocale_codepage_copy_from_string_wide(
 	          &( info_handle->ascii_codepage ),
 	          string,
@@ -275,7 +277,7 @@ int info_handle_set_ascii_codepage(
  */
 int info_handle_set_event_log_type_from_filename(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_set_event_log_type_from_filename";
@@ -316,7 +318,7 @@ int info_handle_set_event_log_type_from_filename(
  */
 int info_handle_open(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_open";
@@ -346,7 +348,7 @@ int info_handle_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libevtx_file_open_wide(
 	     info_handle->input_file,
 	     filename,
@@ -415,14 +417,14 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	const libcstring_system_character_t *event_log_type = NULL;
-	static char *function                               = "evtxinfo_file_info_fprint";
-	uint32_t flags                                      = 0;
-	uint16_t major_version                              = 0;
-	uint16_t minor_version                              = 0;
-	int is_corrupted                                    = 0;
-	int number_of_recovered_records                     = 0;
-	int number_of_records                               = 0;
+	const system_character_t *event_log_type = NULL;
+	static char *function                    = "evtxinfo_file_info_fprint";
+	uint32_t flags                           = 0;
+	uint16_t major_version                   = 0;
+	uint16_t minor_version                   = 0;
+	int is_corrupted                         = 0;
+	int number_of_recovered_records          = 0;
+	int number_of_records                    = 0;
 
 	if( info_handle == NULL )
 	{
@@ -530,42 +532,42 @@ int info_handle_file_fprint(
 	switch( info_handle->event_log_type )
 	{
 		case EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Application" );
+			event_log_type = _SYSTEM_STRING( "Application" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_DFS_REPLICATION:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "DFS Replication" );
+			event_log_type = _SYSTEM_STRING( "DFS Replication" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_HARDWARE_EVENTS:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Hardware Events" );
+			event_log_type = _SYSTEM_STRING( "Hardware Events" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Internet Explorer" );
+			event_log_type = _SYSTEM_STRING( "Internet Explorer" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_KEY_MANAGEMENT_SERVICE:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Key Management Service" );
+			event_log_type = _SYSTEM_STRING( "Key Management Service" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_MEDIA_CENTER:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Media Center" );
+			event_log_type = _SYSTEM_STRING( "Media Center" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_SECURITY:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "Security" );
+			event_log_type = _SYSTEM_STRING( "Security" );
 			break;
 
 		case EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM:
-			event_log_type = _LIBCSTRING_SYSTEM_STRING( "System" );
+			event_log_type = _SYSTEM_STRING( "System" );
 			break;
 	}
 	if( event_log_type != NULL )
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tLog type\t\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+		 "\tLog type\t\t\t: %" PRIs_SYSTEM "\n",
 		 event_log_type );
 	}
 	if( is_corrupted != 0 )

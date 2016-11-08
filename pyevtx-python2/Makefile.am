@@ -8,7 +8,6 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -33,7 +32,6 @@ BUILT_SOURCES = \
 	pyevtx_libbfio.h \
 	pyevtx_libcerror.h \
 	pyevtx_libclocale.h \
-	pyevtx_libcstring.h \
 	pyevtx_libevtx.h \
 	pyevtx_python.h \
 	pyevtx_record.c pyevtx_record.h \
@@ -46,7 +44,6 @@ pyexec_LTLIBRARIES = pyevtx.la
 nodist_pyevtx_la_SOURCES = $(BUILT_SOURCES)
 
 pyevtx_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libevtx/libevtx.la \
 	@LIBCDATA_LIBADD@ \

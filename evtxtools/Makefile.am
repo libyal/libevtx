@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
@@ -44,7 +43,6 @@ evtxexport_SOURCES = \
 	evtxtools_libcnotify.h \
 	evtxtools_libcpath.h \
 	evtxtools_libcsplit.h \
-	evtxtools_libcstring.h \
 	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfcache.h \
@@ -88,7 +86,6 @@ evtxexport_LDADD = \
 	../libevtx/libevtx.la \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@PTHREAD_LIBADD@
 
@@ -99,7 +96,6 @@ evtxinfo_SOURCES = \
 	evtxtools_libcerror.h \
 	evtxtools_libclocale.h \
 	evtxtools_libcnotify.h \
-	evtxtools_libcstring.h \
 	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfdatetime.h \
@@ -118,7 +114,6 @@ evtxinfo_LDADD = \
 	../libevtx/libevtx.la \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@PTHREAD_LIBADD@
 

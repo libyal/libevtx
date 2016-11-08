@@ -27,7 +27,6 @@
 #include <types.h>
 
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libwrc.h"
 
@@ -45,7 +44,7 @@ struct message_string
 
 	/* The string
 	 */
-	libcstring_system_character_t *string;
+	system_character_t *string;
 
 	/* The string size
 	 */

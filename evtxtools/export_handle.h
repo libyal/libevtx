@@ -27,7 +27,6 @@
 #include <types.h>
 
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libevtx.h"
 #include "log_handle.h"
 #include "message_handle.h"
@@ -116,17 +115,17 @@ int export_handle_signal_abort(
 
 int export_handle_set_export_mode(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_export_format(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_preferred_language_identifier(
@@ -136,37 +135,37 @@ int export_handle_set_preferred_language_identifier(
 
 int export_handle_set_event_log_type(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_event_log_type_from_filename(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_set_software_registry_filename(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_set_system_registry_filename(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_set_registry_directory_name(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *name,
+     const system_character_t *name,
      libcerror_error_t **error );
 
 int export_handle_set_resource_files_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      libcerror_error_t **error );
 
 int export_handle_open_input(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_close_input(
@@ -177,7 +176,7 @@ int export_handle_close_input(
  */
 int export_handle_guid_string_copy_to_byte_stream(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      size_t string_length,
      uint8_t *byte_stream,
      size_t byte_stream_size,
@@ -201,9 +200,9 @@ int export_handle_message_string_fprint(
 int export_handle_export_record_event_message(
      export_handle_t *export_handle,
      libevtx_record_t *record,
-     const libcstring_system_character_t *event_provider_identifier,
+     const system_character_t *event_provider_identifier,
      size_t event_provider_identifier_length,
-     const libcstring_system_character_t *event_source,
+     const system_character_t *event_source,
      size_t event_source_length,
      uint32_t event_identifier,
      log_handle_t *log_handle,

@@ -21,14 +21,15 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libevtx_definitions.h"
 #include "libevtx_io_handle.h"
 #include "libevtx_libbfio.h"
 #include "libevtx_libcerror.h"
 #include "libevtx_libclocale.h"
-#include "libevtx_libcstring.h"
 #include "libevtx_support.h"
 
 #if !defined( HAVE_LOCAL_LIBEVTX )
@@ -126,7 +127,7 @@ int libevtx_check_file_signature(
 
 		return( -1 );
 	}
-	filename_length = libcstring_narrow_string_length(
+	filename_length = narrow_string_length(
 	                   filename );
 
 	if( filename_length == 0 )
@@ -233,7 +234,7 @@ int libevtx_check_file_signature_wide(
 
 		return( -1 );
 	}
-	filename_length = libcstring_wide_string_length(
+	filename_length = wide_string_length(
 	                   filename );
 
 	if( filename_length == 0 )

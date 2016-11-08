@@ -28,7 +28,6 @@
 #include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libclocale.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"

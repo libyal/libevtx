@@ -27,7 +27,6 @@
 
 #include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libexe.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libwrc.h"
@@ -43,7 +42,7 @@ struct resource_file
 {
 	/* The name
 	 */
-	libcstring_system_character_t *name;
+	system_character_t *name;
 
 	/* The name size
 	 */
@@ -105,7 +104,7 @@ int resource_file_free(
 
 int resource_file_open(
      resource_file_t *resource_file,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int resource_file_close(
@@ -120,7 +119,7 @@ int resource_file_get_resource_available_languague_identifier(
 
 int resource_file_set_name(
      resource_file_t *resource_file,
-     const libcstring_system_character_t *name,
+     const system_character_t *name,
      size_t name_length,
      libcerror_error_t **error );
 

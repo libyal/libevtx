@@ -21,11 +21,13 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "evtxtools_libcdirectory.h"
 #include "evtxtools_libcerror.h"
-#include "evtxtools_libcstring.h"
 #include "path_handle.h"
 
 /* Creates a path handle
@@ -144,19 +146,19 @@ int path_handle_free(
  */
 int path_handle_get_directory_entry_name_by_name_no_case(
      path_handle_t *path_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      size_t path_length,
-     libcstring_system_character_t *entry_name,
+     system_character_t *entry_name,
      size_t entry_name_size,
      uint8_t entry_type,
      libcerror_error_t **error )
 {
-	libcdirectory_directory_t *directory                = NULL;
-	libcdirectory_directory_entry_t *directory_entry    = NULL;
-	libcstring_system_character_t *directory_entry_name = NULL;
-	static char *function                               = "path_handle_get_directory_entry_name_by_name_no_case";
-	size_t directory_entry_name_length                  = 0;
-	int result                                          = 0;
+	libcdirectory_directory_t *directory             = NULL;
+	libcdirectory_directory_entry_t *directory_entry = NULL;
+	system_character_t *directory_entry_name         = NULL;
+	static char *function                            = "path_handle_get_directory_entry_name_by_name_no_case";
+	size_t directory_entry_name_length               = 0;
+	int result                                       = 0;
 
 	if( path_handle == NULL )
 	{
@@ -226,7 +228,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcdirectory_directory_open_wide(
 		  directory,
 		  path,
@@ -243,7 +245,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open directory: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to open directory: %" PRIs_SYSTEM ".",
 		 function,
 		 path );
 
@@ -262,7 +264,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcdirectory_directory_has_entry_wide(
 		  directory,
 		  directory_entry,
@@ -287,7 +289,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if directory has entry: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to determine if directory has entry: %" PRIs_SYSTEM ".",
 		 function,
 		 entry_name );
 
@@ -295,7 +297,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 	}
 	else if( result != 0 )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libcdirectory_directory_entry_get_name_wide(
 			  directory_entry,
 			  (wchar_t **) &directory_entry_name,
@@ -317,7 +319,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 
 			goto on_error;
 		}
-		directory_entry_name_length = libcstring_system_string_length(
+		directory_entry_name_length = system_string_length(
 					       directory_entry_name );
 
 		if( ( directory_entry_name_length + 1 ) != entry_name_size )
@@ -331,7 +333,7 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     entry_name,
 		     directory_entry_name,
 		     directory_entry_name_length ) == NULL )

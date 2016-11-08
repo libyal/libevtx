@@ -21,13 +21,13 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
 #include "evtx_test_libcerror.h"
-#include "evtx_test_libcstring.h"
 #include "evtx_test_libevtx.h"
 #include "evtx_test_macros.h"
 #include "evtx_test_memory.h"
@@ -73,7 +73,7 @@ on_error:
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc EVTX_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] EVTX_TEST_ATTRIBUTE_UNUSED )

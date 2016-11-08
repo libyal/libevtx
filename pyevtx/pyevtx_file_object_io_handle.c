@@ -28,7 +28,6 @@
 #include "pyevtx_integer.h"
 #include "pyevtx_libbfio.h"
 #include "pyevtx_libcerror.h"
-#include "pyevtx_libcstring.h"
 #include "pyevtx_python.h"
 
 /* Creates a file object IO handle

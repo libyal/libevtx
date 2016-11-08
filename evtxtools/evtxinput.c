@@ -20,12 +20,14 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "evtxinput.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcpath.h"
-#include "evtxtools_libcstring.h"
 #include "evtxtools_libcsystem.h"
 #include "evtxtools_libevtx.h"
 
@@ -33,7 +35,7 @@
  * Returns 1 if successful, 0 if unsupported value or -1 on error
  */
 int evtxinput_determine_event_log_type(
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      int *event_log_type,
      libcerror_error_t **error )
 {
@@ -63,14 +65,14 @@ int evtxinput_determine_event_log_type(
 
 		return( -1 );
 	}
-	string_length = libcstring_system_string_length(
+	string_length = system_string_length(
 	                 string );
 
 	if( string_length == 6 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "system" ),
+		     _SYSTEM_STRING( "system" ),
 		     6 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM;
@@ -79,9 +81,9 @@ int evtxinput_determine_event_log_type(
 	}
 	else if( string_length == 8 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "security" ),
+		     _SYSTEM_STRING( "security" ),
 		     8 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SECURITY;
@@ -90,9 +92,9 @@ int evtxinput_determine_event_log_type(
 	}
 	else if( string_length == 11 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     string,
-		     _LIBCSTRING_SYSTEM_STRING( "application" ),
+		     _SYSTEM_STRING( "application" ),
 		     11 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION;
@@ -106,14 +108,14 @@ int evtxinput_determine_event_log_type(
  * Returns 1 if successful, 0 if unsupported value or -1 on error
  */
 int evtxinput_determine_event_log_type_from_filename(
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      int *event_log_type,
      libcerror_error_t **error )
 {
-	const libcstring_system_character_t *path_separator = NULL;
-	static char *function                               = "evtxinput_determine_event_log_type_from_filename";
-	size_t filename_length                              = 0;
-	int result                                          = 0;
+	const system_character_t *path_separator = NULL;
+	static char *function                    = "evtxinput_determine_event_log_type_from_filename";
+	size_t filename_length                   = 0;
+	int result                               = 0;
 
 	if( filename == NULL )
 	{
@@ -137,12 +139,12 @@ int evtxinput_determine_event_log_type_from_filename(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
-	path_separator = libcstring_system_string_search_character_reverse(
+	path_separator = system_string_search_character_reverse(
 			  filename,
-			  (libcstring_system_character_t) LIBCPATH_SEPARATOR,
+			  (system_character_t) LIBCPATH_SEPARATOR,
 			  filename_length );
 
 	if( path_separator == NULL )
@@ -153,14 +155,14 @@ int evtxinput_determine_event_log_type_from_filename(
 	{
 		path_separator++;
 
-		filename_length = libcstring_system_string_length(
+		filename_length = system_string_length(
 		                   path_separator );
 	}
 	if( filename_length == 11 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "System.evtx" ),
+		     _SYSTEM_STRING( "System.evtx" ),
 		     11 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SYSTEM;
@@ -169,9 +171,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 13 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "Security.evtx" ),
+		     _SYSTEM_STRING( "Security.evtx" ),
 		     13 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_SECURITY;
@@ -180,9 +182,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 16 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "Application.evtx" ),
+		     _SYSTEM_STRING( "Application.evtx" ),
 		     16 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_APPLICATION;
@@ -191,9 +193,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 17 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "Media Center.evtx" ),
+		     _SYSTEM_STRING( "Media Center.evtx" ),
 		     17 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_MEDIA_CENTER;
@@ -202,9 +204,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 19 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "HardwareEvents.evtx" ),
+		     _SYSTEM_STRING( "HardwareEvents.evtx" ),
 		     19 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_HARDWARE_EVENTS;
@@ -213,9 +215,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 20 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "DFS Replication.evtx" ),
+		     _SYSTEM_STRING( "DFS Replication.evtx" ),
 		     20 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_DFS_REPLICATION;
@@ -224,9 +226,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 22 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "Internet Explorer.evtx" ),
+		     _SYSTEM_STRING( "Internet Explorer.evtx" ),
 		     22 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_INTERNET_EXPLORER;
@@ -235,9 +237,9 @@ int evtxinput_determine_event_log_type_from_filename(
 	}
 	else if( filename_length == 27 )
 	{
-		if( libcstring_system_string_compare_no_case(
+		if( system_string_compare_no_case(
 		     path_separator,
-		     _LIBCSTRING_SYSTEM_STRING( "Key Management Service.evtx" ),
+		     _SYSTEM_STRING( "Key Management Service.evtx" ),
 		     27 ) == 0 )
 		{
 			*event_log_type = EVTXTOOLS_EVENT_LOG_TYPE_KEY_MANAGEMENT_SERVICE;

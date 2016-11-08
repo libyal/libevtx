@@ -22,6 +22,7 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "libevtx_byte_stream.h"
@@ -308,7 +309,7 @@ int libevtx_record_values_read_header(
 	int result                        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 32 ];
+	system_character_t filetime_string[ 32 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 #endif
@@ -492,7 +493,7 @@ int libevtx_record_values_read_header(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
@@ -519,7 +520,7 @@ int libevtx_record_values_read_header(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: written time\t\t\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+		 "%s: written time\t\t\t\t: %" PRIs_SYSTEM " UTC\n",
 		 function,
 		 filetime_string );
 
