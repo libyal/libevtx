@@ -153,6 +153,13 @@ int libevtx_file_set_ascii_codepage(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_file_get_format_version(
+     libevtx_file_t *file,
+     uint16_t *major_version,
+     uint16_t *minor_version,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,

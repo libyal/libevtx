@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libevtx file
+ * Python object wrapper of libevtx_file_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -108,12 +108,16 @@ int pyevtx_file_set_ascii_codepage_setter(
      PyObject *string_object,
      void *closure );
 
+PyObject *pyevtx_file_get_flags(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
+
 PyObject *pyevtx_file_get_number_of_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments );
 
 PyObject *pyevtx_file_get_record_by_index(
-           pyevtx_file_t *pyevtx_file,
+           PyObject *pyevtx_file,
            int record_index );
 
 PyObject *pyevtx_file_get_record(
@@ -130,8 +134,8 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
            PyObject *arguments );
 
 PyObject *pyevtx_file_get_recovered_record_by_index(
-           pyevtx_file_t *pyevtx_file,
-           int record_index );
+           PyObject *pyevtx_file,
+           int recovered_record_index );
 
 PyObject *pyevtx_file_get_recovered_record(
            pyevtx_file_t *pyevtx_file,
@@ -146,5 +150,5 @@ PyObject *pyevtx_file_get_recovered_records(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_FILE_H ) */
 

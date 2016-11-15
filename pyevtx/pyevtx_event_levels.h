@@ -59,5 +59,5 @@ void pyevtx_event_levels_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_EVENT_LEVELS_H ) */
 

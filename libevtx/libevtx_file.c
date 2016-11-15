@@ -1703,6 +1703,70 @@ int libevtx_file_set_ascii_codepage(
 	return( 1 );
 }
 
+/* Retrieves the format version
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_file_get_format_version(
+     libevtx_file_t *file,
+     uint16_t *major_version,
+     uint16_t *minor_version,
+     libcerror_error_t **error )
+{
+	libevtx_internal_file_t *internal_file = NULL;
+	static char *function                  = "libevtx_file_get_format_version";
+
+	if( file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libevtx_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( major_version == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid major version.",
+		 function );
+
+		return( -1 );
+	}
+	if( minor_version == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid minor version.",
+		 function );
+
+		return( -1 );
+	}
+	*major_version = internal_file->io_handle->major_version;
+	*minor_version = internal_file->io_handle->minor_version;
+
+	return( 1 );
+}
+
 /* Retrieves the file version
  * Returns 1 if successful or -1 on error
  */

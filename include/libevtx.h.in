@@ -286,11 +286,11 @@ int libevtx_file_set_ascii_codepage(
      int ascii_codepage,
      libevtx_error_t **error );
 
-/* Retrieves the file version
+/* Retrieves the format version
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_file_get_version(
+int libevtx_file_get_format_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
@@ -344,6 +344,24 @@ int libevtx_file_get_recovered_record(
      libevtx_error_t **error );
 
 /* -------------------------------------------------------------------------
+ * File functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Retrieves the version
+ *
+ * This function deprecated use libevtx_file_get_format_version instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_DEPRECATED \
+LIBEVTX_EXTERN \
+int libevtx_file_get_version(
+     libevtx_file_t *file,
+     uint16_t *major_version,
+     uint16_t *minor_version,
+     libevtx_error_t **error );
+
+/* -------------------------------------------------------------------------
  * Record functions
  * ------------------------------------------------------------------------- */
 
@@ -373,14 +391,13 @@ int libevtx_record_get_identifier(
      uint64_t *identifier,
      libevtx_error_t **error );
 
-/* Retrieves the written time
- * The timestamp is a 64-bit FILETIME date and time value
+/* Retrieves the 64-bit FILETIME value containing the written time
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
 int libevtx_record_get_written_time(
      libevtx_record_t *record,
-     uint64_t *written_time,
+     uint64_t *filetime,
      libevtx_error_t **error );
 
 /* Retrieves the event identifier

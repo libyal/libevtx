@@ -59,5 +59,5 @@ void pyevtx_file_flags_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_FILE_FLAGS_H ) */
 

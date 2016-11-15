@@ -44,5 +44,5 @@ PyObject *pyevtx_datetime_new_from_posix_time(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_DATETIME_H ) */
 

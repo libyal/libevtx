@@ -1,5 +1,5 @@
 /*
- * Python object definition of the strings sequence and iterator
+ * Python object definition of the sequence and iterator object of strings
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -30,7 +29,6 @@
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
-#include "pyevtx_record.h"
 #include "pyevtx_strings.h"
 
 PySequenceMethods pyevtx_strings_sequence_methods = {
@@ -98,7 +96,7 @@ PyTypeObject pyevtx_strings_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"internal pyevtx strings sequence and iterator object",
+	"pyevtx internal sequence and iterator object of strings",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -155,20 +153,20 @@ PyTypeObject pyevtx_strings_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_strings_new(
-           pyevtx_record_t *record_object,
+           PyObject *parent_object,
            PyObject* (*get_string_by_index)(
-                        pyevtx_record_t *record_object,
+                        PyObject *parent_object,
                         int string_index ),
            int number_of_strings )
 {
 	pyevtx_strings_t *pyevtx_strings = NULL;
 	static char *function            = "pyevtx_strings_new";
 
-	if( record_object == NULL )
+	if( parent_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid record object.",
+		 "%s: invalid parent object.",
 		 function );
 
 		return( NULL );
@@ -207,12 +205,12 @@ PyObject *pyevtx_strings_new(
 
 		goto on_error;
 	}
-	pyevtx_strings->record_object       = record_object;
+	pyevtx_strings->parent_object       = parent_object;
 	pyevtx_strings->get_string_by_index = get_string_by_index;
 	pyevtx_strings->number_of_strings   = number_of_strings;
 
 	Py_IncRef(
-	 (PyObject *) pyevtx_strings->record_object );
+	 (PyObject *) pyevtx_strings->parent_object );
 
 	return( (PyObject *) pyevtx_strings );
 
@@ -244,7 +242,7 @@ int pyevtx_strings_init(
 	}
 	/* Make sure the strings values are initialized
 	 */
-	pyevtx_strings->record_object       = NULL;
+	pyevtx_strings->parent_object       = NULL;
 	pyevtx_strings->get_string_by_index = NULL;
 	pyevtx_strings->string_index        = 0;
 	pyevtx_strings->number_of_strings   = 0;
@@ -290,10 +288,10 @@ void pyevtx_strings_free(
 
 		return;
 	}
-	if( pyevtx_strings->record_object != NULL )
+	if( pyevtx_strings->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyevtx_strings->record_object );
+		 (PyObject *) pyevtx_strings->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyevtx_strings );
@@ -365,7 +363,7 @@ PyObject *pyevtx_strings_getitem(
 		return( NULL );
 	}
 	string_object = pyevtx_strings->get_string_by_index(
-	                 pyevtx_strings->record_object,
+	                 pyevtx_strings->parent_object,
 	                 (int) item_index );
 
 	return( string_object );
@@ -445,7 +443,7 @@ PyObject *pyevtx_strings_iternext(
 		return( NULL );
 	}
 	string_object = pyevtx_strings->get_string_by_index(
-	                 pyevtx_strings->record_object,
+	                 pyevtx_strings->parent_object,
 	                 pyevtx_strings->string_index );
 
 	if( string_object != NULL )

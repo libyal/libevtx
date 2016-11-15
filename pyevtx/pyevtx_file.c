@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libevtx file
+ * Python object wrapper of libevtx_file_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,13 +41,15 @@
 #include "pyevtx_unused.h"
 
 #if !defined( LIBEVTX_HAVE_BFIO )
+
 LIBEVTX_EXTERN \
 int libevtx_file_open_file_io_handle(
      libevtx_file_t *file,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libevtx_error_t **error );
-#endif
+
+#endif /* !defined( LIBEVTX_HAVE_BFIO ) */
 
 PyMethodDef pyevtx_file_object_methods[] = {
 
@@ -56,75 +58,78 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	  METH_NOARGS,
 	  "signal_abort() -> None\n"
 	  "\n"
-	  "Signals the file to abort the current activity" },
-
-	/* Functions to access the file */
+	  "Signals the file to abort the current activity." },
 
 	{ "open",
 	  (PyCFunction) pyevtx_file_open,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file" },
+	  "Opens a file." },
 
 	{ "open_file_object",
 	  (PyCFunction) pyevtx_file_open_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file using a file-like object" },
+	  "Opens a file using a file-like object." },
 
 	{ "close",
 	  (PyCFunction) pyevtx_file_close,
 	  METH_NOARGS,
 	  "close() -> None\n"
 	  "\n"
-	  "Closes a file" },
+	  "Closes a file." },
 
 	{ "get_ascii_codepage",
 	  (PyCFunction) pyevtx_file_get_ascii_codepage,
 	  METH_NOARGS,
 	  "get_ascii_codepage() -> String\n"
 	  "\n"
-	  "Returns the codepage used for ASCII strings in the file" },
+	  "Retrieves the codepage for ASCII strings used in the file." },
 
 	{ "set_ascii_codepage",
 	  (PyCFunction) pyevtx_file_set_ascii_codepage,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "set_ascii_codepage(codepage) -> None\n"
 	  "\n"
-	  "Set the codepage used for ASCII strings in the file\n"
-	  "Expects the codepage to be a String containing a Python codec definition" },
+	  "Sets the codepage for ASCII strings used in the file.\n"
+	  "Expects the codepage to be a string containing a Python codec definition." },
 
-	/* Functions to access the records */
+	{ "get_flags",
+	  (PyCFunction) pyevtx_file_get_flags,
+	  METH_NOARGS,
+	  "get_flags() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the flags." },
 
 	{ "get_number_of_records",
 	  (PyCFunction) pyevtx_file_get_number_of_records,
 	  METH_NOARGS,
-	  "get_number_of_records() -> Integer\n"
+	  "get_number_of_records() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the number of records" },
+	  "Retrieves the number of records." },
 
 	{ "get_record",
 	  (PyCFunction) pyevtx_file_get_record,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_record(record_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves a specific record" },
+	  "Retrieves the record." },
 
 	{ "get_number_of_recovered_records",
 	  (PyCFunction) pyevtx_file_get_number_of_recovered_records,
 	  METH_NOARGS,
-	  "get_number_of_recovered_records() -> Integer\n"
+	  "get_number_of_recovered_records() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the number of recovered records" },
+	  "Retrieves the number of recovered records." },
 
 	{ "get_recovered_record",
 	  (PyCFunction) pyevtx_file_get_recovered_record,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_recovered_record(record_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves a specific recovered record" },
+	  "Retrieves the recovered record." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -135,31 +140,37 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 	{ "ascii_codepage",
 	  (getter) pyevtx_file_get_ascii_codepage,
 	  (setter) pyevtx_file_set_ascii_codepage_setter,
-	  "The codepage used for ASCII strings in the file",
+	  "The codepage used for ASCII strings in the file.",
+	  NULL },
+
+	{ "flags",
+	  (getter) pyevtx_file_get_flags,
+	  (setter) 0,
+	  "The flags.",
 	  NULL },
 
 	{ "number_of_records",
 	  (getter) pyevtx_file_get_number_of_records,
 	  (setter) 0,
-	  "The number of records",
+	  "The number of records.",
 	  NULL },
 
 	{ "records",
 	  (getter) pyevtx_file_get_records,
 	  (setter) 0,
-	  "The records",
+	  "The records.",
 	  NULL },
 
 	{ "number_of_recovered_records",
 	  (getter) pyevtx_file_get_number_of_recovered_records,
 	  (setter) 0,
-	  "The number of records",
+	  "The number of recovered records.",
 	  NULL },
 
 	{ "recovered_records",
 	  (getter) pyevtx_file_get_recovered_records,
 	  (setter) 0,
-	  "The recovered records",
+	  "The recovered records.",
 	  NULL },
 
 	/* Sentinel */
@@ -326,7 +337,7 @@ PyObject *pyevtx_file_new_open(
 	return( pyevtx_file );
 }
 
-/* Creates a new file object and opens it
+/* Creates a new file object and opens it using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_new_open_file_object(
@@ -354,8 +365,8 @@ PyObject *pyevtx_file_new_open_file_object(
 int pyevtx_file_init(
      pyevtx_file_t *pyevtx_file )
 {
-	static char *function    = "pyevtx_file_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_file_init";
 
 	if( pyevtx_file == NULL )
 	{
@@ -392,8 +403,8 @@ int pyevtx_file_init(
 void pyevtx_file_free(
       pyevtx_file_t *pyevtx_file )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyevtx_file_free";
 	int result                  = 0;
 
@@ -518,9 +529,9 @@ PyObject *pyevtx_file_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pyevtx_file_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -574,7 +585,7 @@ PyObject *pyevtx_file_open(
 	if( result == -1 )
 	{
 		pyevtx_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -591,7 +602,7 @@ PyObject *pyevtx_file_open(
 
 		result = libevtx_file_open_wide(
 		          pyevtx_file->file,
-	                  filename_wide,
+		          filename_wide,
 		          LIBEVTX_OPEN_READ,
 		          &error );
 
@@ -611,16 +622,16 @@ PyObject *pyevtx_file_open(
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libevtx_file_open(
 		          pyevtx_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBEVTX_OPEN_READ,
 		          &error );
 
@@ -651,17 +662,17 @@ PyObject *pyevtx_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pyevtx_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -673,16 +684,16 @@ PyObject *pyevtx_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libevtx_file_open(
 		          pyevtx_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBEVTX_OPEN_READ,
 		          &error );
 
@@ -724,9 +735,9 @@ PyObject *pyevtx_file_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pyevtx_file_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pyevtx_file == NULL )
@@ -893,11 +904,12 @@ PyObject *pyevtx_file_get_ascii_codepage(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
 	const char *codepage_string = NULL;
 	static char *function       = "pyevtx_file_get_ascii_codepage";
 	int ascii_codepage          = 0;
+	int result                  = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -910,10 +922,16 @@ PyObject *pyevtx_file_get_ascii_codepage(
 
 		return( NULL );
 	}
-	if( libevtx_file_get_ascii_codepage(
-	     pyevtx_file->file,
-	     &ascii_codepage,
-	     &error ) != 1 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_get_ascii_codepage(
+	          pyevtx_file->file,
+	          &ascii_codepage,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -1046,8 +1064,8 @@ PyObject *pyevtx_file_set_ascii_codepage(
            PyObject *arguments,
            PyObject *keywords )
 {
-	static char *keyword_list[] = { "codepage", NULL };
 	char *codepage_string       = NULL;
+	static char *keyword_list[] = { "codepage", NULL };
 	int result                  = 0;
 
 	if( PyArg_ParseTupleAndKeywords(
@@ -1082,8 +1100,8 @@ int pyevtx_file_set_ascii_codepage_setter(
      void *closure PYEVTX_ATTRIBUTE_UNUSED )
 {
 	PyObject *utf8_string_object = NULL;
-	static char *function        = "pyevtx_file_set_ascii_codepage_setter";
 	char *codepage_string        = NULL;
+	static char *function        = "pyevtx_file_set_ascii_codepage_setter";
 	int result                   = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( closure )
@@ -1097,7 +1115,7 @@ int pyevtx_file_set_ascii_codepage_setter(
 	if( result == -1 )
 	{
 		pyevtx_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -1121,10 +1139,10 @@ int pyevtx_file_set_ascii_codepage_setter(
 		}
 #if PY_MAJOR_VERSION >= 3
 		codepage_string = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		codepage_string = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		if( codepage_string == NULL )
 		{
@@ -1144,17 +1162,17 @@ int pyevtx_file_set_ascii_codepage_setter(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pyevtx_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -1174,8 +1192,8 @@ int pyevtx_file_set_ascii_codepage_setter(
 			return( -1 );
 		}
 		result = pyevtx_file_set_ascii_codepage_from_string(
-			  pyevtx_file,
-			  codepage_string );
+		          pyevtx_file,
+		          codepage_string );
 
 		if( result != 1 )
 		{
@@ -1191,6 +1209,65 @@ int pyevtx_file_set_ascii_codepage_setter(
 	return( -1 );
 }
 
+/* Retrieves the flags
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_get_flags(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_file_get_flags";
+	uint32_t value_32bit     = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_get_flags(
+	          pyevtx_file->file,
+	          &value_32bit,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve flags.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	integer_object = PyLong_FromUnsignedLong(
+	                  (unsigned long) value_32bit );
+
+	return( integer_object );
+}
+
 /* Retrieves the number of records
  * Returns a Python object if successful or NULL on error
  */
@@ -1198,8 +1275,8 @@ PyObject *pyevtx_file_get_number_of_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_get_number_of_records";
 	int number_of_records    = 0;
 	int result               = 0;
@@ -1251,12 +1328,12 @@ PyObject *pyevtx_file_get_number_of_records(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_record_by_index(
-           pyevtx_file_t *pyevtx_file,
+           PyObject *pyevtx_file,
            int record_index )
 {
+	PyObject *record_object  = NULL;
 	libcerror_error_t *error = NULL;
 	libevtx_record_t *record = NULL;
-	PyObject *record_object  = NULL;
 	static char *function    = "pyevtx_file_get_record_by_index";
 	int result               = 0;
 
@@ -1272,7 +1349,7 @@ PyObject *pyevtx_file_get_record_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_file_get_record(
-	          pyevtx_file->file,
+	          ( (pyevtx_file_t *) pyevtx_file )->file,
 	          record_index,
 	          &record,
 	          &error );
@@ -1294,8 +1371,9 @@ PyObject *pyevtx_file_get_record_by_index(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
+	                 &pyevtx_record_type_object,
 	                 record,
-	                 pyevtx_file );
+	                 (PyObject *) pyevtx_file );
 
 	if( record_object == NULL )
 	{
@@ -1340,24 +1418,24 @@ PyObject *pyevtx_file_get_record(
 		return( NULL );
 	}
 	record_object = pyevtx_file_get_record_by_index(
-	                 pyevtx_file,
+	                 (PyObject *) pyevtx_file,
 	                 record_index );
 
 	return( record_object );
 }
 
-/* Retrieves a records sequence and iterator object for the records
+/* Retrieves a sequence and iterator object for the records
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *records_object = NULL;
-	static char *function    = "pyevtx_file_get_records";
-	int number_of_records    = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_file_get_records";
+	int number_of_records     = 0;
+	int result                = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -1392,21 +1470,22 @@ PyObject *pyevtx_file_get_records(
 
 		return( NULL );
 	}
-	records_object = pyevtx_records_new(
-	                  pyevtx_file,
-	                  &pyevtx_file_get_record_by_index,
-	                  number_of_records );
+	sequence_object = pyevtx_records_new(
+	                   (PyObject *) pyevtx_file,
+	                   &pyevtx_file_get_record_by_index,
+	                   number_of_records );
 
-	if( records_object == NULL )
+	if( sequence_object == NULL )
 	{
-		PyErr_Format(
+		pyevtx_error_raise(
+		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to create records object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( records_object );
+	return( sequence_object );
 }
 
 /* Retrieves the number of recovered records
@@ -1416,8 +1495,8 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_file_get_number_of_recovered_records";
 	int number_of_records    = 0;
 	int result               = 0;
@@ -1469,12 +1548,12 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_recovered_record_by_index(
-           pyevtx_file_t *pyevtx_file,
+           PyObject *pyevtx_file,
            int record_index )
 {
+	PyObject *record_object  = NULL;
 	libcerror_error_t *error = NULL;
 	libevtx_record_t *record = NULL;
-	PyObject *record_object  = NULL;
 	static char *function    = "pyevtx_file_get_recovered_record_by_index";
 	int result               = 0;
 
@@ -1490,7 +1569,7 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_file_get_recovered_record(
-	          pyevtx_file->file,
+	          ( (pyevtx_file_t *) pyevtx_file )->file,
 	          record_index,
 	          &record,
 	          &error );
@@ -1512,14 +1591,15 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 		goto on_error;
 	}
 	record_object = pyevtx_record_new(
+	                 &pyevtx_record_type_object,
 	                 record,
-	                 pyevtx_file );
+	                 (PyObject *) pyevtx_file );
 
 	if( record_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create recovered record object.",
+		 "%s: unable to create record object.",
 		 function );
 
 		goto on_error;
@@ -1558,24 +1638,24 @@ PyObject *pyevtx_file_get_recovered_record(
 		return( NULL );
 	}
 	record_object = pyevtx_file_get_recovered_record_by_index(
-	                 pyevtx_file,
+	                 (PyObject *) pyevtx_file,
 	                 record_index );
 
 	return( record_object );
 }
 
-/* Retrieves a records sequence and iterator object for the recoverd records
+/* Retrieves a sequence and iterator object for the recovered records
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_file_get_recovered_records(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *records_object = NULL;
-	static char *function    = "pyevtx_file_get_recovered_records";
-	int number_of_records    = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_file_get_recovered_records";
+	int number_of_records     = 0;
+	int result                = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -1610,20 +1690,21 @@ PyObject *pyevtx_file_get_recovered_records(
 
 		return( NULL );
 	}
-	records_object = pyevtx_records_new(
-	                  pyevtx_file,
-	                  &pyevtx_file_get_recovered_record_by_index,
-	                  number_of_records );
+	sequence_object = pyevtx_records_new(
+	                   (PyObject *) pyevtx_file,
+	                   &pyevtx_file_get_recovered_record_by_index,
+	                   number_of_records );
 
-	if( records_object == NULL )
+	if( sequence_object == NULL )
 	{
-		PyErr_Format(
+		pyevtx_error_raise(
+		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to create records object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( records_object );
+	return( sequence_object );
 }
 

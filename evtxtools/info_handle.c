@@ -437,7 +437,7 @@ int info_handle_file_fprint(
 
 		return( -1 );
 	}
-	if( libevtx_file_get_version(
+	if( libevtx_file_get_format_version(
 	     info_handle->input_file,
 	     &major_version,
 	     &minor_version,
@@ -447,7 +447,7 @@ int info_handle_file_fprint(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve file version.",
+		 "%s: unable to retrieve format version.",
 		 function );
 
 		return( -1 );

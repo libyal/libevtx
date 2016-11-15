@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libevtx record
+ * Python object wrapper of libevtx_record_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -28,7 +28,6 @@
 
 #include "pyevtx_datetime.h"
 #include "pyevtx_error.h"
-#include "pyevtx_file.h"
 #include "pyevtx_integer.h"
 #include "pyevtx_libcerror.h"
 #include "pyevtx_libevtx.h"
@@ -39,56 +38,61 @@
 
 PyMethodDef pyevtx_record_object_methods[] = {
 
-	/* Functions to access the record values */
-
 	{ "get_offset",
 	  (PyCFunction) pyevtx_record_get_offset,
 	  METH_NOARGS,
-	  "get_offset() -> Integer\n"
+	  "get_offset() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the offset." },
 
 	{ "get_identifier",
 	  (PyCFunction) pyevtx_record_get_identifier,
 	  METH_NOARGS,
-	  "get_identifier() -> Integer\n"
+	  "get_identifier() -> Integer or None\n"
 	  "\n"
-	  "Retrieves the identifier (number)." },
+	  "Retrieves the identifier." },
 
 	{ "get_written_time",
 	  (PyCFunction) pyevtx_record_get_written_time,
 	  METH_NOARGS,
-	  "get_written_time() -> Datetime\n"
+	  "get_written_time() -> Datetime or None\n"
 	  "\n"
-	  "Returns the written date and time." },
+	  "Retrieves the written time." },
 
 	{ "get_written_time_as_integer",
 	  (PyCFunction) pyevtx_record_get_written_time_as_integer,
 	  METH_NOARGS,
-	  "get_written_time_as_integer() -> Integer\n"
+	  "get_written_time_as_integer() -> Integer or None\n"
 	  "\n"
-	  "Returns the written date and time as a 64-bit integer containing a FILETIME value." },
+	  "Retrieves the written time as a 64-bit integer containing a FILETIME value." },
 
 	{ "get_event_identifier",
 	  (PyCFunction) pyevtx_record_get_event_identifier,
 	  METH_NOARGS,
-	  "get_event_identifier() -> Integer\n"
+	  "get_event_identifier() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the event identifier." },
 
 	{ "get_event_identifier_qualifiers",
 	  (PyCFunction) pyevtx_record_get_event_identifier_qualifiers,
 	  METH_NOARGS,
-	  "get_event_identifier_qualifiers() -> Integer\n"
+	  "get_event_identifier_qualifiers() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the event identifier qualifiers." },
 
 	{ "get_event_level",
 	  (PyCFunction) pyevtx_record_get_event_level,
 	  METH_NOARGS,
-	  "get_event_level() -> Integer\n"
+	  "get_event_level() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the event level." },
+
+	{ "get_provider_identifier",
+	  (PyCFunction) pyevtx_record_get_provider_identifier,
+	  METH_NOARGS,
+	  "get_provider_identifier() -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the provider identifier." },
 
 	{ "get_source_name",
 	  (PyCFunction) pyevtx_record_get_source_name,
@@ -109,28 +113,33 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  METH_NOARGS,
 	  "get_user_security_identifier() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the user security identifier (SID)." },
-
-	/* Functions to access the string */
+	  "Retrieves the user security identifier." },
 
 	{ "get_number_of_strings",
 	  (PyCFunction) pyevtx_record_get_number_of_strings,
 	  METH_NOARGS,
-	  "get_number_of_strings() -> Integer\n"
+	  "get_number_of_strings() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the number of strings." },
 
 	{ "get_string",
 	  (PyCFunction) pyevtx_record_get_string,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_string(string_index) -> Object or None\n"
+	  "get_string(string_index) -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves a specific string." },
+	  "Retrieves the string." },
+
+	{ "get_data",
+	  (PyCFunction) pyevtx_record_get_data,
+	  METH_NOARGS,
+	  "get_data() -> Binary string or None\n"
+	  "\n"
+	  "Retrieves the data." },
 
 	{ "get_xml_string",
 	  (PyCFunction) pyevtx_record_get_xml_string,
 	  METH_NOARGS,
-	  "get_xml_string -> Unicode string or None\n"
+	  "get_xml_string() -> Unicode string or None\n"
 	  "\n"
 	  "Retrieves the XML string." },
 
@@ -149,13 +158,13 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	{ "identifier",
 	  (getter) pyevtx_record_get_identifier,
 	  (setter) 0,
-	  "The identifier (number).",
+	  "The identifier.",
 	  NULL },
 
 	{ "written_time",
 	  (getter) pyevtx_record_get_written_time,
 	  (setter) 0,
-	  "The written date and time.",
+	  "The written time.",
 	  NULL },
 
 	{ "event_identifier",
@@ -176,6 +185,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  "The event level.",
 	  NULL },
 
+	{ "provider_identifier",
+	  (getter) pyevtx_record_get_provider_identifier,
+	  (setter) 0,
+	  "The provider identifier.",
+	  NULL },
+
 	{ "source_name",
 	  (getter) pyevtx_record_get_source_name,
 	  (setter) 0,
@@ -191,7 +206,7 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	{ "user_security_identifier",
 	  (getter) pyevtx_record_get_user_security_identifier,
 	  (setter) 0,
-	  "The user security identifier (SID).",
+	  "The user security identifier.",
 	  NULL },
 
 	{ "number_of_strings",
@@ -204,6 +219,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_strings,
 	  (setter) 0,
 	  "The strings.",
+	  NULL },
+
+	{ "data",
+	  (getter) pyevtx_record_get_data,
+	  (setter) 0,
+	  "The data.",
 	  NULL },
 
 	{ "xml_string",
@@ -315,8 +336,9 @@ PyTypeObject pyevtx_record_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_new(
+           PyTypeObject *type_object,
            libevtx_record_t *record,
-           pyevtx_file_t *file_object )
+           PyObject *parent_object )
 {
 	pyevtx_record_t *pyevtx_record = NULL;
 	static char *function          = "pyevtx_record_new";
@@ -332,7 +354,7 @@ PyObject *pyevtx_record_new(
 	}
 	pyevtx_record = PyObject_New(
 	                 struct pyevtx_record,
-	                 &pyevtx_record_type_object );
+	                 type_object );
 
 	if( pyevtx_record == NULL )
 	{
@@ -353,11 +375,11 @@ PyObject *pyevtx_record_new(
 
 		goto on_error;
 	}
-	pyevtx_record->record      = record;
-	pyevtx_record->file_object = file_object;
+	pyevtx_record->record        = record;
+	pyevtx_record->parent_object = parent_object;
 
 	Py_IncRef(
-	 (PyObject *) pyevtx_record->file_object );
+	 (PyObject *) pyevtx_record->parent_object );
 
 	return( (PyObject *) pyevtx_record );
 
@@ -399,9 +421,10 @@ int pyevtx_record_init(
 void pyevtx_record_free(
       pyevtx_record_t *pyevtx_record )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pyevtx_record_free";
+	int result                  = 0;
 
 	if( pyevtx_record == NULL )
 	{
@@ -442,9 +465,15 @@ void pyevtx_record_free(
 
 		return;
 	}
-	if( libevtx_record_free(
-	     &( pyevtx_record->record ),
-	     &error ) != 1 )
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_free(
+	          &( pyevtx_record->record ),
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -455,10 +484,10 @@ void pyevtx_record_free(
 		libcerror_error_free(
 		 &error );
 	}
-	if( pyevtx_record->file_object != NULL )
+	if( pyevtx_record->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyevtx_record->file_object );
+		 (PyObject *) pyevtx_record->parent_object );
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyevtx_record );
@@ -471,8 +500,8 @@ PyObject *pyevtx_record_get_offset(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_offset";
 	off64_t offset           = 0;
 	int result               = 0;
@@ -497,7 +526,7 @@ PyObject *pyevtx_record_get_offset(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -509,6 +538,13 @@ PyObject *pyevtx_record_get_offset(
 		 &error );
 
 		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	integer_object = pyevtx_integer_signed_new_from_64bit(
 	                  (int64_t) offset );
@@ -523,10 +559,10 @@ PyObject *pyevtx_record_get_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_identifier";
-	uint64_t identifier      = 0;
+	uint64_t value_64bit     = 0;
 	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
@@ -544,7 +580,7 @@ PyObject *pyevtx_record_get_identifier(
 
 	result = libevtx_record_get_identifier(
 	          pyevtx_record->record,
-	          &identifier,
+	          &value_64bit,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -563,20 +599,21 @@ PyObject *pyevtx_record_get_identifier(
 		return( NULL );
 	}
 	integer_object = pyevtx_integer_unsigned_new_from_64bit(
-	                  (uint64_t) identifier );
+	                  (uint64_t) value_64bit );
 
 	return( integer_object );
 }
 
-/* Retrieves the written date and time
+
+/* Retrieves the written time
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error   = NULL;
 	PyObject *date_time_object = NULL;
+	libcerror_error_t *error   = NULL;
 	static char *function      = "pyevtx_record_get_written_time";
 	uint64_t filetime          = 0;
 	int result                 = 0;
@@ -601,7 +638,7 @@ PyObject *pyevtx_record_get_written_time(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -614,21 +651,28 @@ PyObject *pyevtx_record_get_written_time(
 
 		return( NULL );
 	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
 	date_time_object = pyevtx_datetime_new_from_filetime(
 	                    filetime );
 
 	return( date_time_object );
 }
 
-/* Retrieves the written date and time as an integer
+/* Retrieves the written time as an integer
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_written_time_as_integer(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_written_time_as_integer";
 	uint64_t filetime        = 0;
 	int result               = 0;
@@ -653,7 +697,7 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -665,6 +709,13 @@ PyObject *pyevtx_record_get_written_time_as_integer(
 		 &error );
 
 		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
 	}
 	integer_object = pyevtx_integer_unsigned_new_from_64bit(
 	                  (uint64_t) filetime );
@@ -679,10 +730,11 @@ PyObject *pyevtx_record_get_event_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error  = NULL;
-	static char *function     = "pyevtx_record_get_event_identifier";
-	uint32_t event_identifier = 0;
-	int result                = 0;
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_event_identifier";
+	uint32_t value_32bit     = 0;
+	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -699,12 +751,12 @@ PyObject *pyevtx_record_get_event_identifier(
 
 	result = libevtx_record_get_event_identifier(
 	          pyevtx_record->record,
-	          &event_identifier,
+	          &value_32bit,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result != 1 )
+	if( result == -1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -717,8 +769,17 @@ PyObject *pyevtx_record_get_event_identifier(
 
 		return( NULL );
 	}
-	return( PyLong_FromUnsignedLong(
-	         (unsigned long) event_identifier ) );
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	integer_object = PyLong_FromUnsignedLong(
+	                  (unsigned long) value_32bit );
+
+	return( integer_object );
 }
 
 /* Retrieves the event identifier qualifiers
@@ -728,10 +789,11 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error             = NULL;
-	static char *function                = "pyevtx_record_get_event_identifier_qualifiers";
-	uint32_t event_identifier_qualifiers = 0;
-	int result                           = 0;
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_event_identifier_qualifiers";
+	uint32_t value_32bit     = 0;
+	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -748,7 +810,7 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
 
 	result = libevtx_record_get_event_identifier_qualifiers(
 	          pyevtx_record->record,
-	          &event_identifier_qualifiers,
+	          &value_32bit,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -766,8 +828,17 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
 
 		return( NULL );
 	}
-	return( PyLong_FromUnsignedLong(
-	         (unsigned long) event_identifier_qualifiers ) );
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	integer_object = PyLong_FromUnsignedLong(
+	                  (unsigned long) value_32bit );
+
+	return( integer_object );
 }
 
 /* Retrieves the event level
@@ -777,8 +848,8 @@ PyObject *pyevtx_record_get_event_level(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_event_level";
 	uint8_t event_level      = 0;
 	int result               = 0;
@@ -826,19 +897,20 @@ PyObject *pyevtx_record_get_event_level(
 	return( integer_object );
 }
 
-/* Retrieves the source name
+
+/* Retrieves the provider identifier
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_record_get_source_name(
+PyObject *pyevtx_record_get_provider_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
 	const char *errors       = NULL;
-	uint8_t *source_name     = NULL;
-	static char *function    = "pyevtx_record_get_source_name";
-	size_t source_name_size  = 0;
+	static char *function    = "pyevtx_record_get_provider_identifier";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
 	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
@@ -846,7 +918,7 @@ PyObject *pyevtx_record_get_source_name(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -854,9 +926,9 @@ PyObject *pyevtx_record_get_source_name(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_record_get_utf8_source_name_size(
+	result = libevtx_record_get_utf8_provider_identifier_size(
 	          pyevtx_record->record,
-	          &source_name_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -866,7 +938,7 @@ PyObject *pyevtx_record_get_source_name(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve source name size.",
+		 "%s: unable to determine size of provider identifier as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -875,32 +947,32 @@ PyObject *pyevtx_record_get_source_name(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( source_name_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	source_name = (uint8_t *) PyMem_Malloc(
-	                           sizeof( uint8_t ) * source_name_size );
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
 
-	if( source_name == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create source name.",
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
 		 function );
 
 		goto on_error;
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_record_get_utf8_source_name(
-		  pyevtx_record->record,
-		  source_name,
-		  source_name_size,
-		  &error );
+	result = libevtx_record_get_utf8_provider_identifier(
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -909,7 +981,7 @@ PyObject *pyevtx_record_get_source_name(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve source name.",
+		 "%s: unable to retrieve provider identifier as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -917,25 +989,155 @@ PyObject *pyevtx_record_get_source_name(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) source_name,
-			 (Py_ssize_t) source_name_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 source_name );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( source_name != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 source_name );
+		 utf8_string );
+	}
+	return( NULL );
+}
+
+/* Retrieves the source name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_source_name(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pyevtx_record_get_source_name";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_source_name_size(
+	          pyevtx_record->record,
+	          &utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine size of source name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( utf8_string_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
+
+	if( utf8_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_source_name(
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve source name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
+	PyMem_Free(
+	 utf8_string );
+
+	return( string_object );
+
+on_error:
+	if( utf8_string != NULL )
+	{
+		PyMem_Free(
+		 utf8_string );
 	}
 	return( NULL );
 }
@@ -947,20 +1149,20 @@ PyObject *pyevtx_record_get_computer_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error  = NULL;
-	PyObject *string_object   = NULL;
-	const char *errors        = NULL;
-	uint8_t *computer_name    = NULL;
-	static char *function     = "pyevtx_record_get_computer_name";
-	size_t computer_name_size = 0;
-	int result                = 0;
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pyevtx_record_get_computer_name";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -970,7 +1172,7 @@ PyObject *pyevtx_record_get_computer_name(
 
 	result = libevtx_record_get_utf8_computer_name_size(
 	          pyevtx_record->record,
-	          &computer_name_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -980,7 +1182,7 @@ PyObject *pyevtx_record_get_computer_name(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve computer name size.",
+		 "%s: unable to determine size of computer name as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -989,21 +1191,21 @@ PyObject *pyevtx_record_get_computer_name(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( computer_name_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	computer_name = (uint8_t *) PyMem_Malloc(
-	                             sizeof( uint8_t ) * computer_name_size );
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
 
-	if( computer_name == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create computer name.",
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
 		 function );
 
 		goto on_error;
@@ -1011,10 +1213,10 @@ PyObject *pyevtx_record_get_computer_name(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_record_get_utf8_computer_name(
-		  pyevtx_record->record,
-		  computer_name,
-		  computer_name_size,
-		  &error );
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -1023,7 +1225,7 @@ PyObject *pyevtx_record_get_computer_name(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve computer name.",
+		 "%s: unable to retrieve computer name as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -1031,25 +1233,33 @@ PyObject *pyevtx_record_get_computer_name(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) computer_name,
-			 (Py_ssize_t) computer_name_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 computer_name );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( computer_name != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 computer_name );
+		 utf8_string );
 	}
 	return( NULL );
 }
@@ -1061,20 +1271,20 @@ PyObject *pyevtx_record_get_user_security_identifier(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error             = NULL;
-	PyObject *string_object              = NULL;
-	const char *errors                   = NULL;
-	uint8_t *user_security_identifier    = NULL;
-	static char *function                = "pyevtx_record_get_user_security_identifier";
-	size_t user_security_identifier_size = 0;
-	int result                           = 0;
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pyevtx_record_get_user_security_identifier";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -1084,7 +1294,7 @@ PyObject *pyevtx_record_get_user_security_identifier(
 
 	result = libevtx_record_get_utf8_user_security_identifier_size(
 	          pyevtx_record->record,
-	          &user_security_identifier_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -1094,7 +1304,7 @@ PyObject *pyevtx_record_get_user_security_identifier(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve user security identifier size.",
+		 "%s: unable to determine size of user security identifier as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -1103,21 +1313,21 @@ PyObject *pyevtx_record_get_user_security_identifier(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( user_security_identifier_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	user_security_identifier = (uint8_t *) PyMem_Malloc(
-	                                        sizeof( uint8_t ) * user_security_identifier_size );
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
 
-	if( user_security_identifier == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create user security identifier.",
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
 		 function );
 
 		goto on_error;
@@ -1125,10 +1335,10 @@ PyObject *pyevtx_record_get_user_security_identifier(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_record_get_utf8_user_security_identifier(
-		  pyevtx_record->record,
-		  user_security_identifier,
-		  user_security_identifier_size,
-		  &error );
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -1137,7 +1347,7 @@ PyObject *pyevtx_record_get_user_security_identifier(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve user security identifier.",
+		 "%s: unable to retrieve user security identifier as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(
@@ -1145,25 +1355,33 @@ PyObject *pyevtx_record_get_user_security_identifier(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) user_security_identifier,
-			 (Py_ssize_t) user_security_identifier_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 user_security_identifier );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( user_security_identifier != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 user_security_identifier );
+		 utf8_string );
 	}
 	return( NULL );
 }
@@ -1175,8 +1393,8 @@ PyObject *pyevtx_record_get_number_of_strings(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function    = "pyevtx_record_get_number_of_strings";
 	int number_of_strings    = 0;
 	int result               = 0;
@@ -1228,15 +1446,15 @@ PyObject *pyevtx_record_get_number_of_strings(
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_string_by_index(
-           pyevtx_record_t *pyevtx_record,
+           PyObject *pyevtx_record,
            int string_index )
 {
-	libcerror_error_t *error = NULL;
 	PyObject *string_object  = NULL;
-	uint8_t *string          = NULL;
+	libcerror_error_t *error = NULL;
+	uint8_t *utf8_string     = NULL;
 	const char *errors       = NULL;
 	static char *function    = "pyevtx_record_get_string_by_index";
-	size_t string_size       = 0;
+	size_t utf8_string_size  = 0;
 	int result               = 0;
 
 	if( pyevtx_record == NULL )
@@ -1251,9 +1469,9 @@ PyObject *pyevtx_record_get_string_by_index(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_record_get_utf8_string_size(
-	          pyevtx_record->record,
+	          ( (pyevtx_record_t *) pyevtx_record )->record,
 	          string_index,
-	          &string_size,
+	          &utf8_string_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -1263,7 +1481,7 @@ PyObject *pyevtx_record_get_string_by_index(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve string: %d size.",
+		 "%s: unable to determine size of string: %d as UTF-8 string.",
 		 function,
 		 string_index );
 
@@ -1273,34 +1491,33 @@ PyObject *pyevtx_record_get_string_by_index(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( string_size == 0 ) )
+	      || ( utf8_string_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	string = (uint8_t *) PyMem_Malloc(
-	                      sizeof( uint8_t ) * string_size );
+	utf8_string = (uint8_t *) PyMem_Malloc(
+	                           sizeof( uint8_t ) * utf8_string_size );
 
-	if( string == NULL )
+	if( utf8_string == NULL )
 	{
 		PyErr_Format(
 		 PyExc_IOError,
-		 "%s: unable to create string: %d.",
-		 function,
-		 string_index );
+		 "%s: unable to create UTF-8 string.",
+		 function );
 
 		goto on_error;
 	}
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libevtx_record_get_utf8_string(
-		  pyevtx_record->record,
-		  string_index,
-		  string,
-		  string_size,
-		  &error );
+	          ( (pyevtx_record_t *) pyevtx_record )->record,
+	          string_index,
+	          utf8_string,
+	          utf8_string_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -1309,7 +1526,7 @@ PyObject *pyevtx_record_get_string_by_index(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve string: %d.",
+		 "%s: unable to retrieve string: %d as UTF-8 string.",
 		 function,
 		 string_index );
 
@@ -1318,25 +1535,33 @@ PyObject *pyevtx_record_get_string_by_index(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) string,
-			 (Py_ssize_t) string_size - 1,
-			 errors );
+	                 (char *) utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 string );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( string != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 string );
+		 utf8_string );
 	}
 	return( NULL );
 }
@@ -1363,24 +1588,24 @@ PyObject *pyevtx_record_get_string(
 		return( NULL );
 	}
 	string_object = pyevtx_record_get_string_by_index(
-	                 pyevtx_record,
+	                 (PyObject *) pyevtx_record,
 	                 string_index );
 
 	return( string_object );
 }
 
-/* Retrieves a strings sequence and iterator object for the strings
+/* Retrieves a sequence and iterator object for the strings
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_record_get_strings(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error = NULL;
-	PyObject *strings_object = NULL;
-	static char *function    = "pyevtx_record_get_strings";
-	int number_of_strings    = 0;
-	int result               = 0;
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_record_get_strings";
+	int number_of_strings     = 0;
+	int result                = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -1415,36 +1640,35 @@ PyObject *pyevtx_record_get_strings(
 
 		return( NULL );
 	}
-	strings_object = pyevtx_strings_new(
-	                  pyevtx_record,
-	                  &pyevtx_record_get_string_by_index,
-	                  number_of_strings );
+	sequence_object = pyevtx_strings_new(
+	                   (PyObject *) pyevtx_record,
+	                   &pyevtx_record_get_string_by_index,
+	                   number_of_strings );
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create strings object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	return( strings_object );
+	return( sequence_object );
 }
 
-/* Retrieves the XML string
+/* Retrieves the data
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_record_get_xml_string(
+PyObject *pyevtx_record_get_data(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
+	PyObject *bytes_object   = NULL;
 	libcerror_error_t *error = NULL;
-	PyObject *string_object  = NULL;
-	const char *errors       = NULL;
-	uint8_t *xml_string      = NULL;
-	static char *function    = "pyevtx_record_get_xml_string";
-	size_t xml_string_size   = 0;
+	char *data               = NULL;
+	static char *function    = "pyevtx_record_get_data";
+	size_t data_size         = 0;
 	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
@@ -1452,7 +1676,7 @@ PyObject *pyevtx_record_get_xml_string(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -1460,9 +1684,9 @@ PyObject *pyevtx_record_get_xml_string(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_record_get_utf8_xml_string_size(
+	result = libevtx_record_get_data_size(
 	          pyevtx_record->record,
-	          &xml_string_size,
+	          &data_size,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -1472,7 +1696,7 @@ PyObject *pyevtx_record_get_xml_string(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve XML string size.",
+		 "%s: unable to retrieve data size.",
 		 function );
 
 		libcerror_error_free(
@@ -1481,32 +1705,32 @@ PyObject *pyevtx_record_get_xml_string(
 		goto on_error;
 	}
 	else if( ( result == 0 )
-	      || ( xml_string_size == 0 ) )
+	      || ( data_size == 0 ) )
 	{
 		Py_IncRef(
 		 Py_None );
 
 		return( Py_None );
 	}
-	xml_string = (uint8_t *) PyMem_Malloc(
-	                          sizeof( uint8_t ) * xml_string_size );
+	data = (char *) PyMem_Malloc(
+	                 sizeof( char ) * data_size );
 
-	if( xml_string == NULL )
+	if( data == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to create XML string.",
+		 PyExc_MemoryError,
+		 "%s: unable to create data.",
 		 function );
 
 		goto on_error;
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_record_get_utf8_xml_string(
-		  pyevtx_record->record,
-		  xml_string,
-		  xml_string_size,
-		  &error );
+	result = libevtx_record_get_data(
+	          pyevtx_record->record,
+	          (uint8_t *) data,
+	          data_size,
+	          &error );
 
 	Py_END_ALLOW_THREADS
 
@@ -1515,7 +1739,7 @@ PyObject *pyevtx_record_get_xml_string(
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve XML string.",
+		 "%s: unable to retrieve data.",
 		 function );
 
 		libcerror_error_free(
@@ -1523,25 +1747,158 @@ PyObject *pyevtx_record_get_xml_string(
 
 		goto on_error;
 	}
-	/* Pass the string length to PyUnicode_DecodeUTF8
-	 * otherwise it makes the end of string character is part
-	 * of the string
+	/* This is a binary string so include the full size
+	 */
+#if PY_MAJOR_VERSION >= 3
+	bytes_object = PyBytes_FromStringAndSize(
+	                data,
+	                (Py_ssize_t) data_size );
+#else
+	bytes_object = PyString_FromStringAndSize(
+	                data,
+	                (Py_ssize_t) data_size );
+#endif
+	if( bytes_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert data into Bytes object.",
+		 function );
+
+		goto on_error;
+	}
+	PyMem_Free(
+	 data );
+
+	return( bytes_object );
+
+on_error:
+	if( data != NULL )
+	{
+		PyMem_Free(
+		 data );
+	}
+	return( NULL );
+}
+
+/* Retrieves the xml string
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_xml_string(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	const char *errors       = NULL;
+	static char *function    = "pyevtx_record_get_xml_string";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_xml_string_size(
+	          pyevtx_record->record,
+	          &utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine size of xml string as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( utf8_string_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
+
+	if( utf8_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_xml_string(
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve xml string as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
 	 */
 	string_object = PyUnicode_DecodeUTF8(
-			 (char *) xml_string,
-			 (Py_ssize_t) xml_string_size - 1,
-			 errors );
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 errors );
 
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
 	PyMem_Free(
-	 xml_string );
+	 utf8_string );
 
 	return( string_object );
 
 on_error:
-	if( xml_string != NULL )
+	if( utf8_string != NULL )
 	{
 		PyMem_Free(
-		 xml_string );
+		 utf8_string );
 	}
 	return( NULL );
 }

@@ -350,13 +350,12 @@ int libevtx_record_get_identifier(
 	return( 1 );
 }
 
-/* Retrieves the written time
- * The timestamp is a 64-bit FILETIME date and time value
+/* Retrieves the 64-bit FILETIME value containing the written time
  * Returns 1 if successful or -1 on error
  */
 int libevtx_record_get_written_time(
      libevtx_record_t *record,
-     uint64_t *written_time,
+     uint64_t *filetime,
      libcerror_error_t **error )
 {
 	libevtx_internal_record_t *internal_record = NULL;
@@ -386,18 +385,18 @@ int libevtx_record_get_written_time(
 
 		return( -1 );
 	}
-	if( written_time == NULL )
+	if( filetime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid written time.",
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
-	*written_time = internal_record->record_values->written_time;
+	*filetime = internal_record->record_values->written_time;
 
 	return( 1 );
 }

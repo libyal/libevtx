@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libevtx record
+ * Python object wrapper of libevtx_record_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "pyevtx_file.h"
 #include "pyevtx_libevtx.h"
 #include "pyevtx_python.h"
 
@@ -45,17 +44,18 @@ struct pyevtx_record
 	 */
 	libevtx_record_t *record;
 
-	/* The file object
+	/* The parent object
 	 */
-	pyevtx_file_t *file_object;
+	PyObject *parent_object;
 };
 
 extern PyMethodDef pyevtx_record_object_methods[];
 extern PyTypeObject pyevtx_record_type_object;
 
 PyObject *pyevtx_record_new(
+           PyTypeObject *type_object,
            libevtx_record_t *record,
-           pyevtx_file_t *file_object );
+           PyObject *parent_object );
 
 int pyevtx_record_init(
      pyevtx_record_t *pyevtx_record );
@@ -91,6 +91,10 @@ PyObject *pyevtx_record_get_event_level(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
 
+PyObject *pyevtx_record_get_provider_identifier(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
+
 PyObject *pyevtx_record_get_source_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
@@ -108,7 +112,7 @@ PyObject *pyevtx_record_get_number_of_strings(
            PyObject *arguments );
 
 PyObject *pyevtx_record_get_string_by_index(
-           pyevtx_record_t *pyevtx_record,
+           PyObject *pyevtx_record,
            int string_index );
 
 PyObject *pyevtx_record_get_string(
@@ -120,6 +124,10 @@ PyObject *pyevtx_record_get_strings(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
 
+PyObject *pyevtx_record_get_data(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
+
 PyObject *pyevtx_record_get_xml_string(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
@@ -128,5 +136,5 @@ PyObject *pyevtx_record_get_xml_string(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYEVTX_RECORD_H ) */
 

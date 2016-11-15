@@ -85,7 +85,7 @@ int libevtx_record_get_identifier(
 LIBEVTX_EXTERN \
 int libevtx_record_get_written_time(
      libevtx_record_t *record,
-     uint64_t *written_time,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
