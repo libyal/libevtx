@@ -120,5 +120,5 @@ int registry_file_get_key_by_path(
 }
 #endif
 
-#endif
+#endif /* !defined( _REGISTRY_FILE_H ) */
 

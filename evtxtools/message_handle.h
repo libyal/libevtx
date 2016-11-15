@@ -300,5 +300,5 @@ int message_handle_get_resource_file_by_provider_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _MESSAGE_HANDLE_H ) */
 

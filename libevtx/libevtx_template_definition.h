@@ -76,5 +76,5 @@ int libevtx_template_definition_read(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_TEMPLATE_DEFINITION_H ) */
 

@@ -123,11 +123,16 @@ stamp-h[1-9]
 /pyevtx-python[23]/*.[ch]
 /evtxtools/evtxexport
 /evtxtools/evtxinfo
+/tests/evtx_test_chunk
+/tests/evtx_test_chunks_table
 /tests/evtx_test_error
 /tests/evtx_test_file
-/tests/evtx_test_open_close
+/tests/evtx_test_io_handle
+/tests/evtx_test_notify
 /tests/evtx_test_record
+/tests/evtx_test_record_values
 /tests/evtx_test_support
+/tests/evtx_test_template_definition
 /tests/input
 /tests/tmp*
 

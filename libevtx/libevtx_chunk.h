@@ -105,5 +105,5 @@ int libevtx_chunk_get_recovered_record(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_CHUNK_H ) */
 

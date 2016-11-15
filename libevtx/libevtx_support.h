@@ -78,5 +78,5 @@ int libevtx_check_file_signature_file_io_handle(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_SUPPORT_H ) */
 

@@ -178,5 +178,5 @@ int resource_file_get_event_message_identifier(
 }
 #endif
 
-#endif
+#endif /* !defined( _RESOURCE_FILE_H ) */
 

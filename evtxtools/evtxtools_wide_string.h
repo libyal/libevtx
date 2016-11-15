@@ -1,7 +1,7 @@
 /*
  * Wide character string functions
  *
- * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WIDE_STRING_H )
-#define _WIDE_STRING_H
+#if !defined( _EVTXTOOLS_WIDE_STRING_H )
+#define _EVTXTOOLS_WIDE_STRING_H
 
 #include <common.h>
 #include <wide_string.h>
@@ -30,9 +30,16 @@
 extern "C" {
 #endif
 
+#if !defined( wide_string_compare_no_case )
+
+#define wide_string_compare_no_case( string1, string2, size ) \
+	evtxtools_wide_string_compare_no_case( string1, string2, size )
+
+#endif /* !defined( wide_string_compare_no_case ) */
+
 #if defined( TOWLOWER ) && !defined( HAVE_WCSNCASECMP ) && !defined( HAVE_WCSCASECMP ) && !defined( WINAPI )
 
-int wide_string_compare_no_case(
+int evtxtools_wide_string_compare_no_case(
      const wchar_t *string1,
      const wchar_t *string2,
      size_t comparision_length );
@@ -43,5 +50,5 @@ int wide_string_compare_no_case(
 }
 #endif
 
-#endif /* !defined( _WIDE_STRING_H ) */
+#endif /* !defined( _EVTXTOOLS_WIDE_STRING_H ) */
 

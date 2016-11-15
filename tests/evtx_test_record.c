@@ -33,6 +33,8 @@
 #include "evtx_test_memory.h"
 #include "evtx_test_unused.h"
 
+#include "../libevtx/libevtx_record.h"
+
 /* Tests the libevtx_record_free function
  * Returns 1 if successful or 0 if not
  */
@@ -86,9 +88,83 @@ int main(
 	EVTX_TEST_UNREFERENCED_PARAMETER( argc )
 	EVTX_TEST_UNREFERENCED_PARAMETER( argv )
 
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libevtx_record_initialize */
+
+#endif /* defined( __GNUC__ ) */
+
 	EVTX_TEST_RUN(
 	 "libevtx_record_free",
 	 evtx_test_record_free );
+
+	/* TODO: add tests for libevtx_record_get_offset */
+
+	/* TODO: add tests for libevtx_record_get_identifier */
+
+	/* TODO: add tests for libevtx_record_get_written_time */
+
+	/* TODO: add tests for libevtx_record_get_event_identifier */
+
+	/* TODO: add tests for libevtx_record_get_event_identifier_qualifiers */
+
+	/* TODO: add tests for libevtx_record_get_event_level */
+
+	/* TODO: add tests for libevtx_record_get_utf8_provider_identifier_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_provider_identifier */
+
+	/* TODO: add tests for libevtx_record_get_utf16_provider_identifier_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_provider_identifier */
+
+	/* TODO: add tests for libevtx_record_get_utf8_source_name_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_source_name */
+
+	/* TODO: add tests for libevtx_record_get_utf16_source_name_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_source_name */
+
+	/* TODO: add tests for libevtx_record_get_utf8_computer_name_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_computer_name */
+
+	/* TODO: add tests for libevtx_record_get_utf16_computer_name_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_computer_name */
+
+	/* TODO: add tests for libevtx_record_get_utf8_user_security_identifier_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_user_security_identifier */
+
+	/* TODO: add tests for libevtx_record_get_utf16_user_security_identifier_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_user_security_identifier */
+
+	/* TODO: add tests for libevtx_record_parse_data_with_template_definition */
+
+	/* TODO: add tests for libevtx_record_get_number_of_strings */
+
+	/* TODO: add tests for libevtx_record_get_utf8_string_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_string */
+
+	/* TODO: add tests for libevtx_record_get_utf16_string_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_string */
+
+	/* TODO: add tests for libevtx_record_get_data_size */
+
+	/* TODO: add tests for libevtx_record_get_data */
+
+	/* TODO: add tests for libevtx_record_get_utf8_xml_string_size */
+
+	/* TODO: add tests for libevtx_record_get_utf8_xml_string */
+
+	/* TODO: add tests for libevtx_record_get_utf16_xml_string_size */
+
+	/* TODO: add tests for libevtx_record_get_utf16_xml_string */
 
 	return( EXIT_SUCCESS );
 

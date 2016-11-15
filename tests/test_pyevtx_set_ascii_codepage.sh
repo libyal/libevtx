@@ -33,7 +33,7 @@ fi
 
 source ${TEST_RUNNER};
 
-local TEST_DESCRIPTION="Testing Python-bindings functions: set_ascii_codepage";
+TEST_DESCRIPTION="Testing Python-bindings functions: set_ascii_codepage";
 
 run_test_with_arguments "${TEST_DESCRIPTION}" "${TEST_SCRIPT}";
 RESULT=$?;

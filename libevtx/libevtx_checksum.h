@@ -52,5 +52,5 @@ int libevtx_checksum_calculate_little_endian_weak_crc32(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_CHECKSUM_H ) */
 

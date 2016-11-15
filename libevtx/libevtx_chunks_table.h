@@ -79,5 +79,5 @@ int libevtx_chunks_table_read_record(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_CHUNKS_TABLE_H ) */
 

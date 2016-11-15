@@ -58,5 +58,5 @@ int evtxinput_determine_event_log_type_from_filename(
 }
 #endif
 
-#endif
+#endif /* !defined( _EVTXINPUT_H ) */
 

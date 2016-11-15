@@ -65,5 +65,5 @@ int path_handle_get_directory_entry_name_by_name_no_case(
 }
 #endif
 
-#endif
+#endif /* !defined( _PATH_HANDLE_H ) */
 

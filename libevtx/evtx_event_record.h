@@ -60,5 +60,5 @@ struct evtx_event_record_header
 }
 #endif
 
-#endif
+#endif /* !defined( _EVTX_EVENT_RECORD_H ) */
 

@@ -124,5 +124,5 @@ int libevtx_io_handle_read_chunk(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_IO_HANDLE_H ) */
 

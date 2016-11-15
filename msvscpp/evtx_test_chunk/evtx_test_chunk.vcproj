@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtx_test_error"
-	ProjectGUID="{D5374706-39C2-43A0-BCEA-D4A5B3F7E452}"
-	RootNamespace="evtx_test_error"
+	Name="evtx_test_chunk"
+	ProjectGUID="{D840C869-2266-4422-BD66-CAF20CED4832}"
+	RootNamespace="evtx_test_chunk"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_error.c"
+				RelativePath="..\..\tests\evtx_test_chunk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -186,11 +190,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\tests\evtx_test_libcerror.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\evtx_test_libevtx.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\evtx_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_memory.h"
 				>
 			</File>
 			<File

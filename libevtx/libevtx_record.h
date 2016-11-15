@@ -295,5 +295,5 @@ int libevtx_record_get_utf16_xml_string(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_RECORD_H ) */
 

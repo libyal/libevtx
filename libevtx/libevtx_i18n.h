@@ -49,5 +49,5 @@ int libevtx_i18n_initialize(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_I18N_H ) */
 

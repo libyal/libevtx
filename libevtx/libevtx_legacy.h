@@ -47,5 +47,5 @@ int libevtx_record_parse_data(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_LEGACY_H ) */
 

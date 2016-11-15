@@ -51,5 +51,5 @@ int libevtx_debug_print_read_offsets(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_DEBUG_H ) */
 

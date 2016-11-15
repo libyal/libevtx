@@ -38,7 +38,7 @@
 #include "evtx_test_macros.h"
 #include "evtx_test_memory.h"
 
-#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
 
@@ -256,8 +256,8 @@ int evtx_test_file_get_wide_source(
      libcerror_error_t **error )
 {
 	static char *function   = "evtx_test_file_get_wide_source";
-	size_t wide_source_size = 0;
 	size_t source_length    = 0;
+	size_t wide_source_size = 0;
 
 #if !defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result              = 0;
@@ -395,14 +395,14 @@ int evtx_test_file_get_wide_source(
 		result = libuna_utf32_string_copy_from_utf8(
 		          (libuna_utf32_character_t *) wide_string,
 		          wide_string_size,
-		          (uint8_t *) source,
+		          (libuna_utf8_character_t *) source,
 		          source_length + 1,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_utf8(
 		          (libuna_utf16_character_t *) wide_string,
 		          wide_string_size,
-		          (uint8_t *) source,
+		          (libuna_utf8_character_t *) source,
 		          source_length + 1,
 		          error );
 #endif
@@ -521,9 +521,6 @@ int evtx_test_file_open_source(
 on_error:
 	if( *file != NULL )
 	{
-		libevtx_file_close(
-		 *file,
-		 NULL );
 		libevtx_file_free(
 		 file,
 		 NULL );
@@ -587,11 +584,17 @@ int evtx_test_file_close_source(
 int evtx_test_file_initialize(
      void )
 {
-	libcerror_error_t *error = NULL;
-	libevtx_file_t *file      = NULL;
-	int result               = 0;
+	libcerror_error_t *error        = NULL;
+	libevtx_file_t *file            = NULL;
+	int result                      = 0;
 
-	/* Test libevtx_file_initialize
+#if defined( HAVE_EVTX_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libevtx_file_initialize(
 	          &file,
@@ -667,65 +670,89 @@ int evtx_test_file_initialize(
 
 #if defined( HAVE_EVTX_TEST_MEMORY )
 
-	/* Test libevtx_file_initialize with malloc failing
-	 */
-	evtx_test_malloc_attempts_before_fail = 0;
-
-	result = libevtx_file_initialize(
-	          &file,
-	          &error );
-
-	if( evtx_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		evtx_test_malloc_attempts_before_fail = -1;
+		/* Test libevtx_file_initialize with malloc failing
+		 */
+		evtx_test_malloc_attempts_before_fail = test_number;
+
+		result = libevtx_file_initialize(
+		          &file,
+		          &error );
+
+		if( evtx_test_malloc_attempts_before_fail != -1 )
+		{
+			evtx_test_malloc_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libevtx_file_free(
+				 &file,
+				 NULL );
+			}
+		}
+		else
+		{
+			EVTX_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			EVTX_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
+
+			EVTX_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libevtx_file_initialize with memset failing
+		 */
+		evtx_test_memset_attempts_before_fail = test_number;
 
-		EVTX_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+		result = libevtx_file_initialize(
+		          &file,
+		          &error );
 
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+		if( evtx_test_memset_attempts_before_fail != -1 )
+		{
+			evtx_test_memset_attempts_before_fail = -1;
 
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libevtx_file_initialize with memset failing
-	 */
-	evtx_test_memset_attempts_before_fail = 0;
+			if( file != NULL )
+			{
+				libevtx_file_free(
+				 &file,
+				 NULL );
+			}
+		}
+		else
+		{
+			EVTX_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-	result = libevtx_file_initialize(
-	          &file,
-	          &error );
+			EVTX_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
 
-	if( evtx_test_memset_attempts_before_fail != -1 )
-	{
-		evtx_test_memset_attempts_before_fail = -1;
-	}
-	else
-	{
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+			EVTX_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		EVTX_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
-
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_EVTX_TEST_MEMORY ) */
 
@@ -784,7 +811,7 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_open functions
+/* Tests the libevtx_file_open function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_file_open(
@@ -847,21 +874,28 @@ int evtx_test_file_open(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libevtx_file_close(
+	result = libevtx_file_open(
 	          file,
+	          narrow_source,
+	          LIBEVTX_OPEN_READ,
 	          &error );
 
 	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libevtx_file_free(
 	          &file,
 	          &error );
@@ -898,7 +932,7 @@ on_error:
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Tests the libevtx_file_open_wide functions
+/* Tests the libevtx_file_open_wide function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_file_open_wide(
@@ -961,21 +995,28 @@ int evtx_test_file_open_wide(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libevtx_file_close(
+	result = libevtx_file_open_wide(
 	          file,
+	          wide_source,
+	          LIBEVTX_OPEN_READ,
 	          &error );
 
 	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libevtx_file_free(
 	          &file,
 	          &error );
@@ -1012,51 +1053,18 @@ on_error:
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Tests the libevtx_file_get_ascii_codepage functions
+/* Tests the libevtx_file_close function
  * Returns 1 if successful or 0 if not
  */
-int evtx_test_file_get_ascii_codepage(
-     libevtx_file_t *file )
+int evtx_test_file_close(
+     void )
 {
 	libcerror_error_t *error = NULL;
-	int codepage             = 0;
 	int result               = 0;
-
-	result = libevtx_file_get_ascii_codepage(
-	          file,
-	          &codepage,
-	          &error );
-
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
 
 	/* Test error cases
 	 */
-	result = libevtx_file_get_ascii_codepage(
-	          NULL,
-	          &codepage,
-	          &error );
-
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libevtx_file_get_ascii_codepage(
-	          file,
+	result = libevtx_file_close(
 	          NULL,
 	          &error );
 
@@ -1083,11 +1091,283 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_set_ascii_codepage functions
+/* Tests the libevtx_file_open and libevtx_file_close functions
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_file_open_close(
+     const system_character_t *source )
+{
+	libcerror_error_t *error = NULL;
+	libevtx_file_t *file     = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_file_initialize(
+	          &file,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "file",
+         file );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_file_open_wide(
+	          file,
+	          source,
+	          LIBEVTX_OPEN_READ,
+	          &error );
+#else
+	result = libevtx_file_open(
+	          file,
+	          source,
+	          LIBEVTX_OPEN_READ,
+	          &error );
+#endif
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libevtx_file_close(
+	          file,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close a second time to validate clean up on close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_file_open_wide(
+	          file,
+	          source,
+	          LIBEVTX_OPEN_READ,
+	          &error );
+#else
+	result = libevtx_file_open(
+	          file,
+	          source,
+	          LIBEVTX_OPEN_READ,
+	          &error );
+#endif
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libevtx_file_close(
+	          file,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Clean up
+	 */
+	result = libevtx_file_free(
+	          &file,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "file",
+         file );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file != NULL )
+	{
+		libevtx_file_free(
+		 &file,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_file_signal_abort function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_file_signal_abort(
+     libevtx_file_t *file )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libevtx_file_signal_abort(
+	          file,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libevtx_file_signal_abort(
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_file_get_ascii_codepage function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_file_get_ascii_codepage(
+     libevtx_file_t *file )
+{
+	libcerror_error_t *error  = NULL;
+	int ascii_codepage        = 0;
+	int ascii_codepage_is_set = 0;
+	int result                = 0;
+
+	/* Test regular cases
+	 */
+	result = libevtx_file_get_ascii_codepage(
+	          file,
+	          &ascii_codepage,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	ascii_codepage_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_file_get_ascii_codepage(
+	          NULL,
+	          &ascii_codepage,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( ascii_codepage_is_set != 0 )
+	{
+		result = libevtx_file_get_ascii_codepage(
+		          file,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_file_set_ascii_codepage function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_file_set_ascii_codepage(
-     void )
+     libevtx_file_t *file )
 {
 	int supported_codepages[ 15 ] = {
 		LIBEVTX_CODEPAGE_ASCII,
@@ -1126,29 +1406,9 @@ int evtx_test_file_set_ascii_codepage(
 		LIBEVTX_CODEPAGE_KOI8_U };
 
 	libcerror_error_t *error = NULL;
-	libevtx_file_t *file      = NULL;
 	int codepage             = 0;
 	int index                = 0;
 	int result               = 0;
-
-	/* Initialize test
-	 */
-	result = libevtx_file_initialize(
-	          &file,
-	          &error );
-
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "file",
-         file );
-
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
 
 	/* Test set ASCII codepage
 	 */
@@ -1216,18 +1476,15 @@ int evtx_test_file_set_ascii_codepage(
 	}
 	/* Clean up
 	 */
-	result = libevtx_file_free(
-	          &file,
+	result = libevtx_file_set_ascii_codepage(
+	          file,
+	          LIBEVTX_CODEPAGE_WINDOWS_1252,
 	          &error );
 
 	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 1 );
-
-        EVTX_TEST_ASSERT_IS_NULL(
-         "file",
-         file );
 
         EVTX_TEST_ASSERT_IS_NULL(
          "error",
@@ -1241,47 +1498,43 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file != NULL )
-	{
-		libevtx_file_free(
-		 &file,
-		 NULL );
-	}
 	return( 0 );
 }
 
-/* Tests the libevtx_file_get_version functions
+/* Tests the libevtx_file_get_flags function
  * Returns 1 if successful or 0 if not
  */
-int evtx_test_file_get_version(
+int evtx_test_file_get_flags(
      libevtx_file_t *file )
 {
 	libcerror_error_t *error = NULL;
-	uint16_t major_version   = 0;
-	uint16_t minor_version   = 0;
+	uint32_t flags           = 0;
+	int flags_is_set         = 0;
 	int result               = 0;
 
-	result = libevtx_file_get_version(
+	/* Test regular cases
+	 */
+	result = libevtx_file_get_flags(
 	          file,
-	          &major_version,
-	          &minor_version,
+	          &flags,
 	          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	flags_is_set = result;
 
 	/* Test error cases
 	 */
-	result = libevtx_file_get_version(
+	result = libevtx_file_get_flags(
 	          NULL,
-	          &major_version,
-	          &minor_version,
+	          &flags,
 	          &error );
 
 	EVTX_TEST_ASSERT_EQUAL_INT(
@@ -1289,49 +1542,32 @@ int evtx_test_file_get_version(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_version(
-	          file,
-	          NULL,
-	          &minor_version,
-	          &error );
+	if( flags_is_set != 0 )
+	{
+		result = libevtx_file_get_flags(
+		          file,
+		          NULL,
+		          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
-	result = libevtx_file_get_version(
-	          file,
-	          &major_version,
-	          NULL,
-	          &error );
-
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1343,29 +1579,34 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_get_number_of_records functions
+/* Tests the libevtx_file_get_number_of_records function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_file_get_number_of_records(
      libevtx_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_records    = 0;
-	int result               = 0;
+	libcerror_error_t *error     = NULL;
+	int number_of_records        = 0;
+	int number_of_records_is_set = 0;
+	int result                   = 0;
 
+	/* Test regular cases
+	 */
 	result = libevtx_file_get_number_of_records(
 	          file,
 	          &number_of_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_records_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1379,30 +1620,32 @@ int evtx_test_file_get_number_of_records(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_number_of_records(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_records_is_set != 0 )
+	{
+		result = libevtx_file_get_number_of_records(
+		          file,
+		          NULL,
+		          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1414,35 +1657,40 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_get_number_of_recovered_records functions
+/* Tests the libevtx_file_get_number_of_recovered_records function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_file_get_number_of_recovered_records(
      libevtx_file_t *file )
 {
-	libcerror_error_t *error = NULL;
-	int number_of_records    = 0;
-	int result               = 0;
+	libcerror_error_t *error               = NULL;
+	int number_of_recovered_records        = 0;
+	int number_of_recovered_records_is_set = 0;
+	int result                             = 0;
 
+	/* Test regular cases
+	 */
 	result = libevtx_file_get_number_of_recovered_records(
 	          file,
-	          &number_of_records,
+	          &number_of_recovered_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
 	 "result",
 	 result,
-	 1 );
+	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_recovered_records_is_set = result;
 
 	/* Test error cases
 	 */
 	result = libevtx_file_get_number_of_recovered_records(
 	          NULL,
-	          &number_of_records,
+	          &number_of_recovered_records,
 	          &error );
 
 	EVTX_TEST_ASSERT_EQUAL_INT(
@@ -1450,30 +1698,32 @@ int evtx_test_file_get_number_of_recovered_records(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_number_of_recovered_records(
-	          file,
-	          NULL,
-	          &error );
+	if( number_of_recovered_records_is_set != 0 )
+	{
+		result = libevtx_file_get_number_of_recovered_records(
+		          file,
+		          NULL,
+		          &error );
 
-	EVTX_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	return( 1 );
 
 on_error:
@@ -1498,8 +1748,8 @@ int main(
 #endif
 {
 	libcerror_error_t *error   = NULL;
+	libevtx_file_t *file       = NULL;
 	system_character_t *source = NULL;
-	libevtx_file_t *file        = NULL;
 	system_integer_t option    = 0;
 	int result                 = 0;
 
@@ -1540,12 +1790,6 @@ int main(
 	 "libevtx_file_free",
 	 evtx_test_file_free );
 
-	/* TODO add test for libevtx_file_signal_abort */
-
-	EVTX_TEST_RUN(
-	 "libevtx_file_set_ascii_codepage",
-	 evtx_test_file_set_ascii_codepage );
-
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -1569,7 +1813,14 @@ int main(
 
 #endif /* defined( LIBEVTX_HAVE_BFIO ) */
 
-		/* TODO add test for libevtx_file_close */
+		EVTX_TEST_RUN(
+		 "libevtx_file_close",
+		 evtx_test_file_close );
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_open_close",
+		 evtx_test_file_open_close,
+		 source );
 
 		/* Initialize test
 		 */
@@ -1591,7 +1842,18 @@ int main(
 	         "error",
 	         error );
 
-		/* TODO add test for libevtx_file_is_corrupted */
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_signal_abort",
+		 evtx_test_file_signal_abort,
+		 file );
+
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libevtx_file_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		/* TODO: add tests for libevtx_file_is_corrupted */
 
 		EVTX_TEST_RUN_WITH_ARGS(
 		 "libevtx_file_get_ascii_codepage",
@@ -1599,25 +1861,30 @@ int main(
 		 file );
 
 		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_get_version",
-		 evtx_test_file_get_version,
+		 "libevtx_file_set_ascii_codepage",
+		 evtx_test_file_set_ascii_codepage,
 		 file );
 
-		/* TODO add test for libevtx_file_get_flags */
+		/* TODO: add tests for libevtx_file_get_version */
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_get_flags",
+		 evtx_test_file_get_flags,
+		 file );
 
 		EVTX_TEST_RUN_WITH_ARGS(
 		 "libevtx_file_get_number_of_records",
 		 evtx_test_file_get_number_of_records,
 		 file );
 
-		/* TODO add test for libevtx_file_get_record */
+		/* TODO: add tests for libevtx_file_get_record */
 
 		EVTX_TEST_RUN_WITH_ARGS(
 		 "libevtx_file_get_number_of_recovered_records",
 		 evtx_test_file_get_number_of_recovered_records,
 		 file );
 
-		/* TODO add test for libevtx_file_get_recovered_record */
+		/* TODO: add tests for libevtx_file_get_recovered_record */
 
 		/* Clean up
 		 */

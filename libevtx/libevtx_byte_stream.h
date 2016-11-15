@@ -40,5 +40,5 @@ int libevtx_byte_stream_check_for_zero_byte_fill(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_BYTE_STREAM_H ) */
 

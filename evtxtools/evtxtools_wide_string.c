@@ -1,7 +1,7 @@
 /*
  * Wide character string functions
  *
- * Copyright (C) 2013-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -26,6 +26,8 @@
 #include <wctype.h>
 #endif
 
+#include "evtxtools_wide_string.h"
+
 #if defined( TOWLOWER ) && !defined( HAVE_WCSNCASECMP ) && !defined( HAVE_WCSCASECMP ) && !defined( WINAPI )
 
 /* Replacement for missing: wcsncasecmp
@@ -33,7 +35,7 @@
  * ignoring case, returning less than, equal to or greater than zero if string1 is
  * less than, equal to or greater than string.
  */
-int wide_string_compare_no_case(
+int evtxtools_wide_string_compare_no_case(
      const wchar_t *string1,
      const wchar_t *string2,
      size_t comparision_length )

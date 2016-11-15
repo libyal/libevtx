@@ -100,5 +100,5 @@ struct evtx_chunk_header
 }
 #endif
 
-#endif
+#endif /* !defined( _EVTX_CHUNK_H ) */
 

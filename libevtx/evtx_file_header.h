@@ -100,5 +100,5 @@ struct evtx_file_header
 }
 #endif
 
-#endif
+#endif /* !defined( _EVTX_FILE_HEADER_H ) */
 

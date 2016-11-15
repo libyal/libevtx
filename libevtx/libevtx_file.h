@@ -195,5 +195,5 @@ int libevtx_file_get_recovered_record(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_FILE_H ) */
 

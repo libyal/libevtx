@@ -76,5 +76,5 @@ int message_string_fprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _MESSAGE_STRING_H ) */
 
