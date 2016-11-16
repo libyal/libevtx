@@ -1865,6 +1865,8 @@ int main(
 		 evtx_test_file_set_ascii_codepage,
 		 file );
 
+		/* TODO: add tests for libevtx_file_get_format_version */
+
 		/* TODO: add tests for libevtx_file_get_version */
 
 		EVTX_TEST_RUN_WITH_ARGS(

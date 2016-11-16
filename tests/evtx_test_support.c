@@ -984,6 +984,8 @@ int evtx_test_check_file_signature_file_io_handle(
          "error",
          error );
 
+	/* TODO test file too small */
+
 	return( 1 );
 
 on_error:
