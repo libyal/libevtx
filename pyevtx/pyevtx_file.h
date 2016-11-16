@@ -108,7 +108,7 @@ int pyevtx_file_set_ascii_codepage_setter(
      PyObject *string_object,
      void *closure );
 
-PyObject *pyevtx_file_get_flags(
+PyObject *pyevtx_file_get_format_version(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments );
 
@@ -135,7 +135,7 @@ PyObject *pyevtx_file_get_number_of_recovered_records(
 
 PyObject *pyevtx_file_get_recovered_record_by_index(
            PyObject *pyevtx_file,
-           int recovered_record_index );
+           int record_index );
 
 PyObject *pyevtx_file_get_recovered_record(
            pyevtx_file_t *pyevtx_file,

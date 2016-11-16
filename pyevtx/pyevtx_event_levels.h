@@ -50,10 +50,10 @@ PyObject *pyevtx_event_levels_new(
            void );
 
 int pyevtx_event_levels_init(
-     pyevtx_event_levels_t *pyevtx_event_levels );
+     pyevtx_event_levels_t *definitions_object );
 
 void pyevtx_event_levels_free(
-      pyevtx_event_levels_t *pyevtx_event_levels );
+      pyevtx_event_levels_t *definitions_object );
 
 #if defined( __cplusplus )
 }

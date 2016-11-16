@@ -127,7 +127,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_string(string_index) -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the string." },
+	  "Retrieves the string specified by the index." },
 
 	{ "get_data",
 	  (PyCFunction) pyevtx_record_get_data,
@@ -896,7 +896,6 @@ PyObject *pyevtx_record_get_event_level(
 #endif
 	return( integer_object );
 }
-
 
 /* Retrieves the provider identifier
  * Returns a Python object if successful or NULL on error

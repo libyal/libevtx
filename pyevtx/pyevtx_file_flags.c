@@ -191,39 +191,39 @@ on_error:
 PyObject *pyevtx_file_flags_new(
            void )
 {
-	pyevtx_file_flags_t *pyevtx_file_flags = NULL;
-	static char *function                  = "pyevtx_file_flags_new";
+	pyevtx_file_flags_t *definitions_object = NULL;
+	static char *function                   = "pyevtx_file_flags_new";
 
-	pyevtx_file_flags = PyObject_New(
-	                     struct pyevtx_file_flags,
-	                     &pyevtx_file_flags_type_object );
+	definitions_object = PyObject_New(
+	                      struct pyevtx_file_flags,
+	                      &pyevtx_file_flags_type_object );
 
-	if( pyevtx_file_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize file flags.",
+		 "%s: unable to create new definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyevtx_file_flags_init(
-	     pyevtx_file_flags ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize file flags.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pyevtx_file_flags );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pyevtx_file_flags != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pyevtx_file_flags );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
@@ -232,15 +232,15 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pyevtx_file_flags_init(
-     pyevtx_file_flags_t *pyevtx_file_flags )
+     pyevtx_file_flags_t *definitions_object )
 {
 	static char *function = "pyevtx_file_flags_init";
 
-	if( pyevtx_file_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -251,22 +251,22 @@ int pyevtx_file_flags_init(
 /* Frees a file flags object
  */
 void pyevtx_file_flags_free(
-      pyevtx_file_flags_t *pyevtx_file_flags )
+      pyevtx_file_flags_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyevtx_file_flags_free";
 
-	if( pyevtx_file_flags == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file flags.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pyevtx_file_flags );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -287,6 +287,6 @@ void pyevtx_file_flags_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pyevtx_file_flags );
+	 (PyObject*) definitions_object );
 }
 

@@ -96,12 +96,12 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	  "Sets the codepage for ASCII strings used in the file.\n"
 	  "Expects the codepage to be a string containing a Python codec definition." },
 
-	{ "get_flags",
-	  (PyCFunction) pyevtx_file_get_flags,
+	{ "get_format_version",
+	  (PyCFunction) pyevtx_file_get_format_version,
 	  METH_NOARGS,
-	  "get_flags() -> Integer or None\n"
+	  "get_format_version() -> Unicode string or None\n"
 	  "\n"
-	  "Retrieves the flags." },
+	  "Retrieves the format version." },
 
 	{ "get_number_of_records",
 	  (PyCFunction) pyevtx_file_get_number_of_records,
@@ -115,7 +115,7 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_record(record_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves the record." },
+	  "Retrieves the record specified by the index." },
 
 	{ "get_number_of_recovered_records",
 	  (PyCFunction) pyevtx_file_get_number_of_recovered_records,
@@ -129,7 +129,7 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_recovered_record(record_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves the recovered record." },
+	  "Retrieves the recovered record specified by the index." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -143,10 +143,10 @@ PyGetSetDef pyevtx_file_object_get_set_definitions[] = {
 	  "The codepage used for ASCII strings in the file.",
 	  NULL },
 
-	{ "flags",
-	  (getter) pyevtx_file_get_flags,
+	{ "format_version",
+	  (getter) pyevtx_file_get_format_version,
 	  (setter) 0,
-	  "The flags.",
+	  "The format version.",
 	  NULL },
 
 	{ "number_of_records",
@@ -1209,17 +1209,21 @@ int pyevtx_file_set_ascii_codepage_setter(
 	return( -1 );
 }
 
-/* Retrieves the flags
+/* Retrieves the format version
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pyevtx_file_get_flags(
+PyObject *pyevtx_file_get_format_version(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	PyObject *integer_object = NULL;
+	char utf8_string[ 4 ];
+
+	PyObject *string_object  = NULL;
 	libcerror_error_t *error = NULL;
-	static char *function    = "pyevtx_file_get_flags";
-	uint32_t value_32bit     = 0;
+	const char *errors       = NULL;
+	static char *function    = "pyevtx_file_get_format_version";
+	uint16_t major_version   = 0;
+	uint16_t minor_version   = 0;
 	int result               = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
@@ -1235,19 +1239,20 @@ PyObject *pyevtx_file_get_flags(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_file_get_flags(
+	result = libevtx_file_get_format_version(
 	          pyevtx_file->file,
-	          &value_32bit,
+	          &major_version,
+	          &minor_version,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pyevtx_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve flags.",
+		 "%s: unable to retrieve format version.",
 		 function );
 
 		libcerror_error_free(
@@ -1255,17 +1260,47 @@ PyObject *pyevtx_file_get_flags(
 
 		return( NULL );
 	}
-	else if( result == 0 )
+	if( major_version > 9 )
 	{
-		Py_IncRef(
-		 Py_None );
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: major version out of bounds.",
+		 function );
 
-		return( Py_None );
+		return( NULL );
 	}
-	integer_object = PyLong_FromUnsignedLong(
-	                  (unsigned long) value_32bit );
+	if( minor_version > 9 )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: minor version out of bounds.",
+		 function );
 
-	return( integer_object );
+		return( NULL );
+	}
+	utf8_string[ 0 ] = '0' + (char) major_version;
+	utf8_string[ 1 ] = '.';
+	utf8_string[ 2 ] = '0' + (char) minor_version;
+	utf8_string[ 3 ] = 0;
+
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+	                 utf8_string,
+	                 (Py_ssize_t) 3,
+	                 errors );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		return( NULL );
+	}
+	return( string_object );
 }
 
 /* Retrieves the number of records
@@ -1324,6 +1359,17 @@ PyObject *pyevtx_file_get_number_of_records(
 	return( integer_object );
 }
 
+/* Retrieves the record type object
+ * Returns a Python type object if successful or NULL on error
+ */
+PyTypeObject *pyevtx_file_get_record_type_object(
+               libevtx_record_t *record PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PYEVTX_UNREFERENCED_PARAMETER( record )
+
+	return( &pyevtx_record_type_object );
+}
+
 /* Retrieves a specific record by index
  * Returns a Python object if successful or NULL on error
  */
@@ -1331,11 +1377,12 @@ PyObject *pyevtx_file_get_record_by_index(
            PyObject *pyevtx_file,
            int record_index )
 {
-	PyObject *record_object  = NULL;
-	libcerror_error_t *error = NULL;
-	libevtx_record_t *record = NULL;
-	static char *function    = "pyevtx_file_get_record_by_index";
-	int result               = 0;
+	PyObject *record_object   = NULL;
+	PyTypeObject *type_object = NULL;
+	libcerror_error_t *error  = NULL;
+	libevtx_record_t *record  = NULL;
+	static char *function     = "pyevtx_file_get_record_by_index";
+	int result                = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1370,8 +1417,20 @@ PyObject *pyevtx_file_get_record_by_index(
 
 		goto on_error;
 	}
+	type_object = pyevtx_file_get_record_type_object(
+	               record );
+
+	if( type_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to retrieve record type object.",
+		 function );
+
+		goto on_error;
+	}
 	record_object = pyevtx_record_new(
-	                 &pyevtx_record_type_object,
+	                 type_object,
 	                 record,
 	                 (PyObject *) pyevtx_file );
 
@@ -1551,11 +1610,12 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
            PyObject *pyevtx_file,
            int record_index )
 {
-	PyObject *record_object  = NULL;
-	libcerror_error_t *error = NULL;
-	libevtx_record_t *record = NULL;
-	static char *function    = "pyevtx_file_get_recovered_record_by_index";
-	int result               = 0;
+	PyObject *record_object   = NULL;
+	PyTypeObject *type_object = NULL;
+	libcerror_error_t *error  = NULL;
+	libevtx_record_t *record  = NULL;
+	static char *function     = "pyevtx_file_get_recovered_record_by_index";
+	int result                = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1590,8 +1650,20 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 
 		goto on_error;
 	}
+	type_object = pyevtx_file_get_record_type_object(
+	               record );
+
+	if( type_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to retrieve record type object.",
+		 function );
+
+		goto on_error;
+	}
 	record_object = pyevtx_record_new(
-	                 &pyevtx_record_type_object,
+	                 type_object,
 	                 record,
 	                 (PyObject *) pyevtx_file );
 
