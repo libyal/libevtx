@@ -44,48 +44,48 @@ struct pyevtx_strings
 	 */
 	PyObject *parent_object;
 
-	/* The get string by index callback function
+	/* The get item by index callback function
 	 */
-	PyObject* (*get_string_by_index)(
+	PyObject* (*get_item_by_index)(
 	             PyObject *parent_object,
-	             int string_index );
+	             int index );
 
-	/* The (current) string index
+	/* The current index
 	 */
-	int string_index;
+	int current_index;
 
-	/* The number of strings
+	/* The number of items
 	 */
-	int number_of_strings;
+	int number_of_items;
 };
 
 extern PyTypeObject pyevtx_strings_type_object;
 
 PyObject *pyevtx_strings_new(
            PyObject *parent_object,
-           PyObject* (*get_string_by_index)(
+           PyObject* (*get_item_by_index)(
                         PyObject *parent_object,
-                        int string_index ),
-           int number_of_strings );
+                        int index ),
+           int number_of_items );
 
 int pyevtx_strings_init(
-     pyevtx_strings_t *pyevtx_strings );
+     pyevtx_strings_t *strings_object );
 
 void pyevtx_strings_free(
-      pyevtx_strings_t *pyevtx_strings );
+      pyevtx_strings_t *strings_object );
 
 Py_ssize_t pyevtx_strings_len(
-            pyevtx_strings_t *pyevtx_strings );
+            pyevtx_strings_t *strings_object );
 
 PyObject *pyevtx_strings_getitem(
-           pyevtx_strings_t *pyevtx_strings,
+           pyevtx_strings_t *strings_object,
            Py_ssize_t item_index );
 
 PyObject *pyevtx_strings_iter(
-           pyevtx_strings_t *pyevtx_strings );
+           pyevtx_strings_t *strings_object );
 
 PyObject *pyevtx_strings_iternext(
-           pyevtx_strings_t *pyevtx_strings );
+           pyevtx_strings_t *strings_object );
 
 #if defined( __cplusplus )
 }
