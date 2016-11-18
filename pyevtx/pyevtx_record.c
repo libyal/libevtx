@@ -346,7 +346,7 @@ PyObject *pyevtx_record_new(
 	if( record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -403,7 +403,7 @@ int pyevtx_record_init(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -429,7 +429,7 @@ void pyevtx_record_free(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -438,7 +438,7 @@ void pyevtx_record_free(
 	if( pyevtx_record->record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record - missing libevtx record.",
 		 function );
 
@@ -511,7 +511,7 @@ PyObject *pyevtx_record_get_offset(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -570,7 +570,7 @@ PyObject *pyevtx_record_get_identifier(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -603,7 +603,6 @@ PyObject *pyevtx_record_get_identifier(
 
 	return( integer_object );
 }
-
 
 /* Retrieves the written time
  * Returns a Python object if successful or NULL on error
@@ -741,7 +740,7 @@ PyObject *pyevtx_record_get_event_identifier(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -800,7 +799,7 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -859,7 +858,7 @@ PyObject *pyevtx_record_get_event_level(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -1403,7 +1402,7 @@ PyObject *pyevtx_record_get_number_of_strings(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -1459,7 +1458,7 @@ PyObject *pyevtx_record_get_string_by_index(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
@@ -1503,7 +1502,7 @@ PyObject *pyevtx_record_get_string_by_index(
 	if( utf8_string == NULL )
 	{
 		PyErr_Format(
-		 PyExc_IOError,
+		 PyExc_MemoryError,
 		 "%s: unable to create UTF-8 string.",
 		 function );
 
@@ -1611,7 +1610,7 @@ PyObject *pyevtx_record_get_strings(
 	if( pyevtx_record == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid record.",
 		 function );
 
