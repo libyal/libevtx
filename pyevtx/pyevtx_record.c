@@ -611,11 +611,11 @@ PyObject *pyevtx_record_get_written_time(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
 {
-	PyObject *date_time_object = NULL;
-	libcerror_error_t *error   = NULL;
-	static char *function      = "pyevtx_record_get_written_time";
-	uint64_t filetime          = 0;
-	int result                 = 0;
+	PyObject *datetime_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_record_get_written_time";
+	uint64_t filetime         = 0;
+	int result                = 0;
 
 	PYEVTX_UNREFERENCED_PARAMETER( arguments )
 
@@ -657,10 +657,10 @@ PyObject *pyevtx_record_get_written_time(
 
 		return( Py_None );
 	}
-	date_time_object = pyevtx_datetime_new_from_filetime(
-	                    filetime );
+	datetime_object = pyevtx_datetime_new_from_filetime(
+	                   filetime );
 
-	return( date_time_object );
+	return( datetime_object );
 }
 
 /* Retrieves the written time as an integer

@@ -18,7 +18,6 @@ AM_CPPFLAGS = \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWEVT_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
 
@@ -99,16 +98,16 @@ evtx_test_error_LDADD = \
 
 evtx_test_file_SOURCES = \
 	evtx_test_file.c \
+	evtx_test_getopt.c evtx_test_getopt.h \
 	evtx_test_libcerror.h \
 	evtx_test_libclocale.h \
-	evtx_test_libcsystem.h \
+	evtx_test_libcnotify.h \
 	evtx_test_libevtx.h \
 	evtx_test_libuna.h \
 	evtx_test_macros.h \
 	evtx_test_memory.c evtx_test_memory.h
 
 evtx_test_file_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
@@ -164,17 +163,17 @@ evtx_test_record_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 evtx_test_support_SOURCES = \
+	evtx_test_getopt.c evtx_test_getopt.h \
 	evtx_test_libbfio.h \
 	evtx_test_libcerror.h \
 	evtx_test_libclocale.h \
-	evtx_test_libcsystem.h \
+	evtx_test_libcnotify.h \
 	evtx_test_libevtx.h \
 	evtx_test_libuna.h \
 	evtx_test_macros.h \
 	evtx_test_support.c
 
 evtx_test_support_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \

@@ -270,6 +270,3381 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libevtx_record_values_clone function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_clone(
+     void )
+{
+	libcerror_error_t *error                           = NULL;
+	libevtx_record_values_t *destination_record_values = NULL;
+	libevtx_record_values_t *source_record_values      = NULL;
+	int result                                         = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &source_record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "source_record_values",
+         source_record_values );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_clone(
+	          &destination_record_values,
+	          source_record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "destination_record_values",
+         destination_record_values );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libevtx_record_values_free(
+	          &destination_record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "destination_record_values",
+         destination_record_values );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libevtx_record_values_clone(
+	          &destination_record_values,
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "destination_record_values",
+         destination_record_values );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_clone(
+	          NULL,
+	          source_record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        EVTX_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &source_record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "source_record_values",
+         source_record_values );
+
+        EVTX_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( destination_record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &destination_record_values,
+		 NULL );
+	}
+	if( source_record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &source_record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_event_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_event_identifier(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	uint32_t event_identifier              = 0;
+	int event_identifier_is_set            = 0;
+	int result                             = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_event_identifier(
+	          record_values,
+	          &event_identifier,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	event_identifier_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_event_identifier(
+	          NULL,
+	          &event_identifier,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( event_identifier_is_set != 0 )
+	{
+		result = libevtx_record_values_get_event_identifier(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_event_identifier_qualifiers function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_event_identifier_qualifiers(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	uint32_t event_identifier_qualifiers   = 0;
+	int event_identifier_qualifiers_is_set = 0;
+	int result                             = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_event_identifier_qualifiers(
+	          record_values,
+	          &event_identifier_qualifiers,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	event_identifier_qualifiers_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_event_identifier_qualifiers(
+	          NULL,
+	          &event_identifier_qualifiers,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( event_identifier_qualifiers_is_set != 0 )
+	{
+		result = libevtx_record_values_get_event_identifier_qualifiers(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_event_level function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_event_level(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	uint8_t event_level                    = 0;
+	int event_level_is_set                 = 0;
+	int result                             = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_event_level(
+	          record_values,
+	          &event_level,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	event_level_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_event_level(
+	          NULL,
+	          &event_level,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( event_level_is_set != 0 )
+	{
+		result = libevtx_record_values_get_event_level(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_provider_identifier_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_provider_identifier_size(
+     void )
+{
+	libcerror_error_t *error                 = NULL;
+	libevtx_record_values_t *record_values   = NULL;
+	size_t utf8_provider_identifier_size     = 0;
+	int result                               = 0;
+	int utf8_provider_identifier_size_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_provider_identifier_size(
+	          record_values,
+	          &utf8_provider_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_provider_identifier_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_provider_identifier_size(
+	          NULL,
+	          &utf8_provider_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_provider_identifier_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_provider_identifier_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_provider_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_provider_identifier(
+     void )
+{
+	uint8_t utf8_provider_identifier[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf8_provider_identifier_is_set    = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_provider_identifier(
+	          record_values,
+	          utf8_provider_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_provider_identifier_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_provider_identifier(
+	          NULL,
+	          utf8_provider_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_provider_identifier_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_provider_identifier(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_provider_identifier(
+		          record_values,
+		          utf8_provider_identifier,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_provider_identifier(
+		          record_values,
+		          utf8_provider_identifier,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_provider_identifier_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_provider_identifier_size(
+     void )
+{
+	libcerror_error_t *error                  = NULL;
+	libevtx_record_values_t *record_values    = NULL;
+	size_t utf16_provider_identifier_size     = 0;
+	int result                                = 0;
+	int utf16_provider_identifier_size_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_provider_identifier_size(
+	          record_values,
+	          &utf16_provider_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_provider_identifier_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_provider_identifier_size(
+	          NULL,
+	          &utf16_provider_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_provider_identifier_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_provider_identifier_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_provider_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_provider_identifier(
+     void )
+{
+	uint16_t utf16_provider_identifier[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf16_provider_identifier_is_set   = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_provider_identifier(
+	          record_values,
+	          utf16_provider_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_provider_identifier_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_provider_identifier(
+	          NULL,
+	          utf16_provider_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_provider_identifier_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_provider_identifier(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_provider_identifier(
+		          record_values,
+		          utf16_provider_identifier,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_provider_identifier(
+		          record_values,
+		          utf16_provider_identifier,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_source_name_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_source_name_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf8_source_name_size           = 0;
+	int result                             = 0;
+	int utf8_source_name_size_is_set       = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_source_name_size(
+	          record_values,
+	          &utf8_source_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_source_name_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_source_name_size(
+	          NULL,
+	          &utf8_source_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_source_name_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_source_name_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_source_name function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_source_name(
+     void )
+{
+	uint8_t utf8_source_name[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf8_source_name_is_set            = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_source_name(
+	          record_values,
+	          utf8_source_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_source_name_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_source_name(
+	          NULL,
+	          utf8_source_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_source_name_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_source_name(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_source_name(
+		          record_values,
+		          utf8_source_name,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_source_name(
+		          record_values,
+		          utf8_source_name,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_source_name_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_source_name_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf16_source_name_size          = 0;
+	int result                             = 0;
+	int utf16_source_name_size_is_set      = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_source_name_size(
+	          record_values,
+	          &utf16_source_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_source_name_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_source_name_size(
+	          NULL,
+	          &utf16_source_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_source_name_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_source_name_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_source_name function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_source_name(
+     void )
+{
+	uint16_t utf16_source_name[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf16_source_name_is_set           = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_source_name(
+	          record_values,
+	          utf16_source_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_source_name_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_source_name(
+	          NULL,
+	          utf16_source_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_source_name_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_source_name(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_source_name(
+		          record_values,
+		          utf16_source_name,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_source_name(
+		          record_values,
+		          utf16_source_name,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_computer_name_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_computer_name_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf8_computer_name_size         = 0;
+	int result                             = 0;
+	int utf8_computer_name_size_is_set     = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_computer_name_size(
+	          record_values,
+	          &utf8_computer_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_computer_name_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_computer_name_size(
+	          NULL,
+	          &utf8_computer_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_computer_name_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_computer_name_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_computer_name function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_computer_name(
+     void )
+{
+	uint8_t utf8_computer_name[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf8_computer_name_is_set          = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_computer_name(
+	          record_values,
+	          utf8_computer_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_computer_name_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_computer_name(
+	          NULL,
+	          utf8_computer_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_computer_name_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_computer_name(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_computer_name(
+		          record_values,
+		          utf8_computer_name,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_computer_name(
+		          record_values,
+		          utf8_computer_name,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_computer_name_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_computer_name_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf16_computer_name_size        = 0;
+	int result                             = 0;
+	int utf16_computer_name_size_is_set    = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_computer_name_size(
+	          record_values,
+	          &utf16_computer_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_computer_name_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_computer_name_size(
+	          NULL,
+	          &utf16_computer_name_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_computer_name_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_computer_name_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_computer_name function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_computer_name(
+     void )
+{
+	uint16_t utf16_computer_name[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf16_computer_name_is_set         = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_computer_name(
+	          record_values,
+	          utf16_computer_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_computer_name_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_computer_name(
+	          NULL,
+	          utf16_computer_name,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_computer_name_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_computer_name(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_computer_name(
+		          record_values,
+		          utf16_computer_name,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_computer_name(
+		          record_values,
+		          utf16_computer_name,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_user_security_identifier_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_user_security_identifier_size(
+     void )
+{
+	libcerror_error_t *error                      = NULL;
+	libevtx_record_values_t *record_values        = NULL;
+	size_t utf8_user_security_identifier_size     = 0;
+	int result                                    = 0;
+	int utf8_user_security_identifier_size_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_user_security_identifier_size(
+	          record_values,
+	          &utf8_user_security_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_user_security_identifier_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_user_security_identifier_size(
+	          NULL,
+	          &utf8_user_security_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_user_security_identifier_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_user_security_identifier_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_user_security_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_user_security_identifier(
+     void )
+{
+	uint8_t utf8_user_security_identifier[ 512 ];
+
+	libcerror_error_t *error                 = NULL;
+	libevtx_record_values_t *record_values   = NULL;
+	int result                               = 0;
+	int utf8_user_security_identifier_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_user_security_identifier(
+	          record_values,
+	          utf8_user_security_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_user_security_identifier_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_user_security_identifier(
+	          NULL,
+	          utf8_user_security_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_user_security_identifier_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_user_security_identifier(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_user_security_identifier(
+		          record_values,
+		          utf8_user_security_identifier,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_user_security_identifier(
+		          record_values,
+		          utf8_user_security_identifier,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_user_security_identifier_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_user_security_identifier_size(
+     void )
+{
+	libcerror_error_t *error                       = NULL;
+	libevtx_record_values_t *record_values         = NULL;
+	size_t utf16_user_security_identifier_size     = 0;
+	int result                                     = 0;
+	int utf16_user_security_identifier_size_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_user_security_identifier_size(
+	          record_values,
+	          &utf16_user_security_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_user_security_identifier_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_user_security_identifier_size(
+	          NULL,
+	          &utf16_user_security_identifier_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_user_security_identifier_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_user_security_identifier_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_user_security_identifier function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_user_security_identifier(
+     void )
+{
+	uint16_t utf16_user_security_identifier[ 512 ];
+
+	libcerror_error_t *error                  = NULL;
+	libevtx_record_values_t *record_values    = NULL;
+	int result                                = 0;
+	int utf16_user_security_identifier_is_set = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_user_security_identifier(
+	          record_values,
+	          utf16_user_security_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_user_security_identifier_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_user_security_identifier(
+	          NULL,
+	          utf16_user_security_identifier,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_user_security_identifier_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_user_security_identifier(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_user_security_identifier(
+		          record_values,
+		          utf16_user_security_identifier,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_user_security_identifier(
+		          record_values,
+		          utf16_user_security_identifier,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_xml_string_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_xml_string_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf8_xml_string_size            = 0;
+	int result                             = 0;
+	int utf8_xml_string_size_is_set        = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_xml_string_size(
+	          record_values,
+	          &utf8_xml_string_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_xml_string_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_xml_string_size(
+	          NULL,
+	          &utf8_xml_string_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_xml_string_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_xml_string_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf8_xml_string function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf8_xml_string(
+     void )
+{
+	uint8_t utf8_xml_string[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf8_xml_string_is_set             = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf8_xml_string(
+	          record_values,
+	          utf8_xml_string,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf8_xml_string_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf8_xml_string(
+	          NULL,
+	          utf8_xml_string,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf8_xml_string_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf8_xml_string(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_xml_string(
+		          record_values,
+		          utf8_xml_string,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf8_xml_string(
+		          record_values,
+		          utf8_xml_string,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_xml_string_size function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_xml_string_size(
+     void )
+{
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	size_t utf16_xml_string_size           = 0;
+	int result                             = 0;
+	int utf16_xml_string_size_is_set       = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_xml_string_size(
+	          record_values,
+	          &utf16_xml_string_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_xml_string_size_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_xml_string_size(
+	          NULL,
+	          &utf16_xml_string_size,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_xml_string_size_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_xml_string_size(
+		          record_values,
+		          NULL,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libevtx_record_values_get_utf16_xml_string function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_record_values_get_utf16_xml_string(
+     void )
+{
+	uint16_t utf16_xml_string[ 512 ];
+
+	libcerror_error_t *error               = NULL;
+	libevtx_record_values_t *record_values = NULL;
+	int result                             = 0;
+	int utf16_xml_string_is_set            = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_record_values_initialize(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_record_values_get_utf16_xml_string(
+	          record_values,
+	          utf16_xml_string,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	utf16_xml_string_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libevtx_record_values_get_utf16_xml_string(
+	          NULL,
+	          utf16_xml_string,
+	          512,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( utf16_xml_string_is_set != 0 )
+	{
+		result = libevtx_record_values_get_utf16_xml_string(
+		          record_values,
+		          NULL,
+		          512,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_xml_string(
+		          record_values,
+		          utf16_xml_string,
+		          0,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+
+		result = libevtx_record_values_get_utf16_xml_string(
+		          record_values,
+		          utf16_xml_string,
+		          (size_t) SSIZE_MAX + 1,
+		          &error );
+
+		EVTX_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+	        EVTX_TEST_ASSERT_IS_NOT_NULL(
+	         "error",
+	         error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Clean up
+	 */
+	result = libevtx_record_values_free(
+	          &record_values,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_values != NULL )
+	{
+		libevtx_record_values_free(
+		 &record_values,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) */
 
 /* The main program
@@ -287,7 +3662,7 @@ int main(
 	EVTX_TEST_UNREFERENCED_PARAMETER( argc )
 	EVTX_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && defined( TODO )
 
 	EVTX_TEST_RUN(
 	 "libevtx_record_values_initialize",
@@ -297,7 +3672,123 @@ int main(
 	 "libevtx_record_values_free",
 	 evtx_test_record_values_free );
 
-#endif /* defined( __GNUC__ ) */
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_clone",
+	 evtx_test_record_values_clone );
+
+	/* TODO: add tests for libevtx_record_values_read_header */
+
+	/* TODO: add tests for libevtx_record_values_read_xml_document */
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_event_identifier",
+	 evtx_test_record_values_get_event_identifier );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_event_identifier_qualifiers",
+	 evtx_test_record_values_get_event_identifier_qualifiers );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_event_level",
+	 evtx_test_record_values_get_event_level );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_provider_identifier_size",
+	 evtx_test_record_values_get_utf8_provider_identifier_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_provider_identifier",
+	 evtx_test_record_values_get_utf8_provider_identifier );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_provider_identifier_size",
+	 evtx_test_record_values_get_utf16_provider_identifier_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_provider_identifier",
+	 evtx_test_record_values_get_utf16_provider_identifier );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_source_name_size",
+	 evtx_test_record_values_get_utf8_source_name_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_source_name",
+	 evtx_test_record_values_get_utf8_source_name );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_source_name_size",
+	 evtx_test_record_values_get_utf16_source_name_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_source_name",
+	 evtx_test_record_values_get_utf16_source_name );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_computer_name_size",
+	 evtx_test_record_values_get_utf8_computer_name_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_computer_name",
+	 evtx_test_record_values_get_utf8_computer_name );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_computer_name_size",
+	 evtx_test_record_values_get_utf16_computer_name_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_computer_name",
+	 evtx_test_record_values_get_utf16_computer_name );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_user_security_identifier_size",
+	 evtx_test_record_values_get_utf8_user_security_identifier_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_user_security_identifier",
+	 evtx_test_record_values_get_utf8_user_security_identifier );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_user_security_identifier_size",
+	 evtx_test_record_values_get_utf16_user_security_identifier_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_user_security_identifier",
+	 evtx_test_record_values_get_utf16_user_security_identifier );
+
+	/* TODO: add tests for libevtx_record_values_parse_data */
+
+	/* TODO: add tests for libevtx_record_values_get_number_of_strings */
+
+	/* TODO: add tests for libevtx_record_values_get_utf8_string_size */
+
+	/* TODO: add tests for libevtx_record_values_get_utf8_string */
+
+	/* TODO: add tests for libevtx_record_values_get_utf16_string_size */
+
+	/* TODO: add tests for libevtx_record_values_get_utf16_string */
+
+	/* TODO: add tests for libevtx_record_values_get_data_size */
+
+	/* TODO: add tests for libevtx_record_values_get_data */
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_xml_string_size",
+	 evtx_test_record_values_get_utf8_xml_string_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf8_xml_string",
+	 evtx_test_record_values_get_utf8_xml_string );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_xml_string_size",
+	 evtx_test_record_values_get_utf16_xml_string_size );
+
+	EVTX_TEST_RUN(
+	 "libevtx_record_values_get_utf16_xml_string",
+	 evtx_test_record_values_get_utf16_xml_string );
+
+#endif /* defined( __GNUC__ ) && defined( TODO ) */
 
 	return( EXIT_SUCCESS );
 

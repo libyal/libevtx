@@ -38,9 +38,9 @@
 #include <libevtx/extern.h>
 
 #else
-#define LIBEVTX_EXTERN	extern
+#define LIBEVTX_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 
 #endif /* !defined( _LIBEVTX_INTERNAL_EXTERN_H ) */
 
