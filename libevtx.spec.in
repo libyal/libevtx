@@ -24,8 +24,8 @@ Header files and libraries for developing applications for libevtx.
 %package tools
 Summary: Several tools for reading Windows XML Event Log (EVTX) files
 Group: Applications/System
-Requires: libevtx = %{version}-%{release} @ax_libcdirectory_spec_requires@ @ax_libcsystem_spec_requires@ @ax_libexe_spec_requires@ @ax_libregf_spec_requires@ @ax_libwrc_spec_requires@
-@libevtx_spec_tools_build_requires@ @ax_libcdirectory_spec_build_requires@ @ax_libcsystem_spec_build_requires@ @ax_libexe_spec_build_requires@ @ax_libregf_spec_build_requires@ @ax_libwrc_spec_build_requires@
+Requires: libevtx = %{version}-%{release} @ax_libcdirectory_spec_requires@ @ax_libexe_spec_requires@ @ax_libregf_spec_requires@ @ax_libwrc_spec_requires@
+@libevtx_spec_tools_build_requires@ @ax_libcdirectory_spec_build_requires@ @ax_libexe_spec_build_requires@ @ax_libregf_spec_build_requires@ @ax_libwrc_spec_build_requires@
 
 %description tools
 Several tools for reading Windows XML Event Log (EVTX) files

@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libevtx_file_t
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -80,6 +80,13 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	  "close() -> None\n"
 	  "\n"
 	  "Closes a file." },
+
+	{ "is_corrupted",
+	  (PyCFunction) pyevtx_file_is_corrupted,
+	  METH_NOARGS,
+	  "is_corrupted() -> Boolean\n"
+	  "\n"
+	  "Determines if the file is corrupted." },
 
 	{ "get_ascii_codepage",
 	  (PyCFunction) pyevtx_file_get_ascii_codepage,
@@ -770,6 +777,16 @@ PyObject *pyevtx_file_open_file_object(
 
 		return( NULL );
 	}
+	if( pyevtx_file->file_io_handle != NULL )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid file - file IO handle already set.",
+		 function );
+
+		goto on_error;
+	}
 	if( pyevtx_file_object_initialize(
 	     &( pyevtx_file->file_io_handle ),
 	     file_object,
@@ -895,6 +912,62 @@ PyObject *pyevtx_file_close(
 	 Py_None );
 
 	return( Py_None );
+}
+
+/* Determines if the file is corrupted
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_file_is_corrupted(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_file_is_corrupted";
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_file_is_corrupted(
+	          pyevtx_file->file,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine if file is corrupted.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	if( result != 0 )
+	{
+		Py_IncRef(
+		 (PyObject *) Py_True );
+
+		return( Py_True );
+	}
+	Py_IncRef(
+	 (PyObject *) Py_False );
+
+	return( Py_False );
 }
 
 /* Retrieves the codepage used for ASCII strings in the file

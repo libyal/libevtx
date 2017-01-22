@@ -22,7 +22,6 @@ AM_CPPFLAGS = \
 	@LIBREGF_CPPFLAGS@ \
 	@LIBWRC_CPPFLAGS@ \
 	@LIBCDIRECTORY_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
 
@@ -35,7 +34,8 @@ bin_PROGRAMS = \
 evtxexport_SOURCES = \
 	evtxexport.c \
 	evtxinput.c evtxinput.h \
-	evtxoutput.c evtxoutput.h \
+	evtxtools_getopt.c evtxtools_getopt.h \
+	evtxtools_i18n.h \
 	evtxtools_libbfio.h \
 	evtxtools_libcdirectory.h \
 	evtxtools_libcerror.h \
@@ -43,7 +43,6 @@ evtxexport_SOURCES = \
 	evtxtools_libcnotify.h \
 	evtxtools_libcpath.h \
 	evtxtools_libcsplit.h \
-	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfcache.h \
 	evtxtools_libfdatetime.h \
@@ -54,7 +53,10 @@ evtxexport_SOURCES = \
 	evtxtools_libregf.h \
 	evtxtools_libuna.h \
 	evtxtools_libwrc.h \
+	evtxtools_output.c evtxtools_output.h \
+	evtxtools_signal.c evtxtools_signal.h \
 	evtxtools_system_split_string.h \
+	evtxtools_unused.h \
 	evtxtools_wide_string.c evtxtools_wide_string.h \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
@@ -75,7 +77,6 @@ evtxexport_LDADD = \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFDATA_LIBADD@ \
 	@LIBFCACHE_LIBADD@ \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
@@ -94,22 +95,24 @@ evtxexport_LDADD = \
 evtxinfo_SOURCES = \
 	evtxinfo.c \
 	evtxinput.c evtxinput.h \
-	evtxoutput.c evtxoutput.h \
+	evtxtools_getopt.c evtxtools_getopt.h \
+	evtxtools_i18n.h \
 	evtxtools_libcerror.h \
 	evtxtools_libclocale.h \
 	evtxtools_libcnotify.h \
-	evtxtools_libcsystem.h \
 	evtxtools_libevtx.h \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
 	evtxtools_libfvalue.h \
 	evtxtools_libfwnt.h \
 	evtxtools_libuna.h \
+	evtxtools_output.c evtxtools_output.h \
+	evtxtools_signal.c evtxtools_signal.h \
 	evtxtools_wide_string.c evtxtools_wide_string.h \
+	evtxtools_unused.h \
 	info_handle.c info_handle.h
 
 evtxinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \

@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libevtx_file_t
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -87,6 +87,10 @@ PyObject *pyevtx_file_open_file_object(
            PyObject *keywords );
 
 PyObject *pyevtx_file_close(
+           pyevtx_file_t *pyevtx_file,
+           PyObject *arguments );
+
+PyObject *pyevtx_file_is_corrupted(
            pyevtx_file_t *pyevtx_file,
            PyObject *arguments );
 

@@ -25,7 +25,6 @@ SUBDIRS = \
 	libregf \
 	libwrc \
 	libcdirectory \
-	libcsystem \
 	evtxtools \
 	pyevtx \
 	pyevtx-python2 \
@@ -138,7 +137,6 @@ splint:
 	(cd $(srcdir)/libevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfwevt && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/evtxtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pyevtx && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))

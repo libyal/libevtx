@@ -1,7 +1,7 @@
 /*
  * Codepage functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -103,5 +103,5 @@ const char *libevtx_codepage_get_description(
 	 ( libevtx_codepages[ iterator ] ).description );
 }
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 

@@ -23,29 +23,23 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON_TESTS
 TESTS_PYEVTX = \
-	test_python_functions.sh \
-	test_pyevtx_set_ascii_codepage.sh
+	test_python_module.sh
 endif
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_evtxinfo.sh \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
 	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
-	pyevtx_test_get_version.py \
-	pyevtx_test_open_close.py \
-	pyevtx_test_set_ascii_codepage.py \
-	test_api_functions.sh \
-	test_api_types.sh \
+	pyevtx_test_support.py \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
 	test_evtxinfo.sh \
-	test_pyevtx_set_ascii_codepage.sh \
-	test_python_functions.sh \
+	test_library.sh \
+	test_python_module.sh \
 	test_runner.sh
 
 EXTRA_DIST = \

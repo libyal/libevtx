@@ -1,7 +1,7 @@
 /*
  * Codepage functions
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -81,6 +81,32 @@ enum LIBEVTX_CODEPAGES
 };
 
 #endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
+
+#if defined( HAVE_DEBUG_OUTPUT )
+
+typedef struct libevtx_codepage libevtx_codepage_t;
+
+struct libevtx_codepage
+{
+	/* The codepage
+	 */
+	uint32_t codepage;
+
+	/* The identifier
+	 */
+	const char *identifier;
+
+	/* The description
+	 */
+	const char *description;
+};
+const char *libevtx_codepage_get_identifier(
+             uint32_t codepage );
+
+const char *libevtx_codepage_get_description(
+             uint32_t codepage );
+
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 #if defined( __cplusplus )
 }

@@ -1,7 +1,7 @@
 /*
- * Library record type testing program
+ * Library record type test program
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -98,6 +98,8 @@ int main(
 	 "libevtx_record_free",
 	 evtx_test_record_free );
 
+#if defined( __GNUC__ )
+
 	/* TODO: add tests for libevtx_record_get_offset */
 
 	/* TODO: add tests for libevtx_record_get_identifier */
@@ -165,6 +167,8 @@ int main(
 	/* TODO: add tests for libevtx_record_get_utf16_xml_string_size */
 
 	/* TODO: add tests for libevtx_record_get_utf16_xml_string */
+
+#endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );
 

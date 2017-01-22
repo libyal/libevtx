@@ -1,7 +1,7 @@
 /*
- * Common output functions for the evtxtools
+ * The unused definition
  *
- * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,31 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _EVTXOUTPUT_H )
-#define _EVTXOUTPUT_H
+#if !defined( _EVTXTOOLS_UNUSED_H )
+#define _EVTXTOOLS_UNUSED_H
 
 #include <common.h>
-#include <file_stream.h>
-#include <types.h>
 
-#if defined( __cplusplus )
-extern "C" {
-#endif
+#if !defined( EVTXTOOLS_ATTRIBUTE_UNUSED )
 
-void evtxoutput_copyright_fprint(
-      FILE *stream );
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define EVTXTOOLS_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
 
-void evtxoutput_version_fprint(
-      FILE *stream,
-      const char *program );
+#else
+#define EVTXTOOLS_ATTRIBUTE_UNUSED
 
-void evtxoutput_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
+#endif /* defined( __GNUC__ ) && __GNUC__ >= 3 */
 
-#if defined( __cplusplus )
-}
-#endif
+#endif /* !defined( EVTXTOOLS_ATTRIBUTE_UNUSED ) */
 
-#endif /* !defined( _EVTXOUTPUT_H ) */
+#if defined( _MSC_VER )
+#define EVTXTOOLS_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+
+#else
+#define EVTXTOOLS_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
+
+#endif /* defined( _MSC_VER ) */
+
+#endif /* !defined( _EVTXTOOLS_UNUSED_H ) */
 
