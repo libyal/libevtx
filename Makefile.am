@@ -40,13 +40,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libevtx.docs \
-	dpkg/libevtx-dev.docs \
-	dpkg/libevtx-python.docs \
-	dpkg/libevtx-python3.docs \
-	dpkg/libevtx-tools.docs \
+	dpkg/libevtx.install \
+	dpkg/libevtx-dev.install \
+	dpkg/libevtx-python.install \
+	dpkg/libevtx-python3.install \
+	dpkg/libevtx-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \

@@ -1,100 +1,28 @@
 #!/usr/bin/make -f
-# debian/rules that uses debhelper >= 7.
+# -*- makefile -*-
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+# Uncomment for debhelper verbose output.
+# export DH_VERBOSE=1
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
+export SKIP_PYTHON_TESTS=1
 
 %:
-	dh  $@
+	dh $@ --with autoreconf
 
 .PHONY: override_dh_auto_configure
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-python2 --enable-python3 CFLAGS="-g"
 
-.PHONY: override_dh_auto_test
-override_dh_auto_test:
-
 .PHONY: override_dh_install
 override_dh_install:
-	# Create the libevtx package.
-	dh_install "debian/tmp/usr/lib/lib*.so.*.*.*" -p libevtx
-	# Create the libevtx-dev package.
-	dh_install "debian/tmp/usr/include/*.h" -p libevtx-dev
-	dh_install "debian/tmp/usr/include/lib*/*.h" -p libevtx-dev
-	dh_install "debian/tmp/usr/lib/*.a" -p libevtx-dev
-	dh_install "debian/tmp/usr/lib/*.la" -p libevtx-dev
-	dh_install "debian/tmp/usr/lib/*.so" -p libevtx-dev
-	dh_install "debian/tmp/usr/lib/pkgconfig/*" -p libevtx-dev
-	dh_install "debian/tmp/usr/share/man/man3/*" -p libevtx-dev
-	# Create the libevtx-tools package.
-	dh_install "debian/tmp/usr/bin/*" -p libevtx-tools
-	dh_install "debian/tmp/usr/share/man/man1/*" -p libevtx-tools
-	# Create the libevtx-python package.
-	dh_install -X"*_d.so" "debian/tmp/usr/lib/python2*/*" -p libevtx-python
-	# Create the libevtx-python3 package.
-	dh_install -X"*_d.so" "debian/tmp/usr/lib/python3*/*" -p libevtx-python3
-	# The libevtx-dbg, libevtx-python-dbg and libevtx-python3-dbg packages
-	# are created by dh_strip.
-	dh_install
-
-.PHONY: override_dh_installmenu
-override_dh_installmenu:
-
-.PHONY: override_dh_installmime
-override_dh_installmime:
-
-.PHONY: override_dh_installmodules
-override_dh_installmodules:
-
-.PHONY: override_dh_installlogcheck
-override_dh_installlogcheck:
-
-.PHONY: override_dh_installlogrotate
-override_dh_installlogrotate:
-
-.PHONY: override_dh_installpam
-override_dh_installpam:
-
-.PHONY: override_dh_installppp
-override_dh_installppp:
-
-.PHONY: override_dh_installudev
-override_dh_installudev:
-
-.PHONY: override_dh_installwm
-override_dh_installwm:
-
-.PHONY: override_dh_installxfonts
-override_dh_installxfonts:
-
-.PHONY: override_dh_gconf
-override_dh_gconf:
-
-.PHONY: override_dh_icons
-override_dh_icons:
-
-.PHONY: override_dh_perl
-override_dh_perl:
-
-.PHONY: override_dh_pysupport
-override_dh_pysupport:
+	dh_install --fail-missing -X.la -X/pyevtx.a
 
 .PHONY: override_dh_strip
 override_dh_strip:
 ifeq (,$(filter nostrip,$(DEB_BUILD_OPTIONS)))
 	dh_strip -plibevtx --dbg-package=libevtx-dbg
+	dh_strip -plibevtx-tools --dbg-package=libevtx-tools-dbg
 	dh_strip -plibevtx-python --dbg-package=libevtx-python-dbg
 	dh_strip -plibevtx-python3 --dbg-package=libevtx-python3-dbg
 endif
-
-.PHONY: override_dh_shlibdeps
-override_dh_shlibdeps:
-	dh_shlibdeps -Llibevtx -l${CURDIR}/debian/tmp/usr/lib
-
-.PHONY: override_dh_makeshlibs
-override_dh_makeshlibs:
-	dh_makeshlibs -Xlibevtx-dev
 

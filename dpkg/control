@@ -1,10 +1,10 @@
 Source: libevtx
-Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
-Build-Depends: debhelper (>= 7), autotools-dev, python-all-dev, python3-all-dev
+Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, python-dev, python3-dev
 Standards-Version: 3.9.5
-Homepage: https://github.com/libyal/libevtx/
+Section: libs
+Homepage: https://github.com/libyal/libevtx
 
 Package: libevtx
 Architecture: any
@@ -33,6 +33,13 @@ Architecture: any
 Depends: libevtx (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading Windows XML Event Log (EVTX) files
  Several tools for reading Windows XML Event Log (EVTX) files.
+
+Package: libevtx-tools-dbg
+Section: debug
+Architecture: any
+Depends: libevtx-tools (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for libevtx-tools
+ Debugging symbols for libevtx-tools.
 
 Package: libevtx-python
 Section: python
