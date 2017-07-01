@@ -179,6 +179,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libexe\libexe_le_header.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_mz_header.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_ne_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libexe\libexe_notify.c"
 				>
 			</File>
@@ -206,6 +218,22 @@
 			>
 			<File
 				RelativePath="..\..\libexe\exe_file_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\exe_le_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\exe_mz_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\exe_ne_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\exe_pe_header.h"
 				>
 			</File>
 			<File
@@ -257,6 +285,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libexe\libexe_le_header.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libexe\libexe_libbfio.h"
 				>
 			</File>
@@ -290,6 +322,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libexe\libexe_libuna.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_mz_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_ne_header.h"
 				>
 			</File>
 			<File
