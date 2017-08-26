@@ -35,7 +35,7 @@
 
 #include "../libevtx/libevtx_record_values.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT )
 
 /* Tests the libevtx_record_values_initialize function
  * Returns 1 if successful or 0 if not
@@ -3645,7 +3645,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 /* The main program
  */

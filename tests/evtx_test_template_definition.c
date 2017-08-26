@@ -291,11 +291,11 @@ int main(
 
 	/* TODO: add tests for libevtx_template_definition_set_data */
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT )
 
 	/* TODO: add tests for libevtx_template_definition_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

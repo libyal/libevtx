@@ -88,17 +88,17 @@ int main(
 	EVTX_TEST_UNREFERENCED_PARAMETER( argc )
 	EVTX_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT )
 
 	/* TODO: add tests for libevtx_record_initialize */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 	EVTX_TEST_RUN(
 	 "libevtx_record_free",
 	 evtx_test_record_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT )
 
 	/* TODO: add tests for libevtx_record_get_offset */
 
@@ -168,7 +168,7 @@ int main(
 
 	/* TODO: add tests for libevtx_record_get_utf16_xml_string */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
