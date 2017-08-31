@@ -57,9 +57,9 @@ int evtx_test_chunks_table_free(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

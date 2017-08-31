@@ -60,13 +60,13 @@ int evtx_test_template_definition_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "template_definition",
-         template_definition );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "template_definition",
+	 template_definition );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libevtx_template_definition_free(
 	          &template_definition,
@@ -77,13 +77,13 @@ int evtx_test_template_definition_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "template_definition",
-         template_definition );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "template_definition",
+	 template_definition );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -96,9 +96,9 @@ int evtx_test_template_definition_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -114,9 +114,9 @@ int evtx_test_template_definition_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -248,9 +248,9 @@ int evtx_test_template_definition_free(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

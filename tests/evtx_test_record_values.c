@@ -64,13 +64,13 @@ int evtx_test_record_values_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "record_values",
-         record_values );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record_values",
+	 record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libevtx_record_values_free(
 	          &record_values,
@@ -81,13 +81,13 @@ int evtx_test_record_values_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "record_values",
-         record_values );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record_values",
+	 record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int evtx_test_record_values_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int evtx_test_record_values_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int evtx_test_record_values_free(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -292,13 +292,13 @@ int evtx_test_record_values_clone(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "source_record_values",
-         source_record_values );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "source_record_values",
+	 source_record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -312,13 +312,13 @@ int evtx_test_record_values_clone(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "destination_record_values",
-         destination_record_values );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "destination_record_values",
+	 destination_record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libevtx_record_values_free(
 	          &destination_record_values,
@@ -329,13 +329,13 @@ int evtx_test_record_values_clone(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "destination_record_values",
-         destination_record_values );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "destination_record_values",
+	 destination_record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libevtx_record_values_clone(
 	          &destination_record_values,
@@ -347,13 +347,13 @@ int evtx_test_record_values_clone(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "destination_record_values",
-         destination_record_values );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "destination_record_values",
+	 destination_record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -367,9 +367,9 @@ int evtx_test_record_values_clone(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -385,13 +385,13 @@ int evtx_test_record_values_clone(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "source_record_values",
-         source_record_values );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "source_record_values",
+	 source_record_values );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 

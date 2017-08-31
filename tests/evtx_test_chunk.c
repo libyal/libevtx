@@ -64,13 +64,13 @@ int evtx_test_chunk_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "chunk",
-         chunk );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "chunk",
+	 chunk );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libevtx_chunk_free(
 	          &chunk,
@@ -81,13 +81,13 @@ int evtx_test_chunk_initialize(
 	 result,
 	 1 );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "chunk",
-         chunk );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "chunk",
+	 chunk );
 
-        EVTX_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int evtx_test_chunk_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int evtx_test_chunk_initialize(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int evtx_test_chunk_free(
 	 result,
 	 -1 );
 
-        EVTX_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
