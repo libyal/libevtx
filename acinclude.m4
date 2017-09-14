@@ -1,3 +1,7 @@
+dnl Checks for required headers and functions
+dnl
+dnl Version: 20170914
+
 dnl Function to detect if libevtx dependencies are available
 AC_DEFUN([AX_LIBEVTX_CHECK_LOCAL],
   [dnl Headers included in libevtx/libevtx_xml_tag.h
@@ -50,6 +54,16 @@ AC_DEFUN([AX_EVTXTOOLS_CHECK_LOCAL],
    [AC_MSG_FAILURE(
      [Missing function: close],
      [1])
+  ])
+
+  dnl Headers included in evtxtools/log_handle.c
+  AC_CHECK_HEADERS([stdarg.h varargs.h])
+
+  AS_IF(
+    [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
+    [AC_MSG_FAILURE(
+      [Missing headers: stdarg.h and varargs.h],
+      [1])
   ])
 
   dnl Check if tools should be build as static executables
