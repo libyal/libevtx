@@ -34,6 +34,7 @@ TESTS = \
 	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
+	pyevtx_test_file.py \
 	pyevtx_test_support.py \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
@@ -92,17 +93,24 @@ evtx_test_error_LDADD = \
 
 evtx_test_file_SOURCES = \
 	evtx_test_file.c \
+	evtx_test_functions.c evtx_test_functions.h \
 	evtx_test_getopt.c evtx_test_getopt.h \
+	evtx_test_libbfio.h \
 	evtx_test_libcerror.h \
 	evtx_test_libclocale.h \
 	evtx_test_libcnotify.h \
 	evtx_test_libevtx.h \
 	evtx_test_libuna.h \
 	evtx_test_macros.h \
-	evtx_test_memory.c evtx_test_memory.h
+	evtx_test_memory.c evtx_test_memory.h \
+	evtx_test_unused.h
 
 evtx_test_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -157,6 +165,7 @@ evtx_test_record_values_LDADD = \
 	@LIBCERROR_LIBADD@
 
 evtx_test_support_SOURCES = \
+	evtx_test_functions.c evtx_test_functions.h \
 	evtx_test_getopt.c evtx_test_getopt.h \
 	evtx_test_libbfio.h \
 	evtx_test_libcerror.h \
@@ -165,7 +174,8 @@ evtx_test_support_SOURCES = \
 	evtx_test_libevtx.h \
 	evtx_test_libuna.h \
 	evtx_test_macros.h \
-	evtx_test_support.c
+	evtx_test_support.c \
+	evtx_test_unused.h
 
 evtx_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \

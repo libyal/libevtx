@@ -992,9 +992,9 @@ int evtx_test_record_values_get_utf8_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1010,9 +1010,9 @@ int evtx_test_record_values_get_utf8_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1028,9 +1028,9 @@ int evtx_test_record_values_get_utf8_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1278,9 +1278,9 @@ int evtx_test_record_values_get_utf16_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1296,9 +1296,9 @@ int evtx_test_record_values_get_utf16_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1314,9 +1314,9 @@ int evtx_test_record_values_get_utf16_provider_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1564,9 +1564,9 @@ int evtx_test_record_values_get_utf8_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1582,9 +1582,9 @@ int evtx_test_record_values_get_utf8_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1600,9 +1600,9 @@ int evtx_test_record_values_get_utf8_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1850,9 +1850,9 @@ int evtx_test_record_values_get_utf16_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1868,9 +1868,9 @@ int evtx_test_record_values_get_utf16_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -1886,9 +1886,9 @@ int evtx_test_record_values_get_utf16_source_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2136,9 +2136,9 @@ int evtx_test_record_values_get_utf8_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2154,9 +2154,9 @@ int evtx_test_record_values_get_utf8_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2172,9 +2172,9 @@ int evtx_test_record_values_get_utf8_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2422,9 +2422,9 @@ int evtx_test_record_values_get_utf16_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2440,9 +2440,9 @@ int evtx_test_record_values_get_utf16_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2458,9 +2458,9 @@ int evtx_test_record_values_get_utf16_computer_name(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2708,9 +2708,9 @@ int evtx_test_record_values_get_utf8_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2726,9 +2726,9 @@ int evtx_test_record_values_get_utf8_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2744,9 +2744,9 @@ int evtx_test_record_values_get_utf8_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -2994,9 +2994,9 @@ int evtx_test_record_values_get_utf16_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3012,9 +3012,9 @@ int evtx_test_record_values_get_utf16_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3030,9 +3030,9 @@ int evtx_test_record_values_get_utf16_user_security_identifier(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3280,9 +3280,9 @@ int evtx_test_record_values_get_utf8_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3298,9 +3298,9 @@ int evtx_test_record_values_get_utf8_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3316,9 +3316,9 @@ int evtx_test_record_values_get_utf8_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3566,9 +3566,9 @@ int evtx_test_record_values_get_utf16_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3584,9 +3584,9 @@ int evtx_test_record_values_get_utf16_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3602,9 +3602,9 @@ int evtx_test_record_values_get_utf16_xml_string(
 		 result,
 		 -1 );
 
-	        EVTX_TEST_ASSERT_IS_NOT_NULL(
-	         "error",
-	         error );
+		EVTX_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
 		libcerror_error_free(
 		 &error );
@@ -3662,7 +3662,7 @@ int main(
 	EVTX_TEST_UNREFERENCED_PARAMETER( argc )
 	EVTX_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ ) && defined( TODO )
+#if defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT )
 
 	EVTX_TEST_RUN(
 	 "libevtx_record_values_initialize",
@@ -3675,6 +3675,8 @@ int main(
 	EVTX_TEST_RUN(
 	 "libevtx_record_values_clone",
 	 evtx_test_record_values_clone );
+
+#if defined( TODO )
 
 	/* TODO: add tests for libevtx_record_values_read_header */
 
@@ -3788,7 +3790,9 @@ int main(
 	 "libevtx_record_values_get_utf16_xml_string",
 	 evtx_test_record_values_get_utf16_xml_string );
 
-#endif /* defined( __GNUC__ ) && defined( TODO ) */
+#endif /* defined( TODO ) */
+
+#endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

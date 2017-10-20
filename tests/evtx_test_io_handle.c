@@ -270,6 +270,104 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libevtx_io_handle_clear function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_io_handle_clear(
+     void )
+{
+	libcerror_error_t *error       = NULL;
+	libevtx_io_handle_t *io_handle = NULL;
+	int result                     = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libevtx_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libevtx_io_handle_clear(
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libevtx_io_handle_free(
+	          &io_handle,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( io_handle != NULL )
+	{
+		libevtx_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBEVTX_DLL_IMPORT ) */
 
 /* The main program
@@ -297,7 +395,9 @@ int main(
 	 "libevtx_io_handle_free",
 	 evtx_test_io_handle_free );
 
-	/* TODO: add tests for libevtx_io_handle_clear */
+	EVTX_TEST_RUN(
+	 "libevtx_io_handle_clear",
+	 evtx_test_io_handle_clear );
 
 	/* TODO: add tests for libevtx_io_handle_read_file_header */
 
