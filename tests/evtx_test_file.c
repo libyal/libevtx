@@ -43,7 +43,12 @@
 
 #if !defined( LIBEVTX_HAVE_BFIO )
 
-extern \
+LIBEVTX_EXTERN \
+int libevtx_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_file_open_file_io_handle(
      libevtx_file_t *file,
      libbfio_handle_t *file_io_handle,
@@ -781,7 +786,7 @@ int evtx_test_file_open_file_io_handle(
 	libbfio_handle_t *file_io_handle = NULL;
 	libcerror_error_t *error         = NULL;
 	libevtx_file_t *file             = NULL;
-	size_t source_length             = 0;
+	size_t string_length             = 0;
 	int result                       = 0;
 
 	/* Initialize test
@@ -803,20 +808,20 @@ int evtx_test_file_open_file_io_handle(
          "error",
          error );
 
-	source_length = system_string_length(
+	string_length = system_string_length(
 	                 source );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libbfio_file_set_name_wide(
 	          file_io_handle,
 	          source,
-	          source_length,
+	          string_length,
 	          &error );
 #else
 	result = libbfio_file_set_name(
 	          file_io_handle,
 	          source,
-	          source_length,
+	          string_length,
 	          &error );
 #endif
 	EVTX_TEST_ASSERT_EQUAL_INT(
@@ -1601,6 +1606,150 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libevtx_file_get_record function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_file_get_record(
+     libevtx_file_t *file )
+{
+	libcerror_error_t *error = NULL;
+	libevtx_record_t *record = 0;
+	int number_of_records    = 0;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_file_get_number_of_records(
+	          file,
+	          &number_of_records,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( number_of_records == 0 )
+	{
+		return( 1 );
+	}
+	/* Test regular cases
+	 */
+	result = libevtx_file_get_record(
+	          file,
+	          0,
+	          &record,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "record",
+	 record );
+
+	result = libevtx_record_free(
+	          &record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libevtx_file_get_record(
+	          NULL,
+	          0,
+	          &record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record",
+	 record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libevtx_file_get_record(
+	          file,
+	          -1,
+	          &record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record",
+	 record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libevtx_file_get_record(
+	          file,
+	          0,
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "record",
+	 record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libevtx_file_get_number_of_recovered_records function
  * Returns 1 if successful or 0 if not
  */
@@ -1679,6 +1828,150 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libevtx_file_get_recovered_record function
+ * Returns 1 if successful or 0 if not
+ */
+int evtx_test_file_get_recovered_record(
+     libevtx_file_t *file )
+{
+	libcerror_error_t *error           = NULL;
+	libevtx_record_t *recovered_record = 0;
+	int number_of_recovered_records    = 0;
+	int result                         = 0;
+
+	/* Initialize test
+	 */
+	result = libevtx_file_get_number_of_recovered_records(
+	          file,
+	          &number_of_recovered_records,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	if( number_of_recovered_records == 0 )
+	{
+		return( 1 );
+	}
+	/* Test regular cases
+	 */
+	result = libevtx_file_get_recovered_record(
+	          file,
+	          0,
+	          &recovered_record,
+	          &error );
+
+	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "recovered_record",
+	 recovered_record );
+
+	result = libevtx_record_free(
+	          &recovered_record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libevtx_file_get_recovered_record(
+	          NULL,
+	          0,
+	          &recovered_record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "recovered_record",
+	 recovered_record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libevtx_file_get_recovered_record(
+	          file,
+	          -1,
+	          &recovered_record,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "recovered_record",
+	 recovered_record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libevtx_file_get_recovered_record(
+	          file,
+	          0,
+	          NULL,
+	          &error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	EVTX_TEST_ASSERT_IS_NULL(
+	 "recovered_record",
+	 recovered_record );
+
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1739,57 +2032,6 @@ int main(
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libevtx_check_file_signature_wide(
-		          source,
-		          &error );
-#else
-		result = libevtx_check_file_signature(
-		          source,
-		          &error );
-#endif
-
-		EVTX_TEST_ASSERT_NOT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		EVTX_TEST_ASSERT_IS_NULL(
-		 "error",
-		 error );
-	}
-	if( result != 0 )
-	{
-		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_open",
-		 evtx_test_file_open,
-		 source );
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-
-		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_open_wide",
-		 evtx_test_file_open_wide,
-		 source );
-
-#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
-
-		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_open_file_io_handle",
-		 evtx_test_file_open_file_io_handle,
-		 source );
-
-		EVTX_TEST_RUN(
-		 "libevtx_file_close",
-		 evtx_test_file_close );
-
-		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_open_close",
-		 evtx_test_file_open_close,
-		 source );
-
-		/* Initialize test
-		 */
 		result = libbfio_file_initialize(
 		          &file_io_handle,
 		          &error );
@@ -1832,6 +2074,51 @@ int main(
 	         "error",
 	         error );
 
+		result = libevtx_check_file_signature_file_io_handle(
+		          file_io_handle,
+		          &error );
+
+		EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EVTX_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+	if( result != 0 )
+	{
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_open",
+		 evtx_test_file_open,
+		 source );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_open_wide",
+		 evtx_test_file_open_wide,
+		 source );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_open_file_io_handle",
+		 evtx_test_file_open_file_io_handle,
+		 source );
+
+		EVTX_TEST_RUN(
+		 "libevtx_file_close",
+		 evtx_test_file_close );
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_open_close",
+		 evtx_test_file_open_close,
+		 source );
+
+		/* Initialize file for tests
+		 */
 		result = evtx_test_file_open_source(
 		          &file,
 		          file_io_handle,
@@ -1887,14 +2174,24 @@ int main(
 		 evtx_test_file_get_number_of_records,
 		 file );
 
-		/* TODO: add tests for libevtx_file_get_record */
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_get_record",
+		 evtx_test_file_get_record,
+		 file );
 
 		EVTX_TEST_RUN_WITH_ARGS(
 		 "libevtx_file_get_number_of_recovered_records",
 		 evtx_test_file_get_number_of_recovered_records,
 		 file );
 
-		/* TODO: add tests for libevtx_file_get_recovered_record */
+#if defined( TODO )
+
+		EVTX_TEST_RUN_WITH_ARGS(
+		 "libevtx_file_get_recovered_record",
+		 evtx_test_file_get_recovered_record,
+		 file );
+
+#endif /* defined( TODO ) */
 
 		/* Clean up
 		 */
