@@ -1,7 +1,7 @@
 /*
  * Extracts items from a Windows XML Event Viewer Log (EVTX) file
  *
- * Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
