@@ -132,13 +132,15 @@ evtx_test_io_handle_LDADD = \
 	@LIBCERROR_LIBADD@
 
 evtx_test_notify_SOURCES = \
+	evtx_test_libcerror.h \
 	evtx_test_libevtx.h \
 	evtx_test_macros.h \
 	evtx_test_notify.c \
 	evtx_test_unused.h
 
 evtx_test_notify_LDADD = \
-	../libevtx/libevtx.la
+	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@
 
 evtx_test_record_SOURCES = \
 	evtx_test_libcerror.h \
@@ -174,6 +176,7 @@ evtx_test_support_SOURCES = \
 	evtx_test_libevtx.h \
 	evtx_test_libuna.h \
 	evtx_test_macros.h \
+	evtx_test_memory.c evtx_test_memory.h \
 	evtx_test_support.c \
 	evtx_test_unused.h
 
