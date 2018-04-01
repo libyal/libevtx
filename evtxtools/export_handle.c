@@ -1542,22 +1542,24 @@ int export_handle_export_record_event_message(
 			}
 			else if( result != 0 )
 			{
-#if defined( HAVE_DEBUG_OUTPUT )
-				fprintf(
-				 export_handle->notify_stream,
-				 "Event identifier qualifiers\t: 0x%08" PRIx32 "\n",
-				 event_identifier_qualifiers );
-#endif
+				if( export_handle->verbose != 0 )
+				{
+					fprintf(
+					 export_handle->notify_stream,
+					 "Event identifier qualifiers\t: 0x%08" PRIx32 "\n",
+					 event_identifier_qualifiers );
+				}
 				message_identifier = event_identifier_qualifiers << 16;
 			}
 			message_identifier |= event_identifier;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		fprintf(
-		 export_handle->notify_stream,
-		 "Message identifier\t\t: 0x%08" PRIx32 "\n",
-		 message_identifier );
-#endif
+		if( export_handle->verbose != 0 )
+		{
+			fprintf(
+			 export_handle->notify_stream,
+			 "Message identifier\t\t: 0x%08" PRIx32 "\n",
+			 message_identifier );
+		}
 		result = message_handle_get_message_string(
 			  export_handle->message_handle,
 			  message_filename,
@@ -2220,12 +2222,13 @@ int export_handle_export_record_text(
 
 			goto on_error;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		fprintf(
-		 export_handle->notify_stream,
-		 "Provider identifier\t\t: %" PRIs_SYSTEM "\n",
-		 provider_identifier );
-#endif
+		if( export_handle->verbose != 0 )
+		{
+			fprintf(
+			 export_handle->notify_stream,
+			 "Provider identifier\t\t: %" PRIs_SYSTEM "\n",
+			 provider_identifier );
+		}
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libevtx_record_get_utf16_source_name_size(

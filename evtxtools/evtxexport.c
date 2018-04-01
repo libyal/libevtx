@@ -494,6 +494,7 @@ int main( int argc, char * const argv[] )
 		}
 	}
 	evtxexport_export_handle->use_template_definition = use_template_definition;
+	evtxexport_export_handle->verbose                 = verbose;
 
 	if( log_handle_open(
 	     log_handle,

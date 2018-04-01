@@ -93,6 +93,10 @@ struct export_handle
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;
+
+	/* Value to indicate if the output should be verbose
+	 */
+	int verbose;
 };
 
 const char *export_handle_get_event_log_key_name(
