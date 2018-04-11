@@ -1,6 +1,6 @@
 dnl Checks for libcdirectory or required headers and functions
 dnl
-dnl Version: 20170904
+dnl Version: 20180407
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -40,7 +40,7 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
            [[#include <libcdirectory/features.h>]],
            [[#if !defined( LIBCDIRECTORY_HAVE_WIDE_CHARACTER_TYPE ) || ( LIBCDIRECTORY_HAVE_WIDE_CHARACTER_TYPE != 1 )
 #error LIBCDIRECTORY_HAVE_WIDE_CHARACTER_TYPE not defined
-##endif]] )],
+#endif]] )],
          [ac_cv_header_libcdirectory_features_h_have_wide_character_type=yes],
          [ac_cv_header_libcdirectory_features_h_have_wide_character_type=no])
        AC_LANG_POP(C)],
