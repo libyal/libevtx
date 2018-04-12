@@ -1,5 +1,5 @@
 /*
- * Python bindings for libevtx (pyevtx)
+ * Python bindings module for libevtx (pyevtx)
  *
  * Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,6 +41,16 @@ PyObject *pyevtx_check_file_signature(
            PyObject *keywords );
 
 PyObject *pyevtx_check_file_signature_file_object(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyevtx_open_new_file(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pyevtx_open_new_file_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

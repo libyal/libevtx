@@ -318,7 +318,7 @@ int libevtx_file_get_number_of_records(
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_file_get_record(
+int libevtx_file_get_record_by_index(
      libevtx_file_t *file,
      int record_index,
      libevtx_record_t **record,
@@ -337,7 +337,7 @@ int libevtx_file_get_number_of_recovered_records(
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \
-int libevtx_file_get_recovered_record(
+int libevtx_file_get_recovered_record_by_index(
      libevtx_file_t *file,
      int record_index,
      libevtx_record_t **record,
@@ -359,6 +359,34 @@ int libevtx_file_get_version(
      libevtx_file_t *file,
      uint16_t *major_version,
      uint16_t *minor_version,
+     libevtx_error_t **error );
+
+/* Retrieves a specific record
+ *
+ * This function deprecated use libevtx_file_get_record_by_index instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_DEPRECATED \
+LIBEVTX_EXTERN \
+int libevtx_file_get_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
+     libevtx_error_t **error );
+
+/* Retrieves a specific recovered record
+ *
+ * This function deprecated use libevtx_file_get_recovered_record_by_index instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBEVTX_DEPRECATED \
+LIBEVTX_EXTERN \
+int libevtx_file_get_recovered_record(
+     libevtx_file_t *file,
+     int record_index,
+     libevtx_record_t **record,
      libevtx_error_t **error );
 
 /* -------------------------------------------------------------------------

@@ -2569,7 +2569,7 @@ int export_handle_export_records(
 		{
 			return( -1 );
 		}
-		if( libevtx_file_get_record(
+		if( libevtx_file_get_record_by_index(
 		     file,
 		     record_index,
 		     &record,
@@ -2695,7 +2695,7 @@ int export_handle_export_recovered_records(
 		{
 			return( -1 );
 		}
-		if( libevtx_file_get_recovered_record(
+		if( libevtx_file_get_recovered_record_by_index(
 		     file,
 		     record_index,
 		     &record,

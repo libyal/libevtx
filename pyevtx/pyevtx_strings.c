@@ -58,7 +58,7 @@ PyTypeObject pyevtx_strings_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pyevtx._strings",
+	"pyevtx.strings",
 	/* tp_basicsize */
 	sizeof( pyevtx_strings_t ),
 	/* tp_itemsize */
@@ -96,7 +96,7 @@ PyTypeObject pyevtx_strings_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
 	/* tp_doc */
-	"pyevtx internal sequence and iterator object of strings",
+	"pyevtx sequence and iterator object of strings",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -149,7 +149,7 @@ PyTypeObject pyevtx_strings_type_object = {
 	0
 };
 
-/* Creates a new strings object
+/* Creates a new strings sequence and iterator object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pyevtx_strings_new(
@@ -159,8 +159,8 @@ PyObject *pyevtx_strings_new(
                         int index ),
            int number_of_items )
 {
-	pyevtx_strings_t *strings_object = NULL;
-	static char *function            = "pyevtx_strings_new";
+	pyevtx_strings_t *sequence_object = NULL;
+	static char *function             = "pyevtx_strings_new";
 
 	if( parent_object == NULL )
 	{
@@ -182,93 +182,98 @@ PyObject *pyevtx_strings_new(
 	}
 	/* Make sure the strings values are initialized
 	 */
-	strings_object = PyObject_New(
-	                  struct pyevtx_strings,
-	                  &pyevtx_strings_type_object );
+	sequence_object = PyObject_New(
+	                   struct pyevtx_strings,
+	                   &pyevtx_strings_type_object );
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create strings object.",
+		 "%s: unable to create sequence object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pyevtx_strings_init(
-	     strings_object ) != 0 )
+	     sequence_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize strings object.",
+		 "%s: unable to initialize sequence object.",
 		 function );
 
 		goto on_error;
 	}
-	strings_object->parent_object     = parent_object;
-	strings_object->get_item_by_index = get_item_by_index;
-	strings_object->number_of_items   = number_of_items;
+	sequence_object->parent_object     = parent_object;
+	sequence_object->get_item_by_index = get_item_by_index;
+	sequence_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) strings_object->parent_object );
+	 (PyObject *) sequence_object->parent_object );
 
-	return( (PyObject *) strings_object );
+	return( (PyObject *) sequence_object );
 
 on_error:
-	if( strings_object != NULL )
+	if( sequence_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) strings_object );
+		 (PyObject *) sequence_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a strings object
+/* Intializes a strings sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pyevtx_strings_init(
-     pyevtx_strings_t *strings_object )
+     pyevtx_strings_t *sequence_object )
 {
 	static char *function = "pyevtx_strings_init";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the strings values are initialized
 	 */
-	strings_object->parent_object     = NULL;
-	strings_object->get_item_by_index = NULL;
-	strings_object->current_index     = 0;
-	strings_object->number_of_items   = 0;
+	sequence_object->parent_object     = NULL;
+	sequence_object->get_item_by_index = NULL;
+	sequence_object->current_index     = 0;
+	sequence_object->number_of_items   = 0;
+
+	PyErr_Format(
+	 PyExc_NotImplementedError,
+	 "%s: initialize of strings not supported.",
+	 function );
 
 	return( 0 );
 }
 
-/* Frees a strings object
+/* Frees a strings sequence object
  */
 void pyevtx_strings_free(
-      pyevtx_strings_t *strings_object )
+      pyevtx_strings_t *sequence_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pyevtx_strings_free";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           strings_object );
+	           sequence_object );
 
 	if( ob_type == NULL )
 	{
@@ -288,72 +293,72 @@ void pyevtx_strings_free(
 
 		return;
 	}
-	if( strings_object->parent_object != NULL )
+	if( sequence_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) strings_object->parent_object );
+		 (PyObject *) sequence_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) strings_object );
+	 (PyObject*) sequence_object );
 }
 
 /* The strings len() function
  */
 Py_ssize_t pyevtx_strings_len(
-            pyevtx_strings_t *strings_object )
+            pyevtx_strings_t *sequence_object )
 {
 	static char *function = "pyevtx_strings_len";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) strings_object->number_of_items );
+	return( (Py_ssize_t) sequence_object->number_of_items );
 }
 
 /* The strings getitem() function
  */
 PyObject *pyevtx_strings_getitem(
-           pyevtx_strings_t *strings_object,
+           pyevtx_strings_t *sequence_object,
            Py_ssize_t item_index )
 {
 	PyObject *string_object = NULL;
 	static char *function   = "pyevtx_strings_getitem";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->get_item_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object - missing get item by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->number_of_items < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object - invalid number of items.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) strings_object->number_of_items ) )
+	 || ( item_index >= (Py_ssize_t) sequence_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -362,8 +367,8 @@ PyObject *pyevtx_strings_getitem(
 
 		return( NULL );
 	}
-	string_object = strings_object->get_item_by_index(
-	                 strings_object->parent_object,
+	string_object = sequence_object->get_item_by_index(
+	                 sequence_object->parent_object,
 	                 (int) item_index );
 
 	return( string_object );
@@ -372,83 +377,83 @@ PyObject *pyevtx_strings_getitem(
 /* The strings iter() function
  */
 PyObject *pyevtx_strings_iter(
-           pyevtx_strings_t *strings_object )
+           pyevtx_strings_t *sequence_object )
 {
 	static char *function = "pyevtx_strings_iter";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) strings_object );
+	 (PyObject *) sequence_object );
 
-	return( (PyObject *) strings_object );
+	return( (PyObject *) sequence_object );
 }
 
 /* The strings iternext() function
  */
 PyObject *pyevtx_strings_iternext(
-           pyevtx_strings_t *strings_object )
+           pyevtx_strings_t *sequence_object )
 {
 	PyObject *string_object = NULL;
 	static char *function   = "pyevtx_strings_iternext";
 
-	if( strings_object == NULL )
+	if( sequence_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object.",
+		 "%s: invalid sequence object.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->get_item_by_index == NULL )
+	if( sequence_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object - missing get item by index function.",
+		 "%s: invalid sequence object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->current_index < 0 )
+	if( sequence_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object - invalid current index.",
+		 "%s: invalid sequence object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->number_of_items < 0 )
+	if( sequence_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid strings object - invalid number of items.",
+		 "%s: invalid sequence object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( strings_object->current_index >= strings_object->number_of_items )
+	if( sequence_object->current_index >= sequence_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	string_object = strings_object->get_item_by_index(
-	                 strings_object->parent_object,
-	                 strings_object->current_index );
+	string_object = sequence_object->get_item_by_index(
+	                 sequence_object->parent_object,
+	                 sequence_object->current_index );
 
 	if( string_object != NULL )
 	{
-		strings_object->current_index++;
+		sequence_object->current_index++;
 	}
 	return( string_object );
 }

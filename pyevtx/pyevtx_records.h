@@ -69,23 +69,23 @@ PyObject *pyevtx_records_new(
            int number_of_items );
 
 int pyevtx_records_init(
-     pyevtx_records_t *records_object );
+     pyevtx_records_t *sequence_object );
 
 void pyevtx_records_free(
-      pyevtx_records_t *records_object );
+      pyevtx_records_t *sequence_object );
 
 Py_ssize_t pyevtx_records_len(
-            pyevtx_records_t *records_object );
+            pyevtx_records_t *sequence_object );
 
 PyObject *pyevtx_records_getitem(
-           pyevtx_records_t *records_object,
+           pyevtx_records_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pyevtx_records_iter(
-           pyevtx_records_t *records_object );
+           pyevtx_records_t *sequence_object );
 
 PyObject *pyevtx_records_iternext(
-           pyevtx_records_t *records_object );
+           pyevtx_records_t *sequence_object );
 
 #if defined( __cplusplus )
 }

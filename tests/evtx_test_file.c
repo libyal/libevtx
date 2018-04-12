@@ -1606,10 +1606,10 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_get_record function
+/* Tests the libevtx_file_get_record_by_index function
  * Returns 1 if successful or 0 if not
  */
-int evtx_test_file_get_record(
+int evtx_test_file_get_record_by_index(
      libevtx_file_t *file )
 {
 	libcerror_error_t *error = NULL;
@@ -1639,7 +1639,7 @@ int evtx_test_file_get_record(
 	}
 	/* Test regular cases
 	 */
-	result = libevtx_file_get_record(
+	result = libevtx_file_get_record_by_index(
 	          file,
 	          0,
 	          &record,
@@ -1673,7 +1673,7 @@ int evtx_test_file_get_record(
 
 	/* Test error cases
 	 */
-	result = libevtx_file_get_record(
+	result = libevtx_file_get_record_by_index(
 	          NULL,
 	          0,
 	          &record,
@@ -1695,7 +1695,7 @@ int evtx_test_file_get_record(
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_record(
+	result = libevtx_file_get_record_by_index(
 	          file,
 	          -1,
 	          &record,
@@ -1717,7 +1717,7 @@ int evtx_test_file_get_record(
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_record(
+	result = libevtx_file_get_record_by_index(
 	          file,
 	          0,
 	          NULL,
@@ -1828,10 +1828,10 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libevtx_file_get_recovered_record function
+/* Tests the libevtx_file_get_recovered_record_by_index function
  * Returns 1 if successful or 0 if not
  */
-int evtx_test_file_get_recovered_record(
+int evtx_test_file_get_recovered_record_by_index(
      libevtx_file_t *file )
 {
 	libcerror_error_t *error           = NULL;
@@ -1861,7 +1861,7 @@ int evtx_test_file_get_recovered_record(
 	}
 	/* Test regular cases
 	 */
-	result = libevtx_file_get_recovered_record(
+	result = libevtx_file_get_recovered_record_by_index(
 	          file,
 	          0,
 	          &recovered_record,
@@ -1895,7 +1895,7 @@ int evtx_test_file_get_recovered_record(
 
 	/* Test error cases
 	 */
-	result = libevtx_file_get_recovered_record(
+	result = libevtx_file_get_recovered_record_by_index(
 	          NULL,
 	          0,
 	          &recovered_record,
@@ -1917,7 +1917,7 @@ int evtx_test_file_get_recovered_record(
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_recovered_record(
+	result = libevtx_file_get_recovered_record_by_index(
 	          file,
 	          -1,
 	          &recovered_record,
@@ -1939,7 +1939,7 @@ int evtx_test_file_get_recovered_record(
 	libcerror_error_free(
 	 &error );
 
-	result = libevtx_file_get_recovered_record(
+	result = libevtx_file_get_recovered_record_by_index(
 	          file,
 	          0,
 	          NULL,
@@ -2175,8 +2175,8 @@ int main(
 		 file );
 
 		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_get_record",
-		 evtx_test_file_get_record,
+		 "libevtx_file_get_record_by_index",
+		 evtx_test_file_get_record_by_index,
 		 file );
 
 		EVTX_TEST_RUN_WITH_ARGS(
@@ -2187,8 +2187,8 @@ int main(
 #if defined( TODO )
 
 		EVTX_TEST_RUN_WITH_ARGS(
-		 "libevtx_file_get_recovered_record",
-		 evtx_test_file_get_recovered_record,
+		 "libevtx_file_get_recovered_record_by_index",
+		 evtx_test_file_get_recovered_record_by_index,
 		 file );
 
 #endif /* defined( TODO ) */

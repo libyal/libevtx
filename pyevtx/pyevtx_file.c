@@ -1468,7 +1468,7 @@ PyObject *pyevtx_file_get_record_by_index(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_file_get_record(
+	result = libevtx_file_get_record_by_index(
 	          ( (pyevtx_file_t *) pyevtx_file )->file,
 	          record_index,
 	          &record,
@@ -1701,7 +1701,7 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libevtx_file_get_recovered_record(
+	result = libevtx_file_get_recovered_record_by_index(
 	          ( (pyevtx_file_t *) pyevtx_file )->file,
 	          record_index,
 	          &record,

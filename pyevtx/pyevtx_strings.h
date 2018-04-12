@@ -69,23 +69,23 @@ PyObject *pyevtx_strings_new(
            int number_of_items );
 
 int pyevtx_strings_init(
-     pyevtx_strings_t *strings_object );
+     pyevtx_strings_t *sequence_object );
 
 void pyevtx_strings_free(
-      pyevtx_strings_t *strings_object );
+      pyevtx_strings_t *sequence_object );
 
 Py_ssize_t pyevtx_strings_len(
-            pyevtx_strings_t *strings_object );
+            pyevtx_strings_t *sequence_object );
 
 PyObject *pyevtx_strings_getitem(
-           pyevtx_strings_t *strings_object,
+           pyevtx_strings_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pyevtx_strings_iter(
-           pyevtx_strings_t *strings_object );
+           pyevtx_strings_t *sequence_object );
 
 PyObject *pyevtx_strings_iternext(
-           pyevtx_strings_t *strings_object );
+           pyevtx_strings_t *sequence_object );
 
 #if defined( __cplusplus )
 }

@@ -1,4 +1,4 @@
-.Dd January 22, 2017
+.Dd April 12, 2018
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
@@ -75,11 +75,11 @@ File functions
 .Ft int
 .Fn libevtx_file_get_number_of_records "libevtx_file_t *file, int *number_of_records, libevtx_error_t **error"
 .Ft int
-.Fn libevtx_file_get_record "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
+.Fn libevtx_file_get_record_by_index "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
 .Ft int
 .Fn libevtx_file_get_number_of_recovered_records "libevtx_file_t *file, int *number_of_records, libevtx_error_t **error"
 .Ft int
-.Fn libevtx_file_get_recovered_record "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
+.Fn libevtx_file_get_recovered_record_by_index "libevtx_file_t *file, int record_index, libevtx_record_t **record, libevtx_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
