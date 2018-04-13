@@ -106,35 +106,35 @@ PyMethodDef pyevtx_file_object_methods[] = {
 	{ "get_format_version",
 	  (PyCFunction) pyevtx_file_get_format_version,
 	  METH_NOARGS,
-	  "get_format_version() -> Unicode string or None\n"
+	  "get_format_version() -> Unicode string\n"
 	  "\n"
 	  "Retrieves the format version." },
 
 	{ "get_number_of_records",
 	  (PyCFunction) pyevtx_file_get_number_of_records,
 	  METH_NOARGS,
-	  "get_number_of_records() -> Integer or None\n"
+	  "get_number_of_records() -> Integer\n"
 	  "\n"
 	  "Retrieves the number of records." },
 
 	{ "get_record",
 	  (PyCFunction) pyevtx_file_get_record,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_record(record_index) -> Object or None\n"
+	  "get_record(record_index) -> Object\n"
 	  "\n"
 	  "Retrieves the record specified by the index." },
 
 	{ "get_number_of_recovered_records",
 	  (PyCFunction) pyevtx_file_get_number_of_recovered_records,
 	  METH_NOARGS,
-	  "get_number_of_recovered_records() -> Integer or None\n"
+	  "get_number_of_recovered_records() -> Integer\n"
 	  "\n"
 	  "Retrieves the number of recovered records." },
 
 	{ "get_recovered_record",
 	  (PyCFunction) pyevtx_file_get_recovered_record,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_recovered_record(record_index) -> Object or None\n"
+	  "get_recovered_record(record_index) -> Object\n"
 	  "\n"
 	  "Retrieves the recovered record specified by the index." },
 
@@ -279,93 +279,6 @@ PyTypeObject pyevtx_file_type_object = {
 	0
 };
 
-/* Creates a new file object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyevtx_file_new(
-           void )
-{
-	pyevtx_file_t *pyevtx_file = NULL;
-	static char *function      = "pyevtx_file_new";
-
-	pyevtx_file = PyObject_New(
-	               struct pyevtx_file,
-	               &pyevtx_file_type_object );
-
-	if( pyevtx_file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	if( pyevtx_file_init(
-	     pyevtx_file ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pyevtx_file );
-
-on_error:
-	if( pyevtx_file != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pyevtx_file );
-	}
-	return( NULL );
-}
-
-/* Creates a new file object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyevtx_file_new_open(
-           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyevtx_file = NULL;
-
-	PYEVTX_UNREFERENCED_PARAMETER( self )
-
-	pyevtx_file = pyevtx_file_new();
-
-	pyevtx_file_open(
-	 (pyevtx_file_t *) pyevtx_file,
-	 arguments,
-	 keywords );
-
-	return( pyevtx_file );
-}
-
-/* Creates a new file object and opens it using a file-like object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pyevtx_file_new_open_file_object(
-           PyObject *self PYEVTX_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pyevtx_file = NULL;
-
-	PYEVTX_UNREFERENCED_PARAMETER( self )
-
-	pyevtx_file = pyevtx_file_new();
-
-	pyevtx_file_open_file_object(
-	 (pyevtx_file_t *) pyevtx_file,
-	 arguments,
-	 keywords );
-
-	return( pyevtx_file );
-}
-
 /* Intializes a file object
  * Returns 0 if successful or -1 on error
  */
@@ -384,6 +297,8 @@ int pyevtx_file_init(
 
 		return( -1 );
 	}
+	/* Make sure libevtx file is set to NULL
+	 */
 	pyevtx_file->file           = NULL;
 	pyevtx_file->file_io_handle = NULL;
 
@@ -424,15 +339,6 @@ void pyevtx_file_free(
 
 		return;
 	}
-	if( pyevtx_file->file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid file - missing libevtx file.",
-		 function );
-
-		return;
-	}
 	ob_type = Py_TYPE(
 	           pyevtx_file );
 
@@ -454,24 +360,27 @@ void pyevtx_file_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libevtx_file_free(
-	          &( pyevtx_file->file ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pyevtx_file->file != NULL )
 	{
-		pyevtx_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libevtx file.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libevtx_file_free(
+		          &( pyevtx_file->file ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pyevtx_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libevtx file.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pyevtx_file );
@@ -898,7 +807,7 @@ PyObject *pyevtx_file_close(
 		{
 			pyevtx_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_MemoryError,
 			 "%s: unable to free libbfio file IO handle.",
 			 function );
 
@@ -1357,7 +1266,7 @@ PyObject *pyevtx_file_get_format_version(
 	utf8_string[ 3 ] = 0;
 
 	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
-	 * the end of string character is part of the string
+	 * the end of string character is part of the string.
 	 */
 	string_object = PyUnicode_DecodeUTF8(
 	                 utf8_string,
@@ -1432,17 +1341,6 @@ PyObject *pyevtx_file_get_number_of_records(
 	return( integer_object );
 }
 
-/* Retrieves the record type object
- * Returns a Python type object if successful or NULL on error
- */
-PyTypeObject *pyevtx_file_get_record_type_object(
-               libevtx_record_t *record PYEVTX_ATTRIBUTE_UNUSED )
-{
-	PYEVTX_UNREFERENCED_PARAMETER( record )
-
-	return( &pyevtx_record_type_object );
-}
-
 /* Retrieves a specific record by index
  * Returns a Python object if successful or NULL on error
  */
@@ -1450,12 +1348,11 @@ PyObject *pyevtx_file_get_record_by_index(
            PyObject *pyevtx_file,
            int record_index )
 {
-	PyObject *record_object   = NULL;
-	PyTypeObject *type_object = NULL;
-	libcerror_error_t *error  = NULL;
-	libevtx_record_t *record  = NULL;
-	static char *function     = "pyevtx_file_get_record_by_index";
-	int result                = 0;
+	PyObject *record_object  = NULL;
+	libcerror_error_t *error = NULL;
+	libevtx_record_t *record = NULL;
+	static char *function    = "pyevtx_file_get_record_by_index";
+	int result               = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1490,22 +1387,9 @@ PyObject *pyevtx_file_get_record_by_index(
 
 		goto on_error;
 	}
-	type_object = pyevtx_file_get_record_type_object(
-	               record );
-
-	if( type_object == NULL )
-	{
-		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to retrieve record type object.",
-		 function );
-
-		goto on_error;
-	}
 	record_object = pyevtx_record_new(
-	                 type_object,
 	                 record,
-	                 (PyObject *) pyevtx_file );
+	                 pyevtx_file );
 
 	if( record_object == NULL )
 	{
@@ -1683,12 +1567,11 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
            PyObject *pyevtx_file,
            int record_index )
 {
-	PyObject *record_object   = NULL;
-	PyTypeObject *type_object = NULL;
-	libcerror_error_t *error  = NULL;
-	libevtx_record_t *record  = NULL;
-	static char *function     = "pyevtx_file_get_recovered_record_by_index";
-	int result                = 0;
+	PyObject *record_object  = NULL;
+	libcerror_error_t *error = NULL;
+	libevtx_record_t *record = NULL;
+	static char *function    = "pyevtx_file_get_recovered_record_by_index";
+	int result               = 0;
 
 	if( pyevtx_file == NULL )
 	{
@@ -1723,20 +1606,7 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 
 		goto on_error;
 	}
-	type_object = pyevtx_file_get_record_type_object(
-	               record );
-
-	if( type_object == NULL )
-	{
-		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to retrieve record type object.",
-		 function );
-
-		goto on_error;
-	}
 	record_object = pyevtx_record_new(
-	                 type_object,
 	                 record,
 	                 (PyObject *) pyevtx_file );
 
@@ -1744,7 +1614,7 @@ PyObject *pyevtx_file_get_recovered_record_by_index(
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to create record object.",
+		 "%s: unable to create recovered record object.",
 		 function );
 
 		goto on_error;

@@ -53,19 +53,6 @@ struct pyevtx_file
 extern PyMethodDef pyevtx_file_object_methods[];
 extern PyTypeObject pyevtx_file_type_object;
 
-PyObject *pyevtx_file_new(
-           void );
-
-PyObject *pyevtx_file_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pyevtx_file_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pyevtx_file_init(
      pyevtx_file_t *pyevtx_file );
 

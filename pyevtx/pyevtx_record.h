@@ -53,7 +53,6 @@ extern PyMethodDef pyevtx_record_object_methods[];
 extern PyTypeObject pyevtx_record_type_object;
 
 PyObject *pyevtx_record_new(
-           PyTypeObject *type_object,
            libevtx_record_t *record,
            PyObject *parent_object );
 
