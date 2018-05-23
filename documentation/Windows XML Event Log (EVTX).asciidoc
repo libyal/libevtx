@@ -432,7 +432,7 @@ The name (BinXmlName) is variable of size and consists of:
 | Offset | Size | Value | Description
 | 0 | 4 | | [yellow-background]*Unknown*
 | 4 | 2 | | Name hash
-4+| _Optional see notes below_
+4+| _See notes below_
 | 6 | 2 | | Number of characters
 | 8 | ... | | UTF-16 little-endian string with an end-of-string character
 |===
