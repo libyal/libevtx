@@ -431,14 +431,26 @@ The name (BinXmlName) is variable of size and consists of:
 |===
 | Offset | Size | Value | Description
 | 0 | 4 | | [yellow-background]*Unknown*
-| 4 | 2 | | Name hash +
-[yellow-background]*Which hash algorithm?*
+| 4 | 2 | | Name hash
+4+| _Optional see notes below_
 | 6 | 2 | | Number of characters
 | 8 | ... | | UTF-16 little-endian string with an end-of-string character
 |===
 
 The unknown 4 bytes are not present in the binary XML in the Windows Event 
 Template resource.
+
+[NOTE]
+The hash function is defined in [MS-EVEN6] as follows:
+....
+hash(string)
+{
+  ret = 0;
+  for (i = 0; i < stringLen; i++)
+    ret = ret * 65599 + string[i];
+  return ret & 0xffff;
+}
+....
 
 ==== Content
 The content (BinXMLContent) can be:
