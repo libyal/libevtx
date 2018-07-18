@@ -550,7 +550,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_event_levels_type_object );
+	 (PyObject *) &pyevtx_event_levels_type_object );
 
 	PyModule_AddObject(
 	 module,
@@ -567,7 +567,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_file_type_object );
+	 (PyObject *) &pyevtx_file_type_object );
 
 	PyModule_AddObject(
 	 module,
@@ -584,7 +584,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_file_flags_type_object );
+	 (PyObject *) &pyevtx_file_flags_type_object );
 
 	PyModule_AddObject(
 	 module,
@@ -601,7 +601,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_record_type_object );
+	 (PyObject *) &pyevtx_record_type_object );
 
 	PyModule_AddObject(
 	 module,
@@ -618,7 +618,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_records_type_object );
+	 (PyObject *) &pyevtx_records_type_object );
 
 	PyModule_AddObject(
 	 module,
@@ -635,7 +635,7 @@ PyMODINIT_FUNC initpyevtx(
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject * ) &pyevtx_strings_type_object );
+	 (PyObject *) &pyevtx_strings_type_object );
 
 	PyModule_AddObject(
 	 module,

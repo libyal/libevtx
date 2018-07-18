@@ -37,8 +37,11 @@
 
 #include <libevtx/extern.h>
 
+#define LIBEVTX_EXTERN_VARIABLE	LIBEVTX_EXTERN
+
 #else
-#define LIBEVTX_EXTERN	/* extern */
+#define LIBEVTX_EXTERN		/* extern */
+#define LIBEVTX_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 
