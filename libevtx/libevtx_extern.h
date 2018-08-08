@@ -28,13 +28,6 @@
  */
 #if !defined( HAVE_LOCAL_LIBEVTX )
 
-/* If libtool DLL support is enabled set LIBEVTX_DLL_EXPORT
- * before including libevtx/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBEVTX_DLL_EXPORT
-#endif
-
 #include <libevtx/extern.h>
 
 #define LIBEVTX_EXTERN_VARIABLE	LIBEVTX_EXTERN

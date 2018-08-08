@@ -24,14 +24,7 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBEVTX_DLL_IMPORT
- * before including libevtx.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBEVTX_DLL_IMPORT
-#endif
-
 #include <libevtx.h>
 
-#endif
+#endif /* !defined( _PYEVTX_LIBEVTX_H ) */
 
