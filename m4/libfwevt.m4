@@ -1,42 +1,46 @@
-dnl Functions for libfwevt
+dnl Checks for libfwevt required headers and functions
 dnl
-dnl Version: 20180404
+dnl Version: 20181117
 
 dnl Function to detect if libfwevt is available
 dnl ac_libfwevt_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
 AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
-  [dnl Check if parameters were provided
-  AS_IF(
-    [test "x$ac_cv_with_libfwevt" != x && test "x$ac_cv_with_libfwevt" != xno && test "x$ac_cv_with_libfwevt" != xauto-detect],
-    [AS_IF(
-      [test -d "$ac_cv_with_libfwevt"],
-      [CFLAGS="$CFLAGS -I${ac_cv_with_libfwevt}/include"
-      LDFLAGS="$LDFLAGS -L${ac_cv_with_libfwevt}/lib"],
-      [AC_MSG_WARN([no such directory: $ac_cv_with_libfwevt])
-      ])
-    ])
-
-  AS_IF(
-    [test "x$ac_cv_with_libfwevt" = xno],
+  [AS_IF(
+    [test "x$ac_cv_enable_shared_libs" = xno || test "x$ac_cv_with_libfwevt" = xno],
     [ac_cv_libfwevt=no],
-    [dnl Check for a pkg-config file
+    [dnl Check if the directory provided as parameter exists
     AS_IF(
-      [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
-      [PKG_CHECK_MODULES(
-        [libfwevt],
-        [libfwevt >= 20160103],
-        [ac_cv_libfwevt=yes],
-        [ac_cv_libfwevt=no])
+      [test "x$ac_cv_with_libfwevt" != x && test "x$ac_cv_with_libfwevt" != xauto-detect],
+      [AS_IF(
+        [test -d "$ac_cv_with_libfwevt"],
+        [CFLAGS="$CFLAGS -I${ac_cv_with_libfwevt}/include"
+        LDFLAGS="$LDFLAGS -L${ac_cv_with_libfwevt}/lib"],
+        [AC_MSG_FAILURE(
+          [no such directory: $ac_cv_with_libfwevt],
+          [1])
+        ])
+        ac_cv_libfwevt=check],
+      [dnl Check for a pkg-config file
+      AS_IF(
+        [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
+        [PKG_CHECK_MODULES(
+          [libfwevt],
+          [libfwevt >= 20160103],
+          [ac_cv_libfwevt=yes],
+          [ac_cv_libfwevt=check])
+        ])
+      AS_IF(
+        [test "x$ac_cv_libfwevt" = xyes],
+        [ac_cv_libfwevt_CPPFLAGS="$pkg_cv_libfwevt_CFLAGS"
+        ac_cv_libfwevt_LIBADD="$pkg_cv_libfwevt_LIBS"])
       ])
 
     AS_IF(
-      [test "x$ac_cv_libfwevt" = xyes],
-      [ac_cv_libfwevt_CPPFLAGS="$pkg_cv_libfwevt_CFLAGS"
-      ac_cv_libfwevt_LIBADD="$pkg_cv_libfwevt_LIBS"],
+      [test "x$ac_cv_libfwevt" = xcheck],
       [dnl Check for headers
       AC_CHECK_HEADERS([libfwevt.h])
 
-    AS_IF(
+      AS_IF(
         [test "x$ac_cv_header_libfwevt_h" = xno],
         [ac_cv_libfwevt=no],
         [dnl Check for the individual functions
@@ -552,19 +556,14 @@ AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
           [ac_cv_libfwevt_dummy=yes],
           [ac_cv_libfwevt=no])
 
-        ac_cv_libfwevt_LIBADD="-lfwevt"
-        ])
+        ac_cv_libfwevt_LIBADD="-lfwevt"])
       ])
-    ])
-
-  dnl Check for debug functions
-  AS_IF(
-    [test "x$ac_cv_libfwevt" = xyes && test "x$ac_cv_enable_debug_output" != xno],
-    [AC_CHECK_LIB(
-      fwevt,
-      libfwevt_xml_document_debug_print,
-      [ac_cv_libfwevt_dummy=yes],
-      [ac_cv_libfwevt=no])
+    AS_IF(
+      [test "x$ac_cv_with_libfwevt" != x && test "x$ac_cv_with_libfwevt" != xauto-detect && test "x$ac_cv_libfwevt" != xyes],
+      [AC_MSG_FAILURE(
+        [unable to find supported libfwevt in directory: $ac_cv_with_libfwevt],
+        [1])
+      ])
     ])
 
   AS_IF(
