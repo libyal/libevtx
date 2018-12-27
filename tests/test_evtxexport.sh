@@ -1,7 +1,7 @@
 #!/bin/bash
 # Export tool testing script
 #
-# Version: 20181111
+# Version: 20181221
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;

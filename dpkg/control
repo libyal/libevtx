@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libevtx
 Package: libevtx
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libevtx1
+Replaces: libevtx1
 Suggests: libevtx-dbg
 Description: Library to access the Windows XML Event Log (EVTX) format
  libevtx is a library to access the Windows XML Event Log (EVTX) format.
@@ -31,6 +33,8 @@ Package: libevtx-tools
 Section: utils
 Architecture: any
 Depends: libevtx (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libevtx-utils
+Replaces: libevtx-utils
 Description: Several tools for reading Windows XML Event Log (EVTX) files
  Several tools for reading Windows XML Event Log (EVTX) files.
 
@@ -45,6 +49,8 @@ Package: libevtx-python
 Section: python
 Architecture: any
 Depends: libevtx (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libevtx
+Replaces: python-libevtx
 Suggests: libevtx-python-dbg
 Description: Python 2 bindings for libevtx
  Python 2 bindings for libevtx.
@@ -60,6 +66,8 @@ Package: libevtx-python3
 Section: python
 Architecture: any
 Depends: libevtx (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libevtx
+Replaces: python3-libevtx
 Suggests: libevtx-python3-dbg
 Description: Python 3 bindings for libevtx
  Python 3 bindings for libevtx.
