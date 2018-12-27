@@ -67,7 +67,7 @@ int libevtx_chunks_table_read_record(
      intptr_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_list_element_t *list_element,
-     libfcache_cache_t *cache,
+     libfdata_cache_t *cache,
      int data_range_file_index,
      off64_t data_range_offset,
      size64_t data_range_size,

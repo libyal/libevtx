@@ -997,7 +997,7 @@ int libevtx_file_open_read(
 	     (intptr_t *) internal_file->io_handle,
 	     NULL,
 	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfcache_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_io_handle_read_chunk,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_io_handle_read_chunk,
 	     NULL,
 	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
 	     error ) != 1 )
@@ -1072,7 +1072,7 @@ int libevtx_file_open_read(
 	     (intptr_t *) chunks_table,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libevtx_chunks_table_free,
 	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfdata_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
 	     NULL,
 	     LIBFDATA_DATA_HANDLE_FLAG_MANAGED,
 	     error ) != 1 )
@@ -1093,7 +1093,7 @@ int libevtx_file_open_read(
 	     (intptr_t *) chunks_table,
 	     NULL,
 	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfcache_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfdata_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libevtx_chunks_table_read_record,
 	     NULL,
 	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
 	     error ) != 1 )
@@ -1963,7 +1963,7 @@ int libevtx_file_get_record(
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->records_list,
 	     (intptr_t *) internal_file->file_io_handle,
-	     internal_file->records_cache,
+	     (libfdata_cache_t *) internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,
 	     0,
@@ -2039,7 +2039,7 @@ int libevtx_file_get_record_by_index(
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->records_list,
 	     (intptr_t *) internal_file->file_io_handle,
-	     internal_file->records_cache,
+	     (libfdata_cache_t *) internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,
 	     0,
@@ -2156,7 +2156,7 @@ int libevtx_file_get_recovered_record(
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->recovered_records_list,
 	     (intptr_t *) internal_file->file_io_handle,
-	     internal_file->records_cache,
+	     (libfdata_cache_t *) internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,
 	     0,
@@ -2232,7 +2232,7 @@ int libevtx_file_get_recovered_record_by_index(
 	if( libfdata_list_get_element_value_by_index(
 	     internal_file->recovered_records_list,
 	     (intptr_t *) internal_file->file_io_handle,
-	     internal_file->records_cache,
+	     (libfdata_cache_t *) internal_file->records_cache,
 	     record_index,
 	     (intptr_t **) &record_values,
 	     0,

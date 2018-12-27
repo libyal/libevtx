@@ -27,7 +27,6 @@
 
 #include "libevtx_libbfio.h"
 #include "libevtx_libcerror.h"
-#include "libevtx_libfcache.h"
 #include "libevtx_libfdata.h"
 
 #if defined( __cplusplus )
@@ -111,7 +110,7 @@ int libevtx_io_handle_read_chunk(
      libevtx_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_vector_t *vector,
-     libfcache_cache_t *cache,
+     libfdata_cache_t *cache,
      int element_index,
      int element_data_file_index,
      off64_t element_data_offset,
