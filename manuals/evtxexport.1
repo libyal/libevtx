@@ -1,4 +1,4 @@
-.Dd February 10, 2014
+.Dd April 14, 2019
 .Dt evtxexport
 .Os libevtx
 .Sh NAME
@@ -16,7 +16,7 @@
 .Op Fl S Ar software_file
 .Op Fl t Ar event_log_type
 .Op Fl hTvV
-.Va Ar source
+.Ar source
 .Sh DESCRIPTION
 .Nm evtxexport
 is a utility to export items stored in a Windows XML EventViewer Log (EVTX) file
@@ -70,9 +70,9 @@ None
 .Bd -literal
 # evtxexport evtxexport -p c/ -r c/Windows/System32/config/ c/Windows/System32/winevt/Logs/Apllication.Evtx
 evtxexport 20120910
-
+.sp
 .Dl ...
-
+.sp
 .Ed
 .Sh DIAGNOSTICS
 Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.

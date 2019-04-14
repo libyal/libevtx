@@ -40,6 +40,7 @@ check_SCRIPTS = \
 	test_evtxexport_xml.sh \
 	test_evtxinfo.sh \
 	test_library.sh \
+	test_manpage.sh \
 	test_python_module.sh \
 	test_runner.sh
 

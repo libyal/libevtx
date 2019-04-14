@@ -13,6 +13,14 @@ BuildRequires: gcc @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requ
 %description -n libevtx
 Library to access the Windows XML Event Log (EVTX) format
 
+%package -n libevtx-static
+Summary: Library to access the Windows XML Event Log (EVTX) format
+Group: Development/Libraries
+Requires: libevtx = %{version}-%{release}
+
+%description -n libevtx-static
+Static library version of libevtx.
+
 %package -n libevtx-devel
 Summary: Header files and libraries for developing applications for libevtx
 Group: Development/Libraries
@@ -74,11 +82,16 @@ rm -rf %{buildroot}
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
+%files -n libevtx-static
+%defattr(644,root,root,755)
+%license COPYING
+%doc AUTHORS README
+%attr(755,root,root) %{_libdir}/*.a
+
 %files -n libevtx-devel
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
-%{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libevtx.pc
