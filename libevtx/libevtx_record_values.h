@@ -83,6 +83,10 @@ struct libevtx_record_values
 	 */
 	libfwevt_xml_tag_t *event_identifier_xml_tag;
 
+	/* Reference to the time created value
+	 */
+	libfvalue_value_t *time_created_value;
+
 	/* Reference to the level value
 	 */
 	libfvalue_value_t *level_value;
@@ -164,6 +168,16 @@ int libevtx_record_values_get_event_identifier(
 int libevtx_record_values_get_event_identifier_qualifiers(
      libevtx_record_values_t *record_values,
      uint32_t *event_identifier_qualifiers,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_creation_time(
+     libevtx_record_values_t *record_values,
+     uint64_t *filetime,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_written_time(
+     libevtx_record_values_t *record_values,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_event_level(

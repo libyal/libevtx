@@ -1920,6 +1920,69 @@ int export_handle_export_record_text(
 	 "Event number\t\t\t: %" PRIu64 "\n",
 	 value_64bit );
 
+	result = libevtx_record_get_creation_time(
+	          record,
+	          &value_64bit,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve creation time.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libfdatetime_filetime_copy_from_64bit(
+		     filetime,
+		     value_64bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy filetime from 64-bit.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfdatetime_filetime_copy_to_utf16_string(
+			  filetime,
+			  (uint16_t *) filetime_string,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  error );
+#else
+		result = libfdatetime_filetime_copy_to_utf8_string(
+			  filetime,
+			  (uint8_t *) filetime_string,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to copy filetime to string.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Creation time\t\t\t: %" PRIs_SYSTEM " UTC\n",
+		 filetime_string );
+	}
 	if( libevtx_record_get_written_time(
 	     record,
 	     &value_64bit,

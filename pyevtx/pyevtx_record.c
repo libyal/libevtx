@@ -52,6 +52,20 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Retrieves the identifier." },
 
+	{ "get_creation_time",
+	  (PyCFunction) pyevtx_record_get_creation_time,
+	  METH_NOARGS,
+	  "get_creation_time() -> Datetime or None\n"
+	  "\n"
+	  "Retrieves the creation time." },
+
+	{ "get_creation_time_as_integer",
+	  (PyCFunction) pyevtx_record_get_creation_time_as_integer,
+	  METH_NOARGS,
+	  "get_creation_time_as_integer() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the creation time as a 64-bit integer containing a FILETIME value." },
+
 	{ "get_written_time",
 	  (PyCFunction) pyevtx_record_get_written_time,
 	  METH_NOARGS,
@@ -159,6 +173,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_identifier,
 	  (setter) 0,
 	  "The identifier.",
+	  NULL },
+
+	{ "creation_time",
+	  (getter) pyevtx_record_get_creation_time,
+	  (setter) 0,
+	  "The creation time.",
 	  NULL },
 
 	{ "written_time",
@@ -599,6 +619,124 @@ PyObject *pyevtx_record_get_identifier(
 	}
 	integer_object = pyevtx_integer_unsigned_new_from_64bit(
 	                  (uint64_t) value_64bit );
+
+	return( integer_object );
+}
+
+/* Retrieves the creation time
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_creation_time(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *datetime_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pyevtx_record_get_creation_time";
+	uint64_t filetime         = 0;
+	int result                = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_creation_time(
+	          pyevtx_record->record,
+	          &filetime,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve creation time.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	datetime_object = pyevtx_datetime_new_from_filetime(
+	                   filetime );
+
+	return( datetime_object );
+}
+
+/* Retrieves the creation time as an integer
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_creation_time_as_integer(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_creation_time_as_integer";
+	uint64_t filetime        = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_creation_time(
+	          pyevtx_record->record,
+	          &filetime,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve creation time.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	integer_object = pyevtx_integer_unsigned_new_from_64bit(
+	                  (uint64_t) filetime );
 
 	return( integer_object );
 }

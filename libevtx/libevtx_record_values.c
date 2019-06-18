@@ -1035,6 +1035,206 @@ int libevtx_record_values_get_event_identifier_qualifiers(
 	return( result );
 }
 
+/* Retrieves the 64-bit FILETIME value containing the creation time from the binary XML
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_creation_time(
+     libevtx_record_values_t *record_values,
+     uint64_t *filetime,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *root_xml_tag         = NULL;
+	libfwevt_xml_tag_t *system_time_xml_tag  = NULL;
+	libfwevt_xml_tag_t *system_xml_tag       = NULL;
+	libfwevt_xml_tag_t *time_created_xml_tag = NULL;
+	static char *function                    = "libevtx_record_values_get_creation_time";
+	int result                               = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->time_created_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "TimeCreated",
+		          11,
+		          &time_created_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve TimeCreated XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_attribute_by_utf8_name(
+		          time_created_xml_tag,
+		          (uint8_t *) "SystemTime",
+		          10,
+		          &system_time_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve SystemTime XML attribute.",
+			 function );
+
+			return( -1 );
+		}
+		if( result == 0 )
+		{
+			return( 0 );
+		}
+		if( libfwevt_xml_tag_get_value(
+		     system_time_xml_tag,
+		     &( record_values->time_created_value ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve provider TimeCreated XML element value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfvalue_value_copy_to_64bit(
+	     record_values->time_created_value,
+	     0,
+	     filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy value to FILETIME timestamp.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the 64-bit FILETIME value containing the written time from the event record header
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_values_get_written_time(
+     libevtx_record_values_t *record_values,
+     uint64_t *filetime,
+     libcerror_error_t **error )
+{
+	static char *function = "libevtx_record_values_get_written_time";
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( filetime == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid FILETIME timestamp.",
+		 function );
+
+		return( -1 );
+	}
+	*filetime = record_values->written_time;
+
+	return( 1 );
+}
+
 /* Retrieves the event level
  * Returns 1 if successful or -1 on error
  */

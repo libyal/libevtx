@@ -1,4 +1,4 @@
-.Dd April 14, 2019
+.Dd June 17, 2019
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
@@ -94,6 +94,8 @@ Record functions
 .Fn libevtx_record_get_offset "libevtx_record_t *record" "off64_t *offset" "libevtx_error_t **error"
 .Ft int
 .Fn libevtx_record_get_identifier "libevtx_record_t *record" "uint64_t *identifier" "libevtx_error_t **error"
+.Ft int
+.Fn libevtx_record_get_creation_time "libevtx_record_t *record" "uint64_t *filetime" "libevtx_error_t **error"
 .Ft int
 .Fn libevtx_record_get_written_time "libevtx_record_t *record" "uint64_t *filetime" "libevtx_error_t **error"
 .Ft int

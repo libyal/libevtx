@@ -419,7 +419,16 @@ int libevtx_record_get_identifier(
      uint64_t *identifier,
      libevtx_error_t **error );
 
-/* Retrieves the 64-bit FILETIME value containing the written time
+/* Retrieves the 64-bit FILETIME value containing the creation time from the binary XML
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+LIBEVTX_EXTERN \
+int libevtx_record_get_creation_time(
+     libevtx_record_t *record,
+     uint64_t *filetime,
+     libevtx_error_t **error );
+
+/* Retrieves the 64-bit FILETIME value containing the written time from the event record header
  * Returns 1 if successful or -1 on error
  */
 LIBEVTX_EXTERN \

@@ -62,7 +62,7 @@ then
 	return ${EXIT_IGNORE};
 fi
 
-TEST_PROFILE_DIRECTORY=$(get_test_profile_directory "input" "evtxexport");
+TEST_PROFILE_DIRECTORY=$(get_test_profile_directory "input" "evtxexport_xml");
 
 IGNORE_LIST=$(read_ignore_list "${TEST_PROFILE_DIRECTORY}");
 
@@ -91,7 +91,7 @@ do
 	then
 		for INPUT_FILE in `cat ${TEST_SET_DIRECTORY}/files | sed "s?^?${TEST_SET_INPUT_DIRECTORY}/?"`;
 		do
-			run_test_on_input_file_with_options "${TEST_SET_DIRECTORY}" "evtxexport" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_FILE}";
+			run_test_on_input_file_with_options "${TEST_SET_DIRECTORY}" "evtxexport" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_FILE}" "${OPTIONS}";
 			RESULT=$?;
 
 			if test ${RESULT} -ne ${EXIT_SUCCESS};
@@ -102,7 +102,7 @@ do
 	else
 		for INPUT_FILE in `ls -1 ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB}`;
 		do
-			run_test_on_input_file_with_options "${TEST_SET_DIRECTORY}" "evtxexport" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_FILE}";
+			run_test_on_input_file_with_options "${TEST_SET_DIRECTORY}" "evtxexport" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_FILE}" "${OPTIONS}";
 			RESULT=$?;
 
 			if test ${RESULT} -ne ${EXIT_SUCCESS};

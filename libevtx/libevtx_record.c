@@ -350,7 +350,48 @@ int libevtx_record_get_identifier(
 	return( 1 );
 }
 
-/* Retrieves the 64-bit FILETIME value containing the written time
+/* Retrieves the 64-bit FILETIME value containing the creation time from the binary XML
+ * Returns 1 if successful or -1 on error
+ */
+int libevtx_record_get_creation_time(
+     libevtx_record_t *record,
+     uint64_t *filetime,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_creation_time";
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	if( libevtx_record_values_get_creation_time(
+	     internal_record->record_values,
+	     filetime,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve creation time from record values.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the 64-bit FILETIME value containing the written time from the event record header
  * Returns 1 if successful or -1 on error
  */
 int libevtx_record_get_written_time(
@@ -374,30 +415,20 @@ int libevtx_record_get_written_time(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( internal_record->record_values == NULL )
+	if( libevtx_record_values_get_written_time(
+	     internal_record->record_values,
+	     filetime,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid record - missing record values.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve written time from record values.",
 		 function );
 
 		return( -1 );
 	}
-	if( filetime == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filetime.",
-		 function );
-
-		return( -1 );
-	}
-	*filetime = internal_record->record_values->written_time;
-
 	return( 1 );
 }
 
