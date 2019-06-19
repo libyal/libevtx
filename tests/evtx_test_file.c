@@ -1240,10 +1240,9 @@ on_error:
 int evtx_test_file_get_ascii_codepage(
      libevtx_file_t *file )
 {
-	libcerror_error_t *error  = NULL;
-	int ascii_codepage        = 0;
-	int ascii_codepage_is_set = 0;
-	int result                = 0;
+	libcerror_error_t *error = NULL;
+	int ascii_codepage       = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1252,16 +1251,14 @@ int evtx_test_file_get_ascii_codepage(
 	          &ascii_codepage,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	ascii_codepage_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1282,25 +1279,23 @@ int evtx_test_file_get_ascii_codepage(
 	libcerror_error_free(
 	 &error );
 
-	if( ascii_codepage_is_set != 0 )
-	{
-		result = libevtx_file_get_ascii_codepage(
-		          file,
-		          NULL,
-		          &error );
+	result = libevtx_file_get_ascii_codepage(
+	          file,
+	          NULL,
+	          &error );
 
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1458,7 +1453,6 @@ int evtx_test_file_get_flags(
 {
 	libcerror_error_t *error = NULL;
 	uint32_t flags           = 0;
-	int flags_is_set         = 0;
 	int result               = 0;
 
 	/* Test regular cases
@@ -1468,16 +1462,14 @@ int evtx_test_file_get_flags(
 	          &flags,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	flags_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1498,25 +1490,23 @@ int evtx_test_file_get_flags(
 	libcerror_error_free(
 	 &error );
 
-	if( flags_is_set != 0 )
-	{
-		result = libevtx_file_get_flags(
-		          file,
-		          NULL,
-		          &error );
+	result = libevtx_file_get_flags(
+	          file,
+	          NULL,
+	          &error );
 
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1534,10 +1524,9 @@ on_error:
 int evtx_test_file_get_number_of_records(
      libevtx_file_t *file )
 {
-	libcerror_error_t *error     = NULL;
-	int number_of_records        = 0;
-	int number_of_records_is_set = 0;
-	int result                   = 0;
+	libcerror_error_t *error = NULL;
+	int number_of_records    = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1546,16 +1535,14 @@ int evtx_test_file_get_number_of_records(
 	          &number_of_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_records_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1576,25 +1563,23 @@ int evtx_test_file_get_number_of_records(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_records_is_set != 0 )
-	{
-		result = libevtx_file_get_number_of_records(
-		          file,
-		          NULL,
-		          &error );
+	result = libevtx_file_get_number_of_records(
+	          file,
+	          NULL,
+	          &error );
 
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1624,10 +1609,10 @@ int evtx_test_file_get_record_by_index(
 	          &number_of_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1645,10 +1630,13 @@ int evtx_test_file_get_record_by_index(
 	          &record,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	/* TODO: remove after troubleshooting failing tests */
+	EVTX_TEST_FPRINT_ERROR( error );
+
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1756,10 +1744,9 @@ on_error:
 int evtx_test_file_get_number_of_recovered_records(
      libevtx_file_t *file )
 {
-	libcerror_error_t *error               = NULL;
-	int number_of_recovered_records        = 0;
-	int number_of_recovered_records_is_set = 0;
-	int result                             = 0;
+	libcerror_error_t *error        = NULL;
+	int number_of_recovered_records = 0;
+	int result                      = 0;
 
 	/* Test regular cases
 	 */
@@ -1768,16 +1755,14 @@ int evtx_test_file_get_number_of_recovered_records(
 	          &number_of_recovered_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_recovered_records_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1798,25 +1783,23 @@ int evtx_test_file_get_number_of_recovered_records(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_recovered_records_is_set != 0 )
-	{
-		result = libevtx_file_get_number_of_recovered_records(
-		          file,
-		          NULL,
-		          &error );
+	result = libevtx_file_get_number_of_recovered_records(
+	          file,
+	          NULL,
+	          &error );
 
-		EVTX_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	EVTX_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		EVTX_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	EVTX_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1846,10 +1829,10 @@ int evtx_test_file_get_recovered_record_by_index(
 	          &number_of_recovered_records,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1867,10 +1850,10 @@ int evtx_test_file_get_recovered_record_by_index(
 	          &recovered_record,
 	          &error );
 
-	EVTX_TEST_ASSERT_NOT_EQUAL_INT(
+	EVTX_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	EVTX_TEST_ASSERT_IS_NULL(
 	 "error",
