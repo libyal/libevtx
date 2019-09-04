@@ -39,7 +39,7 @@ class FileTypeTests(unittest.TestCase):
   def test_open(self):
     """Tests the open function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest('missing source')
 
     evtx_file = pyevtx.file()
 
@@ -59,7 +59,7 @@ class FileTypeTests(unittest.TestCase):
   def test_open_file_object(self):
     """Tests the open_file_object function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest('missing source')
 
     file_object = open(unittest.source, "rb")
 
@@ -82,7 +82,7 @@ class FileTypeTests(unittest.TestCase):
   def test_close(self):
     """Tests the close function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest('missing source')
 
     evtx_file = pyevtx.file()
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
   argument_parser.add_argument(
       "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="The path of the source file.")
+      default=None, help="path of the source file.")
 
   options, unknown_options = argument_parser.parse_known_args()
   unknown_options.insert(0, sys.argv[0])

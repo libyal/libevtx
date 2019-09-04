@@ -171,11 +171,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_file_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_hive_bin.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_hive_bin_cell.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_hive_bin_header.c"
 				>
 			</File>
 			<File
@@ -199,11 +207,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_multi_string.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_named_key.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_notify.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_security_key.c"
 				>
 			</File>
 			<File
@@ -216,6 +232,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_value_item.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_value_key.c"
 				>
 			</File>
 			<File
@@ -261,11 +281,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_file_header.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_hive_bin.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_hive_bin_cell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_hive_bin_header.h"
 				>
 			</File>
 			<File
@@ -309,6 +337,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_libcthreads.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_libfcache.h"
 				>
 			</File>
@@ -329,11 +361,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_multi_string.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_named_key.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_notify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_security_key.h"
 				>
 			</File>
 			<File
@@ -354,6 +394,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_value_item.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_value_key.h"
 				>
 			</File>
 			<File
