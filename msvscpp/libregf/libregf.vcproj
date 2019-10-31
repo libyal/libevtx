@@ -155,6 +155,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_data_block_key.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_data_block_stream.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_data_type.c"
 				>
 			</File>
@@ -238,10 +246,6 @@
 				RelativePath="..\..\libregf\libregf_value_key.c"
 				>
 			</File>
-			<File
-				RelativePath="..\..\libregf\libregf_value_type.c"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -254,6 +258,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_codepage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_data_block_key.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_data_block_stream.h"
 				>
 			</File>
 			<File
@@ -398,10 +410,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_value_key.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libregf\libregf_value_type.h"
 				>
 			</File>
 			<File
