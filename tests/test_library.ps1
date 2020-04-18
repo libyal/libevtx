@@ -1,6 +1,6 @@
 # Tests library functions and types.
 #
-# Version: 20200405
+# Version: 20200413
 
 $ExitSuccess = 0
 $ExitFailure = 1
@@ -11,32 +11,6 @@ $LibraryTestsWithInput = "file support"
 $OptionSets = "";
 
 $InputGlob = "*"
-
-Function GetTestProfileDirectory
-{
-	param( [string]$TestInputDirectory, [string]$TestProfile )
-
-	$TestProfileDirectory = "${TestInputDirectory}\.${TestProfile}"
-
-	If (-Not (Test-Path -Path ${TestProfileDirectory} -PathType "Container"))
-	{
-		New-Item -ItemType "directory" -Path ${TestProfileDirectory}
-	}
-	Return ${TestProfileDirectory}
-}
-
-Function GetTestSetDirectory
-{
-	param( [string]$TestProfileDirectory, [string]$TestSetInputDirectory )
-
-	$TestSetDirectory = "${TestProfileDirectory}\${TestSetInputDirectory.Basename}"
-
-	If (-Not (Test-Path -Path ${TestSetDirectory} -PathType "Container"))
-	{
-		New-Item -ItemType "directory" -Path ${TestSetDirectory}
-	}
-	Return ${TestSetDirectory}
-}
 
 Function GetTestExecutablesDirectory
 {
@@ -87,6 +61,14 @@ Function RunTest
 	$TestDescription = "Testing: ${TestName}"
 	$TestExecutable = "${TestExecutablesDirectory}\evtx_test_${TestName}.exe"
 
+	If (-Not (Test-Path -Path ${TestExecutable} -PathType "Leaf"))
+	{
+		Write-Host "${TestDescription} (" -nonewline
+		Write-Host "SKIP" -foreground Cyan -nonewline
+		Write-Host ")"
+
+		Return ${ExitIgnore}
+	}
 	$Output = Invoke-Expression ${TestExecutable}
 	$Result = ${LastExitCode}
 
@@ -94,16 +76,18 @@ Function RunTest
 	{
 		Write-Host ${Output} -foreground Red
 	}
-	Write-Host "${TestDescription} " -nonewline
+	Write-Host "${TestDescription} (" -nonewline
 
 	If (${Result} -ne ${ExitSuccess})
 	{
-		Write-Host " (FAIL)"
+		Write-Host "FAIL" -foreground Red -nonewline
 	}
 	Else
 	{
-		Write-Host " (PASS)"
+		Write-Host "PASS" -foreground Green -nonewline
 	}
+	Write-Host ")"
+
 	Return ${Result}
 }
 
@@ -114,8 +98,20 @@ Function RunTestWithInput
 	$TestDescription = "Testing: ${TestName}"
 	$TestExecutable = "${TestExecutablesDirectory}\evtx_test_${TestName}.exe"
 
-	$TestProfileDirectory = GetTestProfileDirectory "input" "libevtx"
+	If (-Not (Test-Path -Path ${TestExecutable} -PathType "Leaf"))
+	{
+		Write-Host "${TestDescription} (" -nonewline
+		Write-Host "SKIP" -foreground Cyan -nonewline
+		Write-Host ")"
 
+		Return ${ExitIgnore}
+	}
+	$TestProfileDirectory = "input\.libevtx"
+
+	If (-Not (Test-Path -Path ${TestProfileDirectory} -PathType "Container"))
+	{
+		New-Item -ItemType "directory" -Path ${TestProfileDirectory}
+	}
 	$IgnoreList = ReadIgnoreList ${TestProfileDirectory}
 
 	$Result = ${ExitSuccess}
@@ -130,11 +126,11 @@ Function RunTestWithInput
 		{
 			Continue
 		}
-		$TestSetDirectory = GetTestSetDirectory ${TestProfileDirectory} ${TestSetInputDirectory}
+		$TestSetName = ${TestSetInputDirectory}.Name
 
-		If (Test-Path -Path "${TestSetDirectory}\files" -PathType "Leaf")
+		If (Test-Path -Path "${TestProfileDirectory}\${TestSetName}\files" -PathType "Leaf")
 		{
-			$InputFiles = Get-Content -Path "${TestSetDirectory}\files" | Where {$_ -ne ""}
+			$InputFiles = Get-Content -Path "${TestProfileDirectory}\${TestSetName}\files" | Where {$_ -ne ""}
 		}
 		Else
 		{
@@ -142,10 +138,33 @@ Function RunTestWithInput
 		}
 		ForEach ($InputFile in ${InputFiles})
 		{
-			# TODO: add test option support
-			$Output = Invoke-Expression ${TestExecutable}
-			$Result = ${LastExitCode}
+			$TestedWithOptions = $False
 
+			ForEach ($OptionSet in ${OptionSets} -split " ")
+			{
+				$InputFileName = ${InputFile}.Name
+				$TestDataOptionFile = "${TestProfileDirectory}\${TestSetName}\${InputFileName}.${OptionSet}"
+
+				If (-Not (Test-Path -Path "${TestDataOptionFile}" -PathType "Leaf"))
+				{
+					Continue
+				}
+				$InputOptions = Get-content -Path "${TestDataOptionFile}" -First 1
+
+				$Output = Invoke-Expression "${TestExecutable} ${InputOptions} ${InputFile}"
+				$Result = $LastExitCode
+
+				If (${Result} -ne ${ExitSuccess})
+				{
+					Break
+				}
+				$TestedWithOptions = $True
+			}
+			If ((${Result} -eq ${ExitSuccess}) -And (-Not (${TestedWithOptions})))
+			{
+				$Output = Invoke-Expression "${TestExecutable} ${InputFile}"
+				$Result = ${LastExitCode}
+			}
 			If (${Result} -ne ${ExitSuccess})
 			{
 				Break
@@ -160,16 +179,18 @@ Function RunTestWithInput
 	{
 		Write-Host ${Output} -foreground Red
 	}
-	Write-Host "${TestDescription} " -nonewline
+	Write-Host "${TestDescription} (" -nonewline
 
 	If (${Result} -ne ${ExitSuccess})
 	{
-		Write-Host " (FAIL)"
+		Write-Host "FAIL" -foreground Red -nonewline
 	}
 	Else
 	{
-		Write-Host " (PASS)"
+		Write-Host "PASS" -foreground Green -nonewline
 	}
+	Write-Host ")"
+
 	Return ${Result}
 }
 
@@ -193,7 +214,7 @@ Foreach (${TestName} in ${LibraryTests} -split " ")
 	}
 	$Result = RunTest ${TestName}
 
-	If (${Result} -ne ${ExitSuccess})
+	If ((${Result} -ne ${ExitSuccess}) -And (${Result} -ne ${ExitIgnore}))
 	{
 		Break
 	}
@@ -214,7 +235,7 @@ Foreach (${TestName} in ${LibraryTestsWithInput} -split " ")
 	{
 		$Result = RunTest ${TestName}
 	}
-	If (${Result} -ne ${ExitSuccess})
+	If ((${Result} -ne ${ExitSuccess}) -And (${Result} -ne ${ExitIgnore}))
 	{
 		Break
 	}

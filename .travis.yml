@@ -136,21 +136,21 @@ jobs:
     - TARGET="macos-clang"
     compiler: clang
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
   - name: "Mac OS with gcc"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="macos-gcc"
     compiler: gcc
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
   - name: "Mac OS with gcc and Python module"
     env:
     - CONFIGURE_OPTIONS="--enable-python"
     - TARGET="macos-gcc-python"
     compiler: gcc
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
   - name: "Mac OS with gcc and Python 2 module"
     env:
     - CONFIGURE_OPTIONS="--enable-python2"
@@ -158,13 +158,13 @@ jobs:
     - TARGET="macos-gcc-python2"
     compiler: gcc
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
   - name: "Mac OS 10.12 with gcc and Python 2 module (setup.py)"
     env:
     - TARGET="macos-gcc-python-setup-py"
     compiler: gcc
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
   - name: "Mac OS 10.14 with gcc and Python 3.7 module (setup.py)"
     env:
     - TARGET="macos-gcc-python-setup-py37"
@@ -178,7 +178,7 @@ jobs:
     - TARGET="macos-gcc-pkgbuild"
     compiler: gcc
     os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
 before_install:
 - .travis/before_install.sh
 install:
