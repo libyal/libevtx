@@ -502,7 +502,7 @@ PyObject *pyevtx_file_open(
 	{
 		pyevtx_error_fetch_and_raise(
 		 PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -531,7 +531,7 @@ PyObject *pyevtx_file_open(
 		{
 			pyevtx_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -1098,7 +1098,7 @@ int pyevtx_file_set_ascii_codepage_setter(
 	{
 		pyevtx_error_fetch_and_raise(
 		 PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( -1 );
@@ -1114,7 +1114,7 @@ int pyevtx_file_set_ascii_codepage_setter(
 		{
 			pyevtx_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( -1 );

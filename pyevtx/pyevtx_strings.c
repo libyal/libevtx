@@ -243,7 +243,7 @@ int pyevtx_strings_init(
 	 "%s: initialize of strings not supported.",
 	 function );
 
-	return( 0 );
+	return( -1 );
 }
 
 /* Frees a strings sequence object

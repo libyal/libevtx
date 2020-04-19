@@ -244,7 +244,7 @@ int pyevtx_records_init(
 	 "%s: initialize of records not supported.",
 	 function );
 
-	return( 0 );
+	return( -1 );
 }
 
 /* Frees a records sequence object

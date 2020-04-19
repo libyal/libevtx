@@ -1519,6 +1519,12 @@ on_error:
 		 &( internal_file->records_cache ),
 		 NULL );
 	}
+	if( internal_file->recovered_records_list != NULL )
+	{
+		libfdata_list_free(
+		 &( internal_file->recovered_records_list ),
+		 NULL );
+	}
 	if( internal_file->records_list != NULL )
 	{
 		libfdata_list_free(
