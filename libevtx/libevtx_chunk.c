@@ -290,6 +290,18 @@ int libevtx_chunk_read(
 
 		return( -1 );
 	}
+	if( ( io_handle->chunk_size < 4 )
+	 || ( io_handle->chunk_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid IO handle - invalid chunk size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 	calculated_chunk_number = (uint64_t) ( ( file_offset - io_handle->chunk_size ) / io_handle->chunk_size );
 #endif
@@ -522,7 +534,8 @@ int libevtx_chunk_read(
 			libcnotify_printf(
 			 "\n" );
 		}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 		if( header_size != 128 )
 		{
 			libcerror_error_set(
@@ -800,7 +813,7 @@ int libevtx_chunk_read(
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 #endif
-		while( chunk_data_offset < chunk_data_size )
+		while( chunk_data_offset < ( chunk_data_size - 4 ) )
 		{
 /* TODO optimize scan ? */
 			if( memory_compare(

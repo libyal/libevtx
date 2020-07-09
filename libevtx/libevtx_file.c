@@ -1446,6 +1446,17 @@ int libevtx_file_open_read(
 		{
 			trailing_data_size = (size_t) ( file_size - file_offset );
 
+			if( trailing_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid trailing data size value exceeds maximum allocation size.",
+				 function );
+
+				goto on_error;
+			}
 			trailing_data = (uint8_t *) memory_allocate(
 			                             sizeof( uint8_t ) * trailing_data_size );
 

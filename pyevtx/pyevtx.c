@@ -430,19 +430,47 @@ PyObject *pyevtx_open_new_file(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pyevtx_file = NULL;
+	pyevtx_file_t *pyevtx_file = NULL;
+	static char *function      = "pyevtx_open_new_file";
 
 	PYEVTX_UNREFERENCED_PARAMETER( self )
 
-	pyevtx_file_init(
-	 (pyevtx_file_t *) pyevtx_file );
+	/* PyObject_New does not invoke tp_init
+	 */
+	pyevtx_file = PyObject_New(
+	               struct pyevtx_file,
+	               &pyevtx_file_type_object );
 
-	pyevtx_file_open(
-	 (pyevtx_file_t *) pyevtx_file,
-	 arguments,
-	 keywords );
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
 
-	return( pyevtx_file );
+		goto on_error;
+	}
+	if( pyevtx_file_init(
+	     pyevtx_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pyevtx_file_open(
+	     pyevtx_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pyevtx_file );
+
+on_error:
+	if( pyevtx_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pyevtx_file );
+	}
+	return( NULL );
 }
 
 /* Creates a new file object and opens it using a file-like object
@@ -453,19 +481,47 @@ PyObject *pyevtx_open_new_file_with_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pyevtx_file = NULL;
+	pyevtx_file_t *pyevtx_file = NULL;
+	static char *function      = "pyevtx_open_new_file_with_file_object";
 
 	PYEVTX_UNREFERENCED_PARAMETER( self )
 
-	pyevtx_file_init(
-	 (pyevtx_file_t *) pyevtx_file );
+	/* PyObject_New does not invoke tp_init
+	 */
+	pyevtx_file = PyObject_New(
+	               struct pyevtx_file,
+	               &pyevtx_file_type_object );
 
-	pyevtx_file_open_file_object(
-	 (pyevtx_file_t *) pyevtx_file,
-	 arguments,
-	 keywords );
+	if( pyevtx_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
 
-	return( pyevtx_file );
+		goto on_error;
+	}
+	if( pyevtx_file_init(
+	     pyevtx_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pyevtx_file_open_file_object(
+	     pyevtx_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pyevtx_file );
+
+on_error:
+	if( pyevtx_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pyevtx_file );
+	}
+	return( NULL );
 }
 
 #if PY_MAJOR_VERSION >= 3

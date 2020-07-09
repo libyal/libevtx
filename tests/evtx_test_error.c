@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "evtx_test_libcerror.h"
 #include "evtx_test_libevtx.h"
 #include "evtx_test_macros.h"
 #include "evtx_test_unused.h"

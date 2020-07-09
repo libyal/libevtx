@@ -3964,6 +3964,18 @@ int libevtx_record_values_parse_data_xml_tag_by_template(
 		{
 			return( 0 );
 		}
+		if( ( data_name_size == 0 )
+		 || ( data_name_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid data name size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		data_name = (uint8_t *) memory_allocate(
 		                         sizeof( uint8_t ) * data_name_size );
 
