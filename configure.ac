@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libevtx],
- [20200709],
+ [20200710],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -237,6 +237,7 @@ AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([tests/Makefile])
+AC_CONFIG_FILES([ossfuzz/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Generate header files
 AC_CONFIG_FILES([include/libevtx.h])

@@ -80,5 +80,13 @@ AC_DEFUN([AX_EVTXTOOLS_CHECK_LOCAL],
         ["-DLIBEVTX_DLL_IMPORT"])
     ])
   ])
+
+  dnl Check if OSS-Fuzz build environment is available and fuzz targets should be build
+  AM_CONDITIONAL(
+    HAVE_LIB_FUZZING_ENGINE,
+    [test "x${LIB_FUZZING_ENGINE}" != x])
+  AC_SUBST(
+    [LIB_FUZZING_ENGINE],
+    ["${LIB_FUZZING_ENGINE}"])
 ])
 
