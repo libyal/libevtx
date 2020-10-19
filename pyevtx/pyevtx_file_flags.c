@@ -228,7 +228,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a file flags object
+/* Initializes a file flags object
  * Returns 0 if successful or -1 on error
  */
 int pyevtx_file_flags_init(

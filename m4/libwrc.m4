@@ -1,6 +1,6 @@
 dnl Checks for libwrc required headers and functions
 dnl
-dnl Version: 20190308
+dnl Version: 20200716
 
 dnl Function to detect if libwrc is available
 dnl ac_libwrc_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -84,6 +84,14 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
     ])
   ])
 
+dnl Function to detect if libwrc dependencies are available
+AC_DEFUN([AX_LIBWRC_CHECK_LOCAL],
+  [ac_cv_libwrc_CPPFLAGS="-I../libwrc";
+  ac_cv_libwrc_LIBADD="../libwrc/libwrc.la";
+
+  ac_cv_libwrc=local
+  ])
+
 dnl Function to detect how to enable libwrc
 AC_DEFUN([AX_LIBWRC_CHECK_ENABLE],
   [AX_COMMON_ARG_WITH(
@@ -99,19 +107,16 @@ AC_DEFUN([AX_LIBWRC_CHECK_ENABLE],
   dnl Check if the dependencies for the local library version
   AS_IF(
     [test "x$ac_cv_libwrc" != xyes],
-    [ac_cv_libwrc_CPPFLAGS="-I../libwrc";
-    ac_cv_libwrc_LIBADD="../libwrc/libwrc.la";
+    [AX_LIBWRC_CHECK_LOCAL
 
-    ac_cv_libwrc=local
-
-    AC_DEFINE(
-      [HAVE_LOCAL_LIBWRC],
-      [1],
-      [Define to 1 if the local version of libwrc is used.])
-    AC_SUBST(
-      [HAVE_LOCAL_LIBWRC],
-      [1])
-    ])
+  AC_DEFINE(
+    [HAVE_LOCAL_LIBWRC],
+    [1],
+    [Define to 1 if the local version of libwrc is used.])
+  AC_SUBST(
+    [HAVE_LOCAL_LIBWRC],
+    [1])
+  ])
 
   AM_CONDITIONAL(
     [HAVE_LOCAL_LIBWRC],

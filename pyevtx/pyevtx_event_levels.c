@@ -270,7 +270,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes an event levels object
+/* Initializes an event levels object
  * Returns 0 if successful or -1 on error
  */
 int pyevtx_event_levels_init(

@@ -214,7 +214,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a strings sequence and iterator object
+/* Initializes a strings sequence and iterator object
  * Returns 0 if successful or -1 on error
  */
 int pyevtx_strings_init(

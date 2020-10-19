@@ -171,6 +171,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_dirty_vector.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_error.c"
 				>
 			</File>
@@ -207,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_key_descriptor.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_key_item.c"
 				>
 			</File>
@@ -228,6 +236,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_security_key.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_sub_key_list.c"
 				>
 			</File>
 			<File
@@ -281,6 +293,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libregf\libregf_dirty_vector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libregf\libregf_error.h"
 				>
 			</File>
@@ -318,6 +334,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_key.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_key_descriptor.h"
 				>
 			</File>
 			<File
@@ -386,6 +406,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libregf\libregf_security_key.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libregf\libregf_sub_key_list.h"
 				>
 			</File>
 			<File

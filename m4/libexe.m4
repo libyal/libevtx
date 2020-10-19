@@ -1,6 +1,6 @@
 dnl Checks for libexe required headers and functions
 dnl
-dnl Version: 20190308
+dnl Version: 20201114
 
 dnl Function to detect if libexe is available
 dnl ac_libexe_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -105,65 +105,70 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
     ])
   ])
 
-dnl Function to detect how to enable libexe
-AC_DEFUN([AX_LIBEXE_CHECK_ENABLE],
- [AX_COMMON_ARG_WITH(
-  [libexe],
-  [libexe],
-  [search for libexe in includedir and libdir or in the specified DIR, or no if to use local version],
-  [auto-detect],
-  [DIR])
-
- dnl Check for a shared library version
- AX_LIBEXE_CHECK_LIB
-
- dnl Check if the dependencies for the local library version
- AS_IF(
-  [test "x$ac_cv_libexe" != xyes],
+dnl Function to detect if libexe dependencies are available
+AC_DEFUN([AX_LIBEXE_CHECK_LOCAL],
   [ac_cv_libexe_CPPFLAGS="-I../libexe";
   ac_cv_libexe_LIBADD="../libexe/libexe.la";
 
   ac_cv_libexe=local
+  ])
+
+dnl Function to detect how to enable libexe
+AC_DEFUN([AX_LIBEXE_CHECK_ENABLE],
+  [AX_COMMON_ARG_WITH(
+    [libexe],
+    [libexe],
+    [search for libexe in includedir and libdir or in the specified DIR, or no if to use local version],
+    [auto-detect],
+    [DIR])
+
+  dnl Check for a shared library version
+  AX_LIBEXE_CHECK_LIB
+
+  dnl Check if the dependencies for the local library version
+  AS_IF(
+    [test "x$ac_cv_libexe" != xyes],
+    [AX_LIBEXE_CHECK_LOCAL
 
   AC_DEFINE(
-   [HAVE_LOCAL_LIBEXE],
-   [1],
-   [Define to 1 if the local version of libexe is used.])
+    [HAVE_LOCAL_LIBEXE],
+    [1],
+    [Define to 1 if the local version of libexe is used.])
   AC_SUBST(
-   [HAVE_LOCAL_LIBEXE],
-   [1])
+    [HAVE_LOCAL_LIBEXE],
+    [1])
   ])
 
- AM_CONDITIONAL(
-  [HAVE_LOCAL_LIBEXE],
-  [test "x$ac_cv_libexe" = xlocal])
- AS_IF(
-  [test "x$ac_cv_libexe_CPPFLAGS" != "x"],
-  [AC_SUBST(
-   [LIBEXE_CPPFLAGS],
-   [$ac_cv_libexe_CPPFLAGS])
-  ])
- AS_IF(
-  [test "x$ac_cv_libexe_LIBADD" != "x"],
-  [AC_SUBST(
-   [LIBEXE_LIBADD],
-   [$ac_cv_libexe_LIBADD])
-  ])
+  AM_CONDITIONAL(
+    [HAVE_LOCAL_LIBEXE],
+    [test "x$ac_cv_libexe" = xlocal])
+  AS_IF(
+    [test "x$ac_cv_libexe_CPPFLAGS" != "x"],
+    [AC_SUBST(
+      [LIBEXE_CPPFLAGS],
+      [$ac_cv_libexe_CPPFLAGS])
+    ])
+  AS_IF(
+    [test "x$ac_cv_libexe_LIBADD" != "x"],
+    [AC_SUBST(
+      [LIBEXE_LIBADD],
+      [$ac_cv_libexe_LIBADD])
+    ])
 
- AS_IF(
-  [test "x$ac_cv_libexe" = xyes],
-  [AC_SUBST(
-   [ax_libexe_pc_libs_private],
-   [-lexe])
-  ])
+  AS_IF(
+    [test "x$ac_cv_libexe" = xyes],
+    [AC_SUBST(
+      [ax_libexe_pc_libs_private],
+      [-lexe])
+    ])
 
- AS_IF(
-  [test "x$ac_cv_libexe" = xyes],
-  [AC_SUBST(
-   [ax_libexe_spec_requires],
-   [libexe])
-  AC_SUBST(
-   [ax_libexe_spec_build_requires],
-   [libexe-devel])
+  AS_IF(
+    [test "x$ac_cv_libexe" = xyes],
+    [AC_SUBST(
+      [ax_libexe_spec_requires],
+      [libexe])
+    AC_SUBST(
+      [ax_libexe_spec_build_requires],
+      [libexe-devel])
+    ])
   ])
- ])
