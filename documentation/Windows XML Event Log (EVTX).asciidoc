@@ -7,6 +7,7 @@ Analysis of EVTX
 :numbered!:
 [abstract]
 == Summary
+
 The Windows XML EventLog (EVTX) format is used by Microsoft Windows to store 
 system log information. This specification is based the work done by A. 
 Schuster `[SCHUSTER11]` and on `[MS-EVEN6]`. It was complemented by other 
@@ -21,6 +22,7 @@ files.
 
 [preface]
 == Document information
+
 [cols="1,5"]
 |===
 | Author(s): | Joachim Metz <joachim.metz@gmail.com>
@@ -31,8 +33,9 @@ files.
 
 [preface]
 == License
+
 ....
-Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the 
 terms of the GNU Free Documentation License, Version 1.3 or any later version 
 published by the Free Software Foundation; with no Invariant Sections, no 
@@ -42,6 +45,7 @@ in the section entitled "GNU Free Documentation License".
 
 [preface]
 == Revision history
+
 [cols="1,1,1,5",options="header"]
 |===
 | Version | Author | Date | Comments
@@ -66,10 +70,12 @@ April 2012 | Additional information.
 | 0.0.16 | J.B. Metz | March 2015 | Switched to asccidoc format.
 | 0.0.17 | J.B. Metz | January 2016 | Additional information about Binary XML type (0x21).
 | 0.0.18 | J.B. Metz | April 2016 | Fixed typo.
+| 0.0.19 | J.B. Metz | November 2020 | Changes for formatting.
 |===
 
 :numbered:
 == Overview
+
 The Windows XML EventLog (EVTX) format is used by Microsoft Windows, as of 
 Windows Vista, to store system log information.
 
@@ -93,6 +99,7 @@ Unicode strings are stored in UTF-16 little-endian without the byte order mark (
 |===
 
 === Test version
+
 The following version of programs were used to test the information within this document:
 
 * Windows Vista
@@ -103,6 +110,7 @@ The following version of programs were used to test the information within this 
 * Windows 10
 
 === Event Log files
+
 The event logs files can normally be found in:
 ....
 C:\Windows\System32\winevt\Logs\
@@ -163,6 +171,7 @@ C:\Windows\System32\winevt\Logs\
 |===
 
 == File header
+
 The file header is 4096 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -200,6 +209,7 @@ The CRC-32 is describe in RFC 1952 and uses an initial value of 0.
 |===
 
 == Chunk
+
 The chunk is 65536 bytes of size and consists of:
 
 * chunk header
@@ -207,6 +217,7 @@ The chunk is 65536 bytes of size and consists of:
 * unused space
 
 === Chunk header
+
 The chunk header is 512 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -257,6 +268,7 @@ from successive event records.*
 [yellow-background]*Data after header and before event record?*
 
 === Event record
+
 The event record is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -276,7 +288,9 @@ See section: <<binary_xml,Binary XML>>
 |===
 
 == [[binary_xml]]Binary XML
+
 === Document structure
+
 According `[MS-EVEN6]` the binary XML structure should consist of:
 
 The document (BinXMLDocument) consists of:
@@ -287,12 +301,14 @@ The document (BinXMLDocument) consists of:
 * End of file token
 
 ==== Fragment
+
 The fragment (BinXMLFragment) consists of:
 
 * fragment header
 * an element or a template instance
 
 ==== Fragment header
+
 The fragment header (BinXMLFragmentHeader) is 4 byte of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -300,13 +316,14 @@ The fragment header (BinXMLFragmentHeader) is 4 byte of size and consists of:
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0f | Fragment header token +
 Should be: BinXmlFragmentHeaderToken +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | 1 | 0x01 | Major version
 | 2 | 1 | 0x01 | Minor version
 | 3 | 1 | 0x00 | Flags
 |===
 
 ==== Element
+
 An element (BinXMLElement) can either be 'empty' or a 'filled'.
 
 BinXMLEmpyElement:
@@ -334,6 +351,7 @@ Example of a 'filled' element in textual XML:
 [yellow-background]*TODO: is it valid for a fragment with more then one element?*
 
 ==== Element start
+
 The element start (BinXMLElementStart) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -342,7 +360,7 @@ The element start (BinXMLElementStart) is variable of size and consists of:
 | 0 | 1 | 0x01 +
 0x41 | Open start element tag token +
 Should be: BinXmlTokenOpenStartElementTag +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 4+| _Optional see notes below_
 | 1 | 2 | | Dependency identifier +
 -1 (0xffff) => not set
@@ -375,6 +393,7 @@ The dependency identifier is not present when the element start is used in a
 substitution token with value type: Binary XML (0x21).
 
 ==== [[attribute_list]]Attribute list
+
 The attribute (BinXmlAttributeList) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -390,6 +409,7 @@ See section: <<attribute,Attribute>>
 Is this 32-bit alignment padding?*
 
 ==== [[attribute]]Attribute
+
 The attribute (BinXmlAttribute) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -398,7 +418,7 @@ The attribute (BinXmlAttribute) is variable of size and consists of:
 | 0 | 1 | 0x06 +
 0x46 | Attribute token +
 Should be: BinXmlTokenAttribute +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 4+| _Optional see notes below_
 | 1 | 4 | | Attribute name offset +
 The offset is relative from the start of the chunk +
@@ -425,6 +445,7 @@ The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 ==== [[name]]Name
+
 The name (BinXmlName) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -441,6 +462,7 @@ The unknown 4 bytes are not present in the binary XML in the Windows Event
 Template resource.
 
 ==== Content
+
 The content (BinXMLContent) can be:
 
 * an element
@@ -451,6 +473,7 @@ The content (BinXMLContent) can be:
 * PI
 
 ==== Content string
+
 The content string data (BinXMLContentStringData) can be:
 
 * value text
@@ -460,6 +483,7 @@ The content string data (BinXMLContentStringData) can be:
 seems to be considered empty by Event Viewer*
 
 ==== Value text
+
 The value text (BinXmlValueText) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -468,7 +492,7 @@ The value text (BinXmlValueText) is variable of size and consists of:
 | 0 | 1 | 0x05 +
 0x45 | Value token +
 Should be: BinXmlTokenValue +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | 1 | 0x01 | Value type +
 Should be: StringType +
 See section: <<value_type,Value types>>
@@ -483,12 +507,14 @@ that no more such data follows.
 A value text can be stored spanning multiple value tokens.
 
 ==== Substitution
+
 The substitution (BinXmSubstitution) can be:
 
 * normal substitution
 * optional substitution
 
 ==== Normal substitution
+
 The normal substitution (BinXmNormalSubstitution) is 4 byte of size and 
 consists of:
 
@@ -497,7 +523,7 @@ consists of:
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0d | Normal substitution token +
 Should be: BinXmlTokenNormalSubstitution +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | 2 | | Substitution identifier +
 Identifier of the value in the template instance data, where 0 represents the first value
 | 3 | 1 | | Value type +
@@ -522,6 +548,7 @@ the following:
 * a template instance (BinXmlTemplateInstance).
 
 ==== Optional substitution
+
 The optional substitution (BinXmlOptionalSubstitution) is 4 byte of size and 
 consists of:
 
@@ -530,7 +557,7 @@ consists of:
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0e | Optional substitution token +
 Should be: BinXmlTokenOptionallSubstitution +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | 2 | | Substitution identifier +
 Identifier of the value in the template instance data, where 0 represents the first value
 | 3 | 1 | | Value type +
@@ -558,6 +585,7 @@ the following:
 * a template instance (BinXmlTemplateInstance).
 
 ==== Character entity reference
+
 The character entity reference (BinXmlCharacterEntityReference) is 3 byte of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -566,7 +594,7 @@ The character entity reference (BinXmlCharacterEntityReference) is 3 byte of siz
 | 0 | 1 | 0x08 +
 0x48 | Character entity reference token +
 Should be: BinXmlTokenCharRef +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | 2 | | Character entity value
 |===
 
@@ -580,6 +608,7 @@ In the resulting XML the character entity is replaced e.g. `38` becomes `&#38;`.
 and the decimal string representation of the value. TODO create a test file.*
 
 ==== Entity reference
+
 The entity reference (BinXmlEntityReference) is 5 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -588,7 +617,7 @@ The entity reference (BinXmlEntityReference) is 5 bytes of size and consists of:
 | 0 | 1 | 0x09 +
 0x49 | Entity reference token +
 Should be: BinXmlTokenEntityRef +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 4+| _Optional see notes below_
 | 1 | 4 | | Entity name offset +
 The offset is relative from the start of the chunk +
@@ -610,6 +639,7 @@ It currently is assumed that the following entity references are supported lt,
 gt, amp, quot and apos.
 
 ==== CDATA section
+
 The entity reference (BinXmlEntityReference) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -618,7 +648,7 @@ The entity reference (BinXmlEntityReference) is variable of size and consists of
 | 0 | 1 | 0x07 +
 0x47 | CDATA section token +
 Should be: BinXmlTokenCDATASection +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | ... | | CDATA text +
 See section: <<unicode_text_string,Unicode text string>>
 |===
@@ -628,6 +658,7 @@ current content of the element or attribute; a token type of 0x07 indicates
 that no more such data follows.
 
 ==== Template instance
+
 The template instance (BinXmlTemplateInstance) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -635,12 +666,13 @@ The template instance (BinXmlTemplateInstance) is variable of size and consists 
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0c | Template instance token +
 Should be: BinXmlTokenTemplateInstance +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | ... | | Template definition
 | ... | ... | | Template instance data
 |===
 
 ==== Template definition
+
 The template definition (BinXmlTemplateDefinition) is variable of size and 
 consists of:
 
@@ -663,7 +695,7 @@ This includes the size of the fragment header, element and end of file token, ex
 | ... | ... | | Element
 | ... | 1 | | End of file token +
 Should be: BinXmlTokenEOF +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 |===
 
 [NOTE]
@@ -675,6 +707,7 @@ therefore be stored non-continuous.
 [yellow-background]*Possibly a bit value of 0 seeing that in other MSDN documentation %d16 indicates a decimal value of 16.*
 
 ==== Template instance data
+
 The template instance data (BinXmlTemplateInstanceData) is variable of size and 
 consists of:
 
@@ -697,6 +730,7 @@ The template value descriptor is 4 bytes of size and consists of:
 |===
 
 ==== [[unicode_text_string]]Unicode text string
+
 The Unicode text string is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -707,12 +741,14 @@ The Unicode text string is variable of size and consists of:
 |===
 
 ==== PI
+
 The PI consists of:
 
 * PI target
 * PI data
 
 ==== PI target
+
 The PI target (BinXmlPITarget) is 5 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -720,7 +756,7 @@ The PI target (BinXmlPITarget) is 5 bytes of size and consists of:
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0a | PI target reference token +
 Should be: BinXmlTokenPITarget +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 4+| _Optional see notes below_
 | 1 | 4 | | PI target name offset +
 The offset is relative from the start of the chunk +
@@ -732,6 +768,7 @@ The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 ==== PI data
+
 The entity reference (BinXmlPIData) is variable of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -739,12 +776,13 @@ The entity reference (BinXmlPIData) is variable of size and consists of:
 | Offset | Size | Value | Description
 | 0 | 1 | 0x0b | PI data token +
 Should be: BinXmlTokenCDATASection +
-See section: <<token_type,Token types>>
+See section: <<token_types,Token types>>
 | 1 | ... | | PI data text +
 See section: <<unicode_text_string,Unicode text string>>
 |===
 
 === [[token_types]]Token types
+
 Binary XML defines multiple token types.
 
 [cols="1,1,5",options="header"]
@@ -879,6 +917,7 @@ Every 8 bytes are an individual value in little-endian
 |===
 
 ==== String
+
 If in a string the characters: <, >, &, " and ' are not escaped they must 
 respectively be replaced by the following character entities: `&lt;`, `&gt;`, 
 `&amp;`, `&quot;` and `&apos;`. This does not apply to Character entity 
@@ -889,6 +928,7 @@ when exported as XML. Event Viewer seems to apply the XML character entity
 escaping inside element values for &, < and > but not for ' and ".
 
 ==== Systemtime
+
 The systemtime is 16 bytes of size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -905,6 +945,7 @@ The systemtime is 16 bytes of size and consists of:
 |===
 
 ==== Floating point
+
 Floating point values are represented as the following stings.
 
 [cols="1,1,5",options="header"]
@@ -923,7 +964,9 @@ Floating point values are represented as the following stings.
 64-bit fractional of 14*
 
 == Event
+
 === Event identifier
+
 The event identifier is 4 bytes of size and consist of:
 
 [cols="1,1,1,5",options="header"]
@@ -1022,6 +1065,7 @@ Shown as "Information" in Event Viewer
 |===
 
 === Externally stored values
+
 Some of the data that Event Viewer shows is stored outside the event log files.
 
 On Windows XP (and earlier) the first step to determine the location of these 
@@ -1086,6 +1130,7 @@ wevtutil gp Microsoft-Windows-Search
 ....
 
 ==== Message strings
+
 The event message strings are stored in event message files.
 
 The event message provider Registry key has a value named "EventMessageFile" 
@@ -1149,6 +1194,7 @@ of preference seems to be:
 * use message-table resource if present, before checking MUI resource
 
 ===== Event resource file
+
 The event message provider Registry key has a value named "ResourceFileName". 
 It is currently assumed that this Registry value contains a path specification 
 of the event resource file, e.g.
@@ -1168,6 +1214,7 @@ The information stored in this resource is used to:
 For more detailed information see: `[LIBEXE]`.
 
 ===== Message string identifier
+
 On Windows XP (and earlier) the message string identifier was a direct mapping 
 of the event identifier as of Windows Vista this is no longer the case. There 
 seem to be multiple methods how the event identifier is mapped to the message 
@@ -1177,6 +1224,7 @@ string identifier, namely:
 * Using the Windows Event Template resource
 
 ====== Using the event identifier qualifiers
+
 If the EventID element in Event XML has the Qualifiers attribute set, e.g.:
 ....
 <EventID Qualifiers="16384">7036</EventID>
@@ -1193,6 +1241,7 @@ message string identifier = ( 0x4000 << 16 ) | 0x1b7c = 0x40001b7c
 ....
 
 ====== Using the Windows Event Template (WEVT_TEMPLATE) resource
+
 If an event resource file has been specified and if the Provider element in the 
 Event XML has the GUID attribute set, e.g.:
 ....
@@ -1208,6 +1257,7 @@ case of the example 1. The event definition will also contain a reference the
 the message identifier, e.g. in case of the example 0xb9000001.
 
 ===== Message-table resource event message files
+
 In a message-table resource event message file the event message strings are 
 stored in the message-table resource of the event message file.
 
@@ -1245,6 +1295,7 @@ Note that the event message strings are language specific. An event message
 file can therefore contain event message strings for multiple languages.
 
 ===== Multilingual User Interface (MUI) event message files
+
 The resource section of a Multilingual User Interface (MUI) event message file 
 contains Multilingual User Interface (MUI) resource. E.g. on Windows Vista
 ....
@@ -1301,6 +1352,7 @@ within the Event XML, e.g.
 ....
 
 ===== [[event_data]]Event data
+
 As previously mentioned the event strings (and binary data) are stored as 
 "Data" elements in the "EventData" element within the Event XML. Another way to 
 store the event data is in a "UserData" element. The information in this 
@@ -1457,6 +1509,7 @@ contains Name="%1" but not the event record.
 This however might be a special case of the "EventData".
 
 ===== Parsing event data
+
 In the initial phases of the libevtx project several attempts have been made to 
 uniformly parse the event data.
 
@@ -1499,6 +1552,7 @@ definition match those of the event record. Which is the technique used as of
 version 20130208.
 
 ===== Parameter expansion
+
 Parameter expansion is e.g. seen in event identifier 7006 of the Service 
 Control Manager (SC Manager).
 ....
@@ -1525,9 +1579,11 @@ Here %%5 corresponds to the message string with identifier 5 stored in
 msobjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".
 
 ====  Category
+
 [yellow-background]*TODO: CategoryMessageFile*
 
 == Recovery
+
 1. Scan the chunk free space for event records and make sure the size and copy of size match.
 2. Ignore any record with an identifier that already exists. Often the free space contains former versions of existing event records.
 
@@ -1535,6 +1591,7 @@ msobjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".
 correcting corrupted event records?*
 
 === Detecting corrupted records
+
 Comparing the size and copy of size is a quick way to detect corrupted records 
 but sometimes the sizes match while the record is not recoverable. The 
 detection of corrupted records can be improved by looking at:
@@ -1558,7 +1615,9 @@ This translates to the Binary XML data should start with either:
 * 0x00; which means there is no Binary XML data
 
 == Corruption scenarios
+
 === String value oddities
+
 This has been seen in PI data and CDATA section structures.
 ....
 libevtx_binary_xml_document_read_pi_data: type                  : 0x0b
@@ -1620,6 +1679,7 @@ EventViewer shows the last line as:
 Even the 04 04 part of the string looks like valid BinXML.
 
 === Corrupted file header with correct checksum
+
 For some reason in EVTX file the file header was written with incorrect data 
 although the checksum checks out. As you can see the first chunk number: 206 
 exceeds last chunk number: 205.
@@ -1641,6 +1701,7 @@ checksum                            : 0x7fc747e2
 event ids are in sequential order. At first glance it seems to be this way.*
 
 === Dirty file with invalid number of chunks
+
 In the dirty file with invalid offset values scenarios the file header 
 indicates the incorrect number of chunks in the file; in this case less than 
 the actual number of chunks.
@@ -1666,6 +1727,7 @@ keep scanning for chunks after the last chunk indicated by the file header. The
 records in these chunks are not marked as recovered records.
 
 === Corrupt event record
+
 Corruption of an event record can occur in multiple ways, the following variant 
 have been seen:
 
@@ -1676,6 +1738,7 @@ The approach is to start scanning for recoverable event records in the
 remainder of the chunk. Any event records found are considered recovered.
 
 === Corrupted chunk
+
 Corruption of an chunk can occur in multiple ways, the following variant have 
 been seen:
 
@@ -1686,7 +1749,9 @@ chunk header is found or the end of file is reached. Any event records found
 are considered recovered.
 
 == Notes
+
 === Normal behavior
+
 Lets consider a "normal" Application.evtx file.
 
 EventViewer shows 20568 events.
@@ -1760,6 +1825,7 @@ event records checksum                              : 0x7fa7a9df
 normal behavior?*
 
 === Corruption scenario: event record mismatch between size and copy of size
+
 Lets consider a dirty Security.evtx file.
 
 EventViewer shows 4001 events.
@@ -1823,6 +1889,7 @@ By continuing scanning for event records in total 21045 event records were
 found with the first event number of 72432422.
 
 === Corruption scenario: cross chunk 0-byte values
+
 Lets consider a dirty Security.evtx file.
 
 EventViewer shows 102019 events.
@@ -1886,6 +1953,7 @@ By continuing scanning for event records in total 98927 event records and 1043
 recoverable event records were found.
 
 === Other
+
 What are .ax files? As seen in:
 ....
 Source          : Microsoft-Windows-DirectShow-KernelSupport
@@ -1986,6 +2054,7 @@ http://msdn.microsoft.com/en-us/library/cc238875(v=prot.10).aspx
 
 [appendix]
 == GNU Free Documentation License
+
 Version 1.3, 3 November 2008
 Copyright © 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc. 
 <http://fsf.org/>
@@ -1994,6 +2063,7 @@ Everyone is permitted to copy and distribute verbatim copies of this license
 document, but changing it is not allowed.
 
 === 0. PREAMBLE
+
 The purpose of this License is to make a manual, textbook, or other functional 
 and useful document "free" in the sense of freedom: to assure everyone the 
 effective freedom to copy and redistribute it, with or without modifying it, 
@@ -2014,6 +2084,7 @@ recommend this License principally for works whose purpose is instruction or
 reference.
 
 === 1. APPLICABILITY AND DEFINITIONS
+
 This License applies to any manual or other work, in any medium, that contains 
 a notice placed by the copyright holder saying it can be distributed under the 
 terms of this License. Such a notice grants a world-wide, royalty-free license, 
@@ -2092,6 +2163,7 @@ disclaiming warranties: any other implication that these Warranty Disclaimers
 may have is void and has no effect on the meaning of this License.
 
 === 2. VERBATIM COPYING
+
 You may copy and distribute the Document in any medium, either commercially or 
 noncommercially, provided that this License, the copyright notices, and the 
 license notice saying this License applies to the Document are reproduced in 
@@ -2105,6 +2177,7 @@ You may also lend copies, under the same conditions stated above, and you may
 publicly display copies.
 
 === 3. COPYING IN QUANTITY
+
 If you publish printed copies (or copies in media that commonly have printed 
 covers) of the Document, numbering more than 100, and the Document's license 
 notice requires Cover Texts, you must enclose the copies in covers that carry, 
@@ -2138,6 +2211,7 @@ well before redistributing any large number of copies, to give them a chance to
 provide you with an updated version of the Document.
 
 === 4. MODIFICATIONS
+
 You may copy and distribute a Modified Version of the Document under the 
 conditions of sections 2 and 3 above, provided that you release the Modified 
 Version under precisely this License, with the Modified Version filling the 
@@ -2230,6 +2304,7 @@ permission to use their names for publicity for or to assert or imply
 endorsement of any Modified Version.
 
 === 5. COMBINING DOCUMENTS
+
 You may combine the Document with other documents released under this License, 
 under the terms defined in section 4 above for modified versions, provided that 
 you include in the combination all of the Invariant Sections of all of the 
@@ -2251,6 +2326,7 @@ combine any sections Entitled "Acknowledgements", and any sections Entitled
 "Dedications". You must delete all sections Entitled "Endorsements".
 
 === 6. COLLECTIONS OF DOCUMENTS
+
 You may make a collection consisting of the Document and other documents 
 released under this License, and replace the individual copies of this License 
 in the various documents with a single copy that is included in the collection, 
@@ -2263,6 +2339,7 @@ into the extracted document, and follow this License in all other respects
 regarding verbatim copying of that document.
 
 === 7. AGGREGATION WITH INDEPENDENT WORKS
+
 A compilation of the Document or its derivatives with other separate and 
 independent documents or works, in or on a volume of a storage or distribution 
 medium, is called an "aggregate" if the copyright resulting from the 
@@ -2279,6 +2356,7 @@ in electronic form. Otherwise they must appear on printed covers that bracket
 the whole aggregate.
 
 === 8. TRANSLATION
+
 Translation is considered a kind of modification, so you may distribute 
 translations of the Document under the terms of section 4. Replacing Invariant 
 Sections with translations requires special permission from their copyright 
@@ -2296,6 +2374,7 @@ If a section in the Document is Entitled "Acknowledgements", "Dedications", or
 typically require changing the actual title.
 
 === 9. TERMINATION
+
 You may not copy, modify, sublicense, or distribute the Document except as 
 expressly provided under this License. Any attempt otherwise to copy, modify, 
 sublicense, or distribute it is void, and will automatically terminate your 
@@ -2319,6 +2398,7 @@ your rights have been terminated and not permanently reinstated, receipt of a
 copy of some or all of the same material does not give you any rights to use it.
 
 === 10. FUTURE REVISIONS OF THIS LICENSE
+
 The Free Software Foundation may publish new, revised versions of the GNU Free 
 Documentation License from time to time. Such new versions will be similar in 
 spirit to the present version, but may differ in detail to address new problems 
@@ -2336,6 +2416,7 @@ License can be used, that proxy's public statement of acceptance of a version
 permanently authorizes you to choose that version for the Document.
 
 === 11. RELICENSING
+
 "Massive Multiauthor Collaboration Site" (or "MMC Site") means any World Wide 
 Web server that publishes copyrightable works and also provides prominent 
 facilities for anybody to edit those works. A public wiki that anybody can edit 
