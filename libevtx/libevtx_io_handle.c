@@ -221,32 +221,6 @@ int libevtx_io_handle_read_file_header(
 
 		return( -1 );
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading file header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: %" PRIi64 ".",
-		 function,
-		 file_offset );
-
-		return( -1 );
-	}
 	file_header_data = (uint8_t *) memory_allocate(
 	                                sizeof( uint8_t ) * read_size );
 
@@ -261,10 +235,21 @@ int libevtx_io_handle_read_file_header(
 
 		return( -1 );
 	}
-	read_count = libbfio_handle_read_buffer(
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading file header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 file_offset,
+		 file_offset );
+	}
+#endif
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              file_header_data,
 	              read_size,
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) read_size )
@@ -273,8 +258,10 @@ int libevtx_io_handle_read_file_header(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header.",
-		 function );
+		 "%s: unable to read file header at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}
@@ -422,7 +409,8 @@ int libevtx_io_handle_read_file_header(
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( libevtx_checksum_calculate_little_endian_crc32(
 	     &calculated_checksum,
 	     file_header_data,

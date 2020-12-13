@@ -305,33 +305,6 @@ int libevtx_chunk_read(
 #if defined( HAVE_DEBUG_OUTPUT ) || defined( HAVE_VERBOSE_OUTPUT )
 	calculated_chunk_number = (uint64_t) ( ( file_offset - io_handle->chunk_size ) / io_handle->chunk_size );
 #endif
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading chunk: %" PRIu64 " at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
-		 function,
-		 calculated_chunk_number,
-		 file_offset,
-		 file_offset );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     file_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek chunk offset: %" PRIi64 ".",
-		 function,
-		 file_offset );
-
-		goto on_error;
-	}
 	chunk->file_offset = file_offset;
 
 	chunk->data = (uint8_t *) memory_allocate(
@@ -350,10 +323,22 @@ int libevtx_chunk_read(
 	}
 	chunk->data_size = (size_t) io_handle->chunk_size;
 
-	read_count = libbfio_handle_read_buffer(
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: reading chunk: %" PRIu64 " at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 function,
+		 calculated_chunk_number,
+		 file_offset,
+		 file_offset );
+	}
+#endif
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              chunk->data,
 	              chunk->data_size,
+	              file_offset,
 	              error );
 
 	if( read_count != (ssize_t) chunk->data_size )
@@ -362,8 +347,10 @@ int libevtx_chunk_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read chunk data.",
-		 function );
+		 "%s: unable to read chunk data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_offset,
+		 file_offset );
 
 		goto on_error;
 	}
