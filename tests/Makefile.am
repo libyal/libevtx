@@ -28,6 +28,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_evtxinfo.sh \
 	test_evtxexport.sh \
 	test_evtxexport_xml.sh \
@@ -42,7 +43,8 @@ check_SCRIPTS = \
 	test_library.sh \
 	test_manpage.sh \
 	test_python_module.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -57,7 +59,10 @@ check_PROGRAMS = \
 	evtx_test_record \
 	evtx_test_record_values \
 	evtx_test_support \
-	evtx_test_template_definition
+	evtx_test_template_definition \
+	evtx_test_tools_info_handle \
+	evtx_test_tools_output \
+	evtx_test_tools_signal
 
 evtx_test_chunk_SOURCES = \
 	evtx_test_chunk.c \
@@ -202,6 +207,42 @@ evtx_test_template_definition_SOURCES = \
 	evtx_test_unused.h
 
 evtx_test_template_definition_LDADD = \
+	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@
+
+evtx_test_tools_info_handle_SOURCES = \
+	../evtxtools/evtxinput.c ../evtxtools/evtxinput.h \
+	../evtxtools/info_handle.c ../evtxtools/info_handle.h \
+	evtx_test_libcerror.h \
+	evtx_test_macros.h \
+	evtx_test_memory.c evtx_test_memory.h \
+	evtx_test_tools_info_handle.c \
+	evtx_test_unused.h
+
+evtx_test_tools_info_handle_LDADD = \
+	@LIBCLOCALE_LIBADD@ \
+	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@
+
+evtx_test_tools_output_SOURCES = \
+	../evtxtools/evtxtools_output.c ../evtxtools/evtxtools_output.h \
+	evtx_test_libcerror.h \
+	evtx_test_macros.h \
+	evtx_test_tools_output.c \
+	evtx_test_unused.h
+
+evtx_test_tools_output_LDADD = \
+	../libevtx/libevtx.la \
+	@LIBCERROR_LIBADD@
+
+evtx_test_tools_signal_SOURCES = \
+	../evtxtools/evtxtools_signal.c ../evtxtools/evtxtools_signal.h \
+	evtx_test_libcerror.h \
+	evtx_test_macros.h \
+	evtx_test_tools_signal.c \
+	evtx_test_unused.h
+
+evtx_test_tools_signal_LDADD = \
 	../libevtx/libevtx.la \
 	@LIBCERROR_LIBADD@
 
