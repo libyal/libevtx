@@ -39,7 +39,7 @@
 
 #include "../evtxtools/evtxtools_output.h"
 
-/* Tests the evtxtools_output_initialize and function
+/* Tests the evtxtools_output_initialize function
  * Returns 1 if successful or 0 if not
  */
 int evtx_test_tools_output_initialize(
