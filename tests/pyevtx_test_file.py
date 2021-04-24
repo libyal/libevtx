@@ -38,15 +38,16 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     evtx_file = pyevtx.file()
 
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
 
     with self.assertRaises(IOError):
-      evtx_file.open(unittest.source)
+      evtx_file.open(test_source)
 
     evtx_file.close()
 
@@ -54,19 +55,20 @@ class FileTypeTests(unittest.TestCase):
       evtx_file.open(None)
 
     with self.assertRaises(ValueError):
-      evtx_file.open(unittest.source, mode="w")
+      evtx_file.open(test_source, mode="w")
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     evtx_file = pyevtx.file()
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
 
       evtx_file.open_file_object(file_object)
 
@@ -83,7 +85,8 @@ class FileTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     evtx_file = pyevtx.file()
@@ -93,21 +96,22 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       return
 
     evtx_file = pyevtx.file()
 
     # Test open and close.
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
     evtx_file.close()
 
     # Test open and close a second time to validate clean up on close.
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
     evtx_file.close()
 
-    if os.path.isfile(unittest.source):
-      with open(unittest.source, "rb") as file_object:
+    if os.path.isfile(test_source):
+      with open(test_source, "rb") as file_object:
 
         # Test open_file_object and close.
         evtx_file.open_file_object(file_object)
@@ -146,12 +150,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_ascii_codepage(self):
     """Tests the get_ascii_codepage function and ascii_codepage property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     evtx_file = pyevtx.file()
 
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
 
     ascii_codepage = evtx_file.get_ascii_codepage()
     self.assertIsNotNone(ascii_codepage)
@@ -162,12 +167,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_records(self):
     """Tests the get_number_of_records function and number_of_records property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     evtx_file = pyevtx.file()
 
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
 
     number_of_records = evtx_file.get_number_of_records()
     self.assertIsNotNone(number_of_records)
@@ -178,12 +184,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_recovered_records(self):
     """Tests the get_number_of_recovered_records function and number_of_recovered_records property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     evtx_file = pyevtx.file()
 
-    evtx_file.open(unittest.source)
+    evtx_file.open(test_source)
 
     number_of_recovered_records = evtx_file.get_number_of_recovered_records()
     self.assertIsNotNone(number_of_recovered_records)
