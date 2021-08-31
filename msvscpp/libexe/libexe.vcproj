@@ -151,6 +151,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\libexe\libexe_coff_header.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_coff_optional_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libexe\libexe_debug.c"
 				>
 			</File>
@@ -242,6 +250,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libexe\libexe_codepage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_coff_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libexe\libexe_coff_optional_header.h"
 				>
 			</File>
 			<File

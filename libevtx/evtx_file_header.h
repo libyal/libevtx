@@ -69,7 +69,7 @@ struct evtx_file_header
 	 */
 	uint8_t major_version[ 2 ];
 
-	/* The header block_size
+	/* The header block size
 	 * Consists of 2 bytes
 	 */
 	uint8_t header_block_size[ 2 ];
