@@ -71,6 +71,7 @@ April 2012 | Additional information.
 | 0.0.18 | J.B. Metz | April 2016 | Fixed typo.
 | 0.0.19 | J.B. Metz | November 2020 | Changes for formatting.
 | 0.0.20 | J.B. Metz | May 2021 | Textual and formatting changes.
+| 0.0.21 | J.B. Metz | Octoboer 2021 | Additional information regarding format versions.
 |===
 
 :numbered:
@@ -107,7 +108,8 @@ The following version of programs were used to test the information within this 
 * Windows 7
 * Windows 8
 * [yellow-background]*TODO: Windows 2012*
-* Windows 10
+* Windows 10 (1903, 1909, 2004, 20H2)
+* Windows 11 (21H2)
 
 === Event Log files
 
@@ -183,8 +185,10 @@ The file header is 4096 bytes of size and consists of:
 | 16 | 8 | | Last chunk number
 | 24 | 8 | | Next record identifier
 | 32 | 4 | 128 | Header size
-| 36 | 2 | 1 | Minor version
-| 38 | 2 | 3 | Major version
+| 36 | 2 | | Minor format version +
+See section: <<format_versions,Format versions>>
+| 38 | 2 | | Major format version +
+See section: <<format_versions,Format versions>>
 | 40 | 2 | 4096 | Header block size +
 (or chunk data offset)
 | 42 | 2 | | Number of chunks
@@ -199,6 +203,16 @@ CRC32 of the first 120 bytes of the file header
 The CRC-32 is describe in RFC 1952 and uses an initial value of 0.
 
 [yellow-background]*TODO: check if: file size = ( Number of chunks * 65536 ) + 4096*
+
+=== [[format_versions]]Format versions
+
+[cols="1,5",options="header"]
+|===
+| Version +
+(Major.Minor) | Description
+| 3.1 | Seen on Windows Vista and later
+| 3.2 | Seen on Windows 10 (2004) and later
+|===
 
 === [[file_flags]]File flags
 
