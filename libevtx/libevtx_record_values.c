@@ -231,6 +231,17 @@ int libevtx_record_values_clone(
 
 		return( 1 );
 	}
+	if( source_record_values->xml_document != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid source record values - XML document value already set.",
+		 function );
+
+		return( -1 );
+	}
 	*destination_record_values = memory_allocate_structure(
 	                              libevtx_record_values_t );
 
@@ -261,23 +272,6 @@ int libevtx_record_values_clone(
 	}
 	( *destination_record_values )->xml_document = NULL;
 
-	if( source_record_values->xml_document != NULL )
-	{
-		if( libfwevt_xml_document_clone(
-		     &( ( *destination_record_values )->xml_document ),
-		     source_record_values->xml_document,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create destination XML document.",
-			 function );
-
-			goto on_error;
-		}
-	}
 	return( 1 );
 
 on_error:
