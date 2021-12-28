@@ -8,15 +8,15 @@ Analysis of EVTX
 [abstract]
 == Summary
 
-The Windows XML EventLog (EVTX) format is used by Microsoft Windows to store 
-system log information. This specification is based the work done by A. 
-Schuster `[SCHUSTER11]` and on `[MS-EVEN6]`. It was complemented by other 
+The Windows XML EventLog (EVTX) format is used by Microsoft Windows to store
+system log information. This specification is based the work done by A.
+Schuster `[SCHUSTER11]` and on `[MS-EVEN6]`. It was complemented by other
 public available information and was enhanced by analyzing test data.
 
 This document is intended as a working document of the data format specification
 for the libevtx project.
 
-Special thanks to A. Schuster for his excellent work on the format and test 
+Special thanks to A. Schuster for his excellent work on the format and test
 files.
 
 [preface]
@@ -35,10 +35,10 @@ files.
 
 ....
 Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>.
-Permission is granted to copy, distribute and/or modify this document under the 
-terms of the GNU Free Documentation License, Version 1.3 or any later version 
-published by the Free Software Foundation; with no Invariant Sections, no 
-Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included 
+Permission is granted to copy, distribute and/or modify this document under the
+terms of the GNU Free Documentation License, Version 1.3 or any later version
+published by the Free Software Foundation; with no Invariant Sections, no
+Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included
 in the section entitled "GNU Free Documentation License".
 ....
 
@@ -72,15 +72,16 @@ April 2012 | Additional information.
 | 0.0.19 | J.B. Metz | November 2020 | Changes for formatting.
 | 0.0.20 | J.B. Metz | May 2021 | Textual and formatting changes.
 | 0.0.21 | J.B. Metz | Octoboer 2021 | Additional information regarding format versions.
+| 0.0.22 | J.B. Metz | December 2021 | Additional information about MUI language neutral file.
 |===
 
 :numbered:
 == Overview
 
-The Windows XML EventLog (EVTX) format is used by Microsoft Windows, as of 
+The Windows XML EventLog (EVTX) format is used by Microsoft Windows, as of
 Windows Vista, to store system log information.
 
-The EVTX format supersedes the Windows EventLog (EVT) format as used in Windows 
+The EVTX format supersedes the Windows EventLog (EVT) format as used in Windows
 XP.
 
 An EVTX file consists of:
@@ -260,8 +261,8 @@ CRC32 of the first 120 bytes and bytes 128 to 512 of the chunk.
 
 The CRC-32 is describe in RFC 1952 with an uses an initial value of 0.
 
-The free space offset is not the end of event records data offset, is sometimes 
-point to the end of the chunk, where the chunk after the last event record was 
+The free space offset is not the end of event records data offset, is sometimes
+point to the end of the chunk, where the chunk after the last event record was
 filled with 0-byte values. This behavior was seen in archived EVTX files.
 
 [cols="1,1,1,5",options="header"]
@@ -273,9 +274,9 @@ filled with 0-byte values. This behavior was seen in archived EVTX files.
 [yellow-background]*Array of 32 x 32-bit values*
 |===
 
-[yellow-background]*The common string offset array contains the offsets of 
-strings that are common in the event records stored in the chunk so that they 
-only have to be stored once in the first event record and can be referenced 
+[yellow-background]*The common string offset array contains the offsets of
+strings that are common in the event records stored in the chunk so that they
+only have to be stored once in the first event record and can be referenced
 from successive event records.*
 
 [yellow-background]*Identifier/Number of first and last event record in chunk*
@@ -394,19 +395,19 @@ See section: <<name,Name>>
 See section: <<attribute_list,Attribute list>>
 |===
 
-A token type of 0x01 indicates that the element start tag contains no elements; 
-a token type of 0x41 indicates that an attribute list can be expected in the 
+A token type of 0x01 indicates that the element start tag contains no elements;
+a token type of 0x41 indicates that an attribute list can be expected in the
 element start tag.
 
 [NOTE]
 The element name can be stored before the attribute list.
 
 [NOTE]
-The name offset is not present in the binary XML in the Windows Event Template 
+The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 [NOTE]
-The dependency identifier is not present when the element start is used in a 
+The dependency identifier is not present when the element start is used in a
 substitution token with value type: Binary XML (0x21).
 
 ==== [[attribute_list]]Attribute list
@@ -422,7 +423,7 @@ Does not include the 4 byte of the size.
 See section: <<attribute,Attribute>>
 |===
 
-[yellow-background]*TODO: if attribute list is empty it is trailed by 2 bytes? 
+[yellow-background]*TODO: if attribute list is empty it is trailed by 2 bytes?
 Is this 32-bit alignment padding?*
 
 ==== [[attribute]]Attribute
@@ -444,7 +445,7 @@ See section: <<name,Name>>
 | 5 | ... | | Attribute data
 |===
 
-A token type of 0x46 indicates that there is another attribute in the attribute 
+A token type of 0x46 indicates that there is another attribute in the attribute
 list; a token type of 0x06 indicates that no more attributes exist.
 
 [NOTE]
@@ -458,7 +459,7 @@ The attribute data (BinXMLAttributeData) can be:
 * entity reference
 
 [NOTE]
-The name offset is not present in the binary XML in the Windows Event Template 
+The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 ==== [[name]]Name
@@ -475,7 +476,7 @@ The name (BinXmlName) is variable of size and consists of:
 | 8 | ... | | UTF-16 little-endian string with an end-of-string character
 |===
 
-The unknown 4 bytes are not present in the binary XML in the Windows Event 
+The unknown 4 bytes are not present in the binary XML in the Windows Event
 Template resource.
 
 ==== Content
@@ -496,7 +497,7 @@ The content string data (BinXMLContentStringData) can be:
 * value text
 * substitution
 
-[yellow-background]*TODO: a content string containing an end-of-line character 
+[yellow-background]*TODO: a content string containing an end-of-line character
 seems to be considered empty by Event Viewer*
 
 ==== Value text
@@ -517,8 +518,8 @@ See section: <<value_type,Value types>>
 See section: <<unicode_text_string,Unicode text string>>
 |===
 
-A token type of 0x45 indicates that more data can be expected to follow in the 
-current content of the element or attribute; a token type of 0x05 indicates 
+A token type of 0x45 indicates that more data can be expected to follow in the
+current content of the element or attribute; a token type of 0x05 indicates
 that no more such data follows.
 
 A value text can be stored spanning multiple value tokens.
@@ -532,7 +533,7 @@ The substitution (BinXmSubstitution) can be:
 
 ==== Normal substitution
 
-The normal substitution (BinXmNormalSubstitution) is 4 byte of size and 
+The normal substitution (BinXmNormalSubstitution) is 4 byte of size and
 consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -547,17 +548,17 @@ Identifier of the value in the template instance data, where 0 represents the fi
 See section: <<value_types,Value types>>
 |===
 
-If the value type is an array type (0x80) the substitution is repeated for 
-every element of the array. If the size of an array type is 0 then a single 
+If the value type is an array type (0x80) the substitution is repeated for
+every element of the array. If the size of an array type is 0 then a single
 empty element should be created.
 
-If the value type is Size (0x10) the corresponding substitution value should be 
-a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The 
-same applies to an array of Size (0x90) where the substitution value should be 
-an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
+If the value type is Size (0x10) the corresponding substitution value should be
+a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The
+same applies to an array of Size (0x90) where the substitution value should be
+an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal
 integer (0x95).
 
-If the value type is the Binary XML type (0x21) the value data should be one of 
+If the value type is the Binary XML type (0x21) the value data should be one of
 the following:
 
 * an open start element tag (BinXmlTokenOpenStartElementTag);
@@ -566,7 +567,7 @@ the following:
 
 ==== Optional substitution
 
-The optional substitution (BinXmlOptionalSubstitution) is 4 byte of size and 
+The optional substitution (BinXmlOptionalSubstitution) is 4 byte of size and
 consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -581,20 +582,20 @@ Identifier of the value in the template instance data, where 0 represents the fi
 See section: <<value_types,Value types>>
 |===
 
-If the value type of the corresponding template value is NULL (0x00) the 
+If the value type of the corresponding template value is NULL (0x00) the
 element should be ignored and not created.
 
-If the value type is an array type (0x80) the substitution is repeated for 
-every element of the array. If the size of an array type is 0 then a single 
+If the value type is an array type (0x80) the substitution is repeated for
+every element of the array. If the size of an array type is 0 then a single
 empty element should be created.
 
-If the value type is Size (0x10) the corresponding substitution value should be 
-a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The 
-same applies to an array of Size (0x90) where the substitution value should be 
-an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal 
+If the value type is Size (0x10) the corresponding substitution value should be
+a 32-bit hexadecimal integer (0x14) or 64-bit hexadecimal integer (0x15). The
+same applies to an array of Size (0x90) where the substitution value should be
+an array of 32-bit hexadecimal integer (0x94) or an array of 64-bit hexadecimal
 integer (0x95).
 
-If the value type is the Binary XML type (0x21) the value data should be one of 
+If the value type is the Binary XML type (0x21) the value data should be one of
 the following:
 
 * an open start element tag (BinXmlTokenOpenStartElementTag);
@@ -615,13 +616,13 @@ See section: <<token_types,Token types>>
 | 1 | 2 | | Character entity value
 |===
 
-A token type of 0x48 indicates that more data can be expected to follow in the 
-current content of the element or attribute; a token type of 0x08 indicates 
+A token type of 0x48 indicates that more data can be expected to follow in the
+current content of the element or attribute; a token type of 0x08 indicates
 that no more such data follows.
 
 In the resulting XML the character entity is replaced e.g. `38` becomes `&#38;`.
 
-[yellow-background]*According to `[MS-EVEN6]` emit the characters '&' and '#' 
+[yellow-background]*According to `[MS-EVEN6]` emit the characters '&' and '#'
 and the decimal string representation of the value. TODO create a test file.*
 
 ==== Entity reference
@@ -641,18 +642,18 @@ The offset is relative from the start of the chunk +
 See section: <<name,Name>>
 |===
 
-A token type of 0x49 indicates that more data can be expected to follow in the 
-current content of the element or attribute; a token type of 0x09 indicates 
+A token type of 0x49 indicates that more data can be expected to follow in the
+current content of the element or attribute; a token type of 0x09 indicates
 that no more such data follows.
 
-In the resulting string the entity is replaced e.g. `amp` becomes & for a 
+In the resulting string the entity is replaced e.g. `amp` becomes & for a
 Unicode string and `&amp;` for an XML string.
 
 [NOTE]
-The name offset is not present in the binary XML in the Windows Event Template 
+The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
-It currently is assumed that the following entity references are supported lt, 
+It currently is assumed that the following entity references are supported lt,
 gt, amp, quot and apos.
 
 ==== CDATA section
@@ -670,8 +671,8 @@ See section: <<token_types,Token types>>
 See section: <<unicode_text_string,Unicode text string>>
 |===
 
-A token type of 0x47 indicates that more data can be expected to follow in the 
-current content of the element or attribute; a token type of 0x07 indicates 
+A token type of 0x47 indicates that more data can be expected to follow in the
+current content of the element or attribute; a token type of 0x07 indicates
 that no more such data follows.
 
 ==== Template instance
@@ -690,7 +691,7 @@ See section: <<token_types,Token types>>
 
 ==== Template definition
 
-The template definition (BinXmlTemplateDefinition) is variable of size and 
+The template definition (BinXmlTemplateDefinition) is variable of size and
 consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -716,8 +717,8 @@ See section: <<token_types,Token types>>
 |===
 
 [NOTE]
-The template definition data offset either point to the offset directly after 
-this value or somewhere previously in the chunk. The template definition can 
+The template definition data offset either point to the offset directly after
+this value or somewhere previously in the chunk. The template definition can
 therefore be stored non-continuous.
 
 [yellow-background]*What does the %b0 in `[MS-EVEN6]` signify?*
@@ -725,7 +726,7 @@ therefore be stored non-continuous.
 
 ==== Template instance data
 
-The template instance data (BinXmlTemplateInstanceData) is variable of size and 
+The template instance data (BinXmlTemplateInstanceData) is variable of size and
 consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -781,7 +782,7 @@ See section: <<name,Name>>
 |===
 
 [NOTE]
-The name offset is not present in the binary XML in the Windows Event Template 
+The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 ==== PI data
@@ -837,7 +838,7 @@ XML processing instructions
 
 Some of the token types can contain the has more data flag 0x40.
 
-[yellow-background]*TODO bitmask of 0x1f ? is this defined in winevt.h ? If so 
+[yellow-background]*TODO bitmask of 0x1f ? is this defined in winevt.h ? If so
 what do the other flags signify?*
 
 === [[value_types]]Value types
@@ -877,15 +878,15 @@ See `[NTSID]`
 32-bit (unsigned) integer that should be represented in hexadecimal notation
 | 0x15 | HexInt64Type | 64-bit integer hexadecimal +
 64-bit (unsigned) integer that should be represented in hexadecimal notation
-| | | 
+| | |
 | 0x20 | EvtHandle | [yellow-background]*Unknown*
 | 0x21 | BinXmlType | Binary XML fragment
-| | | 
+| | |
 | 0x23 | EvtXml | [yellow-background]*Unknown*
 |===
 
-If the MSB of the value type (0x80) is use to indicate an array type. According 
-to `[MSDN]` binary data and binary XML fragment types are not supported. For the 
+If the MSB of the value type (0x80) is use to indicate an array type. According
+to `[MSDN]` binary data and binary XML fragment types are not supported. For the
 string types the end-of-string character is used as a separator.
 
 [cols="1,1,5",options="header"]
@@ -917,7 +918,7 @@ Every 4 bytes are an individual value in little-endian
 Every 8 bytes are an individual value in little-endian
 | 0x8d | | [yellow-background]*Array of boolean* +
 [yellow-background]*Every 4 bytes are an individual value in little-endian*
-| | | 
+| | |
 | 0x8f | | Array of GUID +
 Every 16 bytes are an individual value in little-endian
 | 0x90 | | Array of size type +
@@ -935,13 +936,13 @@ Every 8 bytes are an individual value in little-endian
 
 ==== String
 
-If in a string the characters: <, >, &, " and ' are not escaped they must 
-respectively be replaced by the following character entities: `&lt;`, `&gt;`, 
-`&amp;`, `&quot;` and `&apos;`. This does not apply to Character entity 
+If in a string the characters: <, >, &, " and ' are not escaped they must
+respectively be replaced by the following character entities: `&lt;`, `&gt;`,
+`&amp;`, `&quot;` and `&apos;`. This does not apply to Character entity
 reference and Entity reference encoded strings.
 
-Event Viewer will not escape the character entities in the XML view, but will 
-when exported as XML. Event Viewer seems to apply the XML character entity 
+Event Viewer will not escape the character entities in the XML view, but will
+when exported as XML. Event Viewer seems to apply the XML character entity
 escaping inside element values for &, < and > but not for ' and ".
 
 ==== Systemtime
@@ -977,7 +978,7 @@ Floating point values are represented as the following stings.
 | [yellow-background]*[-]?[0-9]+.[0-9]{6}e-[0-9]{3}* | | [yellow-background]*Any positive or negative value that could not be represented in 6 fractional digits*
 |===
 
-[yellow-background]*TODO validate the highlighted ones; 32-bit fractional of 6, 
+[yellow-background]*TODO validate the highlighted ones; 32-bit fractional of 6,
 64-bit fractional of 14*
 
 == Event
@@ -1047,7 +1048,7 @@ Shown as "Information" in Event Viewer
 [cols="1,1,5",options="header"]
 |===
 | 0x0000000000000000 | | [yellow-background]*win:AnyKeyword*
-| | | 
+| | |
 | [yellow-background]*0x0000000000010000* | | [yellow-background]*Shell*
 | [yellow-background]*0x0000000000020000* | | [yellow-background]*Properties*
 | [yellow-background]*0x0000000000040000* | | [yellow-background]*FileClassStoreAndIconCache*
@@ -1060,7 +1061,7 @@ Shown as "Information" in Event Viewer
 | [yellow-background]*0x0000000002000000* | | [yellow-background]*WDI*
 | [yellow-background]*0x0000000004000000* | | [yellow-background]*StartupPerf*
 | [yellow-background]*0x0000000008000000* | | [yellow-background]*StructuredQuery*
-| | | 
+| | |
 | 0x0001000000000000 | | [yellow-background]*win:Reserved*
 | 0x0002000000000000 | | [yellow-background]*win:WDIContext*
 | 0x0004000000000000 | | [yellow-background]*win:WDIDiag*
@@ -1085,8 +1086,8 @@ Shown as "Information" in Event Viewer
 
 Some of the data that Event Viewer shows is stored outside the event log files.
 
-On Windows XP (and earlier) the first step to determine the location of these 
-values is find the corresponding "eventlog type sub key" in the Windows 
+On Windows XP (and earlier) the first step to determine the location of these
+values is find the corresponding "eventlog type sub key" in the Windows
 Registry under:
 
 ....
@@ -1108,7 +1109,7 @@ Common event log types are:
 [NOTE]
 The event log type is also stored in the "Channel" event XML element.
 
-The event log type sub key has a "event source sub key" for every source name, 
+The event log type sub key has a "event source sub key" for every source name,
 e.g for the source name "Workstation":
 
 ....
@@ -1116,7 +1117,7 @@ HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\System\Workstation
 ....
 
 [NOTE]
-The source name is case insensitive; so "Workstation" and "workstation" are 
+The source name is case insensitive; so "Workstation" and "workstation" are
 considered equivalent.
 
 The source name is stored as an attribute of the "Provider" element within the Event XML, e.g.
@@ -1129,24 +1130,24 @@ The source name is stored as an attribute of the "Provider" element within the E
               EventSourceName="Windows Search Service"/>
 ....
 
-The "EventSourceName" attribute contains the source name. If there is no 
+The "EventSourceName" attribute contains the source name. If there is no
 "EventSourceName" attribute the "Name" attribute is used.
 
-As of Windows Vista the event log type sub key contains the value 
+As of Windows Vista the event log type sub key contains the value
 "ProviderGuid" which should contain the same GUID as indicated in the Event XML:
 
 ....
 {CA4E628D-8567-4896-AB6B-835B221F373F}
 ....
 
-The corresponding provider settings can be found in the event message provider 
+The corresponding provider settings can be found in the event message provider
 Registry key:
 
 ....
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{ca4e628d-8567-4896-ab6b-835b221f373f}
 ....
 
-On a Windows Vista (or later) system "wevtutil" can be used to determine more 
+On a Windows Vista (or later) system "wevtutil" can be used to determine more
 about the provider. E.g.
 
 ....
@@ -1157,7 +1158,7 @@ wevtutil gp Microsoft-Windows-Search
 
 The event message strings are stored in event message files.
 
-The event message provider Registry key has a value named "EventMessageFile" 
+The event message provider Registry key has a value named "EventMessageFile"
 which contains a path specification of the event message file, e.g.
 
 ....
@@ -1165,22 +1166,22 @@ which contains a path specification of the event message file, e.g.
 ....
 
 [NOTE]
-The value can contain multiple filenames separated by a semi colon (;) 
+The value can contain multiple filenames separated by a semi colon (;)
 character and that the name of the event message files is case insensitive.
 
-On Windows XP (and earlier) the event source sub key has a value named 
-"EventMessageFile" which contains the same path. As of Windows Vista this value 
-is not always present and using the value "MessageFileName" in the event 
-message provider Registry key seems to be the preferred method. However it is 
-possible that the event message provider Registry key is not present and the 
+On Windows XP (and earlier) the event source sub key has a value named
+"EventMessageFile" which contains the same path. As of Windows Vista this value
+is not always present and using the value "MessageFileName" in the event
+message provider Registry key seems to be the preferred method. However it is
+possible that the event message provider Registry key is not present and the
 event source sub key is needs to be used instead.
 
-Here "%SystemRoot%" is case insensitive and needs to be expanded to the Windows 
+Here "%SystemRoot%" is case insensitive and needs to be expanded to the Windows
 directory. The actual value of %SystemRoot% can be found in the Registry value:
 
 ....
 Key: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\
-Value:	SystemRoot
+Value: SystemRoot
 ....
 
 This value is depended on the Windows version, e.g.
@@ -1207,8 +1208,8 @@ Key: HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environ
 Value: windir
 ....
 
-Event message files are PE/COFF executables that contains a resource (".rsrc ") 
-section. Event message files can have various extensions, e.g. ".exe", ".dll", 
+Event message files are PE/COFF executables that contains a resource (".rsrc ")
+section. Event message files can have various extensions, e.g. ".exe", ".dll",
 ".dll.mui", ".sys".
 
 There different types of event message files:
@@ -1216,22 +1217,22 @@ There different types of event message files:
 * Message-table resource
 * Multilingual User Interface (MUI) resource
 
-The event message files can have any combination of these resources. The rules 
+The event message files can have any combination of these resources. The rules
 of preference seems to be:
 
 * use message-table resource if present, before checking MUI resource
 
 ===== Event resource file
 
-The event message provider Registry key has a value named "ResourceFileName". 
-It is currently assumed that this Registry value contains a path specification 
+The event message provider Registry key has a value named "ResourceFileName".
+It is currently assumed that this Registry value contains a path specification
 of the event resource file, e.g.
 
 ....
 %SystemRoot%\System32\tquery.dll
 ....
 
-The event resource file should contain a Windows Event Template (WEVT_TEMPLATE) 
+The event resource file should contain a Windows Event Template (WEVT_TEMPLATE)
 resource. The MUI resource should also contain a main name type "WEVT_TEMPLATE".
 
 The information stored in this resource is used to:
@@ -1244,9 +1245,9 @@ For more detailed information see: `[LIBEXE]`.
 
 ===== Message string identifier
 
-On Windows XP (and earlier) the message string identifier was a direct mapping 
-of the event identifier as of Windows Vista this is no longer the case. There 
-seem to be multiple methods how the event identifier is mapped to the message 
+On Windows XP (and earlier) the message string identifier was a direct mapping
+of the event identifier as of Windows Vista this is no longer the case. There
+seem to be multiple methods how the event identifier is mapped to the message
 string identifier, namely:
 
 * Using the event identifier qualifiers
@@ -1273,7 +1274,7 @@ message string identifier = ( 0x4000 << 16 ) | 0x1b7c = 0x40001b7c
 
 ====== Using the Windows Event Template (WEVT_TEMPLATE) resource
 
-If an event resource file has been specified and if the Provider element in the 
+If an event resource file has been specified and if the Provider element in the
 Event XML has the GUID attribute set, e.g.:
 
 ....
@@ -1282,27 +1283,27 @@ Event XML has the GUID attribute set, e.g.:
 <EventID>1</EventID>
 ....
 
-This GUID can be used to find a corresponding provider in the Windows Event 
-Template (WEVT_TEMPLATE) resource. This resource should contain an event 
-definition with the same identifier as the EventID in the Event XML, e.g. in 
-case of the example 1. The event definition will also contain a reference the 
+This GUID can be used to find a corresponding provider in the Windows Event
+Template (WEVT_TEMPLATE) resource. This resource should contain an event
+definition with the same identifier as the EventID in the Event XML, e.g. in
+case of the example 1. The event definition will also contain a reference the
 the message identifier, e.g. in case of the example 0xb9000001.
 
 ===== Message-table resource event message files
 
-In a message-table resource event message file the event message strings are 
+In a message-table resource event message file the event message strings are
 stored in the message-table resource of the event message file.
 
-The resource section of a message-table resource event message file contains a 
-message-table resource which contains the event message strings. E.g. on 
+The resource section of a message-table resource event message file contains a
+message-table resource which contains the event message strings. E.g. on
 Windows Vista
 
 ....
 C:\Windows\Microsoft.NET\Framework\v2.0.50727\EventLogMessages.dll
 ....
 
-The event message strings have identifiers similar to the event identifiers. 
-E.g. if the event identifier is 0 and the message string identifier 0, the 
+The event message strings have identifiers similar to the event identifiers.
+E.g. if the event identifier is 0 and the message string identifier 0, the
 corresponding event message string would be:
 
 ....
@@ -1311,7 +1312,7 @@ corresponding event message string would be:
 
 The placeholder values %1 represent the first string in the event.
 
-The event strings are stored as "Data" elements in the "EventData" element 
+The event strings are stored as "Data" elements in the "EventData" element
 
 ....
 within the Event XML, e.g.
@@ -1320,43 +1321,43 @@ within the Event XML, e.g.
   </EventData>
 ....
 
-For a more comprehensive description of how to extract the event strings from 
-the Event XML see section: <<event_data,Event data>>. Sometimes the message 
-string can have more placeholder than the event data contains strings, it seems 
-in such a case the placeholders are not replaced and shown as %# in the 
+For a more comprehensive description of how to extract the event strings from
+the Event XML see section: <<event_data,Event data>>. Sometimes the message
+string can have more placeholder than the event data contains strings, it seems
+in such a case the placeholders are not replaced and shown as %# in the
 resulting string.
 
-Note that the event message strings are language specific. An event message 
+Note that the event message strings are language specific. An event message
 file can therefore contain event message strings for multiple languages.
 
 ===== Multilingual User Interface (MUI) event message files
 
-The resource section of a Multilingual User Interface (MUI) event message file 
+The resource section of a Multilingual User Interface (MUI) event message file
 contains Multilingual User Interface (MUI) resource. E.g. on Windows Vista
 
 ....
 C:\Windows\System32\services.exe
 ....
 
-The MUI event message files do not have to contain a message-table resource but 
-forward to a language specific message-table resource event message file, e.g. 
-"en-US":
+The MUI event message (or language neutral) files do not have to contain
+a message-table resource but forward to a language specific message-table
+resource event message file, e.g. "en-US":
 
 ....
 C:\Windows\System32\en-US\services.exe.mui
 ....
 
-Note that it also possible that the corresponding "language specific" event 
+Note that it also possible that the corresponding "language specific" event
 message file is stored in the same directory as the MUI event message file.
 
 ....
 C:\Windows\System32\services.exe.mui
 ....
 
-It is this file that contains the language specific event message-table 
+It is this file that contains the language specific event message-table
 resource.
 
-The event message strings have identifiers similar to the event identifiers. 
+The event message strings have identifiers similar to the event identifiers.
 E.g. if the event identifier in XML is:
 
 ....
@@ -1380,10 +1381,10 @@ The corresponding event message string would be:
 The %1 service entered the %2 state.
 ....
 
-The placeholder values %1 and %2 represent the first and second string in the 
+The placeholder values %1 and %2 represent the first and second string in the
 event.
 
-The event strings are stored as "Data" elements in the "EventData" element 
+The event strings are stored as "Data" elements in the "EventData" element
 within the Event XML, e.g.
 
 ....
@@ -1395,10 +1396,10 @@ within the Event XML, e.g.
 
 ===== [[event_data]]Event data
 
-As previously mentioned the event strings (and binary data) are stored as 
-"Data" elements in the "EventData" element within the Event XML. Another way to 
-store the event data is in a "UserData" element. The information in this 
-section is partially deduced on the behavior of the "General", "Details 
+As previously mentioned the event strings (and binary data) are stored as
+"Data" elements in the "EventData" element within the Event XML. Another way to
+store the event data is in a "UserData" element. The information in this
+section is partially deduced on the behavior of the "General", "Details
 Friendly View" and "Details XML View" of Event Viewer.
 
 Let's start out with the following variant of event data.
@@ -1410,8 +1411,8 @@ Let's start out with the following variant of event data.
   </EventData>
 ....
 
-In this case "EventData" in the "Details Friendly View" contains both the value 
-of the "Data" and the "Binary" tag. The value of the Binary tag is additionally 
+In this case "EventData" in the "Details Friendly View" contains both the value
+of the "Data" and the "Binary" tag. The value of the Binary tag is additionally
 interpreted as "Binary Data", which is base16 encoded.
 
 ....
@@ -1419,8 +1420,8 @@ interpreted as "Binary Data", which is base16 encoded.
   D9060000
 ....
 
-If the Data has a corresponding "Name" attribute the "EventData" in the 
-"Details Friendly View" shows the value of the "Name" attribute followed by the 
+If the Data has a corresponding "Name" attribute the "EventData" in the
+"Details Friendly View" shows the value of the "Name" attribute followed by the
 value of the "Data" tag, e.g.
 
 ....
@@ -1437,8 +1438,8 @@ value of the "Data" tag, e.g.
   param3 Software\Microsoft\EventSystem\EventLog
 ....
 
-The data of an empty "Data" is not ignored but not directly visible int the 
-"Details Friendly View". In case of the following example on the value of the 
+The data of an empty "Data" is not ignored but not directly visible int the
+"Details Friendly View". In case of the following example on the value of the
 "Name" attribute would be shown.
 
 ....
@@ -1452,11 +1453,11 @@ The data of an empty "Data" is not ignored but not directly visible int the
 ProcessingErrorData is a variation of EventData:
 
 ....
-  <ProcessingErrorData> 
-    <ErrorCode>15005</ErrorCode> 
-    <DataItemName>Value</DataItemName> 
-    <EventPayload>804110C3E253BF01</EventPayload> 
-  </ProcessingErrorData> 
+  <ProcessingErrorData>
+    <ErrorCode>15005</ErrorCode>
+    <DataItemName>Value</DataItemName>
+    <EventPayload>804110C3E253BF01</EventPayload>
+  </ProcessingErrorData>
 ....
 
 ....
@@ -1465,7 +1466,7 @@ ProcessingErrorData is a variation of EventData:
     EventPayload 804110C3E253BF01
 ....
 
-In some events the data is not stored in a "EventData" tag within the Event XML 
+In some events the data is not stored in a "EventData" tag within the Event XML
 but in a "UserData" tag, e.g.
 
 ....
@@ -1479,7 +1480,7 @@ but in a "UserData" tag, e.g.
   </UserData>
 ....
 
-In this case the "EventData" in the "Details Friendly View" will show the data 
+In this case the "EventData" in the "Details Friendly View" will show the data
 as:
 
 ....
@@ -1490,7 +1491,7 @@ EventXML
   binaryData 44415441
 ....
 
-The binary data is not interpreted as the binary data seen with the "EventData" 
+The binary data is not interpreted as the binary data seen with the "EventData"
 tag.
 
 Here "WmiApRpl" is the first string and "44415441" the fourth.
@@ -1523,7 +1524,7 @@ The event logging service encountered an error while processing an incoming even
 
 Which indicates the attribute value should be considered the first event string.
 
-Some event records have a corresponding template definition in the 
+Some event records have a corresponding template definition in the
 WEVT_TEMPLATE data.
 
 An example of an event record with a corresponding template definition is:
@@ -1540,9 +1541,9 @@ An example of an event record with a corresponding template definition is:
 </EventData>
 ....
 
-Note that not all event records have corresponding WEVT_TEMPLATE data or 
-template definition. Sometimes the template definition does not entirely match 
-the event record e.g. the following example where the template definition 
+Note that not all event records have corresponding WEVT_TEMPLATE data or
+template definition. Sometimes the template definition does not entirely match
+the event record e.g. the following example where the template definition
 contains Name="%1" but not the event record.
 
 ....
@@ -1563,12 +1564,12 @@ This however might be a special case of the "EventData".
 
 ===== Parsing event data
 
-In the initial phases of the libevtx project several attempts have been made to 
+In the initial phases of the libevtx project several attempts have been made to
 uniformly parse the event data.
 
-Firstly the naive approach. This approach considers the element values of the 
-sub elements of the "EventData" or "UserData" elements as event string. Alas 
-this approach fails to handle event strings that are defined as element 
+Firstly the naive approach. This approach considers the element values of the
+sub elements of the "EventData" or "UserData" elements as event string. Alas
+this approach fails to handle event strings that are defined as element
 attributes values mainly seen in "UserData" elements, e.g.
 
 ....
@@ -1581,10 +1582,10 @@ attributes values mainly seen in "UserData" elements, e.g.
   </UserData>
 ....
 
-The next approach was to use the template definitions, if available, to parse 
-the "EventData" and "UserData" elements. This approach seemed to solve the 
-issue with the event strings defined as attribute values. Alas not every 
-template definition seem to match the event record data, at least for some of 
+The next approach was to use the template definitions, if available, to parse
+the "EventData" and "UserData" elements. This approach seemed to solve the
+issue with the event strings defined as attribute values. Alas not every
+template definition seem to match the event record data, at least for some of
 the "EventData" elements, e.g.
 
 ....
@@ -1601,14 +1602,14 @@ the "EventData" elements, e.g.
 </EventData>
 ....
 
-However using the template definitions to parse the event data proved an 
-interesting insight that the the binary XML substitution tokens of the template 
-definition match those of the event record. Which is the technique used as of 
+However using the template definitions to parse the event data proved an
+interesting insight that the the binary XML substitution tokens of the template
+definition match those of the event record. Which is the technique used as of
 version 20130208.
 
 ===== Parameter expansion
 
-Parameter expansion is e.g. seen in event identifier 7006 of the Service 
+Parameter expansion is e.g. seen in event identifier 7006 of the Service
 Control Manager (SC Manager).
 
 ....
@@ -1622,18 +1623,18 @@ Control Manager (SC Manager).
 Here the string translates to:
 
 ....
-The ScRegSetValueExW call failed for FailureActions with the following error: 
+The ScRegSetValueExW call failed for FailureActions with the following error:
 Access is denied.
 ....
 
-The event source sub key has a value named "ParameterMessageFile" which for the 
+The event source sub key has a value named "ParameterMessageFile" which for the
 Service Control Manager refers to:
 
 ....
 %SystemRoot%\System32\MsObjs.dll
 ....
 
-Here %%5 corresponds to the message string with identifier 5 stored in 
+Here %%5 corresponds to the message string with identifier 5 stored in
 msobjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".
 
 ====  Category
@@ -1645,13 +1646,13 @@ msobjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".
 1. Scan the chunk free space for event records and make sure the size and copy of size match.
 2. Ignore any record with an identifier that already exists. Often the free space contains former versions of existing event records.
 
-[yellow-background]*How useful are former versions of event records for 
+[yellow-background]*How useful are former versions of event records for
 correcting corrupted event records?*
 
 === Detecting corrupted records
 
-Comparing the size and copy of size is a quick way to detect corrupted records 
-but sometimes the sizes match while the record is not recoverable. The 
+Comparing the size and copy of size is a quick way to detect corrupted records
+but sometimes the sizes match while the record is not recoverable. The
 detection of corrupted records can be improved by looking at:
 the Binary XML data.
 
@@ -1687,7 +1688,7 @@ libevtx_binary_xml_document_read_pi_data: value data:
 00000020: 01 ff ff 0f 05 ff ff 0f                            ....
 ....
 
-EventViewer seems to interpret 05 ff ff 0f as part of the string? But 18 x 2 
+EventViewer seems to interpret 05 ff ff 0f as part of the string? But 18 x 2
 seems to be the correct data size.
 ....
 
@@ -1742,8 +1743,8 @@ Even the 04 04 part of the string looks like valid BinXML.
 
 === Corrupted file header with correct checksum
 
-For some reason in EVTX file the file header was written with incorrect data 
-although the checksum checks out. As you can see the first chunk number: 206 
+For some reason in EVTX file the file header was written with incorrect data
+although the checksum checks out. As you can see the first chunk number: 206
 exceeds last chunk number: 205.
 
 ....
@@ -1760,56 +1761,56 @@ flags                               : 0x00000000
 checksum                            : 0x7fc747e2
 ....
 
-[yellow-background]*TODO check the number of chunks in the file and if the 
+[yellow-background]*TODO check the number of chunks in the file and if the
 event ids are in sequential order. At first glance it seems to be this way.*
 
 === Dirty file with invalid number of chunks
 
-In the dirty file with invalid offset values scenarios the file header 
-indicates the incorrect number of chunks in the file; in this case less than 
+In the dirty file with invalid offset values scenarios the file header
+indicates the incorrect number of chunks in the file; in this case less than
 the actual number of chunks.
 
 ....
-signature                           : ElfFile\x00 
-first chunk number                  : 0 
-last chunk number                   : 35 
-next record identifier              : 150158 
-header size                         : 128 
-minor version                       : 1 
-major version                       : 3 
-header block size                   : 4096 
-number of chunks                    : 36 
+signature                           : ElfFile\x00
+first chunk number                  : 0
+last chunk number                   : 35
+next record identifier              : 150158
+header size                         : 128
+minor version                       : 1
+major version                       : 3
+header block size                   : 4096
+number of chunks                    : 36
 flags                               : 0x00000001
 checksum                            : 0x98053517
 ....
 
-Event Viewer seems to "correct" files that are dirty and where the number of 
+Event Viewer seems to "correct" files that are dirty and where the number of
 chunks in the file header is less than the actual number of chunks.
 
-The approach implemented in libevtx 20130713 to deal with these files is to 
-keep scanning for chunks after the last chunk indicated by the file header. The 
+The approach implemented in libevtx 20130713 to deal with these files is to
+keep scanning for chunks after the last chunk indicated by the file header. The
 records in these chunks are not marked as recovered records.
 
 === Corrupt event record
 
-Corruption of an event record can occur in multiple ways, the following variant 
+Corruption of an event record can occur in multiple ways, the following variant
 have been seen:
 
 * In the middle of a chunk there is suddenly a large block of 0-byte values directly after an event record.
 * In the middle of a chunk there is an event record that is corrupt e.g. the size of the event record does not match the copy of size.
 
-The approach is to start scanning for recoverable event records in the 
+The approach is to start scanning for recoverable event records in the
 remainder of the chunk. Any event records found are considered recovered.
 
 === Corrupted chunk
 
-Corruption of an chunk can occur in multiple ways, the following variant have 
+Corruption of an chunk can occur in multiple ways, the following variant have
 been seen:
 
 * In the middle of a chunk there is suddenly a large block of 0-byte values directly after an event record. These 0-byte values continue across the next (expected) chunk header.
 
-The approach is to start scanning for recoverable event records until a correct 
-chunk header is found or the end of file is reached. Any event records found 
+The approach is to start scanning for recoverable event records until a correct
+chunk header is found or the end of file is reached. Any event records found
 are considered recovered.
 
 == Notes
@@ -1856,7 +1857,7 @@ file flags                          : 0x00000000
 checksum                            : 0x9d4c00e2
 ....
 
-In the file the event records are in order, meaning that the first chunk 
+In the file the event records are in order, meaning that the first chunk
 contains the event record with the lowest event record number.
 
 ....
@@ -1891,7 +1892,7 @@ free space offset                                   : 0x0000ff30
 event records checksum                              : 0x7fa7a9df
 ....
 
-[yellow-background]*TODO determine if gaps in event record identifiers is 
+[yellow-background]*TODO determine if gaps in event record identifiers is
 normal behavior?*
 
 === Corruption scenario: event record mismatch between size and copy of size
@@ -1937,7 +1938,7 @@ checksum                                            : 0x5ff97a22
 
 mismatch in chunk: 14 event records CRC-32 checksum (0x6df0577c != 0xd97de631)
 
-In the middle of this chunk the size of the event record does not match the 
+In the middle of this chunk the size of the event record does not match the
 copy of size.
 
 ....
@@ -1950,16 +1951,16 @@ size copy                            : 1694526976
 
 Judging by the data structures the size points in the middle of the binary XML.
 
-In this case scanning for event record signatures in the remainder of the chunk 
+In this case scanning for event record signatures in the remainder of the chunk
 yields 6 results:
 
 * 1x corrupt event record (72433924)
 * 5x recoverable event records (73882240 - 73882244)
 
-The discontinuation in event record numbers suggest that the file was copied 
+The discontinuation in event record numbers suggest that the file was copied
 while event record 72433924 was being written.
 
-By continuing scanning for event records in total 21045 event records were 
+By continuing scanning for event records in total 21045 event records were
 found with the first event number of 72432422.
 
 === Corruption scenario: cross chunk 0-byte values
@@ -1968,7 +1969,7 @@ Lets consider a dirty Security.evtx file.
 
 EventViewer shows 102019 events.
 
-Using "Save All Events As ..." as an XML file from EventViewer shows 68269 
+Using "Save All Events As ..." as an XML file from EventViewer shows 68269
 events.
 
 Wevtutil get-log-info shows 102019 events.
@@ -1991,7 +1992,7 @@ Failed to read events. The event log file is corrupted.
 cat file.xml | grep EventRecordID | wc -l
 ....
 
-Recall that in the previous corruption scenario wevtutil did not report it but 
+Recall that in the previous corruption scenario wevtutil did not report it but
 in this case it does.
 
 ....
@@ -2026,7 +2027,7 @@ chunk header data:
 00000070: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00   ........ ........
 ....
 
-By continuing scanning for event records in total 98927 event records and 1043 
+By continuing scanning for event records in total 98927 event records and 1043
 recoverable event records were found.
 
 === Other
@@ -2134,389 +2135,389 @@ http://msdn.microsoft.com/en-us/library/cc238875(v=prot.10).aspx
 == GNU Free Documentation License
 
 Version 1.3, 3 November 2008
-Copyright © 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc. 
+Copyright © 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
 <http://fsf.org/>
 
-Everyone is permitted to copy and distribute verbatim copies of this license 
+Everyone is permitted to copy and distribute verbatim copies of this license
 document, but changing it is not allowed.
 
 === 0. PREAMBLE
 
-The purpose of this License is to make a manual, textbook, or other functional 
-and useful document "free" in the sense of freedom: to assure everyone the 
-effective freedom to copy and redistribute it, with or without modifying it, 
-either commercially or noncommercially. Secondarily, this License preserves for 
-the author and publisher a way to get credit for their work, while not being 
+The purpose of this License is to make a manual, textbook, or other functional
+and useful document "free" in the sense of freedom: to assure everyone the
+effective freedom to copy and redistribute it, with or without modifying it,
+either commercially or noncommercially. Secondarily, this License preserves for
+the author and publisher a way to get credit for their work, while not being
 considered responsible for modifications made by others.
 
-This License is a kind of "copyleft", which means that derivative works of the 
-document must themselves be free in the same sense. It complements the GNU 
+This License is a kind of "copyleft", which means that derivative works of the
+document must themselves be free in the same sense. It complements the GNU
 General Public License, which is a copyleft license designed for free software.
 
-We have designed this License in order to use it for manuals for free software, 
-because free software needs free documentation: a free program should come with 
-manuals providing the same freedoms that the software does. But this License is 
-not limited to software manuals; it can be used for any textual work, 
-regardless of subject matter or whether it is published as a printed book. We 
-recommend this License principally for works whose purpose is instruction or 
+We have designed this License in order to use it for manuals for free software,
+because free software needs free documentation: a free program should come with
+manuals providing the same freedoms that the software does. But this License is
+not limited to software manuals; it can be used for any textual work,
+regardless of subject matter or whether it is published as a printed book. We
+recommend this License principally for works whose purpose is instruction or
 reference.
 
 === 1. APPLICABILITY AND DEFINITIONS
 
-This License applies to any manual or other work, in any medium, that contains 
-a notice placed by the copyright holder saying it can be distributed under the 
-terms of this License. Such a notice grants a world-wide, royalty-free license, 
-unlimited in duration, to use that work under the conditions stated herein. The 
-"Document", below, refers to any such manual or work. Any member of the public 
-is a licensee, and is addressed as "you". You accept the license if you copy, 
+This License applies to any manual or other work, in any medium, that contains
+a notice placed by the copyright holder saying it can be distributed under the
+terms of this License. Such a notice grants a world-wide, royalty-free license,
+unlimited in duration, to use that work under the conditions stated herein. The
+"Document", below, refers to any such manual or work. Any member of the public
+is a licensee, and is addressed as "you". You accept the license if you copy,
 modify or distribute the work in a way requiring permission under copyright law.
 
-A "Modified Version" of the Document means any work containing the Document or 
-a portion of it, either copied verbatim, or with modifications and/or 
+A "Modified Version" of the Document means any work containing the Document or
+a portion of it, either copied verbatim, or with modifications and/or
 translated into another language.
 
-A "Secondary Section" is a named appendix or a front-matter section of the 
-Document that deals exclusively with the relationship of the publishers or 
-authors of the Document to the Document's overall subject (or to related 
-matters) and contains nothing that could fall directly within that overall 
-subject. (Thus, if the Document is in part a textbook of mathematics, a 
-Secondary Section may not explain any mathematics.) The relationship could be a 
-matter of historical connection with the subject or with related matters, or of 
+A "Secondary Section" is a named appendix or a front-matter section of the
+Document that deals exclusively with the relationship of the publishers or
+authors of the Document to the Document's overall subject (or to related
+matters) and contains nothing that could fall directly within that overall
+subject. (Thus, if the Document is in part a textbook of mathematics, a
+Secondary Section may not explain any mathematics.) The relationship could be a
+matter of historical connection with the subject or with related matters, or of
 legal, commercial, philosophical, ethical or political position regarding them.
 
-The "Invariant Sections" are certain Secondary Sections whose titles are 
-designated, as being those of Invariant Sections, in the notice that says that 
-the Document is released under this License. If a section does not fit the 
-above definition of Secondary then it is not allowed to be designated as 
-Invariant. The Document may contain zero Invariant Sections. If the Document 
+The "Invariant Sections" are certain Secondary Sections whose titles are
+designated, as being those of Invariant Sections, in the notice that says that
+the Document is released under this License. If a section does not fit the
+above definition of Secondary then it is not allowed to be designated as
+Invariant. The Document may contain zero Invariant Sections. If the Document
 does not identify any Invariant Sections then there are none.
 
-The "Cover Texts" are certain short passages of text that are listed, as 
-Front-Cover Texts or Back-Cover Texts, in the notice that says that the 
-Document is released under this License. A Front-Cover Text may be at most 5 
+The "Cover Texts" are certain short passages of text that are listed, as
+Front-Cover Texts or Back-Cover Texts, in the notice that says that the
+Document is released under this License. A Front-Cover Text may be at most 5
 words, and a Back-Cover Text may be at most 25 words.
 
-A "Transparent" copy of the Document means a machine-readable copy, represented 
-in a format whose specification is available to the general public, that is 
-suitable for revising the document straightforwardly with generic text editors 
-or (for images composed of pixels) generic paint programs or (for drawings) 
-some widely available drawing editor, and that is suitable for input to text 
-formatters or for automatic translation to a variety of formats suitable for 
-input to text formatters. A copy made in an otherwise Transparent file format 
-whose markup, or absence of markup, has been arranged to thwart or discourage 
-subsequent modification by readers is not Transparent. An image format is not 
-Transparent if used for any substantial amount of text. A copy that is not 
+A "Transparent" copy of the Document means a machine-readable copy, represented
+in a format whose specification is available to the general public, that is
+suitable for revising the document straightforwardly with generic text editors
+or (for images composed of pixels) generic paint programs or (for drawings)
+some widely available drawing editor, and that is suitable for input to text
+formatters or for automatic translation to a variety of formats suitable for
+input to text formatters. A copy made in an otherwise Transparent file format
+whose markup, or absence of markup, has been arranged to thwart or discourage
+subsequent modification by readers is not Transparent. An image format is not
+Transparent if used for any substantial amount of text. A copy that is not
 "Transparent" is called "Opaque".
 
-Examples of suitable formats for Transparent copies include plain ASCII without 
-markup, Texinfo input format, LaTeX input format, SGML or XML using a publicly 
-available DTD, and standard-conforming simple HTML, PostScript or PDF designed 
-for human modification. Examples of transparent image formats include PNG, XCF 
-and JPG. Opaque formats include proprietary formats that can be read and edited 
-only by proprietary word processors, SGML or XML for which the DTD and/or 
-processing tools are not generally available, and the machine-generated HTML, 
+Examples of suitable formats for Transparent copies include plain ASCII without
+markup, Texinfo input format, LaTeX input format, SGML or XML using a publicly
+available DTD, and standard-conforming simple HTML, PostScript or PDF designed
+for human modification. Examples of transparent image formats include PNG, XCF
+and JPG. Opaque formats include proprietary formats that can be read and edited
+only by proprietary word processors, SGML or XML for which the DTD and/or
+processing tools are not generally available, and the machine-generated HTML,
 PostScript or PDF produced by some word processors for output purposes only.
 
-The "Title Page" means, for a printed book, the title page itself, plus such 
-following pages as are needed to hold, legibly, the material this License 
-requires to appear in the title page. For works in formats which do not have 
-any title page as such, "Title Page" means the text near the most prominent 
+The "Title Page" means, for a printed book, the title page itself, plus such
+following pages as are needed to hold, legibly, the material this License
+requires to appear in the title page. For works in formats which do not have
+any title page as such, "Title Page" means the text near the most prominent
 appearance of the work's title, preceding the beginning of the body of the text.
 
-The "publisher" means any person or entity that distributes copies of the 
+The "publisher" means any person or entity that distributes copies of the
 Document to the public.
 
-A section "Entitled XYZ" means a named subunit of the Document whose title 
-either is precisely XYZ or contains XYZ in parentheses following text that 
-translates XYZ in another language. (Here XYZ stands for a specific section 
-name mentioned below, such as "Acknowledgements", "Dedications", 
-"Endorsements", or "History".) To "Preserve the Title" of such a section when 
-you modify the Document means that it remains a section "Entitled XYZ" 
+A section "Entitled XYZ" means a named subunit of the Document whose title
+either is precisely XYZ or contains XYZ in parentheses following text that
+translates XYZ in another language. (Here XYZ stands for a specific section
+name mentioned below, such as "Acknowledgements", "Dedications",
+"Endorsements", or "History".) To "Preserve the Title" of such a section when
+you modify the Document means that it remains a section "Entitled XYZ"
 according to this definition.
 
-The Document may include Warranty Disclaimers next to the notice which states 
-that this License applies to the Document. These Warranty Disclaimers are 
-considered to be included by reference in this License, but only as regards 
-disclaiming warranties: any other implication that these Warranty Disclaimers 
+The Document may include Warranty Disclaimers next to the notice which states
+that this License applies to the Document. These Warranty Disclaimers are
+considered to be included by reference in this License, but only as regards
+disclaiming warranties: any other implication that these Warranty Disclaimers
 may have is void and has no effect on the meaning of this License.
 
 === 2. VERBATIM COPYING
 
-You may copy and distribute the Document in any medium, either commercially or 
-noncommercially, provided that this License, the copyright notices, and the 
-license notice saying this License applies to the Document are reproduced in 
-all copies, and that you add no other conditions whatsoever to those of this 
-License. You may not use technical measures to obstruct or control the reading 
-or further copying of the copies you make or distribute. However, you may 
-accept compensation in exchange for copies. If you distribute a large enough 
+You may copy and distribute the Document in any medium, either commercially or
+noncommercially, provided that this License, the copyright notices, and the
+license notice saying this License applies to the Document are reproduced in
+all copies, and that you add no other conditions whatsoever to those of this
+License. You may not use technical measures to obstruct or control the reading
+or further copying of the copies you make or distribute. However, you may
+accept compensation in exchange for copies. If you distribute a large enough
 number of copies you must also follow the conditions in section 3.
 
-You may also lend copies, under the same conditions stated above, and you may 
+You may also lend copies, under the same conditions stated above, and you may
 publicly display copies.
 
 === 3. COPYING IN QUANTITY
 
-If you publish printed copies (or copies in media that commonly have printed 
-covers) of the Document, numbering more than 100, and the Document's license 
-notice requires Cover Texts, you must enclose the copies in covers that carry, 
-clearly and legibly, all these Cover Texts: Front-Cover Texts on the front 
-cover, and Back-Cover Texts on the back cover. Both covers must also clearly 
-and legibly identify you as the publisher of these copies. The front cover must 
-present the full title with all words of the title equally prominent and 
-visible. You may add other material on the covers in addition. Copying with 
-changes limited to the covers, as long as they preserve the title of the 
-Document and satisfy these conditions, can be treated as verbatim copying in 
+If you publish printed copies (or copies in media that commonly have printed
+covers) of the Document, numbering more than 100, and the Document's license
+notice requires Cover Texts, you must enclose the copies in covers that carry,
+clearly and legibly, all these Cover Texts: Front-Cover Texts on the front
+cover, and Back-Cover Texts on the back cover. Both covers must also clearly
+and legibly identify you as the publisher of these copies. The front cover must
+present the full title with all words of the title equally prominent and
+visible. You may add other material on the covers in addition. Copying with
+changes limited to the covers, as long as they preserve the title of the
+Document and satisfy these conditions, can be treated as verbatim copying in
 other respects.
 
-If the required texts for either cover are too voluminous to fit legibly, you 
-should put the first ones listed (as many as fit reasonably) on the actual 
+If the required texts for either cover are too voluminous to fit legibly, you
+should put the first ones listed (as many as fit reasonably) on the actual
 cover, and continue the rest onto adjacent pages.
 
-If you publish or distribute Opaque copies of the Document numbering more than 
-100, you must either include a machine-readable Transparent copy along with 
-each Opaque copy, or state in or with each Opaque copy a computer-network 
-location from which the general network-using public has access to download 
-using public-standard network protocols a complete Transparent copy of the 
-Document, free of added material. If you use the latter option, you must take 
-reasonably prudent steps, when you begin distribution of Opaque copies in 
-quantity, to ensure that this Transparent copy will remain thus accessible at 
-the stated location until at least one year after the last time you distribute 
-an Opaque copy (directly or through your agents or retailers) of that edition 
+If you publish or distribute Opaque copies of the Document numbering more than
+100, you must either include a machine-readable Transparent copy along with
+each Opaque copy, or state in or with each Opaque copy a computer-network
+location from which the general network-using public has access to download
+using public-standard network protocols a complete Transparent copy of the
+Document, free of added material. If you use the latter option, you must take
+reasonably prudent steps, when you begin distribution of Opaque copies in
+quantity, to ensure that this Transparent copy will remain thus accessible at
+the stated location until at least one year after the last time you distribute
+an Opaque copy (directly or through your agents or retailers) of that edition
 to the public.
 
-It is requested, but not required, that you contact the authors of the Document 
-well before redistributing any large number of copies, to give them a chance to 
+It is requested, but not required, that you contact the authors of the Document
+well before redistributing any large number of copies, to give them a chance to
 provide you with an updated version of the Document.
 
 === 4. MODIFICATIONS
 
-You may copy and distribute a Modified Version of the Document under the 
-conditions of sections 2 and 3 above, provided that you release the Modified 
-Version under precisely this License, with the Modified Version filling the 
-role of the Document, thus licensing distribution and modification of the 
-Modified Version to whoever possesses a copy of it. In addition, you must do 
+You may copy and distribute a Modified Version of the Document under the
+conditions of sections 2 and 3 above, provided that you release the Modified
+Version under precisely this License, with the Modified Version filling the
+role of the Document, thus licensing distribution and modification of the
+Modified Version to whoever possesses a copy of it. In addition, you must do
 these things in the Modified Version:
 
-A. Use in the Title Page (and on the covers, if any) a title distinct from that 
-of the Document, and from those of previous versions (which should, if there 
-were any, be listed in the History section of the Document). You may use the 
-same title as a previous version if the original publisher of that version 
-gives permission. 
+A. Use in the Title Page (and on the covers, if any) a title distinct from that
+of the Document, and from those of previous versions (which should, if there
+were any, be listed in the History section of the Document). You may use the
+same title as a previous version if the original publisher of that version
+gives permission.
 
-B. List on the Title Page, as authors, one or more persons or entities 
-responsible for authorship of the modifications in the Modified Version, 
-together with at least five of the principal authors of the Document (all of 
-its principal authors, if it has fewer than five), unless they release you from 
-this requirement. 
+B. List on the Title Page, as authors, one or more persons or entities
+responsible for authorship of the modifications in the Modified Version,
+together with at least five of the principal authors of the Document (all of
+its principal authors, if it has fewer than five), unless they release you from
+this requirement.
 
-C. State on the Title page the name of the publisher of the Modified Version, 
-as the publisher. 
+C. State on the Title page the name of the publisher of the Modified Version,
+as the publisher.
 
-D. Preserve all the copyright notices of the Document. 
+D. Preserve all the copyright notices of the Document.
 
-E. Add an appropriate copyright notice for your modifications adjacent to the 
-other copyright notices. 
+E. Add an appropriate copyright notice for your modifications adjacent to the
+other copyright notices.
 
-F. Include, immediately after the copyright notices, a license notice giving 
-the public permission to use the Modified Version under the terms of this 
-License, in the form shown in the Addendum below. 
+F. Include, immediately after the copyright notices, a license notice giving
+the public permission to use the Modified Version under the terms of this
+License, in the form shown in the Addendum below.
 
-G. Preserve in that license notice the full lists of Invariant Sections and 
-required Cover Texts given in the Document's license notice. 
+G. Preserve in that license notice the full lists of Invariant Sections and
+required Cover Texts given in the Document's license notice.
 
-H. Include an unaltered copy of this License. 
+H. Include an unaltered copy of this License.
 
-I. Preserve the section Entitled "History", Preserve its Title, and add to it 
-an item stating at least the title, year, new authors, and publisher of the 
-Modified Version as given on the Title Page. If there is no section Entitled 
-"History" in the Document, create one stating the title, year, authors, and 
-publisher of the Document as given on its Title Page, then add an item 
-describing the Modified Version as stated in the previous sentence. 
+I. Preserve the section Entitled "History", Preserve its Title, and add to it
+an item stating at least the title, year, new authors, and publisher of the
+Modified Version as given on the Title Page. If there is no section Entitled
+"History" in the Document, create one stating the title, year, authors, and
+publisher of the Document as given on its Title Page, then add an item
+describing the Modified Version as stated in the previous sentence.
 
-J. Preserve the network location, if any, given in the Document for public 
-access to a Transparent copy of the Document, and likewise the network 
-locations given in the Document for previous versions it was based on. These 
-may be placed in the "History" section. You may omit a network location for a 
-work that was published at least four years before the Document itself, or if 
-the original publisher of the version it refers to gives permission. 
+J. Preserve the network location, if any, given in the Document for public
+access to a Transparent copy of the Document, and likewise the network
+locations given in the Document for previous versions it was based on. These
+may be placed in the "History" section. You may omit a network location for a
+work that was published at least four years before the Document itself, or if
+the original publisher of the version it refers to gives permission.
 
-K. For any section Entitled "Acknowledgements" or "Dedications", Preserve the 
-Title of the section, and preserve in the section all the substance and tone of 
-each of the contributor acknowledgements and/or dedications given therein. 
+K. For any section Entitled "Acknowledgements" or "Dedications", Preserve the
+Title of the section, and preserve in the section all the substance and tone of
+each of the contributor acknowledgements and/or dedications given therein.
 
-L. Preserve all the Invariant Sections of the Document, unaltered in their text 
-and in their titles. Section numbers or the equivalent are not considered part 
-of the section titles. 
+L. Preserve all the Invariant Sections of the Document, unaltered in their text
+and in their titles. Section numbers or the equivalent are not considered part
+of the section titles.
 
-M. Delete any section Entitled "Endorsements". Such a section may not be 
-included in the Modified Version. 
+M. Delete any section Entitled "Endorsements". Such a section may not be
+included in the Modified Version.
 
-N. Do not retitle any existing section to be Entitled "Endorsements" or to 
-conflict in title with any Invariant Section. 
+N. Do not retitle any existing section to be Entitled "Endorsements" or to
+conflict in title with any Invariant Section.
 
-O. Preserve any Warranty Disclaimers. 
+O. Preserve any Warranty Disclaimers.
 
-If the Modified Version includes new front-matter sections or appendices that 
-qualify as Secondary Sections and contain no material copied from the Document, 
-you may at your option designate some or all of these sections as invariant. To 
-do this, add their titles to the list of Invariant Sections in the Modified 
-Version's license notice. These titles must be distinct from any other section 
+If the Modified Version includes new front-matter sections or appendices that
+qualify as Secondary Sections and contain no material copied from the Document,
+you may at your option designate some or all of these sections as invariant. To
+do this, add their titles to the list of Invariant Sections in the Modified
+Version's license notice. These titles must be distinct from any other section
 titles.
 
-You may add a section Entitled "Endorsements", provided it contains nothing but 
-endorsements of your Modified Version by various parties—for example, 
-statements of peer review or that the text has been approved by an organization 
+You may add a section Entitled "Endorsements", provided it contains nothing but
+endorsements of your Modified Version by various parties—for example,
+statements of peer review or that the text has been approved by an organization
 as the authoritative definition of a standard.
 
-You may add a passage of up to five words as a Front-Cover Text, and a passage 
-of up to 25 words as a Back-Cover Text, to the end of the list of Cover Texts 
-in the Modified Version. Only one passage of Front-Cover Text and one of 
-Back-Cover Text may be added by (or through arrangements made by) any one 
-entity. If the Document already includes a cover text for the same cover, 
-previously added by you or by arrangement made by the same entity you are 
-acting on behalf of, you may not add another; but you may replace the old one, 
+You may add a passage of up to five words as a Front-Cover Text, and a passage
+of up to 25 words as a Back-Cover Text, to the end of the list of Cover Texts
+in the Modified Version. Only one passage of Front-Cover Text and one of
+Back-Cover Text may be added by (or through arrangements made by) any one
+entity. If the Document already includes a cover text for the same cover,
+previously added by you or by arrangement made by the same entity you are
+acting on behalf of, you may not add another; but you may replace the old one,
 on explicit permission from the previous publisher that added the old one.
 
-The author(s) and publisher(s) of the Document do not by this License give 
-permission to use their names for publicity for or to assert or imply 
+The author(s) and publisher(s) of the Document do not by this License give
+permission to use their names for publicity for or to assert or imply
 endorsement of any Modified Version.
 
 === 5. COMBINING DOCUMENTS
 
-You may combine the Document with other documents released under this License, 
-under the terms defined in section 4 above for modified versions, provided that 
-you include in the combination all of the Invariant Sections of all of the 
-original documents, unmodified, and list them all as Invariant Sections of your 
-combined work in its license notice, and that you preserve all their Warranty 
+You may combine the Document with other documents released under this License,
+under the terms defined in section 4 above for modified versions, provided that
+you include in the combination all of the Invariant Sections of all of the
+original documents, unmodified, and list them all as Invariant Sections of your
+combined work in its license notice, and that you preserve all their Warranty
 Disclaimers.
 
-The combined work need only contain one copy of this License, and multiple 
-identical Invariant Sections may be replaced with a single copy. If there are 
-multiple Invariant Sections with the same name but different contents, make the 
-title of each such section unique by adding at the end of it, in parentheses, 
-the name of the original author or publisher of that section if known, or else 
-a unique number. Make the same adjustment to the section titles in the list of 
+The combined work need only contain one copy of this License, and multiple
+identical Invariant Sections may be replaced with a single copy. If there are
+multiple Invariant Sections with the same name but different contents, make the
+title of each such section unique by adding at the end of it, in parentheses,
+the name of the original author or publisher of that section if known, or else
+a unique number. Make the same adjustment to the section titles in the list of
 Invariant Sections in the license notice of the combined work.
 
-In the combination, you must combine any sections Entitled "History" in the 
-various original documents, forming one section Entitled "History"; likewise 
-combine any sections Entitled "Acknowledgements", and any sections Entitled 
+In the combination, you must combine any sections Entitled "History" in the
+various original documents, forming one section Entitled "History"; likewise
+combine any sections Entitled "Acknowledgements", and any sections Entitled
 "Dedications". You must delete all sections Entitled "Endorsements".
 
 === 6. COLLECTIONS OF DOCUMENTS
 
-You may make a collection consisting of the Document and other documents 
-released under this License, and replace the individual copies of this License 
-in the various documents with a single copy that is included in the collection, 
-provided that you follow the rules of this License for verbatim copying of each 
+You may make a collection consisting of the Document and other documents
+released under this License, and replace the individual copies of this License
+in the various documents with a single copy that is included in the collection,
+provided that you follow the rules of this License for verbatim copying of each
 of the documents in all other respects.
 
-You may extract a single document from such a collection, and distribute it 
-individually under this License, provided you insert a copy of this License 
-into the extracted document, and follow this License in all other respects 
+You may extract a single document from such a collection, and distribute it
+individually under this License, provided you insert a copy of this License
+into the extracted document, and follow this License in all other respects
 regarding verbatim copying of that document.
 
 === 7. AGGREGATION WITH INDEPENDENT WORKS
 
-A compilation of the Document or its derivatives with other separate and 
-independent documents or works, in or on a volume of a storage or distribution 
-medium, is called an "aggregate" if the copyright resulting from the 
-compilation is not used to limit the legal rights of the compilation's users 
-beyond what the individual works permit. When the Document is included in an 
-aggregate, this License does not apply to the other works in the aggregate 
+A compilation of the Document or its derivatives with other separate and
+independent documents or works, in or on a volume of a storage or distribution
+medium, is called an "aggregate" if the copyright resulting from the
+compilation is not used to limit the legal rights of the compilation's users
+beyond what the individual works permit. When the Document is included in an
+aggregate, this License does not apply to the other works in the aggregate
 which are not themselves derivative works of the Document.
 
-If the Cover Text requirement of section 3 is applicable to these copies of the 
-Document, then if the Document is less than one half of the entire aggregate, 
-the Document's Cover Texts may be placed on covers that bracket the Document 
-within the aggregate, or the electronic equivalent of covers if the Document is 
-in electronic form. Otherwise they must appear on printed covers that bracket 
+If the Cover Text requirement of section 3 is applicable to these copies of the
+Document, then if the Document is less than one half of the entire aggregate,
+the Document's Cover Texts may be placed on covers that bracket the Document
+within the aggregate, or the electronic equivalent of covers if the Document is
+in electronic form. Otherwise they must appear on printed covers that bracket
 the whole aggregate.
 
 === 8. TRANSLATION
 
-Translation is considered a kind of modification, so you may distribute 
-translations of the Document under the terms of section 4. Replacing Invariant 
-Sections with translations requires special permission from their copyright 
-holders, but you may include translations of some or all Invariant Sections in 
-addition to the original versions of these Invariant Sections. You may include 
-a translation of this License, and all the license notices in the Document, and 
-any Warranty Disclaimers, provided that you also include the original English 
-version of this License and the original versions of those notices and 
-disclaimers. In case of a disagreement between the translation and the original 
-version of this License or a notice or disclaimer, the original version will 
+Translation is considered a kind of modification, so you may distribute
+translations of the Document under the terms of section 4. Replacing Invariant
+Sections with translations requires special permission from their copyright
+holders, but you may include translations of some or all Invariant Sections in
+addition to the original versions of these Invariant Sections. You may include
+a translation of this License, and all the license notices in the Document, and
+any Warranty Disclaimers, provided that you also include the original English
+version of this License and the original versions of those notices and
+disclaimers. In case of a disagreement between the translation and the original
+version of this License or a notice or disclaimer, the original version will
 prevail.
 
-If a section in the Document is Entitled "Acknowledgements", "Dedications", or 
-"History", the requirement (section 4) to Preserve its Title (section 1) will 
+If a section in the Document is Entitled "Acknowledgements", "Dedications", or
+"History", the requirement (section 4) to Preserve its Title (section 1) will
 typically require changing the actual title.
 
 === 9. TERMINATION
 
-You may not copy, modify, sublicense, or distribute the Document except as 
-expressly provided under this License. Any attempt otherwise to copy, modify, 
-sublicense, or distribute it is void, and will automatically terminate your 
+You may not copy, modify, sublicense, or distribute the Document except as
+expressly provided under this License. Any attempt otherwise to copy, modify,
+sublicense, or distribute it is void, and will automatically terminate your
 rights under this License.
 
-However, if you cease all violation of this License, then your license from a 
-particular copyright holder is reinstated (a) provisionally, unless and until 
-the copyright holder explicitly and finally terminates your license, and (b) 
-permanently, if the copyright holder fails to notify you of the violation by 
+However, if you cease all violation of this License, then your license from a
+particular copyright holder is reinstated (a) provisionally, unless and until
+the copyright holder explicitly and finally terminates your license, and (b)
+permanently, if the copyright holder fails to notify you of the violation by
 some reasonable means prior to 60 days after the cessation.
 
-Moreover, your license from a particular copyright holder is reinstated 
-permanently if the copyright holder notifies you of the violation by some 
-reasonable means, this is the first time you have received notice of violation 
-of this License (for any work) from that copyright holder, and you cure the 
+Moreover, your license from a particular copyright holder is reinstated
+permanently if the copyright holder notifies you of the violation by some
+reasonable means, this is the first time you have received notice of violation
+of this License (for any work) from that copyright holder, and you cure the
 violation prior to 30 days after your receipt of the notice.
 
-Termination of your rights under this section does not terminate the licenses 
-of parties who have received copies or rights from you under this License. If 
-your rights have been terminated and not permanently reinstated, receipt of a 
+Termination of your rights under this section does not terminate the licenses
+of parties who have received copies or rights from you under this License. If
+your rights have been terminated and not permanently reinstated, receipt of a
 copy of some or all of the same material does not give you any rights to use it.
 
 === 10. FUTURE REVISIONS OF THIS LICENSE
 
-The Free Software Foundation may publish new, revised versions of the GNU Free 
-Documentation License from time to time. Such new versions will be similar in 
-spirit to the present version, but may differ in detail to address new problems 
+The Free Software Foundation may publish new, revised versions of the GNU Free
+Documentation License from time to time. Such new versions will be similar in
+spirit to the present version, but may differ in detail to address new problems
 or concerns. See http://www.gnu.org/copyleft/.
 
-Each version of the License is given a distinguishing version number. If the 
-Document specifies that a particular numbered version of this License "or any 
-later version" applies to it, you have the option of following the terms and 
-conditions either of that specified version or of any later version that has 
-been published (not as a draft) by the Free Software Foundation. If the 
-Document does not specify a version number of this License, you may choose any 
-version ever published (not as a draft) by the Free Software Foundation. If the 
-Document specifies that a proxy can decide which future versions of this 
-License can be used, that proxy's public statement of acceptance of a version 
+Each version of the License is given a distinguishing version number. If the
+Document specifies that a particular numbered version of this License "or any
+later version" applies to it, you have the option of following the terms and
+conditions either of that specified version or of any later version that has
+been published (not as a draft) by the Free Software Foundation. If the
+Document does not specify a version number of this License, you may choose any
+version ever published (not as a draft) by the Free Software Foundation. If the
+Document specifies that a proxy can decide which future versions of this
+License can be used, that proxy's public statement of acceptance of a version
 permanently authorizes you to choose that version for the Document.
 
 === 11. RELICENSING
 
-"Massive Multiauthor Collaboration Site" (or "MMC Site") means any World Wide 
-Web server that publishes copyrightable works and also provides prominent 
-facilities for anybody to edit those works. A public wiki that anybody can edit 
-is an example of such a server. A "Massive Multiauthor Collaboration" (or 
-"MMC") contained in the site means any set of copyrightable works thus 
+"Massive Multiauthor Collaboration Site" (or "MMC Site") means any World Wide
+Web server that publishes copyrightable works and also provides prominent
+facilities for anybody to edit those works. A public wiki that anybody can edit
+is an example of such a server. A "Massive Multiauthor Collaboration" (or
+"MMC") contained in the site means any set of copyrightable works thus
 published on the MMC site.
 
-"CC-BY-SA" means the Creative Commons Attribution-Share Alike 3.0 license 
-published by Creative Commons Corporation, a not-for-profit corporation with a 
-principal place of business in San Francisco, California, as well as future 
+"CC-BY-SA" means the Creative Commons Attribution-Share Alike 3.0 license
+published by Creative Commons Corporation, a not-for-profit corporation with a
+principal place of business in San Francisco, California, as well as future
 copyleft versions of that license published by that same organization.
 
-"Incorporate" means to publish or republish a Document, in whole or in part, as 
+"Incorporate" means to publish or republish a Document, in whole or in part, as
 part of another Document.
 
-An MMC is "eligible for relicensing" if it is licensed under this License, and 
-if all works that were first published under this License somewhere other than 
-this MMC, and subsequently incorporated in whole or in part into the MMC, (1) 
-had no cover texts or invariant sections, and (2) were thus incorporated prior 
+An MMC is "eligible for relicensing" if it is licensed under this License, and
+if all works that were first published under this License somewhere other than
+this MMC, and subsequently incorporated in whole or in part into the MMC, (1)
+had no cover texts or invariant sections, and (2) were thus incorporated prior
 to November 1, 2008.
 
-The operator of an MMC Site may republish an MMC contained in the site under 
-CC-BY-SA on the same site at any time before August 1, 2009, provided the MMC 
+The operator of an MMC Site may republish an MMC contained in the site under
+CC-BY-SA on the same site at any time before August 1, 2009, provided the MMC
 is eligible for relicensing.
 
