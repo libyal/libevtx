@@ -1,6 +1,6 @@
 dnl Checks for libexe required headers and functions
 dnl
-dnl Version: 20201114
+dnl Version: 20211231
 
 dnl Function to detect if libexe is available
 dnl ac_libexe_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -73,6 +73,43 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
           libexe_get_version,
           [ac_cv_libexe_dummy=yes],
           [ac_cv_libexe=no])
+
+        dnl File functions
+        AC_CHECK_LIB(
+          exe,
+          libexe_file_initialize,
+          [ac_cv_libexe_dummy=yes],
+          [ac_cv_libexe=no])
+        AC_CHECK_LIB(
+          exe,
+          libexe_file_free,
+          [ac_cv_libexe_dummy=yes],
+          [ac_cv_libexe=no])
+        AC_CHECK_LIB(
+          exe,
+          libexe_file_signal_abort,
+          [ac_cv_libexe_dummy=yes],
+          [ac_cv_libexe=no])
+
+        AC_CHECK_LIB(
+          exe,
+          libexe_file_open,
+          [ac_cv_libexe_dummy=yes],
+          [ac_cv_libexe=no])
+        AC_CHECK_LIB(
+          exe,
+          libexe_file_close,
+          [ac_cv_libexe_dummy=yes],
+          [ac_cv_libexe=no])
+
+        AS_IF(
+          [test "x$ac_cv_enable_wide_character_type" != xno],
+          [AC_CHECK_LIB(
+            exe,
+            libexe_file_open,
+            [ac_cv_libexe_dummy=yes],
+            [ac_cv_libexe=no])
+          ])
 
         dnl TODO add functions
 

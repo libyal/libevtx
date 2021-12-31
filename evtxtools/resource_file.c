@@ -39,6 +39,7 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libexe.h"
 #include "evtxtools_libfcache.h"
+#include "evtxtools_libfwevt.h"
 #include "evtxtools_libwrc.h"
 #include "message_string.h"
 #include "resource_file.h"
@@ -488,17 +489,17 @@ int resource_file_close(
 				result = -1;
 			}
 		}
-		if( resource_file->wevt_template_resource != NULL )
+		if( resource_file->wevt_manifest != NULL )
 		{
-			if( libwrc_resource_free(
-			     &( resource_file->wevt_template_resource ),
+			if( libfwevt_manifest_free(
+			     &( resource_file->wevt_manifest ),
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free WEVT_TEMPLATE resource.",
+				 "%s: unable to free WEVT manifest.",
 				 function );
 
 				result = -1;
@@ -577,10 +578,11 @@ int resource_file_get_resource_available_languague_identifier(
      uint32_t *language_identifier,
      libcerror_error_t **error )
 {
-	static char *function                 = "resource_file_get_resource_available_languague_identifier";
-	uint32_t resource_language_identifier = 0;
-	int language_index                    = 0;
-	int number_of_languages               = 0;
+	static char *function                  = "resource_file_get_resource_available_languague_identifier";
+	uint32_t preferred_language_identifier = 0;
+	uint32_t resource_language_identifier  = 0;
+	int language_index                     = 0;
+	int number_of_languages                = 0;
 
 	if( resource_file == NULL )
 	{
@@ -634,6 +636,8 @@ int resource_file_get_resource_available_languague_identifier(
 
 		return( -1 );
 	}
+	preferred_language_identifier = resource_file->preferred_language_identifier & 0x000003ffUL;
+
 	for( language_index = 1;
 	     language_index < number_of_languages;
 	     language_index++ )
@@ -654,7 +658,7 @@ int resource_file_get_resource_available_languague_identifier(
 
 			return( -1 );
 		}
-		if( ( resource_file->preferred_language_identifier & 0x000003ffUL ) == ( resource_language_identifier & 0x000003ffUL ) )
+		if( ( resource_language_identifier & 0x000003ffUL ) == preferred_language_identifier )
 		{
 			*language_identifier = resource_language_identifier;
 
@@ -1147,19 +1151,27 @@ int resource_file_get_mui_file_type(
 	return( 1 );
 }
 
-/* Retrieves a specific provider from the WEVT_TEMPLATE resource
+/* Retrieves the WEVT instrumentation manifest from a WEVT_TEMPLATE resource
  * Returns 1 if successful, 0 if not available or -1 error
  */
-int resource_file_get_provider(
+int resource_file_get_wevt_manifest(
      resource_file_t *resource_file,
-     const uint8_t *provider_identifier,
-     size_t provider_identifier_size,
-     libwrc_wevt_provider_t **provider,
+     libfwevt_manifest_t **wevt_manifest,
      libcerror_error_t **error )
 {
-	static char *function        = "resource_file_get_provider";
-	uint32_t language_identifier = 0;
-	int result                   = 0;
+	libfwevt_manifest_t *safe_wevt_manifest   = NULL;
+	libwrc_resource_t *wevt_template_resource = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	uint8_t *resource_data                    = NULL;
+	static char *function                     = "resource_file_get_wevt_manifest";
+	uint32_t preferred_language_identifier    = 0;
+	uint32_t resource_data_size               = 0;
+	uint32_t resource_identifier              = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
 
 	if( resource_file == NULL )
 	{
@@ -1172,13 +1184,368 @@ int resource_file_get_provider(
 
 		return( -1 );
 	}
-	if( resource_file->wevt_template_resource == NULL )
+	if( wevt_manifest == NULL )
 	{
-		result = libwrc_stream_get_resource_by_utf8_name(
-		          resource_file->resource_stream,
-		          (uint8_t *) "WEVT_TEMPLATE",
-		          13,
-		          &( resource_file->wevt_template_resource ),
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid WEVT manifest.",
+		 function );
+
+		return( -1 );
+	}
+	result = libwrc_stream_get_resource_by_utf8_name(
+	          resource_file->resource_stream,
+	          (uint8_t *) "WEVT_TEMPLATE",
+	          13,
+	          &wevt_template_resource,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		return( 0 );
+	}
+	if( libwrc_resource_get_number_of_items(
+	     wevt_template_resource,
+	     &number_of_resource_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of WEVT_TEMPLATE resource items.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_resource_items != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of WEVT_TEMPLATE resource items.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_get_item_by_index(
+	     wevt_template_resource,
+	     0,
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve WEVT_TEMPLATE resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_number_of_sub_items(
+	     resource_item,
+	     &number_of_resource_sub_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_resource_sub_items < 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	preferred_language_identifier = resource_file->preferred_language_identifier & 0x000003ffUL;
+
+	for( resource_sub_item_index = 0;
+	     resource_sub_item_index < number_of_resource_sub_items;
+	     resource_sub_item_index++ )
+	{
+		if( libwrc_resource_item_get_sub_item_by_index(
+		     resource_item,
+		     resource_sub_item_index,
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( libwrc_resource_item_get_identifier(
+		     resource_sub_item,
+		     &resource_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d identifier.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		{
+			break;
+		}
+		if( libwrc_resource_item_free(
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+	}
+	if( resource_sub_item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: unable to retrieve instrumentation manifest from WEVT_TEMPLATE resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_size(
+	     resource_sub_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource sub item: %d size.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource sub item: %d size value out of bounds.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_read_buffer(
+	     resource_sub_item,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to read data from resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libfwevt_manifest_initialize(
+	     &safe_wevt_manifest,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create WEVT manifest.",
+		 function );
+
+		goto on_error;
+	}
+	if( libfwevt_manifest_read(
+	     safe_wevt_manifest,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read WEVT manifest.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_resource_item_free(
+	     &resource_sub_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_free(
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free WEVT_TEMPLATE resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_free(
+	     &wevt_template_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free WEVT_TEMPLATE resource.",
+		 function );
+
+		goto on_error;
+	}
+	*wevt_manifest = safe_wevt_manifest;
+
+	return( 1 );
+
+on_error:
+	if( safe_wevt_manifest != NULL )
+	{
+		libfwevt_manifest_free(
+		 &safe_wevt_manifest,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( wevt_template_resource != NULL )
+	{
+		libwrc_resource_free(
+		 &wevt_template_resource,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves a specific provider from the WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int resource_file_get_provider(
+     resource_file_t *resource_file,
+     const uint8_t *provider_identifier,
+     size_t provider_identifier_size,
+     libfwevt_provider_t **provider,
+     libcerror_error_t **error )
+{
+	static char *function = "resource_file_get_provider";
+	int result            = 0;
+
+	if( resource_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource file.",
+		 function );
+
+		return( -1 );
+	}
+	if( resource_file->wevt_manifest == NULL )
+	{
+		result = resource_file_get_wevt_manifest(
+		          resource_file,
+		          &( resource_file->wevt_manifest ),
 		          error );
 
 		if( result == -1 )
@@ -1187,7 +1554,7 @@ int resource_file_get_provider(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+			 "%s: unable to retrieve WEVT manifest.",
 			 function );
 
 			return( -1 );
@@ -1197,24 +1564,8 @@ int resource_file_get_provider(
 			return( 0 );
 		}
 	}
-	if( resource_file_get_resource_available_languague_identifier(
-	     resource_file,
-	     resource_file->wevt_template_resource,
-	     &language_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve an available language identifier.",
-		 function );
-
-		return( -1 );
-	}
-	result = libwrc_wevt_template_get_provider_by_identifier(
-	          resource_file->wevt_template_resource,
-	          language_identifier,
+	result = libfwevt_manifest_get_provider_by_identifier(
+	          resource_file->wevt_manifest,
 	          provider_identifier,
 	          provider_identifier_size,
 	          provider,
@@ -1226,7 +1577,7 @@ int resource_file_get_provider(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve provider.",
+		 "%s: unable to retrieve provider from WEVT manifest.",
 		 function );
 
 		return( -1 );
@@ -1242,8 +1593,8 @@ int resource_file_get_event(
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
-     libwrc_wevt_provider_t **provider,
-     libwrc_wevt_event_t **event,
+     libfwevt_provider_t **provider,
+     libfwevt_event_t **event,
      libcerror_error_t **error )
 {
 	static char *function = "resource_file_get_event_message_identifier";
@@ -1291,7 +1642,7 @@ int resource_file_get_event(
 	}
 	else if( result != 0 )
 	{
-		result = libwrc_wevt_provider_get_event_by_identifier(
+		result = libfwevt_provider_get_event_by_identifier(
 			  *provider,
 			  event_identifier,
 			  event,
@@ -1314,7 +1665,7 @@ int resource_file_get_event(
 on_error:
 	if( *provider != NULL )
 	{
-		libwrc_wevt_provider_free(
+		libfwevt_provider_free(
 		 provider,
 		 NULL );
 	}
@@ -1329,13 +1680,16 @@ int resource_file_get_template_definition(
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
-     libwrc_wevt_provider_t **provider,
-     libwrc_wevt_event_t **event,
-     libwrc_wevt_template_definition_t **template_definition,
+     libfwevt_provider_t **provider,
+     libfwevt_event_t **event,
+     libfwevt_template_t **template_definition,
      libcerror_error_t **error )
 {
-	static char *function = "resource_file_get_template_definition";
-	int result            = 0;
+	libfwevt_event_t *safe_event       = NULL;
+	libfwevt_provider_t *safe_provider = NULL;
+	static char *function              = "resource_file_get_template_definition";
+	uint32_t template_offset           = 0;
+	int result                         = 0;
 
 	if( resource_file == NULL )
 	{
@@ -1375,8 +1729,8 @@ int resource_file_get_template_definition(
 	          provider_identifier,
 	          provider_identifier_size,
 	          event_identifier,
-	          provider,
-	          event,
+	          &safe_provider,
+	          &safe_event,
 	          error );
 
 	if( result == -1 )
@@ -1390,10 +1744,31 @@ int resource_file_get_template_definition(
 
 		goto on_error;
 	}
-	else if( result != 0 )
+	else if( result == 0 )
 	{
-		result = libwrc_wevt_event_get_template_definition(
-			  *event,
+		return( 0 );
+	}
+	if( libfwevt_event_get_template_offset(
+	     safe_event,
+	     &template_offset,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve template offset.",
+		 function );
+
+		goto on_error;
+	}
+	result = 0;
+
+	if( template_offset != 0 )
+	{
+		result = libfwevt_provider_get_template_by_offset(
+			  safe_provider,
+			  template_offset,
 			  template_definition,
 			  error );
 
@@ -1403,25 +1778,59 @@ int resource_file_get_template_definition(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template definition.",
+			 "%s: unable to retrieve template by offset.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			*provider = safe_provider;
+			*event    = safe_event;
+		}
+	}
+	if( result == 0 )
+	{
+		if( libfwevt_event_free(
+		     &safe_event,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free event.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfwevt_provider_free(
+		     &safe_provider,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free provider.",
 			 function );
 
 			goto on_error;
 		}
 	}
-	return( 1 );
+	return( result );
 
 on_error:
-	if( *event != NULL )
+	if( safe_event != NULL )
 	{
-		libwrc_wevt_event_free(
-		 event,
+		libfwevt_event_free(
+		 &safe_event,
 		 NULL );
 	}
-	if( *provider != NULL )
+	if( safe_provider != NULL )
 	{
-		libwrc_wevt_provider_free(
-		 provider,
+		libfwevt_provider_free(
+		 &safe_provider,
 		 NULL );
 	}
 	return( -1 );
@@ -1438,10 +1847,10 @@ int resource_file_get_event_message_identifier(
      uint32_t *message_identifier,
      libcerror_error_t **error )
 {
-	libwrc_wevt_event_t *event       = NULL;
-	libwrc_wevt_provider_t *provider = NULL;
-	static char *function            = "resource_file_get_event_message_identifier";
-	int result                       = 0;
+	libfwevt_event_t *event       = NULL;
+	libfwevt_provider_t *provider = NULL;
+	static char *function         = "resource_file_get_event_message_identifier";
+	int result                    = 0;
 
 	if( resource_file == NULL )
 	{
@@ -1476,7 +1885,7 @@ int resource_file_get_event_message_identifier(
 	}
 	else if( result != 0 )
 	{
-		if( libwrc_wevt_event_get_message_identifier(
+		if( libfwevt_event_get_message_identifier(
 		     event,
 		     message_identifier,
 		     error ) != 1 )
@@ -1490,7 +1899,7 @@ int resource_file_get_event_message_identifier(
 
 			goto on_error;
 		}
-		if( libwrc_wevt_event_free(
+		if( libfwevt_event_free(
 		     &event,
 		     error ) != 1 )
 		{
@@ -1503,7 +1912,7 @@ int resource_file_get_event_message_identifier(
 
 			goto on_error;
 		}
-		if( libwrc_wevt_provider_free(
+		if( libfwevt_provider_free(
 		     &provider,
 		     error ) != 1 )
 		{
@@ -1522,13 +1931,13 @@ int resource_file_get_event_message_identifier(
 on_error:
 	if( event != NULL )
 	{
-		libwrc_wevt_event_free(
+		libfwevt_event_free(
 		 &event,
 		 NULL );
 	}
 	if( provider != NULL )
 	{
-		libwrc_wevt_provider_free(
+		libfwevt_provider_free(
 		 &provider,
 		 NULL );
 	}

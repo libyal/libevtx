@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="evtx_test_error"
-	ProjectGUID="{D5374706-39C2-43A0-BCEA-D4A5B3F7E452}"
-	RootNamespace="evtx_test_error"
+	Name="evtx_test_tools_message_handle"
+	ProjectGUID="{073D74D4-5B99-49FE-863B-9DE654277681}"
+	RootNamespace="evtx_test_tools_message_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_error.c"
+				RelativePath="..\..\evtxtools\message_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\message_string.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\path_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\registry_file.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\resource_file.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_tools_message_handle.c"
 				>
 			</File>
 		</Filter>
@@ -186,11 +210,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\evtx_test_libevtx.h"
+				RelativePath="..\..\evtxtools\message_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\message_string.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\path_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\registry_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\evtxtools\resource_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_libcerror.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\evtx_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\evtx_test_memory.h"
 				>
 			</File>
 			<File

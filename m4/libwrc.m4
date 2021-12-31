@@ -1,6 +1,6 @@
 dnl Checks for libwrc required headers and functions
 dnl
-dnl Version: 20200716
+dnl Version: 20211231
 
 dnl Function to detect if libwrc is available
 dnl ac_libwrc_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -26,7 +26,7 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
         [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
         [PKG_CHECK_MODULES(
           [libwrc],
-          [libwrc >= 20120425],
+          [libwrc >= 20211231],
           [ac_cv_libwrc=yes],
           [ac_cv_libwrc=check])
         ])
@@ -50,6 +50,220 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
         AC_CHECK_LIB(
           wrc,
           libwrc_get_version,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        dnl Stream functions
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_initialize,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_free,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_signal_abort,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_open,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_close,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AS_IF(
+          [test "x$ac_cv_enable_wide_character_type" != xno],
+          [AC_CHECK_LIB(
+            wrc,
+            libwrc_stream_open,
+            [ac_cv_libwrc_dummy=yes],
+            [ac_cv_libwrc=no])
+          ])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_set_ascii_codepage,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_virtual_address,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_set_virtual_address,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_number_of_resources,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_resource_by_index,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_resource_by_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_resource_by_type,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_resource_by_utf8_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_stream_get_resource_by_utf16_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        dnl Resource functions
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_free,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_utf8_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_utf8_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_utf16_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_utf16_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_type,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_number_of_languages,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_language_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_number_of_items,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_get_item_by_index,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        dnl Resource item functions
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_free,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_utf8_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_utf8_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_utf16_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_utf16_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_read_buffer,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_read_buffer_at_offset,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_seek_offset,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_offset,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_number_of_sub_items,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_resource_item_get_sub_item_by_index,
           [ac_cv_libwrc_dummy=yes],
           [ac_cv_libwrc=no])
 

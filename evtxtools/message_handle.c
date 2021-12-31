@@ -41,8 +41,8 @@
 #include "evtxtools_libcsplit.h"
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfcache.h"
+#include "evtxtools_libfwevt.h"
 #include "evtxtools_libregf.h"
-#include "evtxtools_libwrc.h"
 #include "evtxtools_system_split_string.h"
 #include "evtxtools_wide_string.h"
 #include "message_handle.h"
@@ -3893,7 +3893,7 @@ int message_handle_get_resource_file_by_provider_identifier(
      resource_file_t **resource_file,
      libcerror_error_t **error )
 {
-	libwrc_wevt_provider_t *provider                      = NULL;
+	libfwevt_provider_t *provider                         = NULL;
 	system_character_t *resource_file_path                = NULL;
 	system_character_t *resource_filename_string_segment  = NULL;
 	system_split_string_t *resource_filename_split_string = NULL;
@@ -4069,7 +4069,7 @@ int message_handle_get_resource_file_by_provider_identifier(
 			}
 			else if( result != 0 )
 			{
-				if( libwrc_wevt_provider_free(
+				if( libfwevt_provider_free(
 				     &provider,
 				     error ) != 1 )
 				{

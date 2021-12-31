@@ -33,6 +33,7 @@
 #include <libwrc_message_table.h>
 #include <libwrc_mui.h>
 #include <libwrc_resource.h>
+#include <libwrc_resource_item.h>
 #include <libwrc_stream.h>
 #include <libwrc_string.h>
 #include <libwrc_version.h>
@@ -59,7 +60,7 @@
 
 #include <libwrc.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBWRC ) */
 
-#endif
+#endif /* !defined( _EVTXTOOLS_LIBWRC_H ) */
 

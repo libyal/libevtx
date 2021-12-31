@@ -33,6 +33,7 @@
 #include "evtxtools_libevtx.h"
 #include "evtxtools_libfdatetime.h"
 #include "evtxtools_libfguid.h"
+#include "evtxtools_libfwevt.h"
 #include "export_handle.h"
 #include "log_handle.h"
 #include "message_handle.h"
@@ -1079,14 +1080,14 @@ int export_handle_resource_file_get_template_definition(
      libevtx_template_definition_t **template_definition,
      libcerror_error_t **error )
 {
-	libwrc_wevt_event_t *wevt_event                             = NULL;
-	libwrc_wevt_provider_t *wevt_provider                       = NULL;
-	libwrc_wevt_template_definition_t *wevt_template_definition = NULL;
-	uint8_t *template_data                                      = NULL;
-	static char *function                                       = "export_handle_resource_file_get_template_definition";
-	size_t template_data_size                                   = 0;
-	uint32_t template_data_offset                               = 0;
-	int result                                                  = 0;
+	libfwevt_event_t *wevt_event       = NULL;
+	libfwevt_provider_t *wevt_provider = NULL;
+	libfwevt_template_t *wevt_template = NULL;
+	const uint8_t *template_data       = NULL;
+	static char *function              = "export_handle_resource_file_get_template_definition";
+	size_t template_data_size          = 0;
+	uint32_t template_data_offset      = 0;
+	int result                         = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1117,7 +1118,7 @@ int export_handle_resource_file_get_template_definition(
 		  event_identifier,
 		  &wevt_provider,
 		  &wevt_event,
-		  &wevt_template_definition,
+		  &wevt_template,
 		  error );
 
 	if( result == -1 )
@@ -1133,8 +1134,8 @@ int export_handle_resource_file_get_template_definition(
 	}
 	else if( result != 0 )
 	{
-		if( libwrc_wevt_template_definition_get_offset(
-		     wevt_template_definition,
+		if( libfwevt_template_get_offset(
+		     wevt_template,
 		     &template_data_offset,
 		     error ) != 1 )
 		{
@@ -1147,8 +1148,10 @@ int export_handle_resource_file_get_template_definition(
 
 			goto on_error;
 		}
-		if( libwrc_wevt_template_definition_get_size(
-		     wevt_template_definition,
+/* TODO make a local copy of the data instead */
+		if( libfwevt_template_get_data(
+		     wevt_template,
+		     &template_data,
 		     &template_data_size,
 		     error ) != 1 )
 		{
@@ -1156,79 +1159,43 @@ int export_handle_resource_file_get_template_definition(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve template size.",
+			 "%s: unable to retrieve template data.",
 			 function );
 
 			goto on_error;
 		}
-		if( template_data_size > 0 )
-		{
-			template_data = (uint8_t *) memory_allocate(
-			                             sizeof( uint8_t ) * template_data_size );
-
-			if( template_data == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create template data.",
-				 function );
-
-				goto on_error;
-			}
-			if( libwrc_wevt_template_definition_get_data(
-			     wevt_template_definition,
-			     template_data,
-			     template_data_size,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve template data.",
-				 function );
-
-				goto on_error;
-			}
 /* TODO cache the EVTX template definitions ? */
-			if( libevtx_template_definition_initialize(
-			     template_definition,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create template definitions.",
-				 function );
+		if( libevtx_template_definition_initialize(
+		     template_definition,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create template definitions.",
+			 function );
 
-				goto on_error;
-			}
-			if( libevtx_template_definition_set_data(
-			     *template_definition,
-			     template_data,
-			     template_data_size,
-			     template_data_offset,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set template data.",
-				 function );
-
-				goto on_error;
-			}
-			memory_free(
-			 template_data );
-
-			template_data = NULL;
+			goto on_error;
 		}
-		if( libwrc_wevt_template_definition_free(
-		     &wevt_template_definition,
+		if( libevtx_template_definition_set_data(
+		     *template_definition,
+		     template_data,
+		     template_data_size,
+		     template_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set template data.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfwevt_template_free(
+		     &wevt_template,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1240,7 +1207,7 @@ int export_handle_resource_file_get_template_definition(
 
 			goto on_error;
 		}
-		if( libwrc_wevt_event_free(
+		if( libfwevt_event_free(
 		     &wevt_event,
 		     error ) != 1 )
 		{
@@ -1253,7 +1220,7 @@ int export_handle_resource_file_get_template_definition(
 
 			goto on_error;
 		}
-		if( libwrc_wevt_provider_free(
+		if( libfwevt_provider_free(
 		     &wevt_provider,
 		     error ) != 1 )
 		{
@@ -1270,26 +1237,21 @@ int export_handle_resource_file_get_template_definition(
 	return( result );
 
 on_error:
-	if( template_data != NULL )
+	if( wevt_template != NULL )
 	{
-		memory_free(
-		 template_data );
-	}
-	if( wevt_template_definition != NULL )
-	{
-		libwrc_wevt_template_definition_free(
-		 &wevt_template_definition,
+		libfwevt_template_free(
+		 &wevt_template,
 		 NULL );
 	}
 	if( wevt_event != NULL )
 	{
-		libwrc_wevt_event_free(
+		libfwevt_event_free(
 		 &wevt_event,
 		 NULL );
 	}
 	if( wevt_provider != NULL )
 	{
-		libwrc_wevt_provider_free(
+		libfwevt_provider_free(
 		 &wevt_provider,
 		 NULL );
 	}

@@ -29,6 +29,7 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libexe.h"
 #include "evtxtools_libfcache.h"
+#include "evtxtools_libfwevt.h"
 #include "evtxtools_libwrc.h"
 #include "message_string.h"
 
@@ -76,9 +77,9 @@ struct resource_file
 	 */
 	libwrc_resource_t *mui_resource;
 
-	/* The libwrc WEVT_TEMPLATE resource
+	/* The instrumentation manifest stored in a WEVT_TEMPLATE resource
 	 */
-	libwrc_resource_t *wevt_template_resource;
+	libfwevt_manifest_t *wevt_manifest;
 
 	/* The message string cache
 	 */
@@ -140,11 +141,16 @@ int resource_file_get_mui_file_type(
      uint32_t *file_type,
      libcerror_error_t **error );
 
+int resource_file_get_wevt_manifest(
+     resource_file_t *resource_file,
+     libfwevt_manifest_t **wevt_manifest,
+     libcerror_error_t **error );
+
 int resource_file_get_provider(
      resource_file_t *resource_file,
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
-     libwrc_wevt_provider_t **provider,
+     libfwevt_provider_t **provider,
      libcerror_error_t **error );
 
 int resource_file_get_event(
@@ -152,8 +158,8 @@ int resource_file_get_event(
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
-     libwrc_wevt_provider_t **provider,
-     libwrc_wevt_event_t **event,
+     libfwevt_provider_t **provider,
+     libfwevt_event_t **event,
      libcerror_error_t **error );
 
 int resource_file_get_template_definition(
@@ -161,9 +167,9 @@ int resource_file_get_template_definition(
      const uint8_t *provider_identifier,
      size_t provider_identifier_size,
      uint32_t event_identifier,
-     libwrc_wevt_provider_t **provider,
-     libwrc_wevt_event_t **event,
-     libwrc_wevt_template_definition_t **template_definition,
+     libfwevt_provider_t **provider,
+     libfwevt_event_t **event,
+     libfwevt_template_t **template_definition,
      libcerror_error_t **error );
 
 int resource_file_get_event_message_identifier(

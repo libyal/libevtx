@@ -48,6 +48,7 @@ evtxexport_SOURCES = \
 	evtxtools_libfdatetime.h \
 	evtxtools_libfguid.h \
 	evtxtools_libfvalue.h \
+	evtxtools_libfwevt.h \
 	evtxtools_libfwnt.h \
 	evtxtools_libexe.h \
 	evtxtools_libregf.h \

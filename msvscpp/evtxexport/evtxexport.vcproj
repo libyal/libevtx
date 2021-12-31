@@ -298,6 +298,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\evtxtools\evtxtools_libfwevt.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\evtxtools\evtxtools_libfwnt.h"
 				>
 			</File>
