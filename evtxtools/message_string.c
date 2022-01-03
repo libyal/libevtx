@@ -154,8 +154,7 @@ int message_string_free(
  */
 int message_string_get_from_message_table_resource(
      message_string_t *message_string,
-     libwrc_resource_t *message_table_resource,
-     uint32_t language_identifier,
+     libwrc_message_table_resource_t *message_table_resource,
      libcerror_error_t **error )
 {
 	static char *function = "message_string_get_from_message_table_resource";
@@ -184,9 +183,8 @@ int message_string_get_from_message_table_resource(
 
 		return( -1 );
 	}
-	result = libwrc_message_table_get_index_by_identifier(
+	result = libwrc_message_table_resource_get_index_by_identifier(
 		  message_table_resource,
-		  language_identifier,
 		  message_string->identifier,
 		  &message_index,
 		  error );
@@ -206,16 +204,14 @@ int message_string_get_from_message_table_resource(
 	else if( result != 0 )
 	{
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_message_table_get_utf16_string_size(
+		result = libwrc_message_table_resource_get_utf16_string_size(
 			  message_table_resource,
-			  language_identifier,
 			  message_index,
 			  &( message_string->string_size ),
 			  error );
 #else
-		result = libwrc_message_table_get_utf8_string_size(
+		result = libwrc_message_table_resource_get_utf8_string_size(
 			  message_table_resource,
-			  language_identifier,
 			  message_index,
 			  &( message_string->string_size ),
 			  error );
@@ -247,17 +243,15 @@ int message_string_get_from_message_table_resource(
 			goto on_error;
 		}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libwrc_message_table_get_utf16_string(
+		result = libwrc_message_table_resource_get_utf16_string(
 			  message_table_resource,
-			  language_identifier,
 			  message_index,
 			  (uint16_t *) message_string->string,
 			  message_string->string_size,
 			  error );
 #else
-		result = libwrc_message_table_get_utf8_string(
+		result = libwrc_message_table_resource_get_utf8_string(
 			  message_table_resource,
-			  language_identifier,
 			  message_index,
 			  (uint8_t *) message_string->string,
 			  message_string->string_size,

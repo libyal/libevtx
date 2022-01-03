@@ -69,13 +69,13 @@ struct resource_file
 	 */
 	uint32_t preferred_language_identifier;
 
-	/* The libwrc message table resource
+	/* The message table resource
 	 */
-	libwrc_resource_t *message_table_resource;
+	libwrc_message_table_resource_t *message_table_resource;
 
-	/* The libwrc MUI resource
+	/* The MUI resource
 	 */
-	libwrc_resource_t *mui_resource;
+	libwrc_mui_resource_t *mui_resource;
 
 	/* The instrumentation manifest stored in a WEVT_TEMPLATE resource
 	 */
@@ -124,6 +124,11 @@ int resource_file_set_name(
      size_t name_length,
      libcerror_error_t **error );
 
+int resource_file_get_message_table_resource(
+     resource_file_t *resource_file,
+     libwrc_message_table_resource_t **message_table_resource,
+     libcerror_error_t **error );
+
 int resource_file_get_message_string_from_cache(
      resource_file_t *resource_file,
      uint32_t message_string_identifier,
@@ -134,6 +139,11 @@ int resource_file_get_message_string(
      resource_file_t *resource_file,
      uint32_t message_string_identifier,
      message_string_t **message_string,
+     libcerror_error_t **error );
+
+int resource_file_get_mui_resource(
+     resource_file_t *resource_file,
+     libwrc_mui_resource_t **mui_resource,
      libcerror_error_t **error );
 
 int resource_file_get_mui_file_type(

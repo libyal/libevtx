@@ -62,8 +62,7 @@ int message_string_free(
 
 int message_string_get_from_message_table_resource(
      message_string_t *message_string,
-     libwrc_resource_t *message_table_resource,
-     uint32_t language_identifier,
+     libwrc_message_table_resource_t *message_table_resource,
      libcerror_error_t **error );
 
 int message_string_fprint(

@@ -459,7 +459,7 @@ int resource_file_close(
 		}
 		if( resource_file->message_table_resource != NULL )
 		{
-			if( libwrc_resource_free(
+			if( libwrc_message_table_resource_free(
 			     &( resource_file->message_table_resource ),
 			     error ) != 1 )
 			{
@@ -475,7 +475,7 @@ int resource_file_close(
 		}
 		if( resource_file->mui_resource != NULL )
 		{
-			if( libwrc_resource_free(
+			if( libwrc_mui_resource_free(
 			     &( resource_file->mui_resource ),
 			     error ) != 1 )
 			{
@@ -777,6 +777,374 @@ on_error:
 	return( -1 );
 }
 
+/* Retrieves a message table resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int resource_file_get_message_table_resource(
+     resource_file_t *resource_file,
+     libwrc_message_table_resource_t **message_table_resource,
+     libcerror_error_t **error )
+{
+	libwrc_message_table_resource_t *safe_message_table_resource = NULL;
+	libwrc_resource_t *resource                                  = NULL;
+	libwrc_resource_item_t *resource_item                        = NULL;
+	libwrc_resource_item_t *resource_sub_item                    = NULL;
+	uint8_t *resource_data                                       = NULL;
+	static char *function                                        = "resource_file_get_message_table_resource";
+	uint32_t preferred_language_identifier                       = 0;
+	uint32_t resource_data_size                                  = 0;
+	uint32_t resource_identifier                                 = 0;
+	int number_of_resource_items                                 = 0;
+	int number_of_resource_sub_items                             = 0;
+	int resource_sub_item_index                                  = 0;
+	int result                                                   = 0;
+
+	if( resource_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource file.",
+		 function );
+
+		return( -1 );
+	}
+	if( message_table_resource == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid message table resource.",
+		 function );
+
+		return( -1 );
+	}
+	result = libwrc_stream_get_resource_by_type(
+	          resource_file->resource_stream,
+	          LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE,
+	          &resource,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve message table resource.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		return( 0 );
+	}
+	if( libwrc_resource_get_number_of_items(
+	     resource,
+	     &number_of_resource_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource items.",
+		 function );
+
+		goto on_error;
+	}
+/* TODO add support for multiple resource items */
+	if( number_of_resource_items != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of resource items.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_get_item_by_index(
+	     resource,
+	     0,
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_number_of_sub_items(
+	     resource_item,
+	     &number_of_resource_sub_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_resource_sub_items < 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	preferred_language_identifier = resource_file->preferred_language_identifier & 0x000003ffUL;
+
+	for( resource_sub_item_index = 0;
+	     resource_sub_item_index < number_of_resource_sub_items;
+	     resource_sub_item_index++ )
+	{
+		if( libwrc_resource_item_get_sub_item_by_index(
+		     resource_item,
+		     resource_sub_item_index,
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( libwrc_resource_item_get_identifier(
+		     resource_sub_item,
+		     &resource_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d identifier.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		{
+			break;
+		}
+		if( libwrc_resource_item_free(
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+	}
+	if( resource_sub_item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: unable to retrieve instrumentation manifest from resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_size(
+	     resource_sub_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource sub item: %d size.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource sub item: %d size value out of bounds.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_read_buffer(
+	     resource_sub_item,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to read data from resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libwrc_message_table_resource_initialize(
+	     &safe_message_table_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create message table resource.",
+		 function );
+
+		goto on_error;
+	}
+/* TODO add support for ascii codepage */
+	if( libwrc_message_table_resource_read(
+	     safe_message_table_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     LIBEVTX_CODEPAGE_WINDOWS_1252,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read message table resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_resource_item_free(
+	     &resource_sub_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_free(
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_free(
+	     &resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource.",
+		 function );
+
+		goto on_error;
+	}
+	*message_table_resource = safe_message_table_resource;
+
+	return( 1 );
+
+on_error:
+	if( safe_message_table_resource != NULL )
+	{
+		libwrc_message_table_resource_free(
+		 &safe_message_table_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Retrieves a message string from the cache
  * Returns 1 if successful, 0 if not available or -1 error
  */
@@ -875,10 +1243,10 @@ int resource_file_get_message_string(
      message_string_t **message_string,
      libcerror_error_t **error )
 {
-	static char *function        = "resource_file_get_message_string";
-	uint32_t language_identifier = 0;
-	time_t timestamp             = 0;
-	int result                   = 0;
+	message_string_t *safe_message_string = NULL;
+	static char *function                 = "resource_file_get_message_string";
+	time_t timestamp                      = 0;
+	int result                            = 0;
 
 	if( resource_file == NULL )
 	{
@@ -904,9 +1272,8 @@ int resource_file_get_message_string(
 	}
 	if( resource_file->message_table_resource == NULL )
 	{
-		result = libwrc_stream_get_resource_by_type(
-		          resource_file->resource_stream,
-		          LIBWRC_RESOURCE_TYPE_MESSAGE_TABLE,
+		result = resource_file_get_message_table_resource(
+		          resource_file,
 		          &( resource_file->message_table_resource ),
 		          error );
 
@@ -919,7 +1286,7 @@ int resource_file_get_message_string(
 			 "%s: unable to retrieve message table resource.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		else if( result == 0 )
 		{
@@ -941,29 +1308,12 @@ int resource_file_get_message_string(
 		 "%s: unable to retrieve message string from cache.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( result == 0 )
 	{
-		if( resource_file_get_resource_available_languague_identifier(
-		     resource_file,
-		     resource_file->message_table_resource,
-		     &language_identifier,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve an available language identifier.",
-			 function );
-
-			return( -1 );
-		}
-		*message_string = NULL;
-
 		if( message_string_initialize(
-		     message_string,
+		     &safe_message_string,
 		     message_string_identifier,
 		     error ) != 1 )
 		{
@@ -974,12 +1324,11 @@ int resource_file_get_message_string(
 			 "%s: unable to create message string.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		result = message_string_get_from_message_table_resource(
-		          *message_string,
+		          safe_message_string,
 		          resource_file->message_table_resource,
-		          language_identifier,
 		          error );
 
 		if( result == -1 )
@@ -992,11 +1341,7 @@ int resource_file_get_message_string(
 			 function,
 			 message_string_identifier );
 
-			message_string_free(
-			 message_string,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 		else if( result != 0 )
 		{
@@ -1011,11 +1356,7 @@ int resource_file_get_message_string(
 				 "%s: unable to retrieve cache timestamp.",
 				 function );
 
-				message_string_free(
-				 message_string,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 			}
 			if( libfcache_cache_set_value_by_index(
 			     resource_file->message_string_cache,
@@ -1023,7 +1364,7 @@ int resource_file_get_message_string(
 			     0,
 			     resource_file->next_message_string_cache_index,
 			     timestamp,
-			     (intptr_t *) *message_string,
+			     (intptr_t *) safe_message_string,
 			     (int (*)(intptr_t **, libcerror_error_t **)) &message_string_free,
 			     LIBFCACHE_CACHE_VALUE_FLAG_MANAGED,
 			     error ) != 1 )
@@ -1036,11 +1377,7 @@ int resource_file_get_message_string(
 				 function,
 				 resource_file->next_message_string_cache_index );
 
-				message_string_free(
-				 message_string,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 			}
 			resource_file->next_message_string_cache_index++;
 
@@ -1048,12 +1385,13 @@ int resource_file_get_message_string(
 			{
 				resource_file->next_message_string_cache_index = 0;
 			}
-			message_string = NULL;
+			*message_string     = safe_message_string;
+			safe_message_string = NULL;
 		}
-		if( message_string != NULL )
+		if( safe_message_string != NULL )
 		{
 			if( message_string_free(
-			     message_string,
+			     &safe_message_string,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -1063,108 +1401,36 @@ int resource_file_get_message_string(
 				 "%s: unable to free message string.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 	}
 	return( result );
+
+on_error:
+	if( safe_message_string != NULL )
+	{
+		message_string_free(
+		 &safe_message_string,
+		 NULL );
+	}
+	return( -1 );
 }
 
-/* Retrieves the MUI file type
+/* Retrieves a MUI resource
  * Returns 1 if successful, 0 if not available or -1 error
  */
-int resource_file_get_mui_file_type(
+int resource_file_get_mui_resource(
      resource_file_t *resource_file,
-     uint32_t *file_type,
+     libwrc_mui_resource_t **mui_resource,
      libcerror_error_t **error )
 {
-	static char *function        = "resource_file_get_mui_file_type";
-	uint32_t language_identifier = 0;
-	int result                   = 0;
-
-	if( resource_file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource file.",
-		 function );
-
-		return( -1 );
-	}
-	if( resource_file->mui_resource == NULL )
-	{
-		result = libwrc_stream_get_resource_by_utf8_name(
-		          resource_file->resource_stream,
-		          (uint8_t *) "MUI",
-		          3,
-		          &( resource_file->mui_resource ),
-		          error );
-
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve MUI resource.",
-			 function );
-
-			return( -1 );
-		}
-		else if( result == 0 )
-		{
-			return( 0 );
-		}
-	}
-	if( resource_file_get_resource_available_languague_identifier(
-	     resource_file,
-	     resource_file->mui_resource,
-	     &language_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve an available language identifier.",
-		 function );
-
-		return( -1 );
-	}
-	if( libwrc_mui_get_file_type(
-	     resource_file->mui_resource,
-	     language_identifier,
-	     file_type,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve file type.",
-		 function );
-
-		return( -1 );
-	}
-	return( 1 );
-}
-
-/* Retrieves the WEVT instrumentation manifest from a WEVT_TEMPLATE resource
- * Returns 1 if successful, 0 if not available or -1 error
- */
-int resource_file_get_wevt_manifest(
-     resource_file_t *resource_file,
-     libfwevt_manifest_t **wevt_manifest,
-     libcerror_error_t **error )
-{
-	libfwevt_manifest_t *safe_wevt_manifest   = NULL;
-	libwrc_resource_t *wevt_template_resource = NULL;
+	libwrc_mui_resource_t *safe_mui_resource  = NULL;
+	libwrc_resource_t *resource               = NULL;
 	libwrc_resource_item_t *resource_item     = NULL;
 	libwrc_resource_item_t *resource_sub_item = NULL;
 	uint8_t *resource_data                    = NULL;
-	static char *function                     = "resource_file_get_wevt_manifest";
+	static char *function                     = "resource_file_get_mui_resource";
 	uint32_t preferred_language_identifier    = 0;
 	uint32_t resource_data_size               = 0;
 	uint32_t resource_identifier              = 0;
@@ -1184,22 +1450,22 @@ int resource_file_get_wevt_manifest(
 
 		return( -1 );
 	}
-	if( wevt_manifest == NULL )
+	if( mui_resource == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid WEVT manifest.",
+		 "%s: invalid MUI resource.",
 		 function );
 
 		return( -1 );
 	}
 	result = libwrc_stream_get_resource_by_utf8_name(
 	          resource_file->resource_stream,
-	          (uint8_t *) "WEVT_TEMPLATE",
-	          13,
-	          &wevt_template_resource,
+	          (uint8_t *) "MUI",
+	          3,
+	          &resource,
 	          error );
 
 	if( result == -1 )
@@ -1208,7 +1474,7 @@ int resource_file_get_wevt_manifest(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+		 "%s: unable to retrieve MUI resource.",
 		 function );
 
 		goto on_error;
@@ -1218,7 +1484,7 @@ int resource_file_get_wevt_manifest(
 		return( 0 );
 	}
 	if( libwrc_resource_get_number_of_items(
-	     wevt_template_resource,
+	     resource,
 	     &number_of_resource_items,
 	     error ) != 1 )
 	{
@@ -1226,24 +1492,25 @@ int resource_file_get_wevt_manifest(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of WEVT_TEMPLATE resource items.",
+		 "%s: unable to retrieve number of resource items.",
 		 function );
 
 		goto on_error;
 	}
+/* TODO add support for multiple resource items */
 	if( number_of_resource_items != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of WEVT_TEMPLATE resource items.",
+		 "%s: unsupported number of resource items.",
 		 function );
 
 		goto on_error;
 	}
 	if( libwrc_resource_get_item_by_index(
-	     wevt_template_resource,
+	     resource,
 	     0,
 	     &resource_item,
 	     error ) != 1 )
@@ -1252,7 +1519,7 @@ int resource_file_get_wevt_manifest(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve WEVT_TEMPLATE resource item: 0.",
+		 "%s: unable to retrieve resource item: 0.",
 		 function );
 
 		goto on_error;
@@ -1344,7 +1611,436 @@ int resource_file_get_wevt_manifest(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: unable to retrieve instrumentation manifest from WEVT_TEMPLATE resource.",
+		 "%s: unable to retrieve instrumentation manifest from resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_size(
+	     resource_sub_item,
+	     &resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource sub item: %d size.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( ( resource_data_size == 0 )
+	 || ( resource_data_size > MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid resource sub item: %d size value out of bounds.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	resource_data = (uint8_t *) memory_allocate(
+	                             sizeof( uint8_t ) * resource_data_size );
+
+	if( resource_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create resource data.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_read_buffer(
+	     resource_sub_item,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != (ssize_t) resource_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to read data from resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libwrc_mui_resource_initialize(
+	     &safe_mui_resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create MUI resource.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_mui_resource_read(
+	     safe_mui_resource,
+	     resource_data,
+	     (size_t) resource_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read MUI resource.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 resource_data );
+
+	resource_data = NULL;
+
+	if( libwrc_resource_item_free(
+	     &resource_sub_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource sub item: %d.",
+		 function,
+		 resource_sub_item_index );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_free(
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_free(
+	     &resource,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free resource.",
+		 function );
+
+		goto on_error;
+	}
+	*mui_resource = safe_mui_resource;
+
+	return( 1 );
+
+on_error:
+	if( safe_mui_resource != NULL )
+	{
+		libwrc_mui_resource_free(
+		 &safe_mui_resource,
+		 NULL );
+	}
+	if( resource_data != NULL )
+	{
+		memory_free(
+		 resource_data );
+	}
+	if( resource_sub_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_sub_item,
+		 NULL );
+	}
+	if( resource_item != NULL )
+	{
+		libwrc_resource_item_free(
+		 &resource_item,
+		 NULL );
+	}
+	if( resource != NULL )
+	{
+		libwrc_resource_free(
+		 &resource,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Retrieves the MUI file type
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int resource_file_get_mui_file_type(
+     resource_file_t *resource_file,
+     uint32_t *file_type,
+     libcerror_error_t **error )
+{
+	static char *function = "resource_file_get_mui_file_type";
+	int result            = 0;
+
+	if( resource_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource file.",
+		 function );
+
+		return( -1 );
+	}
+	if( resource_file->mui_resource == NULL )
+	{
+		result = resource_file_get_mui_resource(
+		          resource_file,
+		          &( resource_file->mui_resource ),
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve MUI resource.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+	}
+	if( libwrc_mui_resource_get_file_type(
+	     resource_file->mui_resource,
+	     file_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file type.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the WEVT instrumentation manifest from a WEVT_TEMPLATE resource
+ * Returns 1 if successful, 0 if not available or -1 error
+ */
+int resource_file_get_wevt_manifest(
+     resource_file_t *resource_file,
+     libfwevt_manifest_t **wevt_manifest,
+     libcerror_error_t **error )
+{
+	libfwevt_manifest_t *safe_wevt_manifest   = NULL;
+	libwrc_resource_t *resource               = NULL;
+	libwrc_resource_item_t *resource_item     = NULL;
+	libwrc_resource_item_t *resource_sub_item = NULL;
+	uint8_t *resource_data                    = NULL;
+	static char *function                     = "resource_file_get_wevt_manifest";
+	uint32_t preferred_language_identifier    = 0;
+	uint32_t resource_data_size               = 0;
+	uint32_t resource_identifier              = 0;
+	int number_of_resource_items              = 0;
+	int number_of_resource_sub_items          = 0;
+	int resource_sub_item_index               = 0;
+	int result                                = 0;
+
+	if( resource_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid resource file.",
+		 function );
+
+		return( -1 );
+	}
+	if( wevt_manifest == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid WEVT manifest.",
+		 function );
+
+		return( -1 );
+	}
+	result = libwrc_stream_get_resource_by_utf8_name(
+	          resource_file->resource_stream,
+	          (uint8_t *) "WEVT_TEMPLATE",
+	          13,
+	          &resource,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve WEVT_TEMPLATE resource.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		return( 0 );
+	}
+	if( libwrc_resource_get_number_of_items(
+	     resource,
+	     &number_of_resource_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource items.",
+		 function );
+
+		goto on_error;
+	}
+/* TODO add support for multiple resource items */
+	if( number_of_resource_items != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of resource items.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_get_item_by_index(
+	     resource,
+	     0,
+	     &resource_item,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve resource item: 0.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwrc_resource_item_get_number_of_sub_items(
+	     resource_item,
+	     &number_of_resource_sub_items,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	if( number_of_resource_sub_items < 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of resource sub items.",
+		 function );
+
+		goto on_error;
+	}
+	preferred_language_identifier = resource_file->preferred_language_identifier & 0x000003ffUL;
+
+	for( resource_sub_item_index = 0;
+	     resource_sub_item_index < number_of_resource_sub_items;
+	     resource_sub_item_index++ )
+	{
+		if( libwrc_resource_item_get_sub_item_by_index(
+		     resource_item,
+		     resource_sub_item_index,
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( libwrc_resource_item_get_identifier(
+		     resource_sub_item,
+		     &resource_identifier,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource sub item: %d identifier.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		{
+			break;
+		}
+		if( libwrc_resource_item_free(
+		     &resource_sub_item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource sub item: %d.",
+			 function,
+			 resource_sub_item_index );
+
+			goto on_error;
+		}
+	}
+	if( resource_sub_item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: unable to retrieve instrumentation manifest from resource.",
 		 function );
 
 		goto on_error;
@@ -1462,20 +2158,20 @@ int resource_file_get_wevt_manifest(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free WEVT_TEMPLATE resource item: 0.",
+		 "%s: unable to free resource item: 0.",
 		 function );
 
 		goto on_error;
 	}
 	if( libwrc_resource_free(
-	     &wevt_template_resource,
+	     &resource,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free WEVT_TEMPLATE resource.",
+		 "%s: unable to free resource.",
 		 function );
 
 		goto on_error;
@@ -1508,10 +2204,10 @@ on_error:
 		 &resource_item,
 		 NULL );
 	}
-	if( wevt_template_resource != NULL )
+	if( resource != NULL )
 	{
 		libwrc_resource_free(
-		 &wevt_template_resource,
+		 &resource,
 		 NULL );
 	}
 	return( -1 );

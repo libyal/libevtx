@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_manifest_resource.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_manifest_values.c"
 				>
 			</File>
@@ -187,11 +191,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_message_table_resource.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_values.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_mui.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_mui_resource.c"
 				>
 			</File>
 			<File
@@ -223,6 +235,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_string_table_resource.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_string_values.c"
 				>
 			</File>
@@ -232,6 +248,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_version.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_version_information_resource.c"
 				>
 			</File>
 			<File
@@ -377,6 +397,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_manifest_resource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_manifest_values.h"
 				>
 			</File>
@@ -385,11 +409,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_message_table_resource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_message_table_values.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_mui.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_mui_resource.h"
 				>
 			</File>
 			<File
@@ -421,6 +453,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_string_table_resource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_string_values.h"
 				>
 			</File>
@@ -438,6 +474,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_version.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_version_information_resource.h"
 				>
 			</File>
 			<File
@@ -505,7 +545,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\wrc_version_resource.h"
+				RelativePath="..\..\libwrc\wrc_version_information_resource.h"
 				>
 			</File>
 		</Filter>

@@ -1,6 +1,6 @@
 dnl Checks for libwrc required headers and functions
 dnl
-dnl Version: 20211231
+dnl Version: 20220103
 
 dnl Function to detect if libwrc is available
 dnl ac_libwrc_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -264,6 +264,164 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
         AC_CHECK_LIB(
           wrc,
           libwrc_resource_item_get_sub_item_by_index,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        dnl message table resource functions
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_initialize,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_free,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_read,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_number_of_messages,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_index_by_identifier,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_utf8_string_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_utf8_string,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_utf16_string_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_message_table_resource_get_utf16_string,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        dnl MUI resource functions
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_initialize,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_free,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_read,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_file_type,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_main_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_main_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_main_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_main_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_mui_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_mui_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_mui_name_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_mui_name,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_language_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_language,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_language_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_language,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_fallback_language_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf8_fallback_language,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_fallback_language_size,
+          [ac_cv_libwrc_dummy=yes],
+          [ac_cv_libwrc=no])
+        AC_CHECK_LIB(
+          wrc,
+          libwrc_mui_resource_get_utf16_fallback_language,
           [ac_cv_libwrc_dummy=yes],
           [ac_cv_libwrc=no])
 

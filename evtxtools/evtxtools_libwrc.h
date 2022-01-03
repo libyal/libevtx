@@ -29,25 +29,15 @@
 #if defined( HAVE_LOCAL_LIBWRC )
 
 #include <libwrc_definitions.h>
-#include <libwrc_manifest.h>
-#include <libwrc_message_table.h>
-#include <libwrc_mui.h>
+#include <libwrc_manifest_resource.h>
+#include <libwrc_message_table_resource.h>
+#include <libwrc_mui_resource.h>
 #include <libwrc_resource.h>
 #include <libwrc_resource_item.h>
 #include <libwrc_stream.h>
-#include <libwrc_string.h>
-#include <libwrc_version.h>
+#include <libwrc_string_table_resource.h>
+#include <libwrc_version_information_resource.h>
 #include <libwrc_types.h>
-#include <libwrc_wevt_channel.h>
-#include <libwrc_wevt_event.h>
-#include <libwrc_wevt_keyword.h>
-#include <libwrc_wevt_level.h>
-#include <libwrc_wevt_map.h>
-#include <libwrc_wevt_opcode.h>
-#include <libwrc_wevt_provider.h>
-#include <libwrc_wevt_task.h>
-#include <libwrc_wevt_template.h>
-#include <libwrc_wevt_template_definition.h>
 
 #else
 
