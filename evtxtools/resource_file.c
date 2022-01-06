@@ -37,6 +37,7 @@
 
 #include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
+#include "evtxtools_libcnotify.h"
 #include "evtxtools_libexe.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libfwevt.h"
@@ -568,106 +569,6 @@ int resource_file_close(
 	return( result );
 }
 
-/* Retrieves an available language identifier from the resource
- * This function will look for the preferred languague identifier otherwise default to the first
- * Returns 1 if successful or -1 on error
- */
-int resource_file_get_resource_available_languague_identifier(
-     resource_file_t *resource_file,
-     libwrc_resource_t *resource,
-     uint32_t *language_identifier,
-     libcerror_error_t **error )
-{
-	static char *function                  = "resource_file_get_resource_available_languague_identifier";
-	uint32_t preferred_language_identifier = 0;
-	uint32_t resource_language_identifier  = 0;
-	int language_index                     = 0;
-	int number_of_languages                = 0;
-
-	if( resource_file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid resource file.",
-		 function );
-
-		return( -1 );
-	}
-	if( language_identifier == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid language identifier.",
-		 function );
-
-		return( -1 );
-	}
-	if( libwrc_resource_get_number_of_languages(
-	     resource,
-	     &number_of_languages,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of languages.",
-		 function );
-
-		return( -1 );
-	}
-	if( libwrc_resource_get_language_identifier(
-	     resource,
-	     language_index,
-	     language_identifier,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve language identifier: %d.",
-		 function,
-		 language_index );
-
-		return( -1 );
-	}
-	preferred_language_identifier = resource_file->preferred_language_identifier & 0x000003ffUL;
-
-	for( language_index = 1;
-	     language_index < number_of_languages;
-	     language_index++ )
-	{
-		if( libwrc_resource_get_language_identifier(
-		     resource,
-		     language_index,
-		     &resource_language_identifier,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve language identifier: %d.",
-			 function,
-			 language_index );
-
-			return( -1 );
-		}
-		if( ( resource_language_identifier & 0x000003ffUL ) == preferred_language_identifier )
-		{
-			*language_identifier = resource_language_identifier;
-
-			break;
-		}
-	}
-	return( 1 );
-}
-
 /* Sets the name
  * Returns 1 if successful or -1 error
  */
@@ -856,18 +757,30 @@ int resource_file_get_message_table_resource(
 
 		goto on_error;
 	}
-/* TODO add support for multiple resource items */
+	if( number_of_resource_items == 0 )
+	{
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
+
+			goto on_error;
+		}
+		return( 0 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( number_of_resource_items != 1 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of resource items.",
-		 function );
-
-		goto on_error;
+		libcnotify_printf(
+		 "%s: found more than 1 resource item." );
 	}
+#endif
 	if( libwrc_resource_get_item_by_index(
 	     resource,
 	     0,
@@ -1497,18 +1410,30 @@ int resource_file_get_mui_resource(
 
 		goto on_error;
 	}
-/* TODO add support for multiple resource items */
+	if( number_of_resource_items == 0 )
+	{
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
+
+			goto on_error;
+		}
+		return( 0 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( number_of_resource_items != 1 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of resource items.",
-		 function );
-
-		goto on_error;
+		libcnotify_printf(
+		 "%s: found more than 1 resource item." );
 	}
+#endif
 	if( libwrc_resource_get_item_by_index(
 	     resource,
 	     0,
@@ -1926,18 +1851,30 @@ int resource_file_get_wevt_manifest(
 
 		goto on_error;
 	}
-/* TODO add support for multiple resource items */
+	if( number_of_resource_items == 0 )
+	{
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
+
+			goto on_error;
+		}
+		return( 0 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( number_of_resource_items != 1 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported number of resource items.",
-		 function );
-
-		goto on_error;
+		libcnotify_printf(
+		 "%s: found more than 1 resource item." );
 	}
+#endif
 	if( libwrc_resource_get_item_by_index(
 	     resource,
 	     0,

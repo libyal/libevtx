@@ -112,12 +112,6 @@ int resource_file_close(
      resource_file_t *resource_file,
      libcerror_error_t **error );
 
-int resource_file_get_resource_available_languague_identifier(
-     resource_file_t *resource_file,
-     libwrc_resource_t *resource,
-     uint32_t *language_identifier,
-     libcerror_error_t **error );
-
 int resource_file_set_name(
      resource_file_t *resource_file,
      const system_character_t *name,
