@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwrc\libwrc_table_entry.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwrc\libwrc_version.c"
 				>
 			</File>
@@ -462,6 +466,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_support.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwrc\libwrc_table_entry.h"
 				>
 			</File>
 			<File
