@@ -8,7 +8,8 @@ metadata:
 attributes:
   byte_order: little-endian
 layout:
-- file_header
+- data_type: file_header
+  offset: 0
 ---
 name: byte
 type: integer
@@ -48,9 +49,9 @@ members:
   data_type: uint64
 - name: header_size
   data_type: uint32
-- name: minor_version
+- name: minor_format_version
   data_type: uint16
-- name: major_version
+- name: major_format_version
   data_type: uint16
 - name: header_block_size
   data_type: uint16

@@ -1,7 +1,7 @@
 Source: libevtx
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
-Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, python-dev, python-setuptools, python3-dev, python3-setuptools
+Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, python3-dev, python3-setuptools
 Standards-Version: 4.1.4
 Section: libs
 Homepage: https://github.com/libyal/libevtx
@@ -45,23 +45,6 @@ Architecture: any
 Depends: libevtx-tools (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libevtx-tools
  Debugging symbols for libevtx-tools.
-
-Package: libevtx-python
-Section: python
-Architecture: any
-Depends: libevtx (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Conflicts: python-libevtx
-Replaces: python-libevtx
-Suggests: libevtx-python-dbg
-Description: Python 2 bindings for libevtx
- Python 2 bindings for libevtx.
-
-Package: libevtx-python-dbg
-Section: debug
-Architecture: any
-Depends: libevtx-python (= ${binary:Version}), ${misc:Depends}
-Description: Debugging symbols for libevtx-python
- Debugging symbols for libevtx-python.
 
 Package: libevtx-python3
 Section: python
