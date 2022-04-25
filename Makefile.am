@@ -44,7 +44,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libevtx.install \
 	dpkg/libevtx-dev.install \
-	dpkg/libevtx-python.install \
 	dpkg/libevtx-python3.install \
 	dpkg/libevtx-tools.install \
 	dpkg/source/format
