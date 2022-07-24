@@ -107,6 +107,12 @@ int libevtx_record_get_event_identifier_qualifiers(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_record_get_event_version(
+     libevtx_record_t *record,
+     uint8_t *event_version,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_record_get_event_level(
      libevtx_record_t *record,
      uint8_t *event_level,

@@ -1,4 +1,4 @@
-.Dd June 17, 2019
+.Dd July 24, 2022
 .Dt libevtx 3
 .Os libevtx
 .Sh NAME
@@ -102,6 +102,8 @@ Record functions
 .Fn libevtx_record_get_event_identifier "libevtx_record_t *record" "uint32_t *event_identifier" "libevtx_error_t **error"
 .Ft int
 .Fn libevtx_record_get_event_identifier_qualifiers "libevtx_record_t *record" "uint32_t *event_identifier_qualifiers" "libevtx_error_t **error"
+.Ft int
+.Fn libevtx_record_get_event_version "libevtx_record_t *record" "uint8_t *event_version" "libevtx_error_t **error"
 .Ft int
 .Fn libevtx_record_get_event_level "libevtx_record_t *record" "uint8_t *event_level" "libevtx_error_t **error"
 .Ft int

@@ -517,6 +517,50 @@ int libevtx_record_get_event_identifier_qualifiers(
 	return( result );
 }
 
+/* Retrieves the event version
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_get_event_version(
+     libevtx_record_t *record,
+     uint8_t *event_version,
+     libcerror_error_t **error )
+{
+	libevtx_internal_record_t *internal_record = NULL;
+	static char *function                      = "libevtx_record_get_event_version";
+	int result                                 = 0;
+
+	if( record == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record = (libevtx_internal_record_t *) record;
+
+	result = libevtx_record_values_get_event_version(
+	          internal_record->record_values,
+	          event_version,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event version from record values.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
 /* Retrieves the event level
  * Returns 1 if successful or -1 on error
  */

@@ -79,6 +79,10 @@ struct libevtx_record_values
 	 */
 	libfvalue_value_t *provider_name_value;
 
+	/* Reference to the version value
+	 */
+	libfvalue_value_t *version_value;
+
 	/* Reference to the event identifier XML tag
 	 */
 	libfwevt_xml_tag_t *event_identifier_xml_tag;
@@ -168,6 +172,11 @@ int libevtx_record_values_get_event_identifier(
 int libevtx_record_values_get_event_identifier_qualifiers(
      libevtx_record_values_t *record_values,
      uint32_t *event_identifier_qualifiers,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_event_version(
+     libevtx_record_values_t *record_values,
+     uint8_t *event_version,
      libcerror_error_t **error );
 
 int libevtx_record_values_get_creation_time(

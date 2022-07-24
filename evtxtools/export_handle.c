@@ -1826,6 +1826,7 @@ int export_handle_export_record_text(
 	uint64_t value_64bit                    = 0;
 	uint32_t event_identifier               = 0;
 	uint8_t event_level                     = 0;
+	uint8_t event_version                   = 0;
 	int result                              = 0;
 
 	if( export_handle == NULL )
@@ -2016,6 +2017,29 @@ int export_handle_export_record_text(
 		 function );
 
 		goto on_error;
+	}
+	result = libevtx_record_get_event_version(
+	          record,
+	          &event_version,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve event version.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		fprintf(
+		 export_handle->notify_stream,
+		 "Event version\t\t\t: %d\n",
+		 event_version );
 	}
 	if( libevtx_record_get_event_level(
 	     record,

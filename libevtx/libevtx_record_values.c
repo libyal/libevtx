@@ -1029,6 +1029,132 @@ int libevtx_record_values_get_event_identifier_qualifiers(
 	return( result );
 }
 
+/* Retrieves the event version
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_event_version(
+     libevtx_record_values_t *record_values,
+     uint8_t *event_version,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *root_xml_tag    = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	libfwevt_xml_tag_t *version_xml_tag = NULL;
+	static char *function               = "libevtx_record_values_get_event_version";
+	int result                          = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->version_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		if( libfwevt_xml_tag_get_element_by_utf8_name(
+		     root_xml_tag,
+		     (uint8_t *) "System",
+		     6,
+		     &system_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Version",
+		          7,
+		          &version_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Version XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result != 0 )
+		{
+			if( libfwevt_xml_tag_get_value(
+			     version_xml_tag,
+			     &( record_values->version_value ),
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve Version XML element value.",
+				 function );
+
+				return( -1 );
+			}
+		}
+	}
+	if( record_values->version_value != NULL )
+	{
+		if( libfvalue_value_copy_to_8bit(
+		     record_values->version_value,
+		     0,
+		     event_version,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy value to event version.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
+}
+
 /* Retrieves the 64-bit FILETIME value containing the creation time from the binary XML
  * Returns 1 if successful, 0 if not available or -1 on error
  */

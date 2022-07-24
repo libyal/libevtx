@@ -94,6 +94,10 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
 
+PyObject *pyevtx_record_get_event_version(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
+
 PyObject *pyevtx_record_get_event_level(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );

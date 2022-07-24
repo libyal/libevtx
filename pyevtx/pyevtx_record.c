@@ -94,10 +94,17 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Retrieves the event identifier qualifiers." },
 
+	{ "get_event_version",
+	  (PyCFunction) pyevtx_record_get_event_version,
+	  METH_NOARGS,
+	  "get_event_version() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the event version." },
+
 	{ "get_event_level",
 	  (PyCFunction) pyevtx_record_get_event_level,
 	  METH_NOARGS,
-	  "get_event_level() -> Integer or None\n"
+	  "get_event_level() -> Integer\n"
 	  "\n"
 	  "Retrieves the event level." },
 
@@ -132,7 +139,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_number_of_strings",
 	  (PyCFunction) pyevtx_record_get_number_of_strings,
 	  METH_NOARGS,
-	  "get_number_of_strings() -> Integer or None\n"
+	  "get_number_of_strings() -> Integer\n"
 	  "\n"
 	  "Retrieves the number of strings." },
 
@@ -197,6 +204,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_event_identifier_qualifiers,
 	  (setter) 0,
 	  "The event identifier qualifiers.",
+	  NULL },
+
+	{ "event_version",
+	  (getter) pyevtx_record_get_event_version,
+	  (setter) 0,
+	  "The event version.",
 	  NULL },
 
 	{ "event_level",
@@ -974,6 +987,69 @@ PyObject *pyevtx_record_get_event_identifier_qualifiers(
 	integer_object = PyLong_FromUnsignedLong(
 	                  (unsigned long) value_32bit );
 
+	return( integer_object );
+}
+
+/* Retrieves the event version
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_event_version(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_event_version";
+	uint8_t event_version    = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_event_version(
+	          pyevtx_record->record,
+	          &event_version,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve event version.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) event_version );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) event_version );
+#endif
 	return( integer_object );
 }
 
