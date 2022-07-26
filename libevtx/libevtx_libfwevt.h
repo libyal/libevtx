@@ -55,7 +55,7 @@
 
 #include <libfwevt.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFWEVT ) */
 
-#endif
+#endif /* !defined( _LIBEVTX_LIBFWEVT_H ) */
 

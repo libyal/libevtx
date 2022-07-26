@@ -26,15 +26,6 @@
 #include <types.h>
 #include <wide_string.h>
 
-#if defined( TIME_WITH_SYS_TIME )
-#include <sys/time.h>
-#include <time.h>
-#elif defined( HAVE_SYS_TIME_H )
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
-
 #include "evtxtools_libbfio.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcnotify.h"
@@ -1158,7 +1149,7 @@ int resource_file_get_message_string(
 {
 	message_string_t *safe_message_string = NULL;
 	static char *function                 = "resource_file_get_message_string";
-	time_t timestamp                      = 0;
+	int64_t timestamp                     = 0;
 	int result                            = 0;
 
 	if( resource_file == NULL )

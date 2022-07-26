@@ -26,15 +26,6 @@
 #include <types.h>
 #include <wide_string.h>
 
-#if defined( TIME_WITH_SYS_TIME )
-#include <sys/time.h>
-#include <time.h>
-#elif defined( HAVE_SYS_TIME_H )
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
-
 #include "evtxtools_libcdirectory.h"
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcpath.h"
@@ -2961,7 +2952,7 @@ int message_handle_get_resource_file(
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_get_resource_file";
-	time_t timestamp      = 0;
+	int64_t timestamp     = 0;
 
 	if( message_handle == NULL )
 	{
@@ -3196,7 +3187,7 @@ int message_handle_get_mui_resource_file(
      libcerror_error_t **error )
 {
 	static char *function = "message_handle_get_mui_resource_file";
-	time_t timestamp      = 0;
+	int64_t timestamp     = 0;
 
 	if( message_handle == NULL )
 	{

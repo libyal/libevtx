@@ -223,10 +223,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_values.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_stream.c"
 				>
 			</File>
@@ -260,50 +256,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_version_values.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_channel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_event.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_keyword.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_level.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_map.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_opcode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_provider.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_task.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template_definition.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template_values.c"
 				>
 			</File>
 		</Filter>
@@ -445,10 +397,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwrc\libwrc_resource_values.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwrc\libwrc_stream.h"
 				>
 			</File>
@@ -490,50 +438,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwrc\libwrc_version_values.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_channel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_event.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_keyword.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_level.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_map.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_opcode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_provider.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_task.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template_definition.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwrc\libwrc_wevt_template_values.h"
 				>
 			</File>
 			<File
