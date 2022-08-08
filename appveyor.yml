@@ -56,12 +56,20 @@ environment:
   - TARGET: macos-x64-gcc-python
     BUILD_ENVIRONMENT: xcode
     APPVEYOR_BUILD_WORKER_IMAGE: macos-monterey
+    PYTHON: "/usr/local/opt/python@3.10/bin/python3"
+    PYTHON_CONFIG: "/usr/local/opt/python@3.10/bin/python3-config"
     HOMEBREW_NO_INSTALL_CLEANUP: 1
+    CFLAGS: "-I/usr/local/include"
+    LDFLAGS: "-L/usr/local/lib"
     CONFIGURE_OPTIONS: "--enable-python"
   - TARGET: macos-pkgbuild
     BUILD_ENVIRONMENT: xcode
     APPVEYOR_BUILD_WORKER_IMAGE: macos-monterey
+    PYTHON: "/usr/local/opt/python@3.10/bin/python3"
+    PYTHON_CONFIG: "/usr/local/opt/python@3.10/bin/python3-config"
     HOMEBREW_NO_INSTALL_CLEANUP: 1
+    CFLAGS: "-I/usr/local/include"
+    LDFLAGS: "-L/usr/local/lib"
     CONFIGURE_OPTIONS: "--disable-dependency-tracking --prefix=/usr/local --enable-python --with-pyprefix"
   - TARGET: python27
     BUILD_ENVIRONMENT: python

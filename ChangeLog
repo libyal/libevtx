@@ -1,6 +1,10 @@
 TODO
 * add parameter expansion support
-* evtxexport: add add support for .mui files in the same directory
+* evtxexport:
+  - add add support for .mui files in the same directory
+  - export EventRecordID in non-XML output
+  - non-xml export format use evtexport like approach (add functions to get
+    specific event data)
 * add clean IO handle function
 * msvscpp:
   - check and fix debug output generation
@@ -56,9 +60,6 @@ libfwevt optimization:
 * deal with corruption scenario
 * deal with trailing empty data ?
 * remove libevtx_libfguid.h once libfvalue wraps the format flags
-* evtxeport:
-  - non-xml export format use evtexport like approach (add functions to get
-    specific event data)
 * add recovery scan
 * add debug function for binary XML token types
 * codepage support
