@@ -1486,9 +1486,6 @@ int libevtx_file_open_read(
 				 "%s: unable to read trailing data.",
 				 function );
 
-				memory_free(
-				 trailing_data );
-
 				goto on_error;
 			}
 			file_offset += read_count;
@@ -1507,7 +1504,8 @@ int libevtx_file_open_read(
 			trailing_data = NULL;
 		}
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	return( 1 );
 
 on_error:
