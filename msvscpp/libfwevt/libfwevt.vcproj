@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libfwevt\libfwevt_notify.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfwevt\libfwevt_opcode.c"
 				>
 			</File>
@@ -290,6 +294,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfwevt\libfwevt_map.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfwevt\libfwevt_notify.h"
 				>
 			</File>
 			<File
