@@ -198,10 +198,10 @@ enum LIBEVTX_XML_TAG_TYPES
 	LIBEVTX_XML_TAG_TYPE_PI
 };
 
-/* The maximum number of cache entries defintions
+/* The maximum number of cache entries definitions
  */
 #define LIBEVTX_MAXIMUM_CACHE_ENTRIES_CHUNKS			16
 #define LIBEVTX_MAXIMUM_CACHE_ENTRIES_RECORDS			64
 
-#endif
+#endif /* !defined( _LIBEVTX_INTERNAL_DEFINITIONS_H ) */
 
