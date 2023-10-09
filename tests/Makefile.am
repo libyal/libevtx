@@ -37,14 +37,12 @@ TESTS = \
 	test_tools.sh \
 	test_evtxinfo.sh \
 	test_evtxexport.sh \
-	test_evtxexport_xml.sh \
 	$(TESTS_PYEVTX)
 
 check_SCRIPTS = \
 	pyevtx_test_file.py \
 	pyevtx_test_support.py \
 	test_evtxexport.sh \
-	test_evtxexport_xml.sh \
 	test_evtxinfo.sh \
 	test_library.sh \
 	test_manpage.sh \
