@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libevtx.h
-	/bin/rm -f libevtx/definitions.h
-	/bin/rm -f libevtx/features.h
-	/bin/rm -f libevtx/types.h
-	/bin/rm -f Makefile
+	-rm -f libevtx.h
+	-rm -f libevtx/definitions.h
+	-rm -f libevtx/features.h
+	-rm -f libevtx/types.h
+	-rm -f Makefile
 

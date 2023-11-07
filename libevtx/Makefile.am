@@ -93,11 +93,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libevtx_definitions.h
-	/bin/rm -f libevtx.rc
-	/bin/rm -f Makefile
+	-rm -f libevtx_definitions.h
+	-rm -f libevtx.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libevtx ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libevtx_la_SOURCES)
 
