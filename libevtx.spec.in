@@ -32,7 +32,7 @@ Header files and libraries for developing applications for libevtx.
 Summary: Python 3 bindings for libevtx
 Group: System Environment/Libraries
 Requires: libevtx = %{version}-%{release} python3
-BuildRequires: python3-devel
+BuildRequires: python3-devel python3-setuptools
 
 %description -n libevtx-python3
 Python 3 bindings for libevtx
@@ -50,7 +50,7 @@ Several tools for reading Windows XML Event Log (EVTX) files
 %setup -q
 
 %build
-%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir} --enable-python3
+%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir} --enable-python
 make %{?_smp_mflags}
 
 %install
