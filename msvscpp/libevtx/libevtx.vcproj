@@ -214,10 +214,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libevtx\libevtx_legacy.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libevtx\libevtx_notify.c"
 				>
 			</File>
@@ -301,10 +297,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libevtx\libevtx_io_handle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libevtx\libevtx_legacy.h"
 				>
 			</File>
 			<File

@@ -41,7 +41,6 @@ libevtx_la_SOURCES = \
 	libevtx_file.c libevtx_file.h \
 	libevtx_i18n.c libevtx_i18n.h \
 	libevtx_io_handle.c libevtx_io_handle.h \
-	libevtx_legacy.c libevtx_legacy.h \
 	libevtx_libbfio.h \
 	libevtx_libcdata.h \
 	libevtx_libcerror.h \
