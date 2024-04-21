@@ -153,7 +153,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_data",
 	  (PyCFunction) pyevtx_record_get_data,
 	  METH_NOARGS,
-	  "get_data() -> Binary string or None\n"
+	  "get_data()-> Bytes or None\n"
 	  "\n"
 	  "Retrieves the data." },
 

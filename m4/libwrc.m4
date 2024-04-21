@@ -1,6 +1,6 @@
 dnl Checks for libwrc required headers and functions
 dnl
-dnl Version: 20220103
+dnl Version: 20240413
 
 dnl Function to detect if libwrc is available
 dnl ac_libwrc_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -10,8 +10,10 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
     [ac_cv_libwrc=no],
     [ac_cv_libwrc=check
     dnl Check if the directory provided as parameter exists
+    dnl For both --with-libwrc which returns "yes" and --with-libwrc= which returns ""
+    dnl treat them as auto-detection.
     AS_IF(
-      [test "x$ac_cv_with_libwrc" != x && test "x$ac_cv_with_libwrc" != xauto-detect],
+      [test "x$ac_cv_with_libwrc" != x && test "x$ac_cv_with_libwrc" != xauto-detect && test "x$ac_cv_with_libwrc" != xyes],
       [AS_IF(
         [test -d "$ac_cv_with_libwrc"],
         [CFLAGS="$CFLAGS -I${ac_cv_with_libwrc}/include"
@@ -429,8 +431,9 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
 
         ac_cv_libwrc_LIBADD="-lwrc"])
       ])
+
     AS_IF(
-      [test "x$ac_cv_with_libwrc" != x && test "x$ac_cv_with_libwrc" != xauto-detect && test "x$ac_cv_libwrc" != xyes],
+      [test "x$ac_cv_libwrc" != xyes && test "x$ac_cv_with_libwrc" != x && test "x$ac_cv_with_libwrc" != xauto-detect && test "x$ac_cv_with_libwrc" != xyes],
       [AC_MSG_FAILURE(
         [unable to find supported libwrc in directory: $ac_cv_with_libwrc],
         [1])
@@ -458,7 +461,7 @@ AC_DEFUN([AX_LIBWRC_CHECK_LIB],
 
 dnl Function to detect if libwrc dependencies are available
 AC_DEFUN([AX_LIBWRC_CHECK_LOCAL],
-  [ac_cv_libwrc_CPPFLAGS="-I../libwrc";
+  [ac_cv_libwrc_CPPFLAGS="-I../libwrc -I\$(top_srcdir)/libwrc";
   ac_cv_libwrc_LIBADD="../libwrc/libwrc.la";
 
   ac_cv_libwrc=local

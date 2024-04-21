@@ -1,6 +1,6 @@
 dnl Checks for libcdirectory required headers and functions
 dnl
-dnl Version: 20190308
+dnl Version: 20240413
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -10,8 +10,10 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
     [ac_cv_libcdirectory=no],
     [ac_cv_libcdirectory=check
     dnl Check if the directory provided as parameter exists
+    dnl For both --with-libcdirectory which returns "yes" and --with-libcdirectory= which returns ""
+    dnl treat them as auto-detection.
     AS_IF(
-      [test "x$ac_cv_with_libcdirectory" != x && test "x$ac_cv_with_libcdirectory" != xauto-detect],
+      [test "x$ac_cv_with_libcdirectory" != x && test "x$ac_cv_with_libcdirectory" != xauto-detect && test "x$ac_cv_with_libcdirectory" != xyes],
       [AS_IF(
         [test -d "$ac_cv_with_libcdirectory"],
         [CFLAGS="$CFLAGS -I${ac_cv_with_libcdirectory}/include"
@@ -156,8 +158,9 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
 
         ac_cv_libcdirectory_LIBADD="-lcdirectory"])
       ])
+
     AS_IF(
-      [test "x$ac_cv_with_libcdirectory" != x && test "x$ac_cv_with_libcdirectory" != xauto-detect && test "x$ac_cv_libcdirectory" != xyes],
+      [test "x$ac_cv_libcdirectory" != xyes && test "x$ac_cv_with_libcdirectory" != x && test "x$ac_cv_with_libcdirectory" != xauto-detect && test "x$ac_cv_with_libcdirectory" != xyes],
       [AC_MSG_FAILURE(
         [unable to find supported libcdirectory in directory: $ac_cv_with_libcdirectory],
         [1])
@@ -215,7 +218,7 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LOCAL],
       ])
     ])
 
-  ac_cv_libcdirectory_CPPFLAGS="-I../libcdirectory";
+  ac_cv_libcdirectory_CPPFLAGS="-I../libcdirectory -I\$(top_srcdir)/libcdirectory";
   ac_cv_libcdirectory_LIBADD="../libcdirectory/libcdirectory.la";
 
   ac_cv_libcdirectory=local

@@ -1169,6 +1169,7 @@ int libevtx_record_values_get_creation_time(
 	libfwevt_xml_tag_t *time_created_xml_tag = NULL;
 	static char *function                    = "libevtx_record_values_get_creation_time";
 	int result                               = 0;
+	int value_type                           = 0;
 
 	if( record_values == NULL )
 	{
@@ -1289,20 +1290,52 @@ int libevtx_record_values_get_creation_time(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_64bit(
+	if( libfvalue_value_get_type(
 	     record_values->time_created_value,
-	     0,
-	     filetime,
+	     &value_type,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy value to FILETIME timestamp.",
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve provider TimeCreated XML element value type.",
 		 function );
 
 		return( -1 );
+	}
+/* TODO add support for LIBFVALUE_VALUE_TYPE_STRING_UTF16
+ * 2022-07-06T12:24:40.608115500Z
+ */
+	if( value_type != LIBFVALUE_VALUE_TYPE_FILETIME )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported TimeCreated XML element value type: %d.",
+		 function,
+		 value_type );
+
+		return( -1 );
+	}
+	if( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
+	{
+		if( libfvalue_value_copy_to_64bit(
+		     record_values->time_created_value,
+		     0,
+		     filetime,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy value to FILETIME timestamp.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( 1 );
 }

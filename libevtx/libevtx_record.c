@@ -351,7 +351,7 @@ int libevtx_record_get_identifier(
 }
 
 /* Retrieves the 64-bit FILETIME value containing the creation time from the binary XML
- * Returns 1 if successful or -1 on error
+ * Returns 1 if successful, 0 if not available or -1 on error
  */
 int libevtx_record_get_creation_time(
      libevtx_record_t *record,
@@ -360,6 +360,7 @@ int libevtx_record_get_creation_time(
 {
 	libevtx_internal_record_t *internal_record = NULL;
 	static char *function                      = "libevtx_record_get_creation_time";
+	int result                                 = 0;
 
 	if( record == NULL )
 	{
@@ -374,10 +375,12 @@ int libevtx_record_get_creation_time(
 	}
 	internal_record = (libevtx_internal_record_t *) record;
 
-	if( libevtx_record_values_get_creation_time(
-	     internal_record->record_values,
-	     filetime,
-	     error ) != 1 )
+	result = libevtx_record_values_get_creation_time(
+	          internal_record->record_values,
+	          filetime,
+	          error );
+
+	if( result == -1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -388,7 +391,7 @@ int libevtx_record_get_creation_time(
 
 		return( -1 );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the 64-bit FILETIME value containing the written time from the event record header

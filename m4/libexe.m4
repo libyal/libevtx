@@ -1,6 +1,6 @@
 dnl Checks for libexe required headers and functions
 dnl
-dnl Version: 20211231
+dnl Version: 20240413
 
 dnl Function to detect if libexe is available
 dnl ac_libexe_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -10,8 +10,10 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
     [ac_cv_libexe=no],
     [ac_cv_libexe=check
     dnl Check if the directory provided as parameter exists
+    dnl For both --with-libexe which returns "yes" and --with-libexe= which returns ""
+    dnl treat them as auto-detection.
     AS_IF(
-      [test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect],
+      [test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect && test "x$ac_cv_with_libexe" != xyes],
       [AS_IF(
         [test -d "$ac_cv_with_libexe"],
         [CFLAGS="$CFLAGS -I${ac_cv_with_libexe}/include"
@@ -115,8 +117,9 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
 
         ac_cv_libexe_LIBADD="-lexe"])
       ])
+
     AS_IF(
-      [test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect && test "x$ac_cv_libexe" != xyes],
+      [test "x$ac_cv_libexe" != xyes && test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect && test "x$ac_cv_with_libexe" != xyes],
       [AC_MSG_FAILURE(
         [unable to find supported libexe in directory: $ac_cv_with_libexe],
         [1])
@@ -144,7 +147,7 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
 
 dnl Function to detect if libexe dependencies are available
 AC_DEFUN([AX_LIBEXE_CHECK_LOCAL],
-  [ac_cv_libexe_CPPFLAGS="-I../libexe";
+  [ac_cv_libexe_CPPFLAGS="-I../libexe -I\$(top_srcdir)/libexe";
   ac_cv_libexe_LIBADD="../libexe/libexe.la";
 
   ac_cv_libexe=local

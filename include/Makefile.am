@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libevtx/features.h.in \
 	libevtx/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libevtx.h \
+	libevtx/definitions.h \
+	libevtx/features.h \
+	libevtx/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libevtx.h
-	-rm -f libevtx/definitions.h
-	-rm -f libevtx/features.h
-	-rm -f libevtx/types.h
-	-rm -f Makefile
 

@@ -1,7 +1,7 @@
 AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -88,13 +88,11 @@ EXTRA_DIST = \
 	libevtx.rc \
 	libevtx.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libevtx_definitions.h \
+	libevtx.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libevtx_definitions.h
-	-rm -f libevtx.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 

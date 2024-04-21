@@ -75,6 +75,7 @@ April 2012 | Additional information.
 | 0.0.22 | J.B. Metz | December 2021 | Additional information about MUI language neutral file.
 | 0.0.23 | J.B. Metz | December 2023 | Updated references and additional information about SystemResources directory.
 | 0.0.24 | J.B. Metz | January 2024 | Additional information about parameter message files.
+| 0.0.25 | J.B. Metz | April 2024 | Additional information about dependency identifier.
 |===
 
 :numbered:
@@ -387,7 +388,7 @@ See section: <<token_types,Token types>>
 4+| _Common_
 | 3 | 4 | | Data size +
 The size of the data. +
-This includes the size of the element name, attribute list, close element tag, content and end element tag, except for the first 7 bytes of the element start.
+This includes the size of the element name, attribute list, close element tag, content and end element tag, except for the first 5 or 7 bytes of the element start.
 4+| _Optional see notes below_
 | 7 | 4 | | Element name offset +
 The offset is relative from the start of the chunk +
@@ -409,8 +410,9 @@ The name offset is not present in the binary XML in the Windows Event Template
 resource.
 
 [NOTE]
-The dependency identifier is not present when the element start is used in a
-substitution token with value type: Binary XML (0x21).
+According to `[MS-EVEN6]` the dependency identifier is not present when the
+element start is used in a substitution token with value type: Binary XML
+(0x21).
 
 ==== [[attribute_list]]Attribute list
 

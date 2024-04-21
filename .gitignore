@@ -151,6 +151,7 @@ stamp-h[1-9]
 /tests/evtx_test_tools_resource_file
 /tests/evtx_test_tools_signal
 /tests/input
+/tests/notify_stream.log
 /tests/tmp*
 
 # Local library dependencies specific files

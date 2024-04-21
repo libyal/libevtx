@@ -1,6 +1,6 @@
 dnl Checks for libregf required headers and functions
 dnl
-dnl Version: 20190308
+dnl Version: 20240413
 
 dnl Function to detect if libregf is available
 dnl ac_libregf_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -10,8 +10,10 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
     [ac_cv_libregf=no],
     [ac_cv_libregf=check
     dnl Check if the directory provided as parameter exists
+    dnl For both --with-libregf which returns "yes" and --with-libregf= which returns ""
+    dnl treat them as auto-detection.
     AS_IF(
-      [test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect],
+      [test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect && test "x$ac_cv_with_libregf" != xyes],
       [AS_IF(
         [test -d "$ac_cv_with_libregf"],
         [CFLAGS="$CFLAGS -I${ac_cv_with_libregf}/include"
@@ -57,8 +59,9 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
 
         ac_cv_libregf_LIBADD="-lregf"])
       ])
+
     AS_IF(
-      [test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect && test "x$ac_cv_libregf" != xyes],
+      [test "x$ac_cv_libregf" != xyes && test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect && test "x$ac_cv_with_libregf" != xyes],
       [AC_MSG_FAILURE(
         [unable to find supported libregf in directory: $ac_cv_with_libregf],
         [1])
@@ -99,9 +102,9 @@ AC_DEFUN([AX_LIBREGF_CHECK_LOCAL],
     [AC_MSG_FAILURE(
       [Missing function: towupper],
       [1])
-   ])
+    ])
 
-  ac_cv_libregf_CPPFLAGS="-I../libregf";
+  ac_cv_libregf_CPPFLAGS="-I../libregf -I\$(top_srcdir)/libregf";
   ac_cv_libregf_LIBADD="../libregf/libregf.la";
 
   ac_cv_libregf=local

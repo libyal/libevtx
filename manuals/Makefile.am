@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	evtxinfo.1 \
 	libevtx.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 
