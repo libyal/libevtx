@@ -43,6 +43,7 @@
 #include <libfwevt_xml_document.h>
 #include <libfwevt_xml_tag.h>
 #include <libfwevt_xml_template_value.h>
+#include <libfwevt_xml_value.h>
 
 #else
 

@@ -782,10 +782,10 @@ int libevtx_record_values_get_event_identifier(
      uint32_t *event_identifier,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *event_identifier_value = NULL;
-	libfwevt_xml_tag_t *root_xml_tag          = NULL;
-	libfwevt_xml_tag_t *system_xml_tag        = NULL;
-	static char *function                    = "libevtx_record_values_get_event_identifier";
+	libfwevt_xml_tag_t *root_xml_tag             = NULL;
+	libfwevt_xml_tag_t *system_xml_tag           = NULL;
+	libfwevt_xml_value_t *event_identifier_value = NULL;
+	static char *function                        = "libevtx_record_values_get_event_identifier";
 
 	if( record_values == NULL )
 	{
@@ -872,9 +872,8 @@ int libevtx_record_values_get_event_identifier(
 
 		return( -1 );
 	}
-	if( libfvalue_value_copy_to_32bit(
+	if( libfwevt_xml_value_copy_to_32bit(
 	     event_identifier_value,
-	     0,
 	     event_identifier,
 	     error ) != 1 )
 	{
@@ -898,10 +897,10 @@ int libevtx_record_values_get_event_identifier_qualifiers(
      uint32_t *event_identifier_qualifiers,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *qualifiers_value    = NULL;
 	libfwevt_xml_tag_t *qualifiers_xml_tag = NULL;
 	libfwevt_xml_tag_t *root_xml_tag       = NULL;
 	libfwevt_xml_tag_t *system_xml_tag     = NULL;
+	libfwevt_xml_value_t *qualifiers_value = NULL;
 	static char *function                  = "libevtx_record_values_get_event_identifier_qualifiers";
 	int result                             = 0;
 
@@ -1010,9 +1009,8 @@ int libevtx_record_values_get_event_identifier_qualifiers(
 
 			return( -1 );
 		}
-		if( libfvalue_value_copy_to_32bit(
+		if( libfwevt_xml_value_copy_to_32bit(
 		     qualifiers_value,
-		     0,
 		     event_identifier_qualifiers,
 		     error ) != 1 )
 		{
@@ -1135,9 +1133,8 @@ int libevtx_record_values_get_event_version(
 	}
 	if( record_values->version_value != NULL )
 	{
-		if( libfvalue_value_copy_to_8bit(
+		if( libfwevt_xml_value_copy_to_8bit(
 		     record_values->version_value,
-		     0,
 		     event_version,
 		     error ) != 1 )
 		{
@@ -1290,7 +1287,7 @@ int libevtx_record_values_get_creation_time(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_type(
+	if( libfwevt_xml_value_get_type(
 	     record_values->time_created_value,
 	     &value_type,
 	     error ) != 1 )
@@ -1304,7 +1301,7 @@ int libevtx_record_values_get_creation_time(
 
 		return( -1 );
 	}
-/* TODO add support for LIBFVALUE_VALUE_TYPE_STRING_UTF16
+/* TODO add support for LIBFVALUE_VALUE_TYPE_FILETIME
  * 2022-07-06T12:24:40.608115500Z
  */
 	if( value_type != LIBFVALUE_VALUE_TYPE_FILETIME )
@@ -1321,9 +1318,8 @@ int libevtx_record_values_get_creation_time(
 	}
 	if( value_type == LIBFVALUE_VALUE_TYPE_FILETIME )
 	{
-		if( libfvalue_value_copy_to_64bit(
+		if( libfwevt_xml_value_copy_to_64bit(
 		     record_values->time_created_value,
-		     0,
 		     filetime,
 		     error ) != 1 )
 		{
@@ -1486,9 +1482,8 @@ int libevtx_record_values_get_event_level(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_8bit(
+	if( libfwevt_xml_value_copy_to_8bit(
 	     record_values->level_value,
-	     0,
 	     event_level,
 	     error ) != 1 )
 	{
@@ -1641,9 +1636,8 @@ int libevtx_record_values_get_utf8_provider_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf8_string_size(
+	if( libfwevt_xml_value_get_utf8_string_size(
 	     record_values->provider_identifier_value,
-	     0,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -1797,9 +1791,8 @@ int libevtx_record_values_get_utf8_provider_identifier(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf8_string(
+	if( libfwevt_xml_value_copy_to_utf8_string(
 	     record_values->provider_identifier_value,
-	     0,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -1953,9 +1946,8 @@ int libevtx_record_values_get_utf16_provider_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf16_string_size(
+	if( libfwevt_xml_value_get_utf16_string_size(
 	     record_values->provider_identifier_value,
-	     0,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -2109,9 +2101,8 @@ int libevtx_record_values_get_utf16_provider_identifier(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf16_string(
+	if( libfwevt_xml_value_copy_to_utf16_string(
 	     record_values->provider_identifier_value,
-	     0,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -2286,9 +2277,8 @@ int libevtx_record_values_get_utf8_source_name_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf8_string_size(
+	if( libfwevt_xml_value_get_utf8_string_size(
 	     record_values->provider_name_value,
-	     0,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -2463,9 +2453,8 @@ int libevtx_record_values_get_utf8_source_name(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf8_string(
+	if( libfwevt_xml_value_copy_to_utf8_string(
 	     record_values->provider_name_value,
-	     0,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -2640,9 +2629,8 @@ int libevtx_record_values_get_utf16_source_name_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf16_string_size(
+	if( libfwevt_xml_value_get_utf16_string_size(
 	     record_values->provider_name_value,
-	     0,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -2817,9 +2805,8 @@ int libevtx_record_values_get_utf16_source_name(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf16_string(
+	if( libfwevt_xml_value_copy_to_utf16_string(
 	     record_values->provider_name_value,
-	     0,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -2948,9 +2935,8 @@ int libevtx_record_values_get_utf8_computer_name_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf8_string_size(
+	if( libfwevt_xml_value_get_utf8_string_size(
 	     record_values->computer_value,
-	     0,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -3079,9 +3065,8 @@ int libevtx_record_values_get_utf8_computer_name(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf8_string(
+	if( libfwevt_xml_value_copy_to_utf8_string(
 	     record_values->computer_value,
-	     0,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -3210,9 +3195,8 @@ int libevtx_record_values_get_utf16_computer_name_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf16_string_size(
+	if( libfwevt_xml_value_get_utf16_string_size(
 	     record_values->computer_value,
-	     0,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -3341,9 +3325,8 @@ int libevtx_record_values_get_utf16_computer_name(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf16_string(
+	if( libfwevt_xml_value_copy_to_utf16_string(
 	     record_values->computer_value,
-	     0,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -3495,9 +3478,8 @@ int libevtx_record_values_get_utf8_user_security_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf8_string_size(
+	if( libfwevt_xml_value_get_utf8_string_size(
 	     record_values->user_security_identifier_value,
-	     0,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -3649,9 +3631,8 @@ int libevtx_record_values_get_utf8_user_security_identifier(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf8_string(
+	if( libfwevt_xml_value_copy_to_utf8_string(
 	     record_values->user_security_identifier_value,
-	     0,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -3803,9 +3784,8 @@ int libevtx_record_values_get_utf16_user_security_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_utf16_string_size(
+	if( libfwevt_xml_value_get_utf16_string_size(
 	     record_values->user_security_identifier_value,
-	     0,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -3957,9 +3937,8 @@ int libevtx_record_values_get_utf16_user_security_identifier(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_to_utf16_string(
+	if( libfwevt_xml_value_copy_to_utf16_string(
 	     record_values->user_security_identifier_value,
-	     0,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -4786,8 +4765,9 @@ int libevtx_record_values_get_utf8_string_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libfwevt_xml_tag_t *string_xml_tag = NULL;
-	static char *function              = "libevtx_record_values_get_utf8_string_size";
+	libfwevt_xml_tag_t *string_xml_tag     = NULL;
+	libfwevt_xml_value_t *string_xml_value = NULL;
+	static char *function                  = "libevtx_record_values_get_utf8_string_size";
 
 	if( record_values == NULL )
 	{
@@ -4845,8 +4825,23 @@ int libevtx_record_values_get_utf8_string_size(
 
 		return( -1 );
 	}
-	if( libfwevt_xml_tag_get_utf8_value_size(
+	if( libfwevt_xml_tag_get_value(
 	     string_xml_tag,
+	     &string_xml_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve string: %d value.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	if( libfwevt_xml_value_get_utf8_string_size(
+	     string_xml_value,
 	     utf8_string_size,
 	     error ) != 1 )
 	{
@@ -4875,8 +4870,9 @@ int libevtx_record_values_get_utf8_string(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libfwevt_xml_tag_t *string_xml_tag = NULL;
-	static char *function              = "libevtx_record_values_get_utf8_string";
+	libfwevt_xml_tag_t *string_xml_tag     = NULL;
+	libfwevt_xml_value_t *string_xml_value = NULL;
+	static char *function                  = "libevtx_record_values_get_utf8_string";
 
 	if( record_values == NULL )
 	{
@@ -4934,8 +4930,23 @@ int libevtx_record_values_get_utf8_string(
 
 		return( -1 );
 	}
-	if( libfwevt_xml_tag_get_utf8_value(
+	if( libfwevt_xml_tag_get_value(
 	     string_xml_tag,
+	     &string_xml_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve string: %d value.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	if( libfwevt_xml_value_copy_to_utf8_string(
+	     string_xml_value,
 	     utf8_string,
 	     utf8_string_size,
 	     error ) != 1 )
@@ -4964,8 +4975,9 @@ int libevtx_record_values_get_utf16_string_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libfwevt_xml_tag_t *string_xml_tag = NULL;
-	static char *function              = "libevtx_record_values_get_utf16_string_size";
+	libfwevt_xml_tag_t *string_xml_tag     = NULL;
+	libfwevt_xml_value_t *string_xml_value = NULL;
+	static char *function                  = "libevtx_record_values_get_utf16_string_size";
 
 	if( record_values == NULL )
 	{
@@ -5023,8 +5035,23 @@ int libevtx_record_values_get_utf16_string_size(
 
 		return( -1 );
 	}
-	if( libfwevt_xml_tag_get_utf16_value_size(
+	if( libfwevt_xml_tag_get_value(
 	     string_xml_tag,
+	     &string_xml_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve string: %d value.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	if( libfwevt_xml_value_get_utf16_string_size(
+	     string_xml_value,
 	     utf16_string_size,
 	     error ) != 1 )
 	{
@@ -5053,8 +5080,9 @@ int libevtx_record_values_get_utf16_string(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libfwevt_xml_tag_t *string_xml_tag = NULL;
-	static char *function              = "libevtx_record_values_get_utf16_string";
+	libfwevt_xml_tag_t *string_xml_tag     = NULL;
+	libfwevt_xml_value_t *string_xml_value = NULL;
+	static char *function                  = "libevtx_record_values_get_utf16_string";
 
 	if( record_values == NULL )
 	{
@@ -5112,8 +5140,23 @@ int libevtx_record_values_get_utf16_string(
 
 		return( -1 );
 	}
-	if( libfwevt_xml_tag_get_utf16_value(
+	if( libfwevt_xml_tag_get_value(
 	     string_xml_tag,
+	     &string_xml_value,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve string: %d value.",
+		 function,
+		 string_index );
+
+		return( -1 );
+	}
+	if( libfwevt_xml_value_copy_to_utf16_string(
+	     string_xml_value,
 	     utf16_string,
 	     utf16_string_size,
 	     error ) != 1 )
@@ -5261,7 +5304,7 @@ int libevtx_record_values_get_data_size(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_get_data_size(
+	if( libfwevt_xml_value_get_data_size(
 	     record_values->binary_data_value,
 	     data_size,
 	     error ) != 1 )
@@ -5409,7 +5452,7 @@ int libevtx_record_values_get_data(
 			return( -1 );
 		}
 	}
-	if( libfvalue_value_copy_data(
+	if( libfwevt_xml_value_copy_data(
 	     record_values->binary_data_value,
 	     data,
 	     data_size,

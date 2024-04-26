@@ -28,7 +28,6 @@
 #include "libevtx_io_handle.h"
 #include "libevtx_libcdata.h"
 #include "libevtx_libcerror.h"
-#include "libevtx_libfvalue.h"
 #include "libevtx_libfwevt.h"
 #include "libevtx_template_definition.h"
 #include "libevtx_types.h"
@@ -73,15 +72,15 @@ struct libevtx_record_values
 
 	/* Reference to the provider identifier value
 	 */
-	libfvalue_value_t *provider_identifier_value;
+	libfwevt_xml_value_t *provider_identifier_value;
 
 	/* Reference to the provider name value
 	 */
-	libfvalue_value_t *provider_name_value;
+	libfwevt_xml_value_t *provider_name_value;
 
 	/* Reference to the version value
 	 */
-	libfvalue_value_t *version_value;
+	libfwevt_xml_value_t *version_value;
 
 	/* Reference to the event identifier XML tag
 	 */
@@ -89,35 +88,35 @@ struct libevtx_record_values
 
 	/* Reference to the time created value
 	 */
-	libfvalue_value_t *time_created_value;
+	libfwevt_xml_value_t *time_created_value;
 
 	/* Reference to the level value
 	 */
-	libfvalue_value_t *level_value;
+	libfwevt_xml_value_t *level_value;
 
 	/* Reference to the task value
 	 */
-	libfvalue_value_t *task_value;
+	libfwevt_xml_value_t *task_value;
 
 	/* Reference to the oppcode value
 	 */
-	libfvalue_value_t *oppcode_value;
+	libfwevt_xml_value_t *oppcode_value;
 
 	/* Reference to the keywords value
 	 */
-	libfvalue_value_t *keywords_value;
+	libfwevt_xml_value_t *keywords_value;
 
 	/* Reference to the channel value
 	 */
-	libfvalue_value_t *channel_value;
+	libfwevt_xml_value_t *channel_value;
 
 	/* Reference to the computer value
 	 */
-	libfvalue_value_t *computer_value;
+	libfwevt_xml_value_t *computer_value;
 
 	/* Reference to the user security identifier (SID) value
 	 */
-	libfvalue_value_t *user_security_identifier_value;
+	libfwevt_xml_value_t *user_security_identifier_value;
 
 	/* The string identifiers array
 	 */
@@ -129,7 +128,7 @@ struct libevtx_record_values
 
 	/* Reference to the BinaryData value
 	 */
-	libfvalue_value_t *binary_data_value;
+	libfwevt_xml_value_t *binary_data_value;
 
 	/* Value to indicate the data was parsed
 	 */

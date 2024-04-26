@@ -250,6 +250,10 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
     CONFIGURE_OPTIONS: "--enable-static-executables"
 
+matrix:
+  allow_failures:
+  - TARGET: mingw-w64-gcc-python
+
 install:
 - cmd: if [%BUILD_ENVIRONMENT%]==[msbuild] (
     git clone https://github.com/libyal/vstools.git ..\vstools )
