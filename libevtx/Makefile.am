@@ -50,7 +50,6 @@ libevtx_la_SOURCES = \
 	libevtx_libfdata.h \
 	libevtx_libfdatetime.h \
 	libevtx_libfguid.h \
-	libevtx_libfvalue.h \
 	libevtx_libfwevt.h \
 	libevtx_libuna.h \
 	libevtx_notify.c libevtx_notify.h \

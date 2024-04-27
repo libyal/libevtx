@@ -155,6 +155,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libfwevt\libfwevt_date_time.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfwevt\libfwevt_debug.c"
 				>
 			</File>
@@ -207,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libfwevt\libfwevt_template_item.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfwevt\libfwevt_xml_document.c"
 				>
 			</File>
@@ -222,6 +230,10 @@
 				RelativePath="..\..\libfwevt\libfwevt_xml_token.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\libfwevt\libfwevt_xml_value.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -234,6 +246,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfwevt\libfwevt_channel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfwevt\libfwevt_date_time.h"
 				>
 			</File>
 			<File
@@ -321,6 +337,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libfwevt\libfwevt_template_item.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libfwevt\libfwevt_types.h"
 				>
 			</File>
@@ -342,6 +362,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfwevt\libfwevt_xml_token.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfwevt\libfwevt_xml_value.h"
 				>
 			</File>
 		</Filter>

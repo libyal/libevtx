@@ -336,10 +336,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libevtx\libevtx_libfvalue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libevtx\libevtx_libfwevt.h"
 				>
 			</File>

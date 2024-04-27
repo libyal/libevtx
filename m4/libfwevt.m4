@@ -1,6 +1,6 @@
 dnl Checks for libfwevt required headers and functions
 dnl
-dnl Version: 20240426
+dnl Version: 20240427
 
 dnl Function to detect if libfwevt is available
 dnl ac_libfwevt_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -28,7 +28,7 @@ AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
         [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
         [PKG_CHECK_MODULES(
           [libfwevt],
-          [libfwevt >= 20240425],
+          [libfwevt >= 20240427],
           [ac_cv_libfwevt=yes],
           [ac_cv_libfwevt=check])
         ])
@@ -587,17 +587,22 @@ AC_DEFUN([AX_LIBFWEVT_CHECK_LIB],
           [ac_cv_libfwevt=no])
         AC_CHECK_LIB(
           fwevt,
-          libfwevt_xml_value_copy_to_8bit,
+          libfwevt_value_get_data_as_8bit_integer,
           [ac_cv_libfwevt_dummy=yes],
           [ac_cv_libfwevt=no])
         AC_CHECK_LIB(
           fwevt,
-          libfwevt_xml_value_copy_to_32bit,
+          libfwevt_value_get_data_as_32bit_integer,
           [ac_cv_libfwevt_dummy=yes],
           [ac_cv_libfwevt=no])
         AC_CHECK_LIB(
           fwevt,
-          libfwevt_xml_value_copy_to_64bit,
+          libfwevt_value_get_data_as_64bit_integer,
+          [ac_cv_libfwevt_dummy=yes],
+          [ac_cv_libfwevt=no])
+        AC_CHECK_LIB(
+          fwevt,
+          libfwevt_value_get_data_as_filetime,
           [ac_cv_libfwevt_dummy=yes],
           [ac_cv_libfwevt=no])
         AC_CHECK_LIB(
