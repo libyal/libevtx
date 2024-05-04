@@ -122,6 +122,13 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	  "\n"
 	  "Retrieves the source name." },
 
+	{ "get_channel_name",
+	  (PyCFunction) pyevtx_record_get_channel_name,
+	  METH_NOARGS,
+	  "get_channel_name() -> Unicode string or None\n"
+	  "\n"
+	  "Retrieves the channel name." },
+
 	{ "get_computer_name",
 	  (PyCFunction) pyevtx_record_get_computer_name,
 	  METH_NOARGS,
@@ -228,6 +235,12 @@ PyGetSetDef pyevtx_record_object_get_set_definitions[] = {
 	  (getter) pyevtx_record_get_source_name,
 	  (setter) 0,
 	  "The source name.",
+	  NULL },
+
+	{ "channel_name",
+	  (getter) pyevtx_record_get_channel_name,
+	  (setter) 0,
+	  "The channel name.",
 	  NULL },
 
 	{ "computer_name",
@@ -1313,6 +1326,127 @@ PyObject *pyevtx_record_get_source_name(
 		 error,
 		 PyExc_IOError,
 		 "%s: unable to retrieve source name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	/* Pass the string length to PyUnicode_DecodeUTF8 otherwise it makes
+	 * the end of string character is part of the string
+	 */
+	string_object = PyUnicode_DecodeUTF8(
+	                 utf8_string,
+	                 (Py_ssize_t) utf8_string_size - 1,
+	                 NULL );
+
+	if( string_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to convert UTF-8 string into Unicode object.",
+		 function );
+
+		goto on_error;
+	}
+	PyMem_Free(
+	 utf8_string );
+
+	return( string_object );
+
+on_error:
+	if( utf8_string != NULL )
+	{
+		PyMem_Free(
+		 utf8_string );
+	}
+	return( NULL );
+}
+
+/* Retrieves the channel name
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pyevtx_record_get_channel_name(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments PYEVTX_ATTRIBUTE_UNUSED )
+{
+	PyObject *string_object  = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pyevtx_record_get_channel_name";
+	char *utf8_string        = NULL;
+	size_t utf8_string_size  = 0;
+	int result               = 0;
+
+	PYEVTX_UNREFERENCED_PARAMETER( arguments )
+
+	if( pyevtx_record == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_channel_name_size(
+	          pyevtx_record->record,
+	          &utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to determine size of channel name as UTF-8 string.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	else if( ( result == 0 )
+	      || ( utf8_string_size == 0 ) )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	utf8_string = (char *) PyMem_Malloc(
+	                        sizeof( char ) * utf8_string_size );
+
+	if( utf8_string == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create UTF-8 string.",
+		 function );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libevtx_record_get_utf8_channel_name(
+	          pyevtx_record->record,
+	          (uint8_t *) utf8_string,
+	          utf8_string_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pyevtx_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve channel name as UTF-8 string.",
 		 function );
 
 		libcerror_error_free(

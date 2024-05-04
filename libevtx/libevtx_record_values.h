@@ -237,6 +237,28 @@ int libevtx_record_values_get_utf16_source_name(
      size_t utf16_string_size,
      libcerror_error_t **error );
 
+int libevtx_record_values_get_utf8_channel_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf8_channel_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_channel_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+int libevtx_record_values_get_utf16_channel_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
 int libevtx_record_values_get_utf8_computer_name_size(
      libevtx_record_values_t *record_values,
      size_t *utf8_string_size,

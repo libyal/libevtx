@@ -2347,6 +2347,79 @@ int export_handle_export_record_text(
 		 "Source name\t\t\t: %" PRIs_SYSTEM "\n",
 		 source_name );
 	}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libevtx_record_get_utf16_channel_name_size(
+	          record,
+	          &value_string_size,
+	          error );
+#else
+	result = libevtx_record_get_utf8_channel_name_size(
+	          record,
+	          &value_string_size,
+	          error );
+#endif
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve channel name size.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( result != 0 )
+	 && ( value_string_size > 0 ) )
+	{
+		value_string = system_string_allocate(
+		                value_string_size );
+
+		if( value_string == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create value string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libevtx_record_get_utf16_channel_name(
+		          record,
+		          (uint16_t *) value_string,
+		          value_string_size,
+		          error );
+#else
+		result = libevtx_record_get_utf8_channel_name(
+		          record,
+		          (uint8_t *) value_string,
+		          value_string_size,
+		          error );
+#endif
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve channel name.",
+			 function );
+
+			goto on_error;
+		}
+		fprintf(
+		 export_handle->notify_stream,
+		 "Channel name\t\t\t: %" PRIs_SYSTEM "\n",
+		 value_string );
+
+		memory_free(
+		 value_string );
+
+		value_string = NULL;
+	}
 /* TODO category ? */
 
 	if( libevtx_record_get_event_identifier(

@@ -110,6 +110,10 @@ PyObject *pyevtx_record_get_source_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );
 
+PyObject *pyevtx_record_get_channel_name(
+           pyevtx_record_t *pyevtx_record,
+           PyObject *arguments );
+
 PyObject *pyevtx_record_get_computer_name(
            pyevtx_record_t *pyevtx_record,
            PyObject *arguments );

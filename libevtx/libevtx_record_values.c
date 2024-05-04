@@ -2789,6 +2789,526 @@ int libevtx_record_values_get_utf16_source_name(
 	return( 1 );
 }
 
+/* Retrieves the size of the UTF-8 encoded channel name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_utf8_channel_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf8_string_size,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *channel_xml_tag = NULL;
+	libfwevt_xml_tag_t *root_xml_tag    = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	static char *function               = "libevtx_record_values_get_utf8_channel_name_size";
+	int result                          = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->channel_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Channel",
+		          7,
+		          &channel_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		if( libfwevt_xml_tag_get_value(
+		     channel_xml_tag,
+		     &( record_values->channel_value ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfwevt_xml_value_get_utf8_string_size(
+	     record_values->channel_value,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-8 string size of channel name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-8 encoded channel name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_utf8_channel_name(
+     libevtx_record_values_t *record_values,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *channel_xml_tag = NULL;
+	libfwevt_xml_tag_t *root_xml_tag    = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	static char *function               = "libevtx_record_values_get_utf8_channel_name";
+	int result                          = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->channel_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Channel",
+		          7,
+		          &channel_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		if( libfwevt_xml_tag_get_value(
+		     channel_xml_tag,
+		     &( record_values->channel_value ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfwevt_xml_value_copy_to_utf8_string(
+	     record_values->channel_value,
+	     utf8_string,
+	     utf8_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy channel name to UTF-8 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the size of the UTF-16 encoded channel name
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_utf16_channel_name_size(
+     libevtx_record_values_t *record_values,
+     size_t *utf16_string_size,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *channel_xml_tag = NULL;
+	libfwevt_xml_tag_t *root_xml_tag    = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	static char *function               = "libevtx_record_values_get_utf16_channel_name_size";
+	int result                          = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->channel_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Channel",
+		          7,
+		          &channel_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		if( libfwevt_xml_tag_get_value(
+		     channel_xml_tag,
+		     &( record_values->channel_value ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfwevt_xml_value_get_utf16_string_size(
+	     record_values->channel_value,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve UTF-16 string size of channel name.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the UTF-16 encoded channel name
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if not available or -1 on error
+ */
+int libevtx_record_values_get_utf16_channel_name(
+     libevtx_record_values_t *record_values,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error )
+{
+	libfwevt_xml_tag_t *channel_xml_tag = NULL;
+	libfwevt_xml_tag_t *root_xml_tag    = NULL;
+	libfwevt_xml_tag_t *system_xml_tag  = NULL;
+	static char *function               = "libevtx_record_values_get_utf16_channel_name";
+	int result                          = 0;
+
+	if( record_values == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record values.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->xml_document == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record values - missing XML document.",
+		 function );
+
+		return( -1 );
+	}
+	if( record_values->channel_value == NULL )
+	{
+		if( libfwevt_xml_document_get_root_xml_tag(
+		     record_values->xml_document,
+		     &root_xml_tag,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve root XML element.",
+			 function );
+
+			return( -1 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          root_xml_tag,
+		          (uint8_t *) "System",
+		          6,
+		          &system_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve System XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		result = libfwevt_xml_tag_get_element_by_utf8_name(
+		          system_xml_tag,
+		          (uint8_t *) "Channel",
+		          7,
+		          &channel_xml_tag,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element.",
+			 function );
+
+			return( -1 );
+		}
+		else if( result == 0 )
+		{
+			return( 0 );
+		}
+		if( libfwevt_xml_tag_get_value(
+		     channel_xml_tag,
+		     &( record_values->channel_value ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve Channel XML element value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfwevt_xml_value_copy_to_utf16_string(
+	     record_values->channel_value,
+	     utf16_string,
+	     utf16_string_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy channel name to UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
 /* Retrieves the size of the UTF-8 encoded computer name
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if not available or -1 on error
@@ -2895,7 +3415,7 @@ int libevtx_record_values_get_utf8_computer_name_size(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve computer XML element value.",
+			 "%s: unable to retrieve Computer XML element value.",
 			 function );
 
 			return( -1 );
@@ -3025,7 +3545,7 @@ int libevtx_record_values_get_utf8_computer_name(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve computer XML element value.",
+			 "%s: unable to retrieve Computer XML element value.",
 			 function );
 
 			return( -1 );
@@ -3155,7 +3675,7 @@ int libevtx_record_values_get_utf16_computer_name_size(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve computer XML element value.",
+			 "%s: unable to retrieve Computer XML element value.",
 			 function );
 
 			return( -1 );
@@ -3285,7 +3805,7 @@ int libevtx_record_values_get_utf16_computer_name(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve computer XML element value.",
+			 "%s: unable to retrieve Computer XML element value.",
 			 function );
 
 			return( -1 );

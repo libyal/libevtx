@@ -171,6 +171,32 @@ int libevtx_record_get_utf16_source_name(
      libcerror_error_t **error );
 
 LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_channel_name_size(
+     libevtx_record_t *record,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf8_channel_name(
+     libevtx_record_t *record,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_channel_name_size(
+     libevtx_record_t *record,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
+int libevtx_record_get_utf16_channel_name(
+     libevtx_record_t *record,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
+LIBEVTX_EXTERN \
 int libevtx_record_get_utf8_computer_name_size(
      libevtx_record_t *record,
      size_t *utf8_string_size,
