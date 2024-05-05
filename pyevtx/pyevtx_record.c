@@ -83,7 +83,7 @@ PyMethodDef pyevtx_record_object_methods[] = {
 	{ "get_event_identifier",
 	  (PyCFunction) pyevtx_record_get_event_identifier,
 	  METH_NOARGS,
-	  "get_event_identifier() -> Integer or None\n"
+	  "get_event_identifier() -> Integer\n"
 	  "\n"
 	  "Retrieves the event identifier." },
 
@@ -918,7 +918,7 @@ PyObject *pyevtx_record_get_event_identifier(
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pyevtx_error_raise(
 		 error,
@@ -930,13 +930,6 @@ PyObject *pyevtx_record_get_event_identifier(
 		 &error );
 
 		return( NULL );
-	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
 	}
 	integer_object = PyLong_FromUnsignedLong(
 	                  (unsigned long) value_32bit );
