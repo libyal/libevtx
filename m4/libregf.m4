@@ -1,6 +1,6 @@
 dnl Checks for libregf required headers and functions
 dnl
-dnl Version: 20240413
+dnl Version: 20240601
 
 dnl Function to detect if libregf is available
 dnl ac_libregf_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -14,15 +14,7 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
     dnl treat them as auto-detection.
     AS_IF(
       [test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect && test "x$ac_cv_with_libregf" != xyes],
-      [AS_IF(
-        [test -d "$ac_cv_with_libregf"],
-        [CFLAGS="$CFLAGS -I${ac_cv_with_libregf}/include"
-        LDFLAGS="$LDFLAGS -L${ac_cv_with_libregf}/lib"],
-        [AC_MSG_FAILURE(
-          [no such directory: $ac_cv_with_libregf],
-          [1])
-        ])
-      ],
+      [AX_CHECK_LIB_DIRECTORY_EXISTS([libregf])],
       [dnl Check for a pkg-config file
       AS_IF(
         [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
@@ -46,26 +38,19 @@ AC_DEFUN([AX_LIBREGF_CHECK_LIB],
       AS_IF(
         [test "x$ac_cv_header_libregf_h" = xno],
         [ac_cv_libregf=no],
-        [dnl Check for the individual functions
-        ac_cv_libregf=yes
+        [ac_cv_libregf=yes
 
-        AC_CHECK_LIB(
-          regf,
-          libregf_get_version,
-          [ac_cv_libregf_dummy=yes],
-          [ac_cv_libregf=no])
+        AX_CHECK_LIB_FUNCTIONS(
+          [libregf],
+          [regf],
+          [[libregf_get_version]])
 
         dnl TODO add functions
 
         ac_cv_libregf_LIBADD="-lregf"])
       ])
 
-    AS_IF(
-      [test "x$ac_cv_libregf" != xyes && test "x$ac_cv_with_libregf" != x && test "x$ac_cv_with_libregf" != xauto-detect && test "x$ac_cv_with_libregf" != xyes],
-      [AC_MSG_FAILURE(
-        [unable to find supported libregf in directory: $ac_cv_with_libregf],
-        [1])
-      ])
+    AX_CHECK_LIB_DIRECTORY_MSG_ON_FAILURE([libregf])
     ])
 
   AS_IF(

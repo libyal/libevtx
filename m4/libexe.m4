@@ -1,6 +1,6 @@
 dnl Checks for libexe required headers and functions
 dnl
-dnl Version: 20240413
+dnl Version: 20240601
 
 dnl Function to detect if libexe is available
 dnl ac_libexe_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -14,15 +14,7 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
     dnl treat them as auto-detection.
     AS_IF(
       [test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect && test "x$ac_cv_with_libexe" != xyes],
-      [AS_IF(
-        [test -d "$ac_cv_with_libexe"],
-        [CFLAGS="$CFLAGS -I${ac_cv_with_libexe}/include"
-        LDFLAGS="$LDFLAGS -L${ac_cv_with_libexe}/lib"],
-        [AC_MSG_FAILURE(
-          [no such directory: $ac_cv_with_libexe],
-          [1])
-        ])
-      ],
+      [AX_CHECK_LIB_DIRECTORY_EXISTS([libexe])],
       [dnl Check for a pkg-config file
       AS_IF(
         [test "x$cross_compiling" != "xyes" && test "x$PKGCONFIG" != "x"],
@@ -67,50 +59,24 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
       AS_IF(
         [test "x$ac_cv_header_libexe_h" = xno],
         [ac_cv_libexe=no],
-        [dnl Check for the individual functions
-        ac_cv_libexe=yes
+        [ac_cv_libexe=yes
 
-        AC_CHECK_LIB(
-          exe,
-          libexe_get_version,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
-
-        dnl File functions
-        AC_CHECK_LIB(
-          exe,
-          libexe_file_initialize,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
-        AC_CHECK_LIB(
-          exe,
-          libexe_file_free,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
-        AC_CHECK_LIB(
-          exe,
-          libexe_file_signal_abort,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
-
-        AC_CHECK_LIB(
-          exe,
-          libexe_file_open,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
-        AC_CHECK_LIB(
-          exe,
-          libexe_file_close,
-          [ac_cv_libexe_dummy=yes],
-          [ac_cv_libexe=no])
+        AX_CHECK_LIB_FUNCTIONS(
+          [libexe],
+          [exe],
+          [[libexe_get_version],
+           [libexe_file_initialize],
+           [libexe_file_free],
+           [libexe_file_signal_abort],
+           [libexe_file_open],
+           [libexe_file_close]])
 
         AS_IF(
           [test "x$ac_cv_enable_wide_character_type" != xno],
-          [AC_CHECK_LIB(
-            exe,
-            libexe_file_open,
-            [ac_cv_libexe_dummy=yes],
-            [ac_cv_libexe=no])
+          [AX_CHECK_LIB_FUNCTIONS(
+            [libexe],
+            [exe],
+            [[libexe_file_open_wide]])
           ])
 
         dnl TODO add functions
@@ -118,12 +84,7 @@ AC_DEFUN([AX_LIBEXE_CHECK_LIB],
         ac_cv_libexe_LIBADD="-lexe"])
       ])
 
-    AS_IF(
-      [test "x$ac_cv_libexe" != xyes && test "x$ac_cv_with_libexe" != x && test "x$ac_cv_with_libexe" != xauto-detect && test "x$ac_cv_with_libexe" != xyes],
-      [AC_MSG_FAILURE(
-        [unable to find supported libexe in directory: $ac_cv_with_libexe],
-        [1])
-      ])
+    AX_CHECK_LIB_DIRECTORY_MSG_ON_FAILURE([libexe])
     ])
 
   AS_IF(
