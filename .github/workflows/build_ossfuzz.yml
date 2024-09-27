@@ -30,6 +30,6 @@ jobs:
         head -n 20 projects/libyal/Dockerfile > projects/libevtx/Dockerfile
         echo "RUN git clone --depth 1 https://github.com/libyal/libevtx.git libevtx" >> projects/libevtx/Dockerfile
         tail -n 3 projects/libyal/Dockerfile >> projects/libevtx/Dockerfile
-        python3 infra/helper.py build_image --pull libevtx 
+        python3 infra/helper.py build_image --pull libevtx
         python3 infra/helper.py build_fuzzers --sanitizer address libevtx
         python3 infra/helper.py check_build libevtx

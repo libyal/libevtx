@@ -1008,10 +1008,14 @@ int libevtx_record_values_get_event_identifier_qualifiers(
 
 			return( -1 );
 		}
-		if( libfwevt_value_get_data_as_32bit_integer(
-		     qualifiers_value,
-		     event_identifier_qualifiers,
-		     error ) != 1 )
+		if( qualifiers_value == NULL )
+		{
+			result = 0;
+		}
+		else if( libfwevt_value_get_data_as_32bit_integer(
+		          qualifiers_value,
+		          event_identifier_qualifiers,
+		          error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
@@ -1130,7 +1134,11 @@ int libevtx_record_values_get_event_version(
 			}
 		}
 	}
-	if( record_values->version_value != NULL )
+	if( record_values->version_value == NULL )
+	{
+		result = 0;
+	}
+	else
 	{
 		if( libfwevt_value_get_data_as_8bit_integer(
 		     record_values->version_value,
@@ -1285,21 +1293,29 @@ int libevtx_record_values_get_creation_time(
 			return( -1 );
 		}
 	}
-	if( libfwevt_value_get_data_as_filetime(
-	     record_values->time_created_value,
-	     filetime,
-	     error ) != 1 )
+	if( record_values->time_created_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy TimeCreated value to FILETIME timestamp.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_value_get_data_as_filetime(
+		     record_values->time_created_value,
+		     filetime,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy TimeCreated value to FILETIME timestamp.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the 64-bit FILETIME value containing the written time from the event record header
@@ -1602,21 +1618,29 @@ int libevtx_record_values_get_utf8_provider_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf8_string_size(
-	     record_values->provider_identifier_value,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->provider_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of provider identifier.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf8_string_size(
+		     record_values->provider_identifier_value,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of provider identifier.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded provider identifier
@@ -1757,22 +1781,30 @@ int libevtx_record_values_get_utf8_provider_identifier(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf8_string(
-	     record_values->provider_identifier_value,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->provider_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy provider identifier to UTF-8 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf8_string(
+		     record_values->provider_identifier_value,
+		     utf8_string,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy provider identifier to UTF-8 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded provider identifier
@@ -1912,21 +1944,29 @@ int libevtx_record_values_get_utf16_provider_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf16_string_size(
-	     record_values->provider_identifier_value,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->provider_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of provider identifier.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf16_string_size(
+		     record_values->provider_identifier_value,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string size of provider identifier.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded provider identifier
@@ -2067,22 +2107,30 @@ int libevtx_record_values_get_utf16_provider_identifier(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf16_string(
-	     record_values->provider_identifier_value,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->provider_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy provider identifier to UTF-16 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf16_string(
+		     record_values->provider_identifier_value,
+		     utf16_string,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy provider identifier to UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded source name
@@ -2243,21 +2291,29 @@ int libevtx_record_values_get_utf8_source_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf8_string_size(
-	     record_values->provider_name_value,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->provider_name_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of provider name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf8_string_size(
+		     record_values->provider_name_value,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of provider name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded source name
@@ -2419,22 +2475,30 @@ int libevtx_record_values_get_utf8_source_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf8_string(
-	     record_values->provider_name_value,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->provider_name_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy provider name to UTF-8 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf8_string(
+		     record_values->provider_name_value,
+		     utf8_string,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy provider name to UTF-8 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded source name
@@ -2595,21 +2659,29 @@ int libevtx_record_values_get_utf16_source_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf16_string_size(
-	     record_values->provider_name_value,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->provider_name_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of provider name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf16_string_size(
+		     record_values->provider_name_value,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string size of provider name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded source name
@@ -2771,22 +2843,30 @@ int libevtx_record_values_get_utf16_source_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf16_string(
-	     record_values->provider_name_value,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->provider_name_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy provider name to UTF-16 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf16_string(
+		     record_values->provider_name_value,
+		     utf16_string,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy provider name to UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded channel name
@@ -2901,21 +2981,29 @@ int libevtx_record_values_get_utf8_channel_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf8_string_size(
-	     record_values->channel_value,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->channel_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of channel name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf8_string_size(
+		     record_values->channel_value,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of channel name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded channel name
@@ -3031,22 +3119,30 @@ int libevtx_record_values_get_utf8_channel_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf8_string(
-	     record_values->channel_value,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->channel_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy channel name to UTF-8 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf8_string(
+		     record_values->channel_value,
+		     utf8_string,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy channel name to UTF-8 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded channel name
@@ -3161,21 +3257,29 @@ int libevtx_record_values_get_utf16_channel_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf16_string_size(
-	     record_values->channel_value,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->channel_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of channel name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf16_string_size(
+		     record_values->channel_value,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string size of channel name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded channel name
@@ -3291,22 +3395,30 @@ int libevtx_record_values_get_utf16_channel_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf16_string(
-	     record_values->channel_value,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->channel_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy channel name to UTF-16 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf16_string(
+		     record_values->channel_value,
+		     utf16_string,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy channel name to UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded computer name
@@ -3421,21 +3533,29 @@ int libevtx_record_values_get_utf8_computer_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf8_string_size(
-	     record_values->computer_value,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->computer_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of computer name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf8_string_size(
+		     record_values->computer_value,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of computer name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded computer name
@@ -3551,22 +3671,30 @@ int libevtx_record_values_get_utf8_computer_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf8_string(
-	     record_values->computer_value,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->computer_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy computer name to UTF-8 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf8_string(
+		     record_values->computer_value,
+		     utf8_string,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy computer name to UTF-8 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded computer name
@@ -3681,21 +3809,29 @@ int libevtx_record_values_get_utf16_computer_name_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf16_string_size(
-	     record_values->computer_value,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->computer_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of computer name.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf16_string_size(
+		     record_values->computer_value,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string size of computer name.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded computer name
@@ -3811,22 +3947,30 @@ int libevtx_record_values_get_utf16_computer_name(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf16_string(
-	     record_values->computer_value,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->computer_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy computer name to UTF-16 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf16_string(
+		     record_values->computer_value,
+		     utf16_string,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy computer name to UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded user security identifier
@@ -3964,21 +4108,29 @@ int libevtx_record_values_get_utf8_user_security_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf8_string_size(
-	     record_values->user_security_identifier_value,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->user_security_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-8 string size of user security identifier.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf8_string_size(
+		     record_values->user_security_identifier_value,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string size of user security identifier.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-8 encoded user security identifier
@@ -4117,22 +4269,30 @@ int libevtx_record_values_get_utf8_user_security_identifier(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf8_string(
-	     record_values->user_security_identifier_value,
-	     utf8_string,
-	     utf8_string_size,
-	     error ) != 1 )
+	if( record_values->user_security_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy user security identifier to UTF-8 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf8_string(
+		     record_values->user_security_identifier_value,
+		     utf8_string,
+		     utf8_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy user security identifier to UTF-8 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-16 encoded user security identifier
@@ -4270,21 +4430,29 @@ int libevtx_record_values_get_utf16_user_security_identifier_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_utf16_string_size(
-	     record_values->user_security_identifier_value,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->user_security_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve UTF-16 string size of user security identifier.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_utf16_string_size(
+		     record_values->user_security_identifier_value,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string size of user security identifier.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the UTF-16 encoded user security identifier
@@ -4423,22 +4591,30 @@ int libevtx_record_values_get_utf16_user_security_identifier(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_to_utf16_string(
-	     record_values->user_security_identifier_value,
-	     utf16_string,
-	     utf16_string_size,
-	     error ) != 1 )
+	if( record_values->user_security_identifier_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy user security identifier to UTF-16 string.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_to_utf16_string(
+		     record_values->user_security_identifier_value,
+		     utf16_string,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy user security identifier to UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Parses a data XML tag for the record values using the template
@@ -5326,6 +5502,7 @@ int libevtx_record_values_get_utf8_string_size(
 
 		return( -1 );
 	}
+/* TODO if string_xml_value == NULL return 0 */
 	if( libfwevt_xml_value_get_utf8_string_size(
 	     string_xml_value,
 	     utf8_string_size,
@@ -5536,6 +5713,7 @@ int libevtx_record_values_get_utf16_string_size(
 
 		return( -1 );
 	}
+/* TODO if string_xml_value == NULL return 0 */
 	if( libfwevt_xml_value_get_utf16_string_size(
 	     string_xml_value,
 	     utf16_string_size,
@@ -5790,21 +5968,29 @@ int libevtx_record_values_get_data_size(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_get_data_size(
-	     record_values->binary_data_value,
-	     data_size,
-	     error ) != 1 )
+	if( record_values->binary_data_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size of binary data.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_get_data_size(
+		     record_values->binary_data_value,
+		     data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve size of binary data.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the data
@@ -5938,22 +6124,30 @@ int libevtx_record_values_get_data(
 			return( -1 );
 		}
 	}
-	if( libfwevt_xml_value_copy_data(
-	     record_values->binary_data_value,
-	     data,
-	     data_size,
-	     error ) != 1 )
+	if( record_values->binary_data_value == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy binary data.",
-		 function );
-
-		return( -1 );
+		result = 0;
 	}
-	return( 1 );
+	else
+	{
+		if( libfwevt_xml_value_copy_data(
+		     record_values->binary_data_value,
+		     data,
+		     data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy binary data.",
+			 function );
+
+			return( -1 );
+		}
+		result = 1;
+	}
+	return( result );
 }
 
 /* Retrieves the size of the UTF-8 encoded XML string

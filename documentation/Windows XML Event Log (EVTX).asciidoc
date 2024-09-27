@@ -76,6 +76,7 @@ April 2012 | Additional information.
 | 0.0.23 | J.B. Metz | December 2023 | Updated references and additional information about SystemResources directory.
 | 0.0.24 | J.B. Metz | January 2024 | Additional information about parameter message files.
 | 0.0.25 | J.B. Metz | April 2024 | Additional information about dependency identifier.
+| 0.0.26 | J.B. Metz | September 2024 | Additional information regarding format edge case with thanks to J. Solomon.
 |===
 
 :numbered:
@@ -1828,6 +1829,11 @@ been seen:
 The approach is to start scanning for recoverable event records until a correct
 chunk header is found or the end of file is reached. Any event records found
 are considered recovered.
+
+=== Empty computer name
+
+It is not clear if this is a corruption scenario or an undesirable edge case.
+It has been observed that the format allows for the computer value to be empty.
 
 == Notes
 
