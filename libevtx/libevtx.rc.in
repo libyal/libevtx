@@ -24,7 +24,7 @@ BEGIN
       VALUE "FileDescription",		"Library to access the Windows XML Event Log (EVTX) format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libevtx.dll\0"
-      VALUE "LegalCopyright",		"(C) 2011-2024, Joachim Metz <joachim.metz@gmail.com>\0"
+      VALUE "LegalCopyright",		"(C) 2011-2025, Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libevtx.dll\0"
       VALUE "ProductName",		"libevtx\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
