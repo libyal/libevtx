@@ -8,11 +8,13 @@ jobs:
     strategy:
       matrix:
         include:
-        - os: macos-13
-          configure_options: ''
         - os: macos-14
           configure_options: ''
         - os: macos-15
+          configure_options: ''
+        - os: macos-15-intel
+          configure_options: ''
+        - os: macos-26
           configure_options: ''
     steps:
     - uses: actions/checkout@v4
