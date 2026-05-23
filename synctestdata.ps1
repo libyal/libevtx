@@ -3,7 +3,7 @@
 # Version: 20251217
 
 $Repository = "log2timeline/plaso"
-$TestDataPath = "test_data"
+$TestDataPath = "test_data/evtx"
 $TestSet = "public"
 $TestInputDirectory = "tests/input"
 $TestFiles = "System.evtx"

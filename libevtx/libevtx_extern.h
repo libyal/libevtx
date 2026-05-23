@@ -30,12 +30,6 @@
 
 #include <libevtx/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBEVTX_EXTERN_VARIABLE	extern
-#else
-#define LIBEVTX_EXTERN_VARIABLE	LIBEVTX_EXTERN
-#endif
-
 #else
 #define LIBEVTX_EXTERN		/* extern */
 #define LIBEVTX_EXTERN_VARIABLE	extern

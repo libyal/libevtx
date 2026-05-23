@@ -3,7 +3,7 @@ libevtx is a library to access the Windows XML Event Log (EVTX) format.
 Project information:
 
 * Status: alpha
-* Licence: LGPLv3+
+* Licence: LGPL-3.0-or-later
 
 Planned:
 

@@ -31,14 +31,17 @@
  */
 #if defined( LIBEVTX_DLL_EXPORT )
 #define LIBEVTX_EXTERN __declspec(dllexport)
+#define LIBEVTX_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBEVTX_DLL_IMPORT )
-#define LIBEVTX_EXTERN extern __declspec(dllimport)
+#define LIBEVTX_EXTERN __declspec(dllimport)
+#define LIBEVTX_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBEVTX_EXTERN extern
+#define LIBEVTX_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBEVTX_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBEVTX_EXTERN_H ) */
 

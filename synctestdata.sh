@@ -4,7 +4,7 @@
 # Version: 20251217
 
 REPOSITORY="log2timeline/plaso";
-TEST_DATA_PATH="test_data";
+TEST_DATA_PATH="test_data/evtx";
 TEST_SET="public";
 TEST_INPUT_DIRECTORY="tests/input";
 TEST_FILES="System.evtx";
