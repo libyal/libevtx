@@ -1,11 +1,11 @@
 # Script that synchronizes the local test data
 #
-# Version: 20251217
+# Version: 20260531
 
 $Repository = "log2timeline/plaso"
 $TestDataPath = "test_data/evtx"
 $TestSet = "public"
-$TestInputDirectory = "tests/input"
+$TestInputDirectory = "tests\input"
 $TestFiles = "System.evtx"
 
 If (-Not (Test-Path ${TestInputDirectory}))

@@ -24,6 +24,19 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBEVTX_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBEVTX_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBEVTX_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBEVTX for local use of libevtx
  */
 #if !defined( HAVE_LOCAL_LIBEVTX )
@@ -32,7 +45,7 @@
 
 #else
 #define LIBEVTX_EXTERN		/* extern */
-#define LIBEVTX_EXTERN_VARIABLE	extern
+#define LIBEVTX_EXTERN_VARIABLE	LIBEVTX_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBEVTX ) */
 

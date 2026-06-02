@@ -2262,6 +2262,7 @@ int message_handle_get_resource_file_path(
 {
 	system_character_t *mui_string                        = NULL;
 	system_character_t *resource_filename_string_segment  = NULL;
+	system_character_t *safe_resource_file_path           = NULL;
 	system_split_string_t *resource_filename_split_string = NULL;
 	static char *function                                 = "message_handle_get_resource_file_path";
 	size_t mui_string_size                                = 0;
@@ -2269,6 +2270,7 @@ int message_handle_get_resource_file_path(
 	size_t resource_filename_directory_name_index         = 0;
 	size_t resource_filename_string_segment_size          = 0;
 	size_t resource_files_path_length                     = 0;
+	size_t safe_resource_file_path_size                   = 0;
 	uint8_t directory_entry_type                          = 0;
 	int resource_filename_number_of_segments              = 0;
 	int resource_filename_segment_index                   = 0;
@@ -2444,7 +2446,7 @@ int message_handle_get_resource_file_path(
 
 		goto on_error;
 	}
-	*resource_file_path_size = 0;
+	safe_resource_file_path_size = 0;
 
 	for( resource_filename_segment_index = 0;
 	     resource_filename_segment_index < resource_filename_number_of_segments;
@@ -2552,13 +2554,13 @@ int message_handle_get_resource_file_path(
 				}
 			}
 		}
-		*resource_file_path_size += resource_filename_string_segment_size;
+		safe_resource_file_path_size += resource_filename_string_segment_size;
 	}
 	if( language_string != NULL )
 	{
 		/* Add: <LANGUAGE>/<FILENAME>.mui
 		 */
-		*resource_file_path_size += language_string_length + 5;
+		safe_resource_file_path_size += language_string_length + 5;
 	}
 	if( message_handle->resource_files_path != NULL )
 	{
@@ -2568,27 +2570,27 @@ int message_handle_get_resource_file_path(
 	if( ( message_handle->resource_files_path != NULL )
 	 && ( resource_files_path_length > 0 ) )
 	{
-		*resource_file_path_size += resource_files_path_length;
+		safe_resource_file_path_size += resource_files_path_length;
 
 		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (system_character_t) LIBCPATH_SEPARATOR )
 		{
-			*resource_file_path_size += 1;
+			safe_resource_file_path_size += 1;
 		}
 	}
 #if defined( WINAPI )
 	else if( volume_letter != NULL )
 	{
-		*resource_file_path_size += 3;
+		safe_resource_file_path_size += 3;
 	}
 #endif
 	else
 	{
-		*resource_file_path_size += 2;
+		safe_resource_file_path_size += 2;
 	}
-	*resource_file_path_size += 1;
+	safe_resource_file_path_size += 1;
 
-	*resource_file_path = system_string_allocate(
-	                       *resource_file_path_size );
+	safe_resource_file_path = system_string_allocate(
+	                           safe_resource_file_path_size );
 
 	if( *resource_file_path == NULL )
 	{
@@ -2607,7 +2609,7 @@ int message_handle_get_resource_file_path(
 	 && ( resource_files_path_length > 0 ) )
 	{
 		if( system_string_copy(
-		     &( ( *resource_file_path )[ resource_file_path_index ] ),
+		     &( safe_resource_file_path[ resource_file_path_index ] ),
 		     message_handle->resource_files_path,
 		     resource_files_path_length ) == NULL )
 		{
@@ -2624,21 +2626,21 @@ int message_handle_get_resource_file_path(
 
 		if( message_handle->resource_files_path[ resource_files_path_length - 1 ] != (system_character_t) LIBCPATH_SEPARATOR )
 		{
-			( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
+			safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 		}
 	}
 #if defined( WINAPI )
 	else if( volume_letter != NULL )
 	{
-		( *resource_file_path )[ resource_file_path_index++ ] = volume_letter[ 0 ];
-		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) ':';
-		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
+		safe_resource_file_path[ resource_file_path_index++ ] = volume_letter[ 0 ];
+		safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) ':';
+		safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 	}
 #endif
 	else
 	{
-		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) '.';
-		( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
+		safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) '.';
+		safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 	}
 	for( resource_filename_segment_index = 0;
 	     resource_filename_segment_index < resource_filename_number_of_segments;
@@ -2681,7 +2683,7 @@ int message_handle_get_resource_file_path(
 			}
 			mui_string[ language_string_length ] = 0;
 
-			( *resource_file_path )[ resource_file_path_index ] = 0;
+			safe_resource_file_path[ resource_file_path_index ] = 0;
 
 			result = path_handle_get_directory_entry_name_by_name_no_case(
 				  message_handle->path_handle,
@@ -2707,7 +2709,7 @@ int message_handle_get_resource_file_path(
 			else if( result != 0 )
 			{
 				if( system_string_copy(
-				     &( ( *resource_file_path )[ resource_file_path_index ] ),
+				     &( safe_resource_file_path[ resource_file_path_index ] ),
 				     mui_string,
 				     language_string_length ) == NULL )
 				{
@@ -2722,7 +2724,7 @@ int message_handle_get_resource_file_path(
 				}
 				resource_file_path_index += language_string_length;
 
-				( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
+				safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 			}
 			memory_free(
 			 mui_string );
@@ -2843,7 +2845,7 @@ int message_handle_get_resource_file_path(
 			}
 			directory_entry_type = LIBCDIRECTORY_ENTRY_TYPE_FILE;
 		}
-		( *resource_file_path )[ resource_file_path_index ] = 0;
+		safe_resource_file_path[ resource_file_path_index ] = 0;
 
 		result = path_handle_get_directory_entry_name_by_name_no_case(
 		          message_handle->path_handle,
@@ -2869,7 +2871,7 @@ int message_handle_get_resource_file_path(
 		else if( result != 0 )
 		{
 			if( system_string_copy(
-			     &( ( *resource_file_path )[ resource_file_path_index ] ),
+			     &( safe_resource_file_path[ resource_file_path_index ] ),
 			     resource_filename_string_segment,
 			     resource_filename_string_segment_size - 1 ) == NULL )
 			{
@@ -2885,7 +2887,7 @@ int message_handle_get_resource_file_path(
 			}
 			resource_file_path_index += resource_filename_string_segment_size - 1;
 
-			( *resource_file_path )[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
+			safe_resource_file_path[ resource_file_path_index++ ] = (system_character_t) LIBCPATH_SEPARATOR;
 		}
 		if( mui_string != NULL )
 		{
@@ -2899,7 +2901,7 @@ int message_handle_get_resource_file_path(
 			break;
 		}
 	}
-	( *resource_file_path )[ resource_file_path_index - 1 ] = 0;
+	safe_resource_file_path[ resource_file_path_index - 1 ] = 0;
 
 	if( system_split_string_free(
 	     &resource_filename_split_string,
@@ -2914,6 +2916,9 @@ int message_handle_get_resource_file_path(
 
 		goto on_error;
 	}
+	*resource_file_path      = safe_resource_file_path;
+	*resource_file_path_size = safe_resource_file_path_size;
+
 	return( result );
 
 on_error:
@@ -2928,15 +2933,11 @@ on_error:
 		 &resource_filename_split_string,
 		 NULL );
 	}
-	if( *resource_file_path != NULL )
+	if( safe_resource_file_path != NULL )
 	{
 		memory_free(
-		 *resource_file_path );
-
-		*resource_file_path = NULL;
+		 safe_resource_file_path );
 	}
-	*resource_file_path_size = 0;
-
 	return( -1 );
 }
 

@@ -1,6 +1,6 @@
 dnl Checks for libcdirectory required headers and functions
 dnl
-dnl Version: 20240525
+dnl Version: 20260530
 
 dnl Function to detect if libcdirectory is available
 dnl ac_libcdirectory_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
@@ -112,6 +112,42 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LIB],
     ])
   ])
 
+dnl Function to detect whether readdir_r is deprecated
+AC_DEFUN([AX_LIBCDIRECTORY_CHECK_DEPRECATED_READDIR_R],
+  [AC_REQUIRE([AC_PROG_CC])
+
+  AC_MSG_CHECKING([whether readdir_r is deprecated])
+
+  BACKUP_CFLAGS="$CFLAGS"
+
+  # Force the compiler to treat warnings as errors
+  CFLAGS="$CFLAGS -Werror -Wdeprecated-declarations"
+
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM(
+     [[#include <sys/types.h>
+       #include <dirent.h>]],
+     [[DIR *dirp = 0;
+       struct dirent entry;
+       struct dirent *result;
+       readdir_r(dirp, &entry, &result);]])],
+    [ac_cv_readdir_r_deprecated=no],
+    [ac_cv_readdir_r_deprecated=yes])
+
+  AC_MSG_RESULT(
+    [$ac_cv_readdir_r_deprecated])
+
+  AS_IF(
+    [test "x$ac_cv_readdir_r_deprecated" = xyes],
+    [AC_DEFINE(
+      [HAVE_DEPRECATED_READDIR_R],
+      [1],
+      [Define to 1 whether `readdir_r' is deprecated.])
+    ])
+
+  CFLAGS="$BACKUP_CFLAGS"
+  ])
+
 dnl Function to detect if libcdirectory dependencies are available
 AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LOCAL],
   [AS_IF(
@@ -120,7 +156,7 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LOCAL],
     AC_CHECK_HEADERS([dirent.h errno.h sys/stat.h])
 
     dnl Directory functions used in libcdirectory/libcdirectory_directory.h
-    AC_CHECK_FUNCS([closedir opendir readdir_r])
+    AC_CHECK_FUNCS([closedir opendir readdir readdir_r])
 
     AS_IF(
       [test "x$ac_cv_func_closedir" != xyes],
@@ -137,10 +173,14 @@ AC_DEFUN([AX_LIBCDIRECTORY_CHECK_LOCAL],
       ])
 
     AS_IF(
-      [test "x$ac_cv_func_readdir_r" != xyes],
-      [AC_MSG_FAILURE(
-        [Missing functions: readdir_r],
-        [1])
+      [test "x$ac_cv_func_readdir_r" = xyes],
+      [AX_LIBCDIRECTORY_CHECK_DEPRECATED_READDIR_R],
+      [AS_IF(
+        [test "x$ac_cv_func_readdir" != xyes],
+        [AC_MSG_FAILURE(
+          [Missing functions: readdir and readdir_r],
+          [1])
+        ])
       ])
     ])
 

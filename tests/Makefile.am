@@ -27,6 +27,10 @@ AM_CPPFLAGS = \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBEVTX_DLL_IMPORT@
 
+AM_TESTS_ENVIRONMENT = \
+	export PYTHON="@PYTHON@"; \
+	export TESTS_USE_WINAPI="@TESTS_USE_WINAPI@";
+
 if HAVE_PYTHON_TESTS
 TESTS_PYEVTX = \
 	test_python_module.sh
@@ -305,7 +309,8 @@ evtx_test_tools_output_SOURCES = \
 
 evtx_test_tools_output_LDADD = \
 	../libevtx/libevtx.la \
-	@LIBCERROR_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 
 evtx_test_tools_path_handle_SOURCES = \
 	../evtxtools/path_handle.c ../evtxtools/path_handle.h \
