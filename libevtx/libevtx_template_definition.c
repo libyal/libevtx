@@ -347,7 +347,7 @@ int libevtx_template_definition_read(
 #endif
 	return( 1 );
 
-on_error:	
+on_error:
 	if( internal_template_definition->xml_document != NULL )
 	{
 		libfwevt_xml_document_free(

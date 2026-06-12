@@ -84,6 +84,9 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	libevtx.pc
 
+check-build: all
+	cd $(srcdir)/tests && $(MAKE) check-build $(AM_MAKEFLAGS)
+
 libtool:
 	@LIBTOOL_DEPS@
 	cd $(srcdir) && $(SHELL) ./config.status --recheck

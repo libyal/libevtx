@@ -1,6 +1,6 @@
-.Dd June  2, 2026
-.Dt libevtx 3
-.Os libevtx
+.Dd June 12, 2026
+.Dt LIBEVTX 3
+.Os
 .Sh NAME
 .Nm libevtx.h
 .Nd Library to access the Windows XML Event Log (EVTX) format
@@ -8,183 +8,641 @@
 .In libevtx.h
 .Pp
 Support functions
+.nf
 .Ft const char *
-.Fn libevtx_get_version "void"
+.Fo libevtx_get_version
+.Fa "void"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_get_access_flags_read "void"
+.Fo libevtx_get_access_flags_read
+.Fa "void"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_get_codepage "int *codepage" "libevtx_error_t **error"
+.Fo libevtx_get_codepage
+.Fa "int *codepage"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_set_codepage "int codepage" "libevtx_error_t **error"
+.Fo libevtx_set_codepage
+.Fa "int codepage"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_check_file_signature "const char *filename" "libevtx_error_t **error"
+.Fo libevtx_check_file_signature
+.Fa "const char *filename"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Available when compiled with wide character string support:
+.nf
 .Ft int
-.Fn libevtx_check_file_signature_wide "const wchar_t *filename" "libevtx_error_t **error"
+.Fo libevtx_check_file_signature_wide
+.Fa "const wchar_t *filename"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Available when compiled with libbfio support:
+.nf
 .Ft int
-.Fn libevtx_check_file_signature_file_io_handle "libbfio_handle_t *bfio_handle" "libevtx_error_t **error"
+.Fo libevtx_check_file_signature_file_io_handle
+.Fa "libbfio_handle_t *bfio_handle"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Notify functions
+.nf
 .Ft void
-.Fn libevtx_notify_set_verbose "int verbose"
+.Fo libevtx_notify_set_verbose
+.Fa "int verbose"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_notify_set_stream "FILE *stream" "libevtx_error_t **error"
+.Fo libevtx_notify_set_stream
+.Fa "FILE *stream"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_notify_stream_open "const char *filename" "libevtx_error_t **error"
+.Fo libevtx_notify_stream_open
+.Fa "const char *filename"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_notify_stream_close "libevtx_error_t **error"
+.Fo libevtx_notify_stream_close
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Error functions
+.nf
 .Ft void
-.Fn libevtx_error_free "libevtx_error_t **error"
+.Fo libevtx_error_free
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_error_fprint "libevtx_error_t *error" "FILE *stream"
+.Fo libevtx_error_fprint
+.Fa "libevtx_error_t *error"
+.Fa "FILE *stream"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_error_sprint "libevtx_error_t *error" "char *string" "size_t size"
+.Fo libevtx_error_sprint
+.Fa "libevtx_error_t *error"
+.Fa "char *string"
+.Fa "size_t size"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_error_backtrace_fprint "libevtx_error_t *error" "FILE *stream"
+.Fo libevtx_error_backtrace_fprint
+.Fa "libevtx_error_t *error"
+.Fa "FILE *stream"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_error_backtrace_sprint "libevtx_error_t *error" "char *string" "size_t size"
+.Fo libevtx_error_backtrace_sprint
+.Fa "libevtx_error_t *error"
+.Fa "char *string"
+.Fa "size_t size"
+.Fc
+.fi
 .Pp
 File functions
+.nf
 .Ft int
-.Fn libevtx_file_initialize "libevtx_file_t **file" "libevtx_error_t **error"
+.Fo libevtx_file_initialize
+.Fa "libevtx_file_t **file"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_free "libevtx_file_t **file" "libevtx_error_t **error"
+.Fo libevtx_file_free
+.Fa "libevtx_file_t **file"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_signal_abort "libevtx_file_t *file" "libevtx_error_t **error"
+.Fo libevtx_file_signal_abort
+.Fa "libevtx_file_t *file"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_open "libevtx_file_t *file" "const char *filename" "int access_flags" "libevtx_error_t **error"
+.Fo libevtx_file_open
+.Fa "libevtx_file_t *file"
+.Fa "const char *filename"
+.Fa "int access_flags"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_close "libevtx_file_t *file" "libevtx_error_t **error"
+.Fo libevtx_file_close
+.Fa "libevtx_file_t *file"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_is_corrupted "libevtx_file_t *file" "libevtx_error_t **error"
+.Fo libevtx_file_is_corrupted
+.Fa "libevtx_file_t *file"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_ascii_codepage "libevtx_file_t *file" "int *ascii_codepage" "libevtx_error_t **error"
+.Fo libevtx_file_get_ascii_codepage
+.Fa "libevtx_file_t *file"
+.Fa "int *ascii_codepage"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_set_ascii_codepage "libevtx_file_t *file" "int ascii_codepage" "libevtx_error_t **error"
+.Fo libevtx_file_set_ascii_codepage
+.Fa "libevtx_file_t *file"
+.Fa "int ascii_codepage"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_format_version "libevtx_file_t *file" "uint16_t *major_version" "uint16_t *minor_version" "libevtx_error_t **error"
+.Fo libevtx_file_get_format_version
+.Fa "libevtx_file_t *file"
+.Fa "uint16_t *major_version"
+.Fa "uint16_t *minor_version"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_flags "libevtx_file_t *file" "uint32_t *flags" "libevtx_error_t **error"
+.Fo libevtx_file_get_flags
+.Fa "libevtx_file_t *file"
+.Fa "uint32_t *flags"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_number_of_records "libevtx_file_t *file" "int *number_of_records" "libevtx_error_t **error"
+.Fo libevtx_file_get_number_of_records
+.Fa "libevtx_file_t *file"
+.Fa "int *number_of_records"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_record_by_index "libevtx_file_t *file" "int record_index" "libevtx_record_t **record" "libevtx_error_t **error"
+.Fo libevtx_file_get_record_by_index
+.Fa "libevtx_file_t *file"
+.Fa "int record_index"
+.Fa "libevtx_record_t **record"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_number_of_recovered_records "libevtx_file_t *file" "int *number_of_records" "libevtx_error_t **error"
+.Fo libevtx_file_get_number_of_recovered_records
+.Fa "libevtx_file_t *file"
+.Fa "int *number_of_records"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_file_get_recovered_record_by_index "libevtx_file_t *file" "int record_index" "libevtx_record_t **record" "libevtx_error_t **error"
+.Fo libevtx_file_get_recovered_record_by_index
+.Fa "libevtx_file_t *file"
+.Fa "int record_index"
+.Fa "libevtx_record_t **record"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Available when compiled with wide character string support:
+.nf
 .Ft int
-.Fn libevtx_file_open_wide "libevtx_file_t *file" "const wchar_t *filename" "int access_flags" "libevtx_error_t **error"
+.Fo libevtx_file_open_wide
+.Fa "libevtx_file_t *file"
+.Fa "const wchar_t *filename"
+.Fa "int access_flags"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Available when compiled with libbfio support:
+.nf
 .Ft int
-.Fn libevtx_file_open_file_io_handle "libevtx_file_t *file" "libbfio_handle_t *file_io_handle" "int access_flags" "libevtx_error_t **error"
+.Fo libevtx_file_open_file_io_handle
+.Fa "libevtx_file_t *file"
+.Fa "libbfio_handle_t *file_io_handle"
+.Fa "int access_flags"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Record functions
+.nf
 .Ft int
-.Fn libevtx_record_free "libevtx_record_t **record" "libevtx_error_t **error"
+.Fo libevtx_record_free
+.Fa "libevtx_record_t **record"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_offset "libevtx_record_t *record" "off64_t *offset" "libevtx_error_t **error"
+.Fo libevtx_record_get_offset
+.Fa "libevtx_record_t *record"
+.Fa "off64_t *offset"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_identifier "libevtx_record_t *record" "uint64_t *identifier" "libevtx_error_t **error"
+.Fo libevtx_record_get_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint64_t *identifier"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_creation_time "libevtx_record_t *record" "uint64_t *filetime" "libevtx_error_t **error"
+.Fo libevtx_record_get_creation_time
+.Fa "libevtx_record_t *record"
+.Fa "uint64_t *filetime"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_written_time "libevtx_record_t *record" "uint64_t *filetime" "libevtx_error_t **error"
+.Fo libevtx_record_get_written_time
+.Fa "libevtx_record_t *record"
+.Fa "uint64_t *filetime"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_event_identifier "libevtx_record_t *record" "uint32_t *event_identifier" "libevtx_error_t **error"
+.Fo libevtx_record_get_event_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint32_t *event_identifier"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_event_identifier_qualifiers "libevtx_record_t *record" "uint32_t *event_identifier_qualifiers" "libevtx_error_t **error"
+.Fo libevtx_record_get_event_identifier_qualifiers
+.Fa "libevtx_record_t *record"
+.Fa "uint32_t *event_identifier_qualifiers"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_event_version "libevtx_record_t *record" "uint8_t *event_version" "libevtx_error_t **error"
+.Fo libevtx_record_get_event_version
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *event_version"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_event_level "libevtx_record_t *record" "uint8_t *event_level" "libevtx_error_t **error"
+.Fo libevtx_record_get_event_level
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *event_level"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_provider_identifier_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_provider_identifier_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_provider_identifier "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_provider_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_provider_identifier_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_provider_identifier_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_provider_identifier "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_provider_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_source_name_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_source_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_source_name "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_source_name
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_source_name_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_source_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_source_name "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_source_name
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_channel_name_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_channel_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_channel_name "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_channel_name
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_channel_name_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_channel_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_channel_name "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_channel_name
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_computer_name_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_computer_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_computer_name "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_computer_name
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_computer_name_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_computer_name_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_computer_name "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_computer_name
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_user_security_identifier_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_user_security_identifier_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_user_security_identifier "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_user_security_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_user_security_identifier_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_user_security_identifier_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_user_security_identifier "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_user_security_identifier
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_parse_data_with_template_definition "libevtx_record_t *record" "libevtx_template_definition_t *template_definition" "libevtx_error_t **error"
+.Fo libevtx_record_parse_data_with_template_definition
+.Fa "libevtx_record_t *record"
+.Fa "libevtx_template_definition_t *template_definition"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_number_of_strings "libevtx_record_t *record" "int *number_of_strings" "libevtx_error_t **error"
+.Fo libevtx_record_get_number_of_strings
+.Fa "libevtx_record_t *record"
+.Fa "int *number_of_strings"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_string_size "libevtx_record_t *record" "int string_index" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_string_size
+.Fa "libevtx_record_t *record"
+.Fa "int string_index"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_string "libevtx_record_t *record" "int string_index" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_string
+.Fa "libevtx_record_t *record"
+.Fa "int string_index"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_string_size "libevtx_record_t *record" "int string_index" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_string_size
+.Fa "libevtx_record_t *record"
+.Fa "int string_index"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_string "libevtx_record_t *record" "int string_index" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_string
+.Fa "libevtx_record_t *record"
+.Fa "int string_index"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_data_size "libevtx_record_t *record" "size_t *data_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_data_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *data_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_data "libevtx_record_t *record" "uint8_t *data" "size_t data_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_data
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *data"
+.Fa "size_t data_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_xml_string_size "libevtx_record_t *record" "size_t *utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_xml_string_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf8_xml_string "libevtx_record_t *record" "uint8_t *utf8_string" "size_t utf8_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf8_xml_string
+.Fa "libevtx_record_t *record"
+.Fa "uint8_t *utf8_string"
+.Fa "size_t utf8_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_xml_string_size "libevtx_record_t *record" "size_t *utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_xml_string_size
+.Fa "libevtx_record_t *record"
+.Fa "size_t *utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_record_get_utf16_xml_string "libevtx_record_t *record" "uint16_t *utf16_string" "size_t utf16_string_size" "libevtx_error_t **error"
+.Fo libevtx_record_get_utf16_xml_string
+.Fa "libevtx_record_t *record"
+.Fa "uint16_t *utf16_string"
+.Fa "size_t utf16_string_size"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Pp
 Template definition functions
+.nf
 .Ft int
-.Fn libevtx_template_definition_initialize "libevtx_template_definition_t **template_definition" "libevtx_error_t **error"
+.Fo libevtx_template_definition_initialize
+.Fa "libevtx_template_definition_t **template_definition"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_template_definition_free "libevtx_template_definition_t **template_definition" "libevtx_error_t **error"
+.Fo libevtx_template_definition_free
+.Fa "libevtx_template_definition_t **template_definition"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
+.nf
 .Ft int
-.Fn libevtx_template_definition_set_data "libevtx_template_definition_t *template_definition" "const uint8_t *data" "size_t data_size" "uint32_t data_offset" "libevtx_error_t **error"
+.Fo libevtx_template_definition_set_data
+.Fa "libevtx_template_definition_t *template_definition"
+.Fa "const uint8_t *data"
+.Fa "size_t data_size"
+.Fa "uint32_t data_offset"
+.Fa "libevtx_error_t **error"
+.Fc
+.fi
 .Sh DESCRIPTION
 The
 .Fn libevtx_get_version
 function is used to retrieve the library version.
 .Sh RETURN VALUES
-Most of the functions return NULL or \-1 on error, dependent on the return type.
-For the actual return values see "libevtx.h".
+Most of the functions return NULL or \-1 on error, dependent on the return \
+type.
+For the actual return values see
+.In libevtx.h .
 .Sh ENVIRONMENT
 None
 .Sh FILES
@@ -202,14 +660,16 @@ To compile libevtx with wide character support use:
 .sp
 .Ar LIBEVTX_WIDE_CHARACTER_TYPE
  in libevtx/features.h can be used to determine if libevtx was compiled with wide character support.
+.Sh SEE ALSO
+.In libevtx.h
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
 .Sh BUGS
-Please report bugs of any kind on the project issue tracker: https://github.com/libyal/libevtx/issues
-.Sh AUTHOR
-These man pages are generated from "libevtx.h".
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libevtx/issues
 .Sh COPYRIGHT
 Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
 .sp
 This is free software; see the source for copying conditions.
-There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-.Sh SEE ALSO
-the libevtx.h include file
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.
