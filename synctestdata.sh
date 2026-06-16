@@ -9,6 +9,9 @@ TEST_SET="public";
 TEST_INPUT_DIRECTORY="tests/input";
 TEST_FILES="System.evtx";
 
+mkdir -p "${TEST_INPUT_DIRECTORY}/.evtxexport_xml";
+echo "-fxml" > "${TEST_INPUT_DIRECTORY}/.evtxexport_xml/options";
+
 mkdir -p "${TEST_INPUT_DIRECTORY}/${TEST_SET}";
 
 for TEST_FILE in ${TEST_FILES};

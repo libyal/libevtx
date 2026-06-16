@@ -12,6 +12,11 @@ If (-Not (Test-Path ${TestInputDirectory}))
 {
 	New-Item -Name ${TestInputDirectory} -ItemType "directory" | Out-Null
 }
+If (-Not (Test-Path "${TestInputDirectory}\.evtxexport_xml"))
+{
+	New-Item -Name "${TestInputDirectory}\.evtxexport_xml" -ItemType "directory" | Out-Null
+	Write-Output "-fxml" | Out-File -Encoding ascii -FilePath "${TestInputDirectory}\.evtxexport_xml\options"
+}
 If (-Not (Test-Path "${TestInputDirectory}\${TestSet}"))
 {
 	New-Item -Name "${TestInputDirectory}\${TestSet}" -ItemType "directory" | Out-Null

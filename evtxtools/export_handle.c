@@ -34,6 +34,7 @@
 #include "evtxtools_libfdatetime.h"
 #include "evtxtools_libfguid.h"
 #include "evtxtools_libfwevt.h"
+#include "evtxtools_unused.h"
 #include "export_handle.h"
 #include "log_handle.h"
 #include "message_handle.h"
@@ -1275,7 +1276,7 @@ int export_handle_export_record_event_message(
      const system_character_t *event_source,
      size_t event_source_length,
      uint32_t event_identifier,
-     log_handle_t *log_handle,
+     log_handle_t *log_handle EVTXTOOLS_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
 	uint8_t provider_identifier[ 16 ];
@@ -1295,6 +1296,8 @@ int export_handle_export_record_event_message(
 	int number_of_strings                              = 0;
 	int result                                         = 0;
 	int value_string_index                             = 0;
+
+	EVTXTOOLS_UNREFERENCED_PARAMETER( log_handle )
 
 	if( export_handle == NULL )
 	{
@@ -2513,12 +2516,14 @@ on_error:
 int export_handle_export_record_xml(
      export_handle_t *export_handle,
      libevtx_record_t *record,
-     log_handle_t *log_handle,
+     log_handle_t *log_handle EVTXTOOLS_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
 	system_character_t *event_xml = NULL;
 	static char *function         = "export_handle_export_record_xml";
 	size_t event_xml_size         = 0;
+
+	EVTXTOOLS_UNREFERENCED_PARAMETER( log_handle )
 
 	if( export_handle == NULL )
 	{

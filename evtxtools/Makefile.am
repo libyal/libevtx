@@ -124,6 +124,9 @@ evtxinfo_LDADD = \
 	@LIBINTL@ \
 	@PTHREAD_LIBADD@
 
+CLEANFILES = \
+	*.exe
+
 DISTCLEANFILES = \
 	Makefile \
 	Makefile.in
