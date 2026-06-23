@@ -414,7 +414,7 @@ on_error:
 }
 
 /* Closes the resource file
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int resource_file_close(
      resource_file_t *resource_file,

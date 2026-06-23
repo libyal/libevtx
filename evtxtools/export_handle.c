@@ -910,7 +910,7 @@ int export_handle_open_input(
 }
 
 /* Closes the input
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int export_handle_close_input(
      export_handle_t *export_handle,
@@ -2635,7 +2635,7 @@ on_error:
 }
 
 /* Exports the records
- * Returns the 1 if succesful, 0 if no records are available or -1 on error
+ * Returns the 1 if successful, 0 if no records are available or -1 on error
  */
 int export_handle_export_records(
      export_handle_t *export_handle,
@@ -2772,7 +2772,7 @@ int export_handle_export_records(
 }
 
 /* Exports the recovered records
- * Returns the 1 if succesful, 0 if no records are available or -1 on error
+ * Returns the 1 if successful, 0 if no records are available or -1 on error
  */
 int export_handle_export_recovered_records(
      export_handle_t *export_handle,
@@ -2907,7 +2907,7 @@ int export_handle_export_recovered_records(
 }
 
 /* Exports the records from the file
- * Returns the 1 if succesful, 0 if no records are available or -1 on error
+ * Returns the 1 if successful, 0 if no records are available or -1 on error
  */
 int export_handle_export_file(
      export_handle_t *export_handle,

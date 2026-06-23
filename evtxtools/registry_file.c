@@ -742,7 +742,7 @@ on_error:
 }
 
 /* Closes the registry file
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int registry_file_close(
      registry_file_t *registry_file,

@@ -1649,7 +1649,7 @@ int message_handle_open_input(
 }
 
 /* Closes the input
- * Returns the 0 if succesful or -1 on error
+ * Returns the 0 if successful or -1 on error
  */
 int message_handle_close_input(
      message_handle_t *message_handle,
