@@ -3,9 +3,10 @@
 $TestsInputDirectory = "tests\input"
 $TestSet = "public"
 $TestFiles = "System.evtx"
+
 If (-Not (Test-Path "${TestsInputDirectory}\.evtxexport_xml"))
 {
-        New-Item -Name "${TestsInputDirectory}\.evtxexport_xml" -ItemType "directory" | Out-Null
+	New-Item -Name "${TestsInputDirectory}\.evtxexport_xml" -ItemType "directory" | Out-Null
 	Write-Output "-fxml" | Out-File -Encoding ascii -FilePath "${TestsInputDirectory}\.evtxexport_xml\options"
 }
 

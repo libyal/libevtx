@@ -1,9 +1,9 @@
-.Dd April 14, 2019
-.Dt evtxinfo
-.Os libevtx
+.Dd June 25, 2026
+.Dt EVTXINFO 1
+.Os
 .Sh NAME
 .Nm evtxinfo
-.Nd determines information about a Windows XML EventViewer Log (EVTX) file
+.Nd determines information about a Windows XML Event Log (EVTX) file
 .Sh SYNOPSIS
 .Nm evtxinfo
 .Op Fl c Ar codepage
@@ -11,14 +11,14 @@
 .Ar source
 .Sh DESCRIPTION
 .Nm evtxinfo
-is a utility to determine information about a Windows XML EventViewer Log (EVTX) file
+is a utility to determine information about a Windows XML Event Log (EVTX) file
 .Pp
 .Nm evtxinfo
 is part of the
 .Nm libevtx
 package.
 .Nm libevtx
-is a library to accesss the Windows XML EventViewer Log (EVTX) format
+is a library to access the Windows XML Event Log (EVTX) format
 .Pp
 .Ar source
 is the source file.
@@ -26,7 +26,10 @@ is the source file.
 The options are as follows:
 .Bl -tag -width Ds
 .It Fl c Ar codepage
-specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+codepage of ASCII strings, options: ascii, windows-874, windows-932, \
+windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 \
+(default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 \
+or windows-1258
 .It Fl h
 shows this help
 .It Fl v
@@ -40,17 +43,30 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-.Dl        ...
+# evtxinfo Application.evtx
+evtxinfo 20260623
+.sp
+Windows Event Viewer Log (EVTX) information:
+	Version				: 3.1
+	Number of records		: 8515
+	Number of recovered records	: 126
+	Log type			: Application
 .sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
+.Sh SEE ALSO
+.Xr evtxexport 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
 .Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libevtx/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libevtx/issues
 .Sh COPYRIGHT
 Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
-.Sh SEE ALSO
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.

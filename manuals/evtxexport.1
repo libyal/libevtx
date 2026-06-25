@@ -1,9 +1,9 @@
-.Dd April 14, 2019
-.Dt evtxexport
-.Os libevtx
+.Dd June 25, 2026
+.Dt EVTXEXPORT 1
+.Os
 .Sh NAME
 .Nm evtxexport
-.Nd exports items stored in a Windows XML EventViewer Log (EVTX) file
+.Nd exports items stored in a Windows XML Event Log (EVTX) file
 .Sh SYNOPSIS
 .Nm evtxexport
 .Op Fl c Ar codepage
@@ -19,14 +19,14 @@
 .Ar source
 .Sh DESCRIPTION
 .Nm evtxexport
-is a utility to export items stored in a Windows XML EventViewer Log (EVTX) file
+is a utility to export items stored in a Windows XML Event Log (EVTX) file
 .Pp
 .Nm evtxexport
 is part of the
 .Nm libevtx
 package.
 .Nm libevtx
-is a library to access the Windows XML EventViewer Log (EVTX) file
+is a library to access the Windows XML Event Log (EVTX) format
 .Pp
 .Ar source
 is the source file.
@@ -34,7 +34,10 @@ is the source file.
 The options are as follows:
 .Bl -tag -width Ds
 .It Fl c Ar codepage
-specify the codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
+codepage of ASCII strings, options: ascii, windows-874, windows-932, \
+windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 \
+(default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 \
+or windows-1258
 .It Fl f Ar format
 output format, options: xml, text (default)
 .It Fl h
@@ -42,7 +45,9 @@ shows this help
 .It Fl l Ar log_file
 specify the file in which to log information about the exported items
 .It Fl m Ar mode
-export mode, option: all, items (default), recovered 'all' exports the (allocated) items and recovered items, 'items' exports the (allocated) items and 'recovered' exports the recovered items
+export mode, option: all, items (default), recovered 'all' exports the \
+(allocated) items and recovered items, 'items' exports the (allocated) \
+items and 'recovered' exports the recovered items
 .It Fl p Ar message_files_path
 search PATH for the resource files (default is the current working directory)
 .It Fl r Ar registy_files_path
@@ -54,7 +59,8 @@ This option overrides the path provided by \-r
 filename of the SOFTWARE (Windows) Registry file
 This option overrides the path provided by \-r
 .It Fl t Ar event_log_type
-event log type, options: application, security, system if not specified the event log type is determined based on the filename.
+event log type, options: application, security, system if not specified the \
+event log type is determined based on the filename
 .It Fl T
 use event template definitions to parse the event record data
 .It Fl v
@@ -68,22 +74,35 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-# evtxexport evtxexport -p c/ -r c/Windows/System32/config/ c/Windows/System32/winevt/Logs/Apllication.Evtx
-evtxexport 20120910
+# evtxexport Application.evtx
+evtxexport 20260623
 .sp
-.Dl ...
+Event number                    : 1
+Creation time                   : Jan 29, 2010 21:47:19.000000000 UTC
+Written time                    : Jan 29, 2010 21:47:20.000000000 UTC
+Event version                   : 0
+Event level                     : Information (4)
+Computer name                   : HOSTNAME
+Source name                     : Windows Search Service
+Channel name                    : Application
+Event identifier                : 0x000003f5 (1013)
+Number of strings               : 0
 .sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
-.Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libevtx/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
-.Sh COPYRIGHT
-Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 .Xr evtxinfo 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
+.Sh BUGS
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libevtx/issues
+.Sh COPYRIGHT
+Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>.
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.

@@ -1,5 +1,5 @@
 /*
- * Extracts items from a Windows XML Event Viewer Log (EVTX) file
+ * Extracts items from a Windows XML Event Log (EVTX) file.
  *
  * Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -54,54 +54,6 @@
 export_handle_t *evtxexport_export_handle = NULL;
 int evtxexport_abort                      = 0;
 
-/* Prints the executable usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use evtxexport to export items stored in a Windows XML Event Viewer\n"
-	                 "Log (EVTX) file.\n\n" );
-
-	fprintf( stream, "Usage: evtxexport [ -c codepage ] [ -f format ] [ -l log_file ]\n"
-	                 "                  [ -m mode ] [ -p resource_files_path ]\n"
-	                 "                  [ -r registy_files_path ] [ -s system_file ]\n"
-	                 "                  [ -S software_file ] [ -t event_log_type ]\n"
-	                 "                  [ -hTvV ] source\n\n" );
-
-
-	fprintf( stream, "\tsource: the source file\n\n" );
-
-	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
-	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
-	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
-	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256\n"
-	                 "\t        windows-1257 or windows-1258\n" );
-	fprintf( stream, "\t-f:     output format, options: xml, text (default)\n" );
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-l:     logs information about the exported items\n" );
-	fprintf( stream, "\t-m:     export mode, option: all, items (default), recovered\n"
-	                 "\t        'all' exports the (allocated) items and recovered items,\n"
-	                 "\t        'items' exports the (allocated) items and 'recovered' exports\n"
-	                 "\t        the recovered items\n" );
-	fprintf( stream, "\t-p:     search PATH for the resource files\n" );
-	fprintf( stream, "\t-r:     name of the directory containing the SOFTWARE and SYSTEM\n"
-	                 "\t        (Windows) Registry file\n" );
-	fprintf( stream, "\t-s:     filename of the SYSTEM (Windows) Registry file.\n"
-	                 "\t        This option overrides the path provided by -r\n" );
-	fprintf( stream, "\t-S:     filename of the SOFTWARE (Windows) Registry file.\n"
-	                 "\t        This option overrides the path provided by -r\n" );
-	fprintf( stream, "\t-t:     event log type, options: application, security, system\n"
-	                 "\t        if not specified the event log type is determined based\n"
-	                 "\t        on the filename.\n" );
-	fprintf( stream, "\t-T:     use event template definitions to parse the event record data\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
-
 /* Signal handler for evtxexport
  */
 void evtxexport_signal_handler(
@@ -154,6 +106,27 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
+	const char *description = \
+		"Use evtxexport to export items stored in a Windows XML Event Log (EVTX) file.";
+
+	evtxtools_option_t options[ ] = {
+		{ 'c', "codepage", "codepage of ASCII strings, options: ascii, windows-874, windows-932, windows-936, windows-949, windows-950, windows-1250, windows-1251, windows-1252 (default), windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258" },
+		{ 'f', "format", "output format, options: xml, text (default)" },
+		{ 'h', NULL, "shows this help" },
+		{ 'l', "log_file", "logs information about the exported items" },
+		{ 'm', "mode", "export mode, option: all, items (default), recovered. 'all' exports the (allocated) items and recovered items, 'items' exports the (allocated) items and 'recovered' exports the recovered items" },
+		{ 'p', "resource_files_path", "search PATH for the resource files (default is the current working directory)" },
+		{ 'r', "registy_files_path", "name of the directory containing the SOFTWARE and SYSTEM (Windows) Registry file" },
+		{ 's', "system_file", "filename of the SYSTEM (Windows) Registry file. This option overrides the path provided by -r" },
+		{ 'S', "software_file", "filename of the SOFTWARE (Windows) Registry file. This option overrides the path provided by -r" },
+		{ 't', "event_log_type", "event log type, options: application, security, system. if not specified the event log type is determined based on the filename." },
+		{ 'T', NULL, "use event template definitions to parse the event record data" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source file" },
+	};
+	system_character_t options_string[ 32 ];
+
 	libcerror_error_t *error                              = NULL;
 	log_handle_t *log_handle                              = NULL;
 	system_character_t *option_ascii_codepage             = NULL;
@@ -169,6 +142,7 @@ int main( int argc, char * const argv[] )
 	system_character_t *source                            = NULL;
 	char *program                                         = "evtxexport";
 	system_integer_t option                               = 0;
+	int number_of_options                                 = (int) ( sizeof( options ) / sizeof( evtxtools_option_t ) );
 	int result                                            = 0;
 	int use_template_definition                           = 0;
 	int verbose                                           = 0;
@@ -204,14 +178,26 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	evtxoutput_version_fprint(
+	evtxtools_output_version_fprint(
 	 stdout,
 	 program );
 
+	if( evtxtools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = evtxtools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "c:f:hl:m:p:r:s:S:t:TvV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -222,8 +208,12 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				evtxtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
@@ -238,8 +228,12 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				evtxtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
@@ -289,7 +283,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				evtxoutput_copyright_fprint(
+				evtxtools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
@@ -301,8 +295,12 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Missing source file.\n" );
 
-		usage_fprint(
-		 stdout );
+		evtxtools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
