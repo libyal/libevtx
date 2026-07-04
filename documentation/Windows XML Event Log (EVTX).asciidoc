@@ -1640,12 +1640,32 @@ The ScRegSetValueExW call failed for FailureActions with the following error:
 Access is denied.
 ....
 
-The event source sub key has a value named "ParameterMessageFile" which for the
-Service Control Manager refers to:
+[NOTE]
+Note that a string can contain multiple parameter placeholders, e.g. seen in
+event identifier 4720 of Microsoft-Windows-Security-Auditing.
+
+....
+    <Data Name="NewUacValue">0x15</Data>
+    <Data Name="UserAccountControl">
+                %%2080
+                %%2082
+                %%2084</Data>
+    <Data Name="UserParameters">%%1793</Data>
+....
+
+The event message provider Registry key has a value named "ParameterFileName"
+which contains a path specification of the event message file, e.g.
 
 ....
 %SystemRoot%\System32\MsObjs.dll
 ....
+
+On Windows XP (and earlier) the event source sub key has a value named
+"ParameterMessageFile" which contains the same path. As of Windows Vista this value
+is not always present and using the value "ParameterFileName" in the event
+message provider Registry key seems to be the preferred method. However it is
+possible that the event message provider Registry key is not present and the
+event source sub key is needs to be used instead.
 
 Here %%5 corresponds to the message string with identifier 5 stored in
 MsObjs.dll (or its MUI equivalent), which is expanded to "Access is denied.".

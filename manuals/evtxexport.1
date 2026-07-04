@@ -1,4 +1,4 @@
-.Dd June 25, 2026
+.Dd July  4, 2026
 .Dt EVTXEXPORT 1
 .Os
 .Sh NAME
@@ -9,6 +9,7 @@
 .Op Fl c Ar codepage
 .Op Fl f Ar format
 .Op Fl l Ar log_file
+.Op Fl L Ar lcid
 .Op Fl m Ar mode
 .Op Fl p Ar message_files_path
 .Op Fl r Ar registy_files_path
@@ -43,7 +44,10 @@ output format, options: xml, text (default)
 .It Fl h
 shows this help
 .It Fl l Ar log_file
-specify the file in which to log information about the exported items
+logs information about the exported items
+.It Fl L Ar lcid
+preferred language of the message strings (default is 0, which is the first \
+language in the resource file)
 .It Fl m Ar mode
 export mode, option: all, items (default), recovered 'all' exports the \
 (allocated) items and recovered items, 'items' exports the (allocated) \

@@ -28,6 +28,7 @@
  */
 #if defined( HAVE_LOCAL_LIBWRC )
 
+#include <libwrc_codepage.h>
 #include <libwrc_definitions.h>
 #include <libwrc_manifest_resource.h>
 #include <libwrc_message_table_resource.h>

@@ -801,7 +801,7 @@ int resource_file_get_message_table_resource(
 
 		goto on_error;
 	}
-	if( number_of_resource_sub_items < 1 )
+	if( number_of_resource_sub_items == 0 )
 	{
 		libcerror_error_set(
 		 error,
@@ -849,7 +849,8 @@ int resource_file_get_message_table_resource(
 
 			goto on_error;
 		}
-		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		if( ( preferred_language_identifier == 0 )
+		 || ( preferred_language_identifier == ( resource_identifier & 0x000003ffUL ) ) )
 		{
 			break;
 		}
@@ -870,14 +871,20 @@ int resource_file_get_message_table_resource(
 	}
 	if( resource_sub_item == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: unable to retrieve instrumentation manifest from resource.",
-		 function );
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		return( 0 );
 	}
 	if( libwrc_resource_item_get_size(
 	     resource_sub_item,
@@ -955,7 +962,7 @@ int resource_file_get_message_table_resource(
 	     safe_message_table_resource,
 	     resource_data,
 	     (size_t) resource_data_size,
-	     LIBEVTX_CODEPAGE_WINDOWS_1252,
+	     LIBWRC_CODEPAGE_WINDOWS_1252,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1454,7 +1461,7 @@ int resource_file_get_mui_resource(
 
 		goto on_error;
 	}
-	if( number_of_resource_sub_items < 1 )
+	if( number_of_resource_sub_items == 0 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1502,7 +1509,8 @@ int resource_file_get_mui_resource(
 
 			goto on_error;
 		}
-		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		if( ( preferred_language_identifier == 0 )
+		 || ( preferred_language_identifier == ( resource_identifier & 0x000003ffUL ) ) )
 		{
 			break;
 		}
@@ -1523,14 +1531,20 @@ int resource_file_get_mui_resource(
 	}
 	if( resource_sub_item == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: unable to retrieve instrumentation manifest from resource.",
-		 function );
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		return( 0 );
 	}
 	if( libwrc_resource_item_get_size(
 	     resource_sub_item,
@@ -1895,7 +1909,7 @@ int resource_file_get_wevt_manifest(
 
 		goto on_error;
 	}
-	if( number_of_resource_sub_items < 1 )
+	if( number_of_resource_sub_items == 0 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1943,7 +1957,8 @@ int resource_file_get_wevt_manifest(
 
 			goto on_error;
 		}
-		if( ( resource_identifier & 0x000003ffUL ) == preferred_language_identifier )
+		if( ( preferred_language_identifier == 0 )
+		 || ( preferred_language_identifier == ( resource_identifier & 0x000003ffUL ) ) )
 		{
 			break;
 		}
@@ -1964,14 +1979,20 @@ int resource_file_get_wevt_manifest(
 	}
 	if( resource_sub_item == NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: unable to retrieve instrumentation manifest from resource.",
-		 function );
+		if( libwrc_resource_free(
+		     &resource,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free resource.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		return( 0 );
 	}
 	if( libwrc_resource_item_get_size(
 	     resource_sub_item,

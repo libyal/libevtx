@@ -114,6 +114,7 @@ int main( int argc, char * const argv[] )
 		{ 'f', "format", "output format, options: xml, text (default)" },
 		{ 'h', NULL, "shows this help" },
 		{ 'l', "log_file", "logs information about the exported items" },
+		{ 'L', "lcid", "preferred language of the message strings (default is 0, which is the first language in the resource file)" },
 		{ 'm', "mode", "export mode, option: all, items (default), recovered. 'all' exports the (allocated) items and recovered items, 'items' exports the (allocated) items and 'recovered' exports the recovered items" },
 		{ 'p', "resource_files_path", "search PATH for the resource files (default is the current working directory)" },
 		{ 'r', "registy_files_path", "name of the directory containing the SOFTWARE and SYSTEM (Windows) Registry file" },
@@ -239,6 +240,11 @@ int main( int argc, char * const argv[] )
 
 			case (system_integer_t) 'l':
 				option_log_filename = optarg;
+
+				break;
+
+			case (system_integer_t) 'L':
+				option_preferred_language = optarg;
 
 				break;
 
@@ -494,10 +500,9 @@ int main( int argc, char * const argv[] )
 	}
 	if( option_preferred_language != NULL )
 	{
-/* TODO set preferred language identifier from input */
 		if( export_handle_set_preferred_language_identifier(
 		     evtxexport_export_handle,
-		     0x0409,
+		     option_preferred_language,
 		     &error ) != 1 )
 		{
 			fprintf(

@@ -30,7 +30,6 @@
 #include "evtxtools_libcerror.h"
 #include "evtxtools_libcpath.h"
 #include "evtxtools_libcsplit.h"
-#include "evtxtools_libevtx.h"
 #include "evtxtools_libfcache.h"
 #include "evtxtools_libfwevt.h"
 #include "evtxtools_libregf.h"
@@ -149,7 +148,7 @@ int message_handle_initialize(
 		goto on_error;
 	}
 	( *message_handle )->ascii_codepage                = LIBREGF_CODEPAGE_WINDOWS_1252;
-	( *message_handle )->preferred_language_identifier = 0x00000409UL;
+	( *message_handle )->preferred_language_identifier = 0;
 
 	return( 1 );
 
@@ -1257,9 +1256,9 @@ int message_handle_open_system_registry_file(
      const char *eventlog_key_name,
      libcerror_error_t **error )
 {
-	libregf_key_t *sub_key              = NULL;
 	system_character_t *key_path        = NULL;
 	system_character_t *system_filename = NULL;
+	libregf_key_t *sub_key              = NULL;
 	static char *function               = "message_handle_open_system_registry_file";
 	size_t eventlog_key_name_length     = 0;
 	size_t key_path_length              = 0;
@@ -2260,16 +2259,16 @@ int message_handle_get_resource_file_path(
      size_t *resource_file_path_size,
      libcerror_error_t **error )
 {
-	system_character_t *mui_string                        = NULL;
 	system_character_t *resource_filename_string_segment  = NULL;
-	system_character_t *safe_resource_file_path           = NULL;
+	system_character_t *mui_string                        = NULL;
 	system_split_string_t *resource_filename_split_string = NULL;
+	system_character_t *safe_resource_file_path           = NULL;
 	static char *function                                 = "message_handle_get_resource_file_path";
 	size_t mui_string_size                                = 0;
 	size_t resource_file_path_index                       = 0;
+	size_t resource_files_path_length                     = 0;
 	size_t resource_filename_directory_name_index         = 0;
 	size_t resource_filename_string_segment_size          = 0;
-	size_t resource_files_path_length                     = 0;
 	size_t safe_resource_file_path_size                   = 0;
 	uint8_t directory_entry_type                          = 0;
 	int resource_filename_number_of_segments              = 0;
@@ -2592,7 +2591,7 @@ int message_handle_get_resource_file_path(
 	safe_resource_file_path = system_string_allocate(
 	                           safe_resource_file_path_size );
 
-	if( *resource_file_path == NULL )
+	if( safe_resource_file_path == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -2687,7 +2686,7 @@ int message_handle_get_resource_file_path(
 
 			result = path_handle_get_directory_entry_name_by_name_no_case(
 				  message_handle->path_handle,
-				  *resource_file_path,
+				  safe_resource_file_path,
 				  resource_file_path_index + 1,
 				  mui_string,
 				  mui_string_size,
@@ -2849,7 +2848,7 @@ int message_handle_get_resource_file_path(
 
 		result = path_handle_get_directory_entry_name_by_name_no_case(
 		          message_handle->path_handle,
-		          *resource_file_path,
+		          safe_resource_file_path,
 		          resource_file_path_index + 1,
 			  resource_filename_string_segment,
 			  resource_filename_string_segment_size,
@@ -2870,6 +2869,17 @@ int message_handle_get_resource_file_path(
 		}
 		else if( result != 0 )
 		{
+			if( resource_filename_string_segment_size >= ( safe_resource_file_path_size - resource_file_path_index ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid resource file path index value out of bounds.",
+				 function );
+
+				goto on_error;
+			}
 			if( system_string_copy(
 			     &( safe_resource_file_path[ resource_file_path_index ] ),
 			     resource_filename_string_segment,

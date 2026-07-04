@@ -105,6 +105,12 @@ const char *export_handle_get_event_log_key_name(
 const char *export_handle_get_event_level(
              uint8_t event_level );
 
+int evtxtools_system_string_copy_from_64_bit_in_decimal(
+     const system_character_t *string,
+     size_t string_size,
+     uint64_t *value_64bit,
+     libcerror_error_t **error );
+
 int export_handle_initialize(
      export_handle_t **export_handle,
      libcerror_error_t **error );
@@ -134,7 +140,7 @@ int export_handle_set_ascii_codepage(
 
 int export_handle_set_preferred_language_identifier(
      export_handle_t *export_handle,
-     uint32_t preferred_language_identifier,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_event_log_type(
@@ -222,6 +228,30 @@ int export_handle_export_record_text(
      export_handle_t *export_handle,
      libevtx_record_t *record,
      log_handle_t *log_handle,
+     libcerror_error_t **error );
+
+int export_handle_print_message(
+     export_handle_t *export_handle,
+     const system_character_t *parameter_filename,
+     size_t parameter_filename_length,
+     message_string_t *message_string,
+     libevtx_record_t *record,
+     libcerror_error_t **error );
+
+int export_handle_print_message_string(
+     export_handle_t *export_handle,
+     system_character_t *string,
+     size_t string_length,
+     size_t *string_index,
+     system_character_t *last_character,
+     libcerror_error_t **error );
+
+int export_handle_print_value_string(
+     export_handle_t *export_handle,
+     const system_character_t *parameter_filename,
+     size_t parameter_filename_length,
+     system_character_t *string,
+     size_t string_length,
      libcerror_error_t **error );
 
 int export_handle_export_record_xml(
