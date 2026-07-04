@@ -49,7 +49,7 @@ struct libevtx_io_handle
 
 	/* The number of chunks
 	 */
-	uint16_t number_of_chunks;
+	uint32_t number_of_chunks;
 
 	/* The chunks data offset
 	 */

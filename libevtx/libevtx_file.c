@@ -857,8 +857,8 @@ int libevtx_file_open_read(
 	static char *function                  = "libevtx_file_open_read";
 	off64_t file_offset                    = 0;
 	size64_t file_size                     = 0;
-	uint16_t chunk_index                   = 0;
-	uint16_t number_of_chunks              = 0;
+	uint32_t chunk_index                   = 0;
+	uint32_t number_of_chunks              = 0;
 	uint16_t number_of_records             = 0;
 	uint16_t record_index                  = 0;
 	int element_index                      = 0;
@@ -1137,7 +1137,7 @@ int libevtx_file_open_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create chunk: %" PRIu16 ".",
+			 "%s: unable to create chunk: %" PRIu32 ".",
 			 function,
 			 chunk_index );
 
@@ -1156,7 +1156,7 @@ int libevtx_file_open_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read chunk: %" PRIu16 ".",
+			 "%s: unable to read chunk: %" PRIu32 ".",
 			 function,
 			 chunk_index );
 
@@ -1170,7 +1170,7 @@ int libevtx_file_open_read(
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
-					 "%s: corruption detected in chunk: %" PRIu16 ".\n",
+					 "%s: corruption detected in chunk: %" PRIu32 ".\n",
 					 function,
 					 chunk_index );
 				}
@@ -1186,7 +1186,7 @@ int libevtx_file_open_read(
 				if( libcnotify_verbose != 0 )
 				{
 					libcnotify_printf(
-					 "%s: corruption detected in chunk: %" PRIu16 ".\n",
+					 "%s: corruption detected in chunk: %" PRIu32 ".\n",
 					 function,
 					 chunk_index );
 				}
@@ -1210,7 +1210,7 @@ int libevtx_file_open_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve chunk: %" PRIu16 " number of records.",
+				 "%s: unable to retrieve chunk: %" PRIu32 " number of records.",
 				 function,
 				 chunk_index );
 
@@ -1230,7 +1230,7 @@ int libevtx_file_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve chunk: %" PRIu16 " record: %" PRIu16 ".",
+					 "%s: unable to retrieve chunk: %" PRIu32 " record: %" PRIu16 ".",
 					 function,
 					 chunk_index,
 					 record_index );
@@ -1243,7 +1243,7 @@ int libevtx_file_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: missing chunk: %" PRIu16 " record: %" PRIu16 ".",
+					 "%s: missing chunk: %" PRIu32 " record: %" PRIu16 ".",
 					 function,
 					 chunk_index,
 					 record_index );
@@ -1281,7 +1281,8 @@ int libevtx_file_open_read(
 						previous_record_identifier = record_values->identifier;
 					}
 				}
-#endif
+#endif /* defined( HAVE_VERBOSE_OUTPUT ) */
+
 				/* The chunk index is stored in the element data size
 				 */
 				if( ( chunk_index < internal_file->io_handle->number_of_chunks )
@@ -1341,7 +1342,7 @@ int libevtx_file_open_read(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve chunk: %" PRIu16 " number of recovered records.",
+				 "%s: unable to retrieve chunk: %" PRIu32 " number of recovered records.",
 				 function,
 				 chunk_index );
 
@@ -1361,7 +1362,7 @@ int libevtx_file_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+					 "%s: unable to retrieve chunk: %" PRIu32 " recovered record: %" PRIu16 ".",
 					 function,
 					 chunk_index,
 					 record_index );
@@ -1374,7 +1375,7 @@ int libevtx_file_open_read(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-					 "%s: missing chunk: %" PRIu16 " recovered record: %" PRIu16 ".",
+					 "%s: missing chunk: %" PRIu32 " recovered record: %" PRIu16 ".",
 					 function,
 					 chunk_index,
 					 record_index );
@@ -1414,7 +1415,7 @@ int libevtx_file_open_read(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free chunk: %" PRIu16 ".",
+			 "%s: unable to free chunk: %" PRIu32 ".",
 			 function,
 			 chunk_index );
 
@@ -1431,7 +1432,7 @@ int libevtx_file_open_read(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: mismatch in number of chunks ( %" PRIu16 " != %" PRIu16 " ).\n",
+			 "%s: mismatch in number of chunks ( %" PRIu32 " != %" PRIu32 " ).\n",
 			 function,
 			 internal_file->io_handle->number_of_chunks,
 			 chunk_index );

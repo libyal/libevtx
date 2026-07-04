@@ -201,7 +201,7 @@ int libevtx_chunks_table_read_record(
 
 	/* The chunk index is stored in the data range size
 	*/
-	if( data_range_size > (uint64_t) UINT16_MAX )
+	if( data_range_size > (uint64_t) UINT32_MAX )
 	{
 		libcerror_error_set(
 		 error,
@@ -216,7 +216,7 @@ int libevtx_chunks_table_read_record(
 	     chunks_table->chunks_vector,
 	     (intptr_t *) file_io_handle,
 	     (libfdata_cache_t *) chunks_table->chunks_cache,
-	     (uint16_t) data_range_size,
+	     (uint32_t) data_range_size,
 	     (intptr_t **) &chunk,
 	     0,
 	     error ) != 1 )

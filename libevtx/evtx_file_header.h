@@ -75,14 +75,14 @@ struct evtx_file_header
 	uint8_t header_block_size[ 2 ];
 
 	/* The number of chunks
-	 * Consists of 2 bytes
+	 * Consists of 4 bytes
 	 */
-	uint8_t number_of_chunks[ 2 ];
+	uint8_t number_of_chunks[ 4 ];
 
 	/* Unknown
-	 * Consists 76 bytes
+	 * Consists 74 bytes
 	 */
-	uint8_t unknown1[ 76 ];
+	uint8_t unknown1[ 74 ];
 
 	/* The file flags
 	 * Consists of 4 bytes

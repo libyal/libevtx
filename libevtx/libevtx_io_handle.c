@@ -200,10 +200,10 @@ int libevtx_io_handle_read_file_header(
 	static char *function        = "libevtx_io_handle_read_file_header";
 	size_t read_size             = 4096;
 	ssize_t read_count           = 0;
+	uint64_t first_chunk_number  = 0;
+	uint64_t last_chunk_number   = 0;
 	uint32_t calculated_checksum = 0;
 	uint32_t stored_checksum     = 0;
-	uint16_t first_chunk_number  = 0;
-	uint16_t last_chunk_number   = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit         = 0;
@@ -311,7 +311,7 @@ int libevtx_io_handle_read_file_header(
 	 ( (evtx_file_header_t *) file_header_data )->header_block_size,
 	 io_handle->chunks_data_offset );
 
-	byte_stream_copy_to_uint16_little_endian(
+	byte_stream_copy_to_uint32_little_endian(
 	 ( (evtx_file_header_t *) file_header_data )->number_of_chunks,
 	 io_handle->number_of_chunks );
 
@@ -380,7 +380,7 @@ int libevtx_io_handle_read_file_header(
 		 io_handle->chunks_data_offset );
 
 		libcnotify_printf(
-		 "%s: number of chunks\t\t\t: %" PRIu16 "\n",
+		 "%s: number of chunks\t\t\t: %" PRIu32 "\n",
 		 function,
 		 io_handle->number_of_chunks );
 
@@ -459,7 +459,7 @@ int libevtx_io_handle_read_file_header(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: first chunk number: %" PRIu16 " exceeds last chunk number: %" PRIu16 ".\n",
+			 "%s: first chunk number: %" PRIu64 " exceeds last chunk number: %" PRIu64 ".\n",
 			 function,
 			 first_chunk_number,
 			 last_chunk_number );
@@ -467,13 +467,13 @@ int libevtx_io_handle_read_file_header(
 #endif
 		io_handle->flags |= LIBEVTX_IO_HANDLE_FLAG_IS_CORRUPTED;
 	}
-	else if( io_handle->number_of_chunks != ( last_chunk_number - first_chunk_number + 1 ) )
+	else if( (uint64_t) io_handle->number_of_chunks != ( last_chunk_number - first_chunk_number + 1 ) )
 	{
 #if defined( HAVE_VERBOSE_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: mismatch in number of chunks ( %" PRIu16 " != %" PRIu16 " ).\n",
+			 "%s: mismatch in number of chunks ( %" PRIu32 " != %" PRIu64 " ).\n",
 			 function,
 			 io_handle->number_of_chunks,
 			 last_chunk_number - first_chunk_number + 1 );
