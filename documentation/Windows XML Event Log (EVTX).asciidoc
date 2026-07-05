@@ -77,7 +77,7 @@ April 2012 | Additional information.
 | 0.0.24 | J.B. Metz | January 2024 | Additional information about parameter message files.
 | 0.0.25 | J.B. Metz | April 2024 | Additional information about dependency identifier.
 | 0.0.26 | J.B. Metz | September 2024 | Additional information regarding format edge case with thanks to J. Solomon.
-| 0.0.27 | J.B. Metz | July 2026 | Additional information regarding files larger than 4G with thanks to W. Billaud.
+| 0.0.27 | J.B. Metz | July 2026 | Additional information regarding files larger than 4G with thanks to W. Billaud, parameter expansion and time mismatch corruption scenario.
 |===
 
 :numbered:
@@ -1325,6 +1325,9 @@ corresponding event message string would be:
 
 The placeholder values %1 represent the first string in the event.
 
+The placeholder %0 has a special meaning indicating the end-of-string anything
+after this should be ignored.
+
 The event strings are stored as "Data" elements in the "EventData" element
 
 ....
@@ -1340,8 +1343,8 @@ string can have more placeholder than the event data contains strings, it seems
 in such a case the placeholders are not replaced and shown as %# in the
 resulting string.
 
-Note that the event message strings are language specific. An event message
-file can therefore contain event message strings for multiple languages.
+The event message strings are language specific. An event message file can
+contain event message strings for multiple languages.
 
 ===== Multilingual User Interface (MUI) event message files
 
@@ -1712,6 +1715,14 @@ This translates to the Binary XML data should start with either:
 * 0x00; which means there is no Binary XML data
 
 == Corruption scenarios
+
+=== Date and time mismatch
+
+The written date and time in the record header and TimeCreated in the event XML
+do not correspond.
+
+Certain versions of wevtutil were observed writing incorrect written date and
+time in the record header. Also see `[WASSENAAR19]`.
 
 === String value oddities
 
@@ -2192,6 +2203,16 @@ Messages        : [u'ksproxy.ax']
 | Title | Extensible Markup Language (XML) 1.0 (Fifth Edition)
 | Date | November 26, 2008
 | URL | http://www.w3.org/TR/REC-xml/
+|===
+
+`[WASSENAAR19]`
+
+[cols="1,5",options="header"]
+|===
+| Title | Export corrupts Windows Event Log files
+| Author(s) | J. Wassenaar
+| Date | June 4, 2019
+| URL | https://blog.fox-it.com/2019/06/04/export-corrupts-windows-event-log-files/
 |===
 
 [appendix]
