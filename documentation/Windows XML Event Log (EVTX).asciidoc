@@ -1325,8 +1325,9 @@ corresponding event message string would be:
 
 The placeholder values %1 represent the first string in the event.
 
-The placeholder %0 has a special meaning indicating the end-of-string anything
-after this should be ignored.
+The placeholder %0 has a special meaning indicating the text should be terminated
+without a trailing newline characte. It instructs FormatMessage to ignore the
+rest of the string.
 
 The event strings are stored as "Data" elements in the "EventData" element
 

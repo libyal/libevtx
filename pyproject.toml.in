@@ -23,6 +23,11 @@ Documentation = "https://github.com/libyal/libevtx/wiki/Home"
 Homepage = "https://github.com/libyal/libevtx"
 Repository = "https://github.com/libyal/libevtx"
 
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = "\\.pyi?$"
+
 [tool.setuptools]
 py-modules = ["_build"]
 
