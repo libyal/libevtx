@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 
 bin_PROGRAMS = \
 	file_fuzzer \
-	record_fuzzer
+	record_fuzzer \
+	template_definition_fuzzer
 
 file_fuzzer_SOURCES = \
 	file_fuzzer.cc \
@@ -50,6 +51,24 @@ record_fuzzer_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
+
+template_definition_fuzzer_SOURCES = \
+	ossfuzz_libbfio.h \
+	ossfuzz_libevtx.h \
+	template_definition_fuzzer.cc
+
+template_definition_fuzzer_LDADD = \
+	@LIB_FUZZING_ENGINE@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libevtx/libevtx.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 endif
 
 DISTCLEANFILES = \
@@ -61,4 +80,6 @@ splint-local:
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(file_fuzzer_SOURCES)
 	@echo "Running splint on record_fuzzer ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(record_fuzzer_SOURCES)
+	@echo "Running splint on template_definition_fuzzer ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(template_definition_fuzzer_SOURCES)
 
